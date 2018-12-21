@@ -141,7 +141,7 @@ That result is finally passed into the function that was created by the `named_a
 ## Sub Expressions
 Sub expressions are denoted by a `#` followed by an identifier and then curly braces `{}`.
 
-To reference a sub expression later, use the `#` followed by the identifier
+To reference a sub expression later, use the `#` followed by the identifier.
 ```
 // Main expression
 #map_expr {
