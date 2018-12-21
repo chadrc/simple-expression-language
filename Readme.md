@@ -136,4 +136,64 @@ Then `rand_range` is called with `min` and `max`.
  
 That result is finally passed into the function that was created by the `named_array` call.
 
-*Since equivalent expressions can be made with both left and right passing, when to use either will be more of a stylistic and readability choice* 
+*Since equivalent expressions can be made with both left and right passing, when to use either will be more of a stylistic and readability choice*
+
+## Sub Expressions
+Sub expressions are denoted by a `#` followed by an identifier and then curly braces `{}`.
+
+To reference a sub expression later, use the `#` followed by the identifier
+```
+// Main expression
+#map_expr {
+    input + rand()
+}
+
+// curly brace may also be on next line
+#filter_expr 
+{
+    input % 2 = 0
+}
+
+init_array(10).map(#map_expr)
+init_array(5).map(#map_expr).filter(#filter_expr)
+``` 
+
+### External Expressions
+Expressions may also be referenced from other files.
+
+Can reference files directly if entire file as a single expression.
+
+filter.sel
+```
+input % 2 = 0
+```
+
+Or reference sub-expressions within a file.
+ 
+map.sel
+```
+#plus_random {
+    input + rand()
+}
+
+#squared {
+    input^2
+}
+```
+
+main.sel
+```
+init_array(10).map(#squared)
+init_array(5).map(#plus_random).filter(#filter)
+```
+
+File resolution and naming will depend on the runtime.
+
+May also rename an external expression.
+
+main.sel
+```
+#is_even <- #filter
+
+init_array(10)..filter(#is_even)
+```
