@@ -21,38 +21,6 @@ false
 5...10 // Inclusive, contains 5, 6, 7, 8, 9 and 10
 ```
 
-### Arrays
-All elements must be of the same type.
-
-Can use exposed variable references.
-
-Given `var_1` and `var_2` are exposed string variables.
-```
-// Valid
-[1, 2, 3]
-["one", "two", "three"]
-[exposed_variable_1, exposed_variable_2]
-
-// Invalid
-[1, "two", 3]
-```
-
-#### Indexing
-Arrays may be index with a number to get a single element or a range to get a sub array of elements.
-
-Arrays are 0 indexed.
-
-Exposed variables:
-* `numbers` = [1, 2, 3, 4, 5]
-
-```
-numbers[3]
-// 4
-
-numbers[2...4]
-// [3, 4, 5]
-```
-
 ## Math operations
 ```
 // Addition
@@ -126,6 +94,70 @@ Ex. exposed function `rand` that takes no parameters
 ```
 rand()
 // result is a randomly generated number
+```
+
+### Associative Array
+A single collection type is provided being a combination of associative array and a regular array.
+
+The types of the values do not have to be the same.
+
+To use like a map. Provide a list of key-value pairs where key is specified first followed by a semi-colon and then the value.
+
+```
+[
+    first_name: "James",
+    last_name: "Smith",
+    age: 36
+]
+```
+
+If you want to include an exposed variable inside a map using the variable identifier as the key and variable value as the value. You may omit the value, keeping the tailing semi-colon.
+```
+[
+    first_name:,
+    last_name:,
+    age:
+]
+```
+
+To use like an array. Provide only the values, no semi-colon.
+```
+[10, 20, 30, 40, 50]
+
+// Don't have to be the same type
+["cat", 45, false, 3..12]
+```
+
+To use as both. Provide a combination of above items.
+```
+[
+    10, // index 0
+    20, // index 1
+    first_name: "James",
+    last_name: "Smith",
+    30, // index 2
+    age: 36
+]
+```
+
+#### Indexing
+Collections my be index with either an number (index to an array) or a string (key to a map).
+
+Arrays are 0 indexed.
+
+Exposed variables:
+* `numbers` = [1, 2, 3, 4, 5]
+* `user` = [first_name: "James", last_name: "Smith", age: 36]
+
+```
+numbers[3]
+// 4
+
+user["first_name"]
+// "James"
+
+// Note that indexing with a number string will not return a value from an array
+numbers["1"] // Error: doesn't exist
 ```
 
 ## Functions
