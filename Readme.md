@@ -207,18 +207,35 @@ To reference a sub expression later, use the `#` followed by the identifier.
 ```
 // Main expression
 #map_expr {
-    input + rand()
+    $ + rand()
 }
 
 // curly brace may also be on next line
 #filter_expr 
 {
-    input % 2 = 0
+    $ % 2 = 0
 }
 
 init_array(10).map(#map_expr)
 init_array(5).map(#map_expr).filter(#filter_expr)
 ``` 
+
+### Input
+Input to an expression or sub expression is referenced by the `$` character.
+
+Input may also be an array, in which it can be index to obtain other values.
+
+Input = "Hello"
+```
+$ + ", SEL!"
+// "Hello, SEL!"
+```
+
+Input = [1, 2, 3, 4, 5]
+```
+$[3]
+// 4
+```
 
 ### Dot operator
 There is no concept of objects but a dot operator is available for convenience when calling functions.
@@ -245,7 +262,7 @@ Following example uses external expressions in separate files, but external expr
 
 filter.sel
 ```
-input % 2 = 0
+$ % 2 = 0
 ```
 
 Or reference sub-expressions within a file.
@@ -253,11 +270,11 @@ Or reference sub-expressions within a file.
 map.sel
 ```
 #plus_random {
-    input + rand()
+    $ + rand()
 }
 
 #squared {
-    input^2
+    $^2
 }
 ```
 
