@@ -198,6 +198,22 @@ init_array(10).map(#map_expr)
 init_array(5).map(#map_expr).filter(#filter_expr)
 ``` 
 
+### Dot operator
+There is no concept of objects but a dot operator is available for convenience when calling functions.
+
+Exposed functions:
+* `map` - takes an array as its first argument and a sub expression or function as its second
+* `squared` - takes a number and squares it
+```
+[1, 2, 3, 4, 5].map(squared)
+
+// Equalivalent to 
+map [1, 2, 3, 4, 5] squared
+map([1, 2, 3, 4, 5], squared)
+[1, 2, 3, 4, 5], squared -> map
+```
+The dot operator can be thought of as taking the result of the left side and injecting it as the first parameter to the right side function
+
 ### External Expressions
 Expressions may also be referenced from other files.
 
