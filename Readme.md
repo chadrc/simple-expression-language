@@ -260,7 +260,7 @@ init_array(5).map(#plus_rand).filter(#is_even)
 ### Input
 Input to an expression or sub expression is referenced by the `$` character.
 
-Input may also be an array, in which it can be index to obtain other values.
+Input may also be an associative array or array, in which it can be index to obtain other values.
 
 Input = "Hello"
 ```
@@ -272,6 +272,12 @@ Input = [1, 2, 3, 4, 5]
 ```
 $[3]
 // 4
+```
+
+Input = [first_name: "James", last_name: "Smith", age: 36]
+```
+$["last_name"]
+// "Smith"
 ```
 
 ### Dot operator
