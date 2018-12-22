@@ -290,5 +290,5 @@ main.sel
 ```
 #is_even <-> #filter
 
-init_array(10)..filter(#is_even)
+init_array(10).filter(#is_even)
 ```
