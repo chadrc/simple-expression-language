@@ -245,8 +245,6 @@ init_array(10).map(#squared)
 init_array(5).map(#plus_random).filter(#filter)
 ```
 
-File resolution and naming will depend on the runtime.
-
 May also rename an external expression.
 
 main.sel
