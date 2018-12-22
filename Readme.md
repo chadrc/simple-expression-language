@@ -288,7 +288,7 @@ May also rename an external expression.
 
 main.sel
 ```
-#is_even <- #filter
+#is_even <-> #filter
 
 init_array(10)..filter(#is_even)
 ```
