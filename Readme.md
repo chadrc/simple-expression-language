@@ -15,6 +15,26 @@
 // Boolean
 true
 false
+
+// Ranges
+5..10 // Exclusive, contains 5, 6, 7, 8, and 9
+5...10 // Inclusive, contains 5, 6, 7, 8, 9 and 10
+```
+
+### Arrays
+All elements must be of the same type.
+
+Can use exposed variable references.
+
+Given `var_1` and `var_2` are exposed string variables.
+```
+// Valid
+[1, 2, 3]
+["one", "two", "three"]
+[exposed_variable_1, exposed_variable_2]
+
+// Invalid
+[1, "two", 3]
 ```
 
 ## Math operations
@@ -84,6 +104,26 @@ Ex. exposed function `rand` that takes no parameters
 ```
 rand()
 // result is a randomly generated number
+```
+
+## Functions
+Exposed functions can be invoke in two ways:
+1. Specify function name followed by arguments in a space separated list
+2. Specify function name followed by arguments in a comma separated list surrounded by parenthesis
+
+Ex. exposed functions
+* `rand` that takes no parameters
+* `rand_range` that takes two parameters
+* `init_range` that takes three parameters
+```
+// 1
+rand // no arguments, so no argument list necessary
+rand_range 10 20
+init_range 10 20 2
+
+// 2
+rand()
+rand_range(10, 20)
 ```
 
 ## Functional operations
