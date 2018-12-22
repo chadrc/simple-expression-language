@@ -206,18 +206,23 @@ Sub expressions are denoted by a `#` followed by an identifier and then curly br
 To reference a sub expression later, use the `#` followed by the identifier.
 ```
 // Main expression
-#map_expr {
+#plus_rand {
     $ + rand()
 }
 
 // curly brace may also be on next line
-#filter_expr 
+#is_even 
 {
     $ % 2 = 0
 }
 
-init_array(10).map(#map_expr)
-init_array(5).map(#map_expr).filter(#filter_expr)
+init_array(10).map(#plus_rand)
+init_array(5).map(#plus_rand).filter(#is_even)
+
+// may also be called directly the same way as functions
+#plus_rand 5
+#plus_rand(5)
+5 -> #plus_rand
 ``` 
 
 ### Input
