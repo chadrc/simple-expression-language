@@ -55,7 +55,10 @@ Given `var_1` and `var_2` are exposed string variables.
 10 % 5
 
 // Exponential
-2^10 
+2^10
+
+// Negation
+-5
 ```
 
 ## String operations
@@ -89,6 +92,9 @@ Given `var_1` and `var_2` are exposed string variables.
 
 // Logical OR
 5 = 4 || 5 < 10
+
+// Logical NOT
+!true
 ```
 
 ## Exposed References
