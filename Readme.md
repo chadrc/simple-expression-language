@@ -215,9 +215,11 @@ map([1, 2, 3, 4, 5], squared)
 The dot operator can be thought of as taking the result of the left side and injecting it as the first parameter to the right side function
 
 ### External Expressions
-Expressions may also be referenced from other files.
+Expressions may also be referenced from other sources.
 
 Can reference files directly if entire file as a single expression.
+
+Following example uses external expressions in separate files, but external expressions may be resolved other ways depending on the runtime.
 
 filter.sel
 ```
