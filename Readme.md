@@ -37,6 +37,22 @@ Given `var_1` and `var_2` are exposed string variables.
 [1, "two", 3]
 ```
 
+#### Indexing
+Arrays may be index with a number to get a single element or a range to get a sub array of elements.
+
+Arrays are 0 indexed.
+
+Exposed variables:
+* `numbers` = [1, 2, 3, 4, 5]
+
+```
+numbers[3]
+// 4
+
+numbers[2...4]
+// [3, 4, 5]
+```
+
 ## Math operations
 ```
 // Addition
