@@ -160,6 +160,33 @@ user["first_name"]
 numbers["1"] // Error: doesn't exist
 ```
 
+## Results
+Each expression outputs a result. 
+
+The runtime will have access to each result after execution
+```
+4 + 5
+// 9
+```
+
+The last result may be referenced with the `?` symbol
+```
+4 + 5
+// 9
+
+? + 11
+// ? = 9
+// 20
+
+? * 5
+// ? = 20
+// 100
+
+// may also be used in function calls
+rand_range(0, ?)
+// random number between 0, 100
+```
+
 ## Functions
 Exposed functions can be invoke in two ways:
 1. Specify function name followed by arguments in a space separated list
