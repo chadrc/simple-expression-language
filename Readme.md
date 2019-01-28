@@ -291,6 +291,7 @@ numbers -> map(is_even)
 min, max |> clamp(34)
 
 // equivalent to
+34, min, max |> clamp
 max |> clamp(34, min)
 clamp(34, min, max)
 ```
