@@ -208,9 +208,9 @@ rand_range(10, 20)
 ```
 
 ## Functional operations
-Two operators to help make passing values in function chains easier to read.
+Operators for piping arguments into functions/sub-expressions.
 
-### Right passing
+### Right Piping
 Exposed variables:
 * `min` = 10
 * `max` = 20
@@ -227,9 +227,9 @@ init_array(rand_range(min, max))
 // may also split out the arguments to rand_range
 min, max -> rand_range -> init_array
 ```
-`min` and `max` are evaluated and passed into `rand_range` and then the result of `rand_range` is passed into `init_array`.
+`min` and `max` are evaluated and piped into `rand_range` and then the result of `rand_range` is piped into `init_array`.
 
-### Left passing
+### Left Piping
 Exposed variables:
 * `min` = 10
 * `max` = 20
@@ -240,7 +240,7 @@ Exposed functions:
 ```
 named_array("my_array") <- rand_range(min, max)
 
-// split out args, right passing resolve before left passing
+// split out args, right piping resolve before left piping
 "my_array" -> named_array <- min, max -> rand_range
 
 // equivalent to 
@@ -255,9 +255,9 @@ Left chains are evaluated after right chains.
 
 Then `rand_range` is called with `min` and `max`.
  
-That result is finally passed into the function that was created by the `named_array` call.
+That result is finally piped into the function that was created by the `named_array` call.
 
-*Since equivalent expressions can be made with both left and right passing, when to use either will be more of a stylistic and readability choice*
+*Since equivalent expressions can be made with both left and right piping, when to use either will be more of a stylistic and readability choice*
 
 ## Sub Expressions
 Sub expressions are denoted by a `#` followed by an identifier and then curly braces `{}`.
