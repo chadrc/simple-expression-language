@@ -259,6 +259,42 @@ That result is finally piped into the function that was created by the `named_ar
 
 *Since equivalent expressions can be made with both left and right piping, when to use either will be more of a stylistic and readability choice*
 
+### Pipe Last
+Also provided is the ability to pipe into a function starting from the end of the argument list.
+
+Exposed variables:
+* `min` = 10
+* `max` = 20
+
+Exposed functions:
+* `rand_range(int, int)` - takes a minimum and maximum and returns a random value between them
+* `map(array, func)` - Applies a function to each element in given array
+* `is_even(int)` - Returns true if given number is even.
+* `clamp(num: int, min: int, max: int)`
+
+Input:
+* `numbers` = [1, 2, 3, 4, 5]
+```
+max |> rand_range(min)
+
+// equivalent to 
+rand_range(min, max)
+
+// Can also left pipe last
+map(numbers) <| is_even
+
+// equivalent to
+map(numbers, is_even)
+numbers -> map(is_even)
+
+// Piping last passes the arguments in the same order given.
+min, max |> clamp(34)
+
+// equivalent to
+max |> clamp(34, min)
+clamp(34, min, max)
+```
+
 ## Sub Expressions
 Sub expressions are denoted by a `#` followed by an identifier and then curly braces `{}`.
 
