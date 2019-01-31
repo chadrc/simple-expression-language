@@ -140,8 +140,10 @@ To use as both. Provide a combination of above items.
 ]
 ```
 
-#### Indexing
-Collections my be index with either an number (index to an array) or a string (key to a map).
+#### Accessing
+Collections may be index with either an number (index to an array) or a string (key to a map).
+
+Map values may also be accessed with the dot operator.
 
 Arrays are 0 indexed.
 
@@ -155,6 +157,9 @@ numbers[3]
 
 user["first_name"]
 // "James"
+
+user.last_name
+// "Smith"
 
 // Note that indexing with a number string will not return a value from an array
 numbers["1"] // Error: doesn't exist
