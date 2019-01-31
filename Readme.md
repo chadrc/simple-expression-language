@@ -230,70 +230,51 @@ rand_range(10, 20)
 ### Functional operations
 Operators for piping arguments into functions/sub-expressions.
 
-#### Right Piping
-Exposed variables:
+Exposed for all examples
+
+Variables:
 * `min` = 10
 * `max` = 20
+* `numbers` = [1, 2, 3, 4, 5]
 
-Exposed functions:
-* `rand_range` - takes a minimum and maximum and returns a random value between them
-* `init_array` - takes a number and creates an array with that many slots
+Functions:
+* `rand_range(min: int, max: int)`
+* `map(ary: array, mapExpr: expression)`
+* `is_even(num: int)`
+* `clamp(num: int, min: int, max: int)`
+
+#### Right Piping
+Pass result of a expression (on left) into the first variable position of the another expression (on right).
 ```
-rand_range(min, max) -> init_array
+rand_range(min, max) -> is_even
 
 // equivalent to 
-init_array(rand_range(min, max))
+is_even(rand_range(min, max))
 
 // may also split out the arguments to rand_range
-min, max -> rand_range -> init_array
+min, max -> rand_range -> is_even
 ```
 `min` and `max` are evaluated and piped into `rand_range` and then the result of `rand_range` is piped into `init_array`.
 
 #### Left Piping
-Exposed variables:
-* `min` = 10
-* `max` = 20
-
-Exposed functions:
-* `rand_range` - takes a minimum and maximum and returns a random value between them
-* `named_array` - takes a string and returns a function that takes a number and creates an array with that many slots
+Pass result of a expression (on right) into the first variable position of the another expression (on left).
 ```
-named_array("my_array") <- rand_range(min, max)
+clamp(11, 15) <- rand_range(min, max)
 
 // split out args, right piping resolve before left piping
-"my_array" -> named_array <- min, max -> rand_range
+clamp(11, 15) <- min, max -> rand_range
 
 // equivalent to 
-named_array("my_array")(rand_range(min, max))
+clamp(rand_range(min, max), 11, 15)
 
 // as well as
-rand_range(min, max) -> named_array("my_array")
+rand_range(min, max) -> clamp(11, 15)
 ```
-Left chains are evaluated after right chains.
-
-`named_array` is evaluated with argument "my_array" and returns a function that creates an array.
-
-Then `rand_range` is called with `min` and `max`.
- 
-That result is finally piped into the function that was created by the `named_array` call.
 
 *Since equivalent expressions can be made with both left and right piping, when to use either will be more of a stylistic and readability choice*
 
 #### Pipe Last
 Also provided is the ability to pipe into a function starting from the end of the argument list.
-
-Exposed variables:
-* `min` = 10
-* `max` = 20
-
-Exposed functions:
-* `rand_range(int, int)` - takes a minimum and maximum and returns a random value between them
-* `map(array, func)` - Applies a function to each element in given array
-* `is_even(int)` - Returns true if given number is even.
-* `clamp(num: int, min: int, max: int)`
-
-Input:
-* `numbers` = [1, 2, 3, 4, 5]
 ```
 max |> rand_range(min)
 
