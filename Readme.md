@@ -227,10 +227,10 @@ rand()
 rand_range(10, 20)
 ```
 
-## Functional operations
+### Functional operations
 Operators for piping arguments into functions/sub-expressions.
 
-### Right Piping
+#### Right Piping
 Exposed variables:
 * `min` = 10
 * `max` = 20
@@ -249,7 +249,7 @@ min, max -> rand_range -> init_array
 ```
 `min` and `max` are evaluated and piped into `rand_range` and then the result of `rand_range` is piped into `init_array`.
 
-### Left Piping
+#### Left Piping
 Exposed variables:
 * `min` = 10
 * `max` = 20
@@ -279,7 +279,7 @@ That result is finally piped into the function that was created by the `named_ar
 
 *Since equivalent expressions can be made with both left and right piping, when to use either will be more of a stylistic and readability choice*
 
-### Pipe Last
+#### Pipe Last
 Also provided is the ability to pipe into a function starting from the end of the argument list.
 
 Exposed variables:
