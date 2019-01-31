@@ -192,6 +192,21 @@ rand_range(0, ?)
 // random number between 0, 100
 ```
 
+## Expression Blocks
+Group a set of expressions together to output a single value
+
+```
+// Enclose expressions in a braces
+{
+    8 * 5
+    ? / 4
+}
+// 10
+
+? * 10
+// 100
+```
+
 ## Functions
 Exposed functions can be invoke in two ways:
 1. Specify function name followed by arguments in a space separated list
