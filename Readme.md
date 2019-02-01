@@ -426,12 +426,3 @@ main.sel
 init_array(10) -> map(#squared)
 init_array(5) -> map(#plus_random) -> filter(#filter)
 ```
-
-May also rename an external expression.
-
-main.sel
-```
-#is_even <-> #filter
-
-init_array(10) -> filter(#is_even)
-```
