@@ -17,9 +17,11 @@ multi-line
 
 `Strings`
 'Basic string'
+
 'Can also be
 more than one line,
 but newlines are stripped'
+
 "
 Formatted strings
 Newlines are kept
