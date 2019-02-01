@@ -63,8 +63,16 @@ false
 
 ## String operations
 ```
-`Concatination`
+`Concatenation`
 "Hello, " + "World"
+`"Hello, World"`
+
+`Numbers and Booleans are cast into Strings when concated to a String`
+"High " + 5
+`"High 5"`
+
+"Is " + true
+`"Is true"`
 ```
 
 ## Logical operations
