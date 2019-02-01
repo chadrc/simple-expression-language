@@ -165,6 +165,29 @@ user.last_name
 numbers["1"] // Error: doesn't exist
 ```
 
+## Input
+Input to an expression or sub expression is referenced by the `$` character.
+
+Input may also be an associative array or array, in which it can be index to obtain other values.
+
+Input = "Hello"
+```
+$ + ", SEL!"
+// "Hello, SEL!"
+```
+
+Input = [1, 2, 3, 4, 5]
+```
+$[3]
+// 4
+```
+
+Input = [first_name: "James", last_name: "Smith", age: 36]
+```
+$["last_name"]
+// "Smith"
+```
+
 ## Results
 Each expression outputs a result. 
 
@@ -313,53 +336,14 @@ To reference a sub expression later, use the `#` followed by the identifier.
     $ % 2 = 0
 }
 
-init_array(10).map(#plus_rand)
-init_array(5).map(#plus_rand).filter(#is_even)
+init_array(10) -> map(#plus_rand)
+init_array(5) -> map(#plus_rand) -> filter(#is_even)
 
 // may also be called directly the same way as functions
 #plus_rand 5
 #plus_rand(5)
 5 -> #plus_rand
 ``` 
-
-### Input
-Input to an expression or sub expression is referenced by the `$` character.
-
-Input may also be an associative array or array, in which it can be index to obtain other values.
-
-Input = "Hello"
-```
-$ + ", SEL!"
-// "Hello, SEL!"
-```
-
-Input = [1, 2, 3, 4, 5]
-```
-$[3]
-// 4
-```
-
-Input = [first_name: "James", last_name: "Smith", age: 36]
-```
-$["last_name"]
-// "Smith"
-```
-
-### Dot operator
-There is no concept of objects but a dot operator is available for convenience when calling functions.
-
-Exposed functions:
-* `map` - takes an array as its first argument and a sub expression or function as its second
-* `squared` - takes a number and squares it
-```
-[1, 2, 3, 4, 5].map(squared)
-
-// Equalivalent to 
-map [1, 2, 3, 4, 5] squared
-map([1, 2, 3, 4, 5], squared)
-[1, 2, 3, 4, 5], squared -> map
-```
-The dot operator can be thought of as taking the result of the left side and injecting it as the first parameter to the right side function
 
 ### External Expressions
 Expressions may also be referenced from other sources.
@@ -388,8 +372,8 @@ map.sel
 
 main.sel
 ```
-init_array(10).map(#squared)
-init_array(5).map(#plus_random).filter(#filter)
+init_array(10) -> map(#squared)
+init_array(5) -> map(#plus_random) -> filter(#filter)
 ```
 
 May also rename an external expression.
@@ -398,5 +382,5 @@ main.sel
 ```
 #is_even <-> #filter
 
-init_array(10).filter(#is_even)
+init_array(10) -> filter(#is_even)
 ```
