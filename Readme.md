@@ -23,6 +23,7 @@ but newlines are stripped'
 "
 Formatted strings
 Newlines are kept
+    And so are tabs
 "
 
 `Boolean`
