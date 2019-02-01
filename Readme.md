@@ -428,3 +428,16 @@ main.sel
 init_array(10) -> map(#squared)
 init_array(5) -> map(#plus_random) -> filter(#filter)
 ```
+
+## Annotations
+Annotations are used to provide a runtime with metadata about expressions.
+
+Mostly reserved for a runtime to add customization there are some standard annotations.
+
+### @Runtime
+
+### @Input
+
+### @Result
+
+### @Test
