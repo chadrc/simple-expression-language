@@ -37,6 +37,9 @@ false
 5...10 `Inclusive, contains 5, 6, 7, 8, 9 and 10`
 ```
 
+### Non-existence
+There is no null value but the unit value `()` is provided to represent something that is uninitialized or empty.
+
 ## Math operations
 ```
 `Addition`
