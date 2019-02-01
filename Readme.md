@@ -480,7 +480,22 @@ _ => "Several"
 `"Couple"`
 ```
 
-Since there are no variants, enums or types, in order to be an exhaustive match the _ "catch all" pattern must be specified.
+#### Exhaustiveness
+Since there are no variants, enums or types, in order to be an exhaustive match the '_' catch all pattern must be specified, expect for the following cases.
+
+The following exceptions are exhaustive by definition and do not require the '_' catch all. However, the '\_' could be used in place of any 1 of the patterns and still be considered exhaustive.
+
+Some or None
+```
+some => ...,
+() => ...
+```
+
+True or False
+```
+true => ...,
+false => ...
+```
 
 ### Matching with Associative Arrays
 Matching on associative arrays allows matching on multiple values and wildcard matching.
