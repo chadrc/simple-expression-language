@@ -480,6 +480,43 @@ _ => "Several"
 Since there are no variants, enums or types, in order to be an exhaustive match the _ "catch all" pattern must be specified.
 
 ### Matching with Associative Arrays
+Matching on associative arrays allows matching on multiple values and wildcard matching.
+
+Match positionally
+```
+// Input: [10, "foo"]
+
+[5, "bar"] => "5 bars",
+[5, "foo"] => "5 foos",
+[10, "bar"] => "10 bars",
+[10, "foo"] => "10 foos"
+_ => "baz"
+// "10 foos"
+```
+
+Ignoring positions
+```
+// Input: [10, "foo", true]
+
+// ignore one position
+[5, ., true] => "5 bars or foos sold",
+// ignore remaining positions
+[10, ..] => "10 bar or foo transaction",
+// ingore first but not second requires a dot on the first
+[., "fel", .] => "Some fel transaction",
+_ => "baz"
+// "10 bar or foo transaction"
+```
+
+Using wildcard, you can use the value, whatever it is, in your match expression. Just provided an identifier.
+```
+// Input: [10, "foo"]
+
+[amount, "bar"] => amount + " bars",
+[amount, "foo"] => amount + " foos",
+_ => "baz"
+// "10 foos"
+```
 
 ### Matching with Named Expressions
 
