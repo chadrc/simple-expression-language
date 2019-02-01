@@ -411,7 +411,7 @@ filter.sel
 $ % 2 = 0
 ```
 
-Or reference named-expressions within a file.
+Or reference named expressions within a file.
  
 map.sel
 ```
