@@ -2,82 +2,95 @@
 
 ## Literals
 ```
-// Numbers
+`Comments are enclosed in backticks`
+
+`
+Comments can
+also be
+multi-line
+`
+
+`Numbers`
 4
 29
 3.14
 
-// String
-"Hello"
-'SEL'
-`The quick brown fox jumped over the lazy dog.`
+`Strings`
+'Basic string'
+'Can also be
+more than one line,
+but newlines are stripped'
+"
+Formatted strings
+Newlines are kept
+"
 
-// Boolean
+`Boolean`
 true
 false
 
-// Ranges
-5..10 // Exclusive, contains 5, 6, 7, 8, and 9
-5...10 // Inclusive, contains 5, 6, 7, 8, 9 and 10
+`Ranges`
+5..10 `Exclusive, contains 5, 6, 7, 8, and 9`
+5...10 `Inclusive, contains 5, 6, 7, 8, 9 and 10`
 ```
 
 ## Math operations
 ```
-// Addition
+`Addition`
 10 + 5
 
-// Subtraction
+`Subtraction`
 10 - 5
 
-// Multiplication
+`Multiplication`
 10 * 5
 
-// Division
+`Division`
 10 / 5
 
-// Remainder
+`Remainder`
 10 % 5
 
-// Exponential
+`Exponential`
 2^10
 
-// Negation
+`Negation`
 -5
 ```
 
 ## String operations
 ```
-// Concatination
+`Concatination`
 "Hello, " + "World"
 ```
 
 ## Logical operations
 ```
-// Equality
+`Equality`
 5 = 4
 
-// Inequality
+`Inequality`
 5 != 4
 
-// Less than
+`Less than`
 5 < 4
 
-// Less than or equal
+`Less than or equal`
 5 <= 4
 
-// Greater than
+`Greater than`
 5 > 4
 
-// Greater than or equal
+`Greater than or equal`
 5 >= 4
 
-// Logical AND
+`Logical AND`
 5 = 4 && 5 < 10
 
-// Logical OR
+`Logical OR`
 5 = 4 || 5 < 10
 
-// Logical NOT
+`Logical NOT`
 !true
 ```
 
@@ -87,13 +100,13 @@ If runtime exposes a variable or function it can be referenced just by its name.
 Ex. exposed variable `name` = "SEL"
 ```
 "Hello, " + name
-// result "Hello, SEL"
+`result "Hello, SEL"`
 ```
 
 Ex. exposed function `rand` that takes no parameters
 ```
 rand()
-// result is a randomly generated number
+`result is a randomly generated number`
 ```
 
 ### Associative Array
@@ -124,18 +137,18 @@ To use like an array. Provide only the values, no semi-colon.
 ```
 [10, 20, 30, 40, 50]
 
-// Don't have to be the same type
+`Don't have to be the same type`
 ["cat", 45, false, 3..12]
 ```
 
 To use as both. Provide a combination of above items.
 ```
 [
-    10, // index 0
-    20, // index 1
+    10, `index 0`
+    20, `index 1`
     first_name: "James",
     last_name: "Smith",
-    30, // index 2
+    30, `index 2`
     age: 36
 ]
 ```
@@ -153,16 +166,16 @@ Exposed variables:
 
 ```
 numbers[3]
-// 4
+`4`
 
 user["first_name"]
-// "James"
+`"James"`
 
 user.last_name
-// "Smith"
+`"Smith"`
 
-// Note that indexing with a number string will not return a value from an array
-numbers["1"] // Error: doesn't exist
+`Note that indexing with a number string will not return a value from an array`
+numbers["1"] `Error: doesn't exist`
 ```
 
 ## Input
@@ -173,19 +186,19 @@ Input may also be an associative array or array, in which it can be index to obt
 Input = "Hello"
 ```
 $ + ", SEL!"
-// "Hello, SEL!"
+`"Hello, SEL!"`
 ```
 
 Input = [1, 2, 3, 4, 5]
 ```
 $[3]
-// 4
+`4`
 ```
 
 Input = [first_name: "James", last_name: "Smith", age: 36]
 ```
 $["last_name"]
-// "Smith"
+`"Smith"`
 ```
 
 ## Results
@@ -194,59 +207,59 @@ Each expression outputs a result.
 The runtime will have access to each result after execution
 ```
 4 + 5
-// 9
+`9`
 ```
 
 The last result may be referenced with the `?` symbol
 ```
 4 + 5
-// 9
+`9`
 
 ? + 11
-// ? = 9
-// 20
+`? = 9`
+`20`
 
 ? * 5
-// ? = 20
-// 100
+`? = 20`
+`100`
 
-// may also be used in function calls
+`may also be used in function calls`
 rand_range(0, ?)
-// random number between 0, 100
+`random number between 0, 100`
 ```
 
 The input is set as the first result of an expression
 Input = 10
 ```
-? + $ // 10 / 10
-// 1
+? + $ `10 / 10`
+`1`
 ```
 
 ## Expression Blocks
 Group a set of expressions together to output a single value
 
 ```
-// Enclose expressions in a braces
+`Enclose expressions in a braces`
 {
     8 * 5
     ? / 4
 }
-// 10
+`10`
 
 ? * 10
-// 100
+`100`
 ```
 
 Blocks receive the last evaluated expression as input
 ```
-5^2 // 25
+5^2 `25`
 
 {
-    $ * 3 // 75
-    ? / 5 // 15
+    $ * 3 `75`
+    ? / 5 `15`
 }
 
-? * 4 // 60
+? * 4 `60`
 ```
 
 ## Functions
@@ -259,12 +272,12 @@ Ex. exposed functions
 * `rand_range` that takes two parameters
 * `init_range` that takes three parameters
 ```
-// 1
-rand // no arguments, so no argument list necessary
+`1`
+rand `no arguments, so no argument list necessary`
 rand_range 10 20
 init_range 10 20 2
 
-// 2
+`2`
 rand()
 rand_range(10, 20)
 ```
@@ -290,10 +303,10 @@ Pass result of a expression (on left) into the first variable position of the an
 ```
 rand_range(min, max) -> is_even
 
-// equivalent to 
+`equivalent to` 
 is_even(rand_range(min, max))
 
-// may also split out the arguments to rand_range
+`may also split out the arguments to rand_range`
 min, max -> rand_range -> is_even
 ```
 `min` and `max` are evaluated and piped into `rand_range` and then the result of `rand_range` is piped into `init_array`.
@@ -303,13 +316,13 @@ Pass result of a expression (on right) into the first variable position of the a
 ```
 clamp(11, 15) <- rand_range(min, max)
 
-// split out args, right piping resolve before left piping
+`split out args, right piping resolve before left piping`
 clamp(11, 15) <- min, max -> rand_range
 
-// equivalent to 
+`equivalent to` 
 clamp(rand_range(min, max), 11, 15)
 
-// as well as
+`as well as`
 rand_range(min, max) -> clamp(11, 15)
 ```
 
@@ -320,20 +333,20 @@ Also provided is the ability to pipe into a function starting from the end of th
 ```
 max |> rand_range(min)
 
-// equivalent to 
+`equivalent to` 
 rand_range(min, max)
 
-// Can also left pipe last
+`Can also left pipe last`
 map(numbers) <| is_even
 
-// equivalent to
+`equivalent to`
 map(numbers, is_even)
 numbers -> map(is_even)
 
-// Piping last passes the arguments in the same order given.
+`Piping last passes the arguments in the same order given.`
 min, max |> clamp(34)
 
-// equivalent to
+`equivalent to`
 34, min, max |> clamp
 max |> clamp(34, min)
 clamp(34, min, max)
@@ -344,12 +357,12 @@ Sub expressions are denoted by a `#` followed by an identifier and then curly br
 
 To reference a sub expression later, use the `#` followed by the identifier.
 ```
-// Main expression
+`Main expression`
 #plus_rand {
     $ + rand()
 }
 
-// curly brace may also be on next line
+`curly brace may also be on next line`
 #is_even 
 {
     $ % 2 = 0
@@ -358,7 +371,7 @@ To reference a sub expression later, use the `#` followed by the identifier.
 init_array(10) -> map(#plus_rand)
 init_array(5) -> map(#plus_rand) -> filter(#is_even)
 
-// may also be called directly the same way as functions
+`may also be called directly the same way as functions`
 #plus_rand 5
 #plus_rand(5)
 5 -> #plus_rand
