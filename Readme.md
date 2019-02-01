@@ -215,6 +215,13 @@ rand_range(0, ?)
 // random number between 0, 100
 ```
 
+The input is set as the first result of an expression
+Input = 10
+```
+? + $ // 10 / 10
+// 1
+```
+
 ## Expression Blocks
 Group a set of expressions together to output a single value
 
@@ -228,6 +235,18 @@ Group a set of expressions together to output a single value
 
 ? * 10
 // 100
+```
+
+Blocks receive the last evaluated expression as input
+```
+5^2 // 25
+
+{
+    $ * 3 // 75
+    ? / 5 // 15
+}
+
+? * 4 // 60
 ```
 
 ## Functions
