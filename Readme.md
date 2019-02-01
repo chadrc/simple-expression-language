@@ -200,7 +200,7 @@ numbers["1"] `Error: doesn't exist`
 ## Input
 Input to an expression is referenced by the `$` character.
 
-Input may also be an associative array or array, in which it can be index to obtain other values.
+Input may also be an associative array, in which it can be index to obtain other values.
 
 Input = "Hello"
 ```
