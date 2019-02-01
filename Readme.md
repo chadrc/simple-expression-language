@@ -71,27 +71,35 @@ false
 ```
 `Equality`
 5 = 4
+'Hello' = 'World'
 
 `Inequality`
 5 != 4
+'Hello' != 'World'
 
 `Less than`
 5 < 4
+'Hello' < 'World'
 
 `Less than or equal`
 5 <= 4
+'Hello' <= 'World'
 
 `Greater than`
 5 > 4
+'Hello' > 'World'
 
 `Greater than or equal`
 5 >= 4
+'Hello' >= 'World'
 
 `Logical AND`
 5 = 4 && 5 < 10
+'Hello' = 'World' && 'Hello' < 'World'
 
 `Logical OR`
 5 = 4 || 5 < 10
+'Hello' = 'World' || 'Hello' < 'World'
 
 `Logical NOT`
 !true
@@ -182,7 +190,7 @@ numbers["1"] `Error: doesn't exist`
 ```
 
 ## Input
-Input to an expression or sub expression is referenced by the `$` character.
+Input to an expression is referenced by the `$` character.
 
 Input may also be an associative array or array, in which it can be index to obtain other values.
 
