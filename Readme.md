@@ -281,6 +281,57 @@ Blocks receive the last evaluated expression as input
 ? * 4 `60`
 ```
 
+## Matching
+Can perform pattern matching on a value.
+
+On input or last result
+
+```
+`Input: 5`
+
+`last result, implicit match on input
+1 => "One",
+2 => "Couple",
+3 => "Few",
+4 => "Some",
+5 => "Many",
+12 => "Dozen",
+_ => "Several"
+
+`"Many"`
+
+`explicit match on input`
+
+$ `Effectivly making it the last result
+
+1 => "One",
+2 => "Couple",
+3 => "Few",
+4 => "Some",
+5 => "Many",
+12 => "Dozen",
+_ => "Several"
+
+`"Many"`
+
+`Match on last result again`
+10 - 8
+
+1 => "One",
+2 => "Couple",
+3 => "Few",
+4 => "Some",
+5 => "Many",
+12 => "Dozen",
+_ => "Several"
+
+`"Couple"`
+```
+
+Since there are no variants, enums or types, in order to be an exhaustive match the _ "catch all" pattern must be specified.
+
+### Matching with Associative Arrays
+
 ## Functions
 Exposed functions can be invoke in two ways:
 1. Specify function name followed by arguments in a space separated list
@@ -378,14 +429,15 @@ These expressions are not evaluated right away, but instead must be called like 
 
 To reference a named expression later, use the `#` followed by the identifier.
 ```
-`Main expression`
-#plus_rand {
-    $ + rand()
-}
+`Single line`
+#plus_rand $ + rand()
 
-`curly brace may also be on next line`
-#is_even 
-{
+`
+Multi line
+Opening brace can be on same line 
+or next line
+`
+#is_even {
     $ % 2 = 0
 }
 
