@@ -281,57 +281,6 @@ Blocks receive the last evaluated expression as input
 ? * 4 `60`
 ```
 
-## Matching
-Can perform pattern matching on a value.
-
-On input or last result
-
-```
-`Input: 5`
-
-`last result, implicit match on input
-1 => "One",
-2 => "Couple",
-3 => "Few",
-4 => "Some",
-5 => "Many",
-12 => "Dozen",
-_ => "Several"
-
-`"Many"`
-
-`explicit match on input`
-
-$ `Effectivly making it the last result
-
-1 => "One",
-2 => "Couple",
-3 => "Few",
-4 => "Some",
-5 => "Many",
-12 => "Dozen",
-_ => "Several"
-
-`"Many"`
-
-`Match on last result again`
-10 - 8
-
-1 => "One",
-2 => "Couple",
-3 => "Few",
-4 => "Some",
-5 => "Many",
-12 => "Dozen",
-_ => "Several"
-
-`"Couple"`
-```
-
-Since there are no variants, enums or types, in order to be an exhaustive match the _ "catch all" pattern must be specified.
-
-### Matching with Associative Arrays
-
 ## Functions
 Exposed functions can be invoke in two ways:
 1. Specify function name followed by arguments in a space separated list
@@ -451,7 +400,7 @@ init_array(5) -> map(#plus_rand) -> filter(#is_even)
 ``` 
 
 ### External Expressions
-Expressions may also be referenced from other sources.
+Named expressions may also be referenced from other sources.
 
 Can reference files directly if entire file as a single expression.
 
@@ -480,6 +429,59 @@ main.sel
 init_array(10) -> map(#squared)
 init_array(5) -> map(#plus_random) -> filter(#filter)
 ```
+
+## Matching
+Can perform pattern matching on a value.
+
+On input or last result
+
+```
+`Input: 5`
+
+`last result, implicit match on input
+1 => "One",
+2 => "Couple",
+3 => "Few",
+4 => "Some",
+5 => "Many",
+12 => "Dozen",
+_ => "Several"
+
+`"Many"`
+
+`explicit match on input`
+
+$ `Effectivly making it the last result
+
+1 => "One",
+2 => "Couple",
+3 => "Few",
+4 => "Some",
+5 => "Many",
+12 => "Dozen",
+_ => "Several"
+
+`"Many"`
+
+`Match on last result again`
+10 - 8
+
+1 => "One",
+2 => "Couple",
+3 => "Few",
+4 => "Some",
+5 => "Many",
+12 => "Dozen",
+_ => "Several"
+
+`"Couple"`
+```
+
+Since there are no variants, enums or types, in order to be an exhaustive match the _ "catch all" pattern must be specified.
+
+### Matching with Associative Arrays
+
+### Matching with Named Expressions
 
 ## Annotations
 Annotations are used to provide a runtime with metadata about expressions.
