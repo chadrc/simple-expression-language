@@ -302,7 +302,7 @@ rand_range(10, 20)
 ```
 
 ### Functional operations
-Operators for piping arguments into functions/sub-expressions.
+Operators for piping arguments into functions/named expressions.
 
 Exposed for all examples
 
@@ -371,10 +371,12 @@ max |> clamp(34, min)
 clamp(34, min, max)
 ```
 
-## Sub Expressions
-Sub expressions are denoted by a `#` followed by an identifier and then curly braces `{}`.
+## Named Expressions
+Named expressions are denoted by a `#` followed by an identifier and then curly braces `{}`.
 
-To reference a sub expression later, use the `#` followed by the identifier.
+These expressions are not evaluated right away, but instead must be called like a function.
+
+To reference a named expression later, use the `#` followed by the identifier.
 ```
 `Main expression`
 #plus_rand {
@@ -408,7 +410,7 @@ filter.sel
 $ % 2 = 0
 ```
 
-Or reference sub-expressions within a file.
+Or reference named-expressions within a file.
  
 map.sel
 ```
