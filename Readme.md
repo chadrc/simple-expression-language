@@ -430,6 +430,24 @@ init_array(10) -> map(#squared)
 init_array(5) -> map(#plus_random) -> filter(#filter)
 ```
 
+## Currying
+Both functions and named expressions can be curried.
+
+Functions:
+* `clamp(num: int, min: int, max: int)`
+```
+#clamp_10 ~ clamp(10)
+// this new expresson now has takes 2 arguments, min and max
+
+// can also provide multiple values
+#clamp_10_min_5 ~ clamp(10, 5)
+// takes one argument, max
+
+// can skip parameters with the '.'
+#clamp_5_to_15 ~ clamp(., 5, 15)
+// takes one argument, num
+```
+
 ## Matching
 Can perform pattern matching on a value.
 
