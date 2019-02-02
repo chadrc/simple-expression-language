@@ -457,12 +457,12 @@ Functions:
 #clamp_10_min_5 ~ clamp(10, 5)
 // takes one argument, max
 
-// can skip parameters with the '.'
-#clamp_min_5 ~ clamp(., 5)
+// can skip parameters with the '_' symbol
+#clamp_min_5 ~ clamp(_, 5)
 // takes two arguments, num and max
 
 // can curry a curried expression
-#clamp_5_to_15 ~ #clamp_min_5(., 15)
+#clamp_5_to_15 ~ #clamp_min_5(_, 15)
 // taks one argument, num
 ```
 
@@ -533,11 +533,11 @@ Ignoring positions
 // Input: [10, "foo", true]
 
 // ignore one position
-[5, ., true] => "5 bars or foos sold",
+[5, _, true] => "5 bars or foos sold",
 // ignore remaining positions
 [10, ..] => "10 bar or foo transaction",
-// ingore first but not second requires a dot on the first
-[., "fel", .] => "Some fel transaction",
+// ingore first but not second requires a '_' in the first and either '_' or '..' in the last
+[_, "fel", _] => "Some fel transaction",
 _ => "baz"
 // "10 bar or foo transaction"
 ```
