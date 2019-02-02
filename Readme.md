@@ -480,23 +480,6 @@ _ => "Several"
 `"Couple"`
 ```
 
-#### Exhaustiveness
-Since there are no variants, enums or types, in order to be an exhaustive match the '_' catch all pattern must be specified, expect for the following cases.
-
-The following exceptions are exhaustive by definition and do not require the '_' catch all. However, the '\_' could be used in place of any 1 of the patterns and still be considered exhaustive.
-
-Some or None
-```
-some => ...,
-() => ...
-```
-
-True or False
-```
-true => ...,
-false => ...
-```
-
 ### Matching with Associative Arrays
 Matching on associative arrays allows matching on multiple values and wildcard matching.
 
@@ -526,7 +509,7 @@ _ => "baz"
 // "10 bar or foo transaction"
 ```
 
-Using wildcard, you can use the value, whatever it is, in your match expression. Just provided an identifier.
+Using wildcard, you can use the value, whatever it is, in your match expression. Just provided an identifier. Wildcards will not match the unit `()` value.
 ```
 // Input: [10, "foo"]
 
@@ -537,6 +520,24 @@ _ => "baz"
 ```
 
 ### Matching with Named Expressions
+
+### Exhaustiveness
+Since there are no variants, enums or types, in order to be an exhaustive match the '_' catch all pattern must be specified, expect for the following cases.
+
+The following exceptions are exhaustive by definition and do not require the '_' catch all. However, the '\_' could be used in place of any 1 of the patterns and still be considered exhaustive.
+
+Some or None
+```
+some => ...,
+() => ...
+```
+A value can effectively be in only one of the above states. Either it is unit `()` or not which will be passed into the wildcard 'some'.
+
+True or False
+```
+true => ...,
+false => ...
+```
 
 ## Annotations
 Annotations are used to provide a runtime with metadata about expressions.
