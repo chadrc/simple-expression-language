@@ -590,6 +590,8 @@ Mostly reserved for a runtime to add customization there are some standard annot
 
 ### @Runtime
 
+### @Type
+
 ### @Input
 
 ### @Result
