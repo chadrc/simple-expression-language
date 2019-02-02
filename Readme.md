@@ -534,25 +534,36 @@ Ignoring positions
 
 // ignore one position
 [5, _, true] => "5 bars or foos sold",
-// ignore remaining positions
-[10, ..] => "10 bar or foo transaction",
-// ingore first but not second requires a '_' in the first and either '_' or '..' in the last
-[_, "fel", _] => "Some fel transaction",
+// ignore implictly by not specifying
+[10] => "10 bar or foo transaction",
 _ => "baz"
 // "10 bar or foo transaction"
 ```
 
-Using wildcard, you can use the value, whatever it is, in your match expression. Just provided an identifier. Wildcards will not match the unit `()` value.
+Each arm expression receives the value being match as the input.
 ```
 // Input: [10, "foo"]
 
-[amount, "bar"] => amount + " bars",
-[amount, "foo"] => amount + " foos",
+[_, "bar"] => $[0] + " bars",
+[_, "foo"] => $[0] + " foos",
 _ => "baz"
 // "10 foos"
 ```
 
-### Matching with Named Expressions
+Match on keys of an associative array
+```
+// Input: [first_name: "John", last_name: "Smith", email: "johnsmith@example.com"]
+
+[last_name: "Anderson"] => "Member of the Smith family",
+// Check for non-existant/uninitialized key
+[email: ()] => $.first_name + " does not have an email",
+// Check for existing key
+[email: _] => $.first_name + " has an email",
+_ => ...
+// "John has an email"
+```
+
+### Matching with Functions and Named Expressions
 
 ### Exhaustiveness
 Since there are no variants, enums or types, in order to be an exhaustive match the '_' catch all pattern must be specified, expect for the following cases.
