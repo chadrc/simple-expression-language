@@ -444,8 +444,12 @@ Functions:
 // takes one argument, max
 
 // can skip parameters with the '.'
-#clamp_5_to_15 ~ clamp(., 5, 15)
-// takes one argument, num
+#clamp_min_5 ~ clamp(., 5)
+// takes two arguments, num and max
+
+// can curry a curried expression
+#clamp_5_to_15 ~ #clamp_min_5(., 15)
+// taks one argument, num
 ```
 
 ## Matching
