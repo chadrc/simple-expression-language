@@ -397,7 +397,21 @@ init_array(5) -> map(#plus_rand) -> filter(#is_even)
 #plus_rand 5
 #plus_rand(5)
 5 -> #plus_rand
-``` 
+```
+
+### Multiple inputs
+An expression technically will always only have one input represented by the `$` symbol.
+
+But you may pass multiple values and the `$` will be converted to an array with those values in the same order.
+
+```
+#sum_divisible_by_3 {
+    $[0] + $[1] % 3 = 0
+}
+
+#sum_divisible_by_3(7, 3)
+// false
+```
 
 ### External Expressions
 Named expressions may also be referenced from other sources.
