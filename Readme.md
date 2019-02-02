@@ -583,6 +583,8 @@ true => ...,
 false => ...
 ```
 
+## Iteration
+
 ## Annotations
 Annotations are used to provide a runtime with metadata about expressions.
 
