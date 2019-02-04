@@ -564,6 +564,26 @@ _ => ...
 ```
 
 ### Matching with Functions and Named Expressions
+Functions and named expressions may be used in the conditional part of a match expression.
+
+```
+// Input: 11
+
+is_prime => $ + " is a prime number.",
+#is_even => $ + " is even.",
+#is_odd => $ + " is odd.",
+_ => $ + " is not an integer."
+```
+
+They may also be used in the left side. Either just by name, which will pass through the input, or explicitly called for custom input.
+
+```
+// Input: [first_name: "John", last_name: "Smith", email: "johnsmith@example.com"]
+
+[email: ()] => #error("no email set", $) // explicit
+[email: _] => send_email // implicit
+_ => ()
+```
 
 ### Exhaustiveness
 Since there are no variants, enums or types, in order to be an exhaustive match the '_' catch all pattern must be specified, expect for the following cases.
@@ -582,6 +602,13 @@ True or False
 true => ...,
 false => ...
 ```
+
+Exists or Not
+```
+[some_key: _] => "some_key exists",
+[some_key: ()] => "some_key does not exist"
+```
+This type of exhaustiveness only works with a single key in the right side.
 
 ## Iteration
 
