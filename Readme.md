@@ -611,44 +611,75 @@ Exists or Not
 This type of exhaustiveness only works with a single key in the left side.
 
 ## Iteration
-There are three main operations dealing with iterating over collections of objects. Mapping, streaming and collecting.
+There are two main operations for iteration of associative arrays.
 
-### Mapping
+### Streaming
 Mapping takes in an associative array and outputs a associative array. 
 
 It is performed with the following operators.
 * `<->` - Iterate over index-value pairs
 * `<=>` - Iterate over key-value pairs
-* `<~>` - Iterate over all pairs in collection
 
 Left side is the collection to map. Right side is an expression that receives input with shape.
 
-[value: any, key: number | string]
+[key: number | string, value: any]
 
-Index-value
+#### Value stream
+
+Output is the value returned from right side expression
 ```
 // Input: [1, 2, 3, 4, 5]
 
 $ <-> $.value * $.key
-// result: [0, 2, 6, 12, 20]
+// outputs the following in order
+// 0 
+// 2
+// 6
+// 12
+// 20
 ```
 
-Key-value
+With keys
+```
+// Input: [first_name: "John", last_name: "Smith", email: "johnsmith@example.com"]
+
+$ <=> $.key + ": " + $.value
+// outputs the following in order
+// "first_name: John"
+// "last_name: Smith"
+// "email: johnsmith@example.com"
+```
+
+#### Key-pair stream
+
+Output is an associative array with shape:
+
+[key: number | string, value: any]
+
+Where key is which ever keys was just processed and value is the value returned from right side expression
+```
+// Input: [1, 2, 3, 4, 5]
+
+$ <-> $.value * $.key
+// outputs the following in order
+// [key: 0, value: 0] 
+// [key: 1, value: 2]
+// [key: 2, value: 6]
+// [key: 3, value: 12]
+// [key: 4, value: 20]
+```
+
+With keys 
 ```
 // Input: [first_name: "John", last_name: "Smith", email: "johnsmith@example.com"]
 
 // each value is mapped to the corresponding key
 $ <=> $.key + ": " + $.value
-// result: [first_name: "first_name: John", last_name: "last_name: Smith", email: "email: johnsmith@example.com"]
+// outputs the following in order
+// [key: first_name, value: "first_name: John"]
+// [key: last_name, value: "last_name: Smith"]
+// [key: email, value: "email: johnsmith@example.com"]
 ```
-
-All pairs
-```
-
-```
-
-### Streaming
-Streaming takes in a associative array and outputs once for each item in the associative array.
 
 ### Collecting
 Collecting is initialized with a seed value, takes in a associative array or stream and aggregates it.
