@@ -554,7 +554,7 @@ Match on keys of an associative array
 ```
 // Input: [first_name: "John", last_name: "Smith", email: "johnsmith@example.com"]
 
-[last_name: "Anderson"] => "Member of the Smith family",
+[last_name: "Anderson"] => "Member of the Anderson family",
 // Check for non-existant/uninitialized key
 [email: ()] => $.first_name + " does not have an email",
 // Check for existing key
