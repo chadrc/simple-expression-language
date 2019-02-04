@@ -575,7 +575,7 @@ is_prime => $ + " is a prime number.",
 _ => $ + " is not an integer."
 ```
 
-They may also be used in the left side. Either just by name, which will pass through the input, or explicitly called for custom input.
+They may also be used in the right side. Either just by name, which will pass through the input, or explicitly called for custom input.
 
 ```
 // Input: [first_name: "John", last_name: "Smith", email: "johnsmith@example.com"]
@@ -608,9 +608,50 @@ Exists or Not
 [some_key: _] => "some_key exists",
 [some_key: ()] => "some_key does not exist"
 ```
-This type of exhaustiveness only works with a single key in the right side.
+This type of exhaustiveness only works with a single key in the left side.
 
 ## Iteration
+There are three main operations dealing with iterating over collections of objects. Mapping, streaming and collecting.
+
+### Mapping
+Mapping takes in an associative array and outputs a associative array. 
+
+It is performed with the following operators.
+* `<->` - Iterate over index-value pairs
+* `<=>` - Iterate over key-value pairs
+* `<~>` - Iterate over all pairs in collection
+
+Left side is the collection to map. Right side is an expression that receives input with shape.
+
+[value: any, key: number | string]
+
+Index-value
+```
+// Input: [1, 2, 3, 4, 5]
+
+$ <-> $.value * $.key
+// result: [0, 2, 6, 12, 20]
+```
+
+Key-value
+```
+// Input: [first_name: "John", last_name: "Smith", email: "johnsmith@example.com"]
+
+// each value is mapped to the corresponding key
+$ <=> $.key + ": " + $.value
+// result: [first_name: "first_name: John", last_name: "last_name: Smith", email: "email: johnsmith@example.com"]
+```
+
+All pairs
+```
+
+```
+
+### Streaming
+Streaming takes in a associative array and outputs once for each item in the associative array.
+
+### Collecting
+Collecting is initialized with a seed value, takes in a associative array or stream and aggregates it.
 
 ## Annotations
 Annotations are used to provide a runtime with metadata about expressions.
