@@ -490,6 +490,18 @@ Functions:
 // taks one argument, num
 ```
 
+### Currying by name
+You may also provide a parameter by its name. This lets you avoid the need to ignore parameters.
+
+Assuming clamp accesses its inputs by name (see Functions _TODO: add link_ section).
+```
+#clamp_min_5 ~ clamp(min=5)
+
+#clamp_5_to_15 ~ clamp_min_5(max=15)
+
+#clamp_10_to_20 ~ clamp(min=10, max=20)
+```
+
 ## Matching
 Can perform pattern matching on a value.
 
