@@ -68,7 +68,7 @@ There is no null value but the unit value `()` is provided to represent somethin
 "Hello, " + "World"
 // "Hello, World"
 
-// Numbers and Booleans are cast into Strings when concated to a String
+// Numbers and Booleans are cast into Strings when concatenated to a String
 "High " + 5
 // "High 5"
 
