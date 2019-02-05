@@ -79,8 +79,8 @@ There is no null value but the unit value `()` is provided to represent somethin
 ## Logical operations
 ```
 // Equality
-5 = 4
-'Hello' = 'World'
+5 == 4
+'Hello' == 'World'
 
 // Inequality
 5 != 4
@@ -103,12 +103,12 @@ There is no null value but the unit value `()` is provided to represent somethin
 'Hello' >= 'World'
 
 // Logical AND
-5 = 4 && 5 < 10
-'Hello' = 'World' && 'Hello' < 'World'
+5 == 4 && 5 < 10
+'Hello' == 'World' && 'Hello' < 'World'
 
 // Logical OR
-5 = 4 || 5 < 10
-'Hello' = 'World' || 'Hello' < 'World'
+5 == 4 || 5 < 10
+'Hello' == 'World' || 'Hello' < 'World'
 
 // Logical NOT
 !true
@@ -236,11 +236,11 @@ The last result may be referenced with the `?` symbol
 // 9
 
 ? + 11
-// ? = 9
+// ? == 9
 // 20
 
 ? * 5
-// ? = 20
+// ? == 20
 // 100
 
 // may also be used in function calls
@@ -398,7 +398,7 @@ To reference a named expression later, use the `#` followed by the identifier.
 // or next line
 
 #is_even {
-    $ % 2 = 0
+    $ % 2 == 0
 }
 
 init_array(10) -> map(#plus_rand)
@@ -417,7 +417,7 @@ But you may pass multiple values and the `$` will be converted to an array with 
 
 ```
 #sum_divisible_by_3 {
-    $[0] + $[1] % 3 = 0
+    $[0] + $[1] % 3 == 0
 }
 
 #sum_divisible_by_3(7, 3)
@@ -429,7 +429,7 @@ Just like functions, you can pass parameters by name to a named expression. Howe
 
 ```
 #sum_divisible_by_3 {
-    $.num1 + $.num2 % 3 = 0
+    $.num1 + $.num2 % 3 == 0
 }
 
 #sum_divisible_by_3(num1=7, num2=3)
@@ -446,7 +446,7 @@ Following example uses external expressions in separate files, but external expr
 
 filter.sel
 ```
-$ % 2 = 0
+$ % 2 == 0
 ```
 
 Or reference named expressions within a file.
