@@ -611,7 +611,7 @@ Exists or Not
 This type of exhaustiveness only works with a single key in the left side.
 
 ## Iteration
-There are two main operations for iteration of associative arrays.
+There are two operations for iteration of associative arrays.
 
 ### Streaming
 Mapping takes in an associative array and outputs a associative array. 
@@ -683,6 +683,71 @@ $ <=> $.key + ": " + $.value
 
 ### Collecting
 Collecting is initialized with a seed value, takes in a associative array or stream and aggregates it.
+
+Operator in form `<any>` where 'any' is the seed value. Must be a value literal value.
+
+The right side expression receives input with shape:
+
+[result: T, value: any]
+
+Where result is the type of the seed value and value is the current value being streamed.
+
+Result becomes the value returned from the expression
+
+Sum numbers in an array
+```
+// Input: [1, 2, 3, 4, 5]
+
+$ <-> $ * 2 <0> $.value + $.result
+// 15
+```
+
+Map an array
+```
+// Input: [1, 2, 3, 4, 5]
+
+$ <-> $ * 2 <[]> $.value -> $.result
+// [2, 4, 6, 8, 10]
+```
+
+For convenience, if doing a simple assignment to a new associative array like the above, the right side expression may be omitted
+```
+// Input: [1, 2, 3, 4, 5]
+
+$ <-> $ * 2 <[]>
+// [2, 4, 6, 8, 10]
+```
+This will take the input stream and insert them into the new array in order received, for value-stream, or into the received key for key-pair stream.
+
+May also opt out of collecting by using the `_` symbol as the seed value. This will output the input to the stream.
+```
+// Input: [1, 2, 3, 4, 5]
+
+$ <-> log($) <_>
+// [1, 2, 3, 4, 5]
+```
+
+Can use the first value in the stream as the input with the `?` symbol as the seed.
+```
+// Input: [1, 2, 3, 4, 5]
+
+// multiply by 2, then take average
+$ <-> $ * 2 <?> ($.value + $.result) / 2
+// 6
+```
+
+Use collection directly on an associative array, by omitting the stream all together.
+```
+// Input: [1, 2, 3, 4, 5]
+
+// take average
+$ <?> ($.value + $.result) / 2
+// 3
+
+// shallow clone
+$ <[]>
+// [1, 2, 3, 4, 5]
+```
 
 ## Annotations
 Annotations are used to provide a runtime with metadata about expressions.
