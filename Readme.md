@@ -288,18 +288,29 @@ Exposed functions can be invoke in two ways:
 2. Specify function name followed by arguments in a comma separated list surrounded by parenthesis
 
 Ex. exposed functions
-* `rand` that takes no parameters
-* `rand_range` that takes two parameters
-* `init_range` that takes three parameters
+* `rand()`
+* `rand_range(min: int, max: int)`
+* `clamp(num: int, min: int, max: int)`
 ```
 // 1
 rand // no arguments, so no argument list necessary
 rand_range 10 20
-init_range 10 20 2
+clamp 10 20 2
 
 // 2
 rand()
 rand_range(10, 20)
+```
+
+### Pass by parameter name
+Can also pass arguments by parameter name for clarity.
+
+```
+// 1
+rand_range min=10, max=20
+
+// 2
+clamp(num=3, min=10, max=20)
 ```
 
 ### Functional operations
@@ -412,6 +423,19 @@ But you may pass multiple values and the `$` will be converted to an array with 
 #sum_divisible_by_3(7, 3)
 // false
 ```
+
+#### Passing by parameter name
+Just like functions, you can pass parameters by name to a named expression. However this changes how they can be accessed in the named expression.
+
+```
+#sum_divisible_by_3 {
+    $.num1 + $.num2 % 3 = 0
+}
+
+#sum_divisible_by_3(num1=7, num2=3)
+// false
+```
+The parameters may no longer be accessed from the input with their index position and must you must always pass parameters by name for this named expression.
 
 ### External Expressions
 Named expressions may also be referenced from other sources.
