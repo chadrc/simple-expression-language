@@ -549,6 +549,13 @@ _ => "Several"
 // "Couple"
 ```
 
+### Something or Nothing
+To check if a value has not been initialized the unit `()` as the match condition.
+```
+() => "Value is uninitialized",
+_ => "Since value is not uninitialized, it has some type of value"
+```
+
 ### Matching with Associative Arrays
 Matching on associative arrays allows matching on multiple values and wildcard matching.
 
@@ -625,13 +632,6 @@ _ => ()
 Since there are no variants, enums or types, in order to be an exhaustive match the '_' catch all pattern must be specified, expect for the following cases.
 
 The following exceptions are exhaustive by definition and do not require the '_' catch all. However, the '\_' could be used in place of any 1 of the patterns and still be considered exhaustive.
-
-Some or None
-```
-some => ...,
-() => ...
-```
-A value can effectively be in only one of the above states. Either it is unit `()` or not which will be passed into the wildcard 'some'.
 
 True or False
 ```
