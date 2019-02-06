@@ -919,7 +919,7 @@ Here, the [1, 2, 3, 4, 5] inside of the @Test annotation will be passed into the
 ```
 Here, we call the named expressions directly inside the test expression.
 
-Test expressions must return either `true` or `false`.
+Test expressions must return a boolean, either `true` or `false`.
 
 They are also omitted from final compiled output.
 
