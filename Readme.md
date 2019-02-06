@@ -897,13 +897,11 @@ $ <?> ($.value + $.result) / 2
 
 @Test([1, 2, 3, 4, 5)
 $ == 3
-
 ```
 Here, the [1, 2, 3, 4, 5] inside of the @Test annotation will be passed into the expression generated from the file and its output will be passed to the expression below the @Test annotation.
 
 2 - Test a named expression within a file.
 ```
-
 @Input([int...])
 #sum $ <0> $.result + $.value
 
@@ -915,7 +913,6 @@ Here, the [1, 2, 3, 4, 5] inside of the @Test annotation will be passed into the
 
 @Test
 #sum([1, 2, 3, 4, 5]) == 15
-
 ```
 Here, we call the named expressions directly inside the test expression.
 
@@ -924,6 +921,44 @@ Test expressions must return a boolean, either `true` or `false`.
 They are also omitted from final compiled output.
 
 #### @Mock
+Input to functions and named expressions may be mocked for testing in isolation. These mocks apply to all tests that come after their declaration.
+
+@Mock(expression_name, result, input)
+
+* expression_name - name of the function or named expression to mock
+* result - result that will be used when invoking the expression
+* input - _optional_ result will only be output if input during test matches input specified here
+```
+@Input(string)
+
+get_user_by_id($).first_name
+
+@Mock(get_user_by_id, [first_name: "John", last_name: "Smith"])
+@Mock(get_user_by_id, (), "unknown_id")
+
+@Test("some id string")
+$ == "John"
+
+@Test("unknown_id")
+$ == ()
+```
+
+##### MockOnce
+To apply a mock to only the next test in the file use @MockOnce. Takes same parameters as @Mock.
+```
+@Input(string)
+
+get_user_by_id($).first_name
+
+@Mock(get_user_by_id, [first_name: "John", last_name: "Smith"])
+
+@MockOnce(get_user_by_id, (), "unknown_id")
+@Test("unknown_id")
+$ == ()
+
+@Test("unknown_id")
+$ == "John"
+```
 
 #### @Exhaustive
 For cases where a match expression is exhaustive due to how the run context defines the input and the compiler can't figure that out we can flag it as such.
