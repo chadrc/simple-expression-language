@@ -925,8 +925,6 @@ They are also omitted from final compiled output.
 
 #### @Mock
 
-##### @MockOnce
-
 #### @Exhaustive
 For cases where a match expression is exhaustive due to how the run context defines the input and the compiler can't figure that out we can flag it as such.
 
