@@ -817,14 +817,41 @@ $ <[]>
 ## Annotations
 Annotations are used to provide a runtime with metadata about expressions.
 
+Annotations are defined starting with `@` symbol followed by an identifier. Then an optional set of parenthesis that may contain any number of values separated by commas. This value is not parse as SEL, instead being passed to the run-context for handling.
+```
+@NoValue
+
+@OneValue(MyValue)
+
+@ManyValues(FirstValue, SecondValue)
+```
+
+### Standard Annotations
 Although, mostly reserved for a runtime to add customization, there are some standard annotations.
 
-### @Runtime
+#### @Context
+Used to specify which run-contexts an expression is expecting.
+```
+@Context(MyContext)
+```
 
-### @Shape
+#### @Shape
+Used to describe which values and their types that my appear in an associative array
+```
+// Object shape
+@Shape(MyShape, [value1: int, value2: string])
 
-### @Input
+// Array shape
+@Shape(MyArray, [int...])
 
-### @Result
+// Tuple like
+@Shape(MyTuple, [int, string, bool])
+```
 
-### @Test
+#### @Input
+
+#### @Result
+
+#### @Test
+
+#### @Exhaustive
