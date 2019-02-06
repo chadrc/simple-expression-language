@@ -923,4 +923,22 @@ Test expressions must return either `true` or `false`.
 
 They are also omitted from final compiled output.
 
+#### @Mock
+
+##### @MockOnce
+
 #### @Exhaustive
+For cases where a match expression is exhaustive due to how the run context defines the input and the compiler can't figure that out we can flag it as such.
+
+```
+@Input(int)
+
+@Exhaustive
+0 => "Sunday",
+1 => "Monday",
+2 => "Tuesday",
+3 => "Wednesday",
+4 => "Thursday",
+5 => "Friday",
+6 => "Saturday"
+```
