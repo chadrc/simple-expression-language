@@ -796,10 +796,10 @@ Can use the first value in the stream as the input with the `?` symbol as the se
 // Input: [1, 2, 3, 4, 5]
 
 // multiply by 2, then take average
-$ <-> $ * 2 <?> ($.value + $.result) / 2
+$ <-> $ * 2 <?> ($.result + $.value) / 2
 // 6
 ```
-The first execution of the collection expression is performed with [value: 2, result: 1] since it was seeded with the first value of the array.
+The first execution of the collection expression is performed with [result: 1, value: 2] since it was seeded with the first value of the array.
 
 Use collection directly on an associative array, by omitting the stream all together.
 ```
