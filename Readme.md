@@ -74,6 +74,20 @@ There is no null value but the unit value `()` is provided to represent somethin
 
 "Is " + true
 // "Is true"
+
+// Length
+|"Hello, World!"|
+// 13
+```
+
+## Range operations
+```
+// Length
+|5..10|
+// 5
+
+|5...10|
+// 6
 ```
 
 ## Logical operations
@@ -196,6 +210,20 @@ user.last_name
 
 // Note that indexing with a number string will not return a value from an array
 numbers["1"] // Error: doesn't exist
+```
+
+#### Length
+Can use the length operator on associative arrays but note that it will return total number of values even if there is a mix of index keys and string keys.
+
+```
+|[1, 2, 3, 4, 5]|
+// 5
+
+|[first_name: "James", last_name: "Smith", age: 36]|
+// 3
+
+|[1, 2, 3, 4, 5, first_name: "James", last_name: "Smith", age: 36]|
+// 8
 ```
 
 ## Input
