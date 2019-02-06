@@ -817,7 +817,7 @@ $ <[]>
 ## Annotations
 Annotations are used to provide a runtime with metadata about expressions.
 
-Mostly reserved for a runtime to add customization there are some standard annotations.
+Although, mostly reserved for a runtime to add customization, there are some standard annotations.
 
 ### @Runtime
 
