@@ -831,12 +831,17 @@ Although, mostly reserved for a runtime to add customization, there are some sta
 
 #### @Context
 Used to specify which run-contexts an expression is expecting.
+
+One per expression.
 ```
 @Context(MyContext)
+@Context(FirstContext, SecondContext)
 ```
 
 #### @Shape
-Used to describe which values and their types that my appear in an associative array
+Used to describe which values and their types that my appear in an associative array.
+
+Any number may be defined
 ```
 // Object shape
 @Shape(MyShape, [value1: int, value2: string])
@@ -849,8 +854,36 @@ Used to describe which values and their types that my appear in an associative a
 ```
 
 #### @Input
+Describes the shape of the input to an expression.
+
+One per expression
+```
+// Single input, my omit brackets
+@Input(int)
+
+// tuple like
+@Input([int, string, bool])
+
+// use predefined @Shape
+@Shape(MyArray, [int...])
+@Input(MyArray)
+```
 
 #### @Result
+Describes the shape of the output of an expression.
+
+One per expression
+```
+// Single ouput, my omit brackets
+@Result(int)
+
+// tuple like
+@Result([int, string, bool])
+
+// use predefined @Shape
+@Shape(MyArray, [int...])
+@Result(MyArray)
+```
 
 #### @Test
 
