@@ -799,6 +799,7 @@ Can use the first value in the stream as the input with the `?` symbol as the se
 $ <-> $ * 2 <?> ($.value + $.result) / 2
 // 6
 ```
+The first execution of the collection expression is performed with [value: 2, result: 1] since it was seeded with the first value of the array.
 
 Use collection directly on an associative array, by omitting the stream all together.
 ```
