@@ -746,7 +746,7 @@ $ <=> $.key + ": " + $.value
 ```
 
 ### Collecting
-Collecting is initialized with a seed value, takes in a associative array or stream and aggregates it.
+Collecting is initialized with a seed value, takes in a associative array, range or stream and passes each value into a given expression.
 
 Operator in form `<any>` where 'any' is the seed value. Must be a value literal value.
 
@@ -783,11 +783,11 @@ $ <-> $ * 2 <[]>
 ```
 This will take the input stream and insert them into the new array in order received, for value-stream, or into the received key for key-pair stream.
 
-May also opt out of collecting by using the `_` symbol as the seed value. This will output the input to the stream.
+May also opt out of collecting by not specifying a seed value. This will output the input to the stream.
 ```
 // Input: [1, 2, 3, 4, 5]
 
-$ <-> log($) <_>
+$ <-> log($) <>
 // [1, 2, 3, 4, 5]
 ```
 
