@@ -886,5 +886,41 @@ One per expression
 ```
 
 #### @Test
+Flags a test expression. Test expressions may be used in two ways.
+
+1 - Test the expression file.
+```
+@Input([int...])
+
+// take average
+$ <?> ($.value + $.result) / 2
+
+@Test([1, 2, 3, 4, 5)
+$ == 3
+
+```
+Here, the [1, 2, 3, 4, 5] inside of the @Test annotation will be passed into the expression generated from the file and its output will be passed to the expression below the @Test annotation.
+
+2 - Test a named expression within a file.
+```
+
+@Input([int...])
+#sum $ <0> $.result + $.value
+
+@Input([int...])
+#avg $ <?> ($.result + $.value) / 2
+
+@Test
+#avg([1, 2, 3, 4, 5]) == 3
+
+@Test
+#sum([1, 2, 3, 4, 5]) == 15
+
+```
+Here, we call the named expressions directly inside the test expression.
+
+Test expressions must return either `true` or `false`.
+
+They are also omitted from final compiled output.
 
 #### @Exhaustive
