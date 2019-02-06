@@ -4,8 +4,8 @@
 ```
 // Comments start with double slash an continue to end of line
 
-/// Markdown comments start with three slashes
-/// And can contain *Markdown* formatting
+/// Triple slash comments are special
+/// and can contain **Markdown** formatting
 
 // Numbers
 4
