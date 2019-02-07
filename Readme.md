@@ -845,7 +845,7 @@ This type of exhaustiveness only works with a single key in the left side.
 There are two operations for iteration of associative arrays.
 
 ### Streaming
-Mapping takes in an associative array and outputs a associative array. 
+Streaming takes in an associative array and outputs each value one at a time.
 
 It is performed with the following operators.
 * `<->` - Iterate over index-value pairs
