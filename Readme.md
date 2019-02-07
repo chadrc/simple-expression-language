@@ -190,6 +190,37 @@ To use as both. Provide a combination of above items.
 #### Concatenation
 Can use piping operators on associative arrays to concat them together or with other primitives
 
+Prepend
+```
+0 -> [1, 2, 3, 4, 5]
+// [0, 1, 2, 3, 4, 5]
+
+[1, 2, 3, 4, 5] <- 0
+// [0, 1, 2, 3, 4, 5]
+
+[-1, 0] -> [1, 2, 3, 4, 5]
+// [-1, 0, 1, 2, 3, 4, 5]
+
+[1, 2, 3, 4, 5] <- [-1, 0]
+// [-1, 0, 1, 2, 3, 4, 5]
+```
+
+Append
+```
+6 |> [1, 2, 3, 4, 5]
+// [1, 2, 3, 4, 5, 6]
+
+[1, 2, 3, 4, 5] <| 6
+// [1, 2, 3, 4, 5, 6]
+
+[6, 7] |> [1, 2, 3, 4, 5]
+// [1, 2, 3, 4, 5, 6, 7]
+
+[1, 2, 3, 4, 5] <| [6, 7]
+// [1, 2, 3, 4, 5, 6, 7]
+```
+_Note: that these operators produce a new associative array. The original arrays are unmodified._
+
 #### Comparison
 Associative arrays can be compared by values, key-value pairs, and keys.
 
