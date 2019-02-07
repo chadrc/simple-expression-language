@@ -1,6 +1,6 @@
 
-pub fn eval(input: &String) -> () {
-
+pub fn tokenize(input: &String) -> &String {
+    return input;
 }
 
 #[cfg(test)]
@@ -8,8 +8,9 @@ mod tests {
     use super::*;
 
     #[test]
-    fn number_integer_literal_returns_value() {
-        let result = eval(&String::from("4"));
-        assert_eq!(false);
+    fn tokenize_integer_expression() {
+        let input = &String::from("4");
+        let result = tokenize(input);
+        assert_eq!(result, "4");
     }
 }
