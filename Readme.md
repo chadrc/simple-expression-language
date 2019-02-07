@@ -268,6 +268,61 @@ Keys - Checks to see if the two arrays contain all the same keys.
 // true
 ```
 
+#### Contains
+Can check if an associative array contains a specific value, key-value, or key with the `~` operator.
+
+Contains Value
+```
+[1, 2, 3, 4, 5] ~ [1]
+// true
+
+[1, 2, 3, 4, 5] ~ [6]
+// false
+
+[first_name: "John", last_name: "Smith"] ~ ["John"]
+// true
+
+[first_name: "John", last_name: "Smith"] ~ ["Anderson"]
+// false
+```
+
+Contains Key-Value pair
+```
+[1, 2, 3, 4, 5] ~ [0: 1]
+// true
+
+[1, 2, 3, 4, 5] ~ [0: 2]
+// false
+
+[first_name: "John", last_name: "Smith"] ~ [first_name: "John"]
+// true
+
+[first_name: "John", last_name: "Smith"] ~ [last_name: "Anderson"]
+// false
+```
+
+Contains Key
+```
+[1, 2, 3, 4, 5] ~ [1:]
+// true
+
+[1, 2, 3, 4, 5] ~ [6:]
+// false
+
+[first_name: "John", last_name: "Smith"] ~ [last_name:]
+// true
+
+[first_name: "John", last_name: "Smith"] ~ [admin:]
+// false
+```
+
+Can also specify multiple and a mix of the checks
+```
+// Contains the value 2, the pair [2: 3], and the key 4
+[1, 2, 3, 4, 5] ~ [2, 2: 3, 4:]
+// true
+```
+
 #### Accessing
 Collections may be index with either an number (index to an array) or a string (key to a map).
 
