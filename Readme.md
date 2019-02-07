@@ -187,6 +187,87 @@ To use as both. Provide a combination of above items.
 ]
 ```
 
+#### Concatenation
+Can use piping operators on associative arrays to concat them together or with other primitives
+
+#### Comparison
+Associative arrays can be compared by values, key-value pairs, and keys.
+
+Values - Checks to see if the two arrays contain the same values
+```
+[1, 2, 3, 4, 5] -- [1, 2, 3, 4, 5]
+// true
+
+[1, 2, 3, 4, 5] -- [4, 3, 5, 2, 1]
+// true
+
+[1, 2, 3, 4, 5] -- [4, 3, 5, 2, 6]
+// false
+
+[1, 2, 3, 4, 5] -- [1, 2, 3, 4]
+// false
+
+[first_name: "John", last_name: "Smith"] == [first_name: "John", last_name: "Smith"]
+// true
+
+[first_name: "John", last_name: "Smith"] == [first_name: "John", last_name: "Anderson"]
+// false
+
+[first_name: "John", last_name: "Smith"] == [first_name: "John", last_name: "Smith", admin: true]
+// false
+
+[] -- []
+// true
+```
+
+Key-value Pairs - Check to see if the two arrays contain all the same keys with their matching values.
+```
+[1, 2, 3, 4, 5] == [1, 2, 3, 4, 5]
+// true
+
+[1, 2, 3, 4, 5] == [4, 3, 5, 2, 1]
+// false
+
+[first_name: "John", last_name: "Smith"] == [first_name: "John", last_name: "Smith"]
+// true
+
+[first_name: "John", last_name: "Smith"] == [first_name: "John", last_name: "Anderson"]
+// false
+
+[first_name: "John", last_name: "Smith"] == [first_name: "John", last_name: "Smith", admin: true]
+// false
+
+[] == []
+// true
+```
+
+Keys - Checks to see if the two arrays contain all the same keys.
+```
+[1, 2, 3, 4, 5] ~~ [1, 2, 3, 4, 5]
+// true
+
+[1, 2, 3, 4, 5] ~~ [4, 3, 5, 2, 1]
+// true
+
+[1, 2, 3, 4, 5] ~~ [4, 3, 5, 2]
+// false
+
+[1, 2, 3, 4, 5] ~~ [4, 3, 5, 2, 6]
+// true
+
+[first_name: "John", last_name: "Smith"] ~~ [first_name: "John", last_name: "Smith"]
+// true
+
+[first_name: "John", last_name: "Smith"] ~~ [first_name: "John", last_name: "Anderson"]
+// true
+
+[first_name: "John", last_name: "Smith"] ~~ [first_name: "John", last_name: "Smith", admin: true]
+// false
+
+[] ~~ []
+// true
+```
+
 #### Accessing
 Collections may be index with either an number (index to an array) or a string (key to a map).
 
