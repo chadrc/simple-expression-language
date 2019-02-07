@@ -377,8 +377,8 @@ user.last_name
 // "Smith"
 
 // Note that indexing with a number string will not return a value from an array
-numbers["1"]
-// () doesn't exist
+numbers["1"] // doesn't exist
+// ()
 ```
 
 #### Length
