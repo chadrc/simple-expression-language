@@ -16,7 +16,7 @@
 'Basic string'
 "Double quoted"
 
-'Can also be
+'Can also be on
 more than one line,
 but newlines are stripped'
 
