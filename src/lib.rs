@@ -67,7 +67,7 @@ mod tests {
         assert_eq!(
             *tokens.get(1).unwrap(),
             Token {
-                token_type: TokenType::PlusSign,
+                token_type: TokenType::PlusSign,
                 token_str: String::from("+")
             }
         );
