@@ -64,6 +64,7 @@ mod tests {
                 token_str: String::from("4")
             }
         );
+
         assert_eq!(
             *tokens.get(1).unwrap(),
             Token {
