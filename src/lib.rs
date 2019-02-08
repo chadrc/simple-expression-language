@@ -22,8 +22,14 @@ pub fn tokenize(input: &String) -> Vec<Token> {
         current_token.push(c);
 
         if current_token.len() > 0 {
+            let token_type = if current_token == "+" {
+                TokenType::PlusSign
+            } else {
+                TokenType::Integer
+            };
+
             tokens.push(Token {
-                token_type: TokenType::Integer,
+                token_type: token_type,
                 token_str: current_token,
             });
             current_token = String::new();
