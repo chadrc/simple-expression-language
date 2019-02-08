@@ -59,8 +59,17 @@ mod tests {
     #[test]
     fn tokenize_addition_expression() {
         let input = String::from("4 + 5");
-        let tokens = tokenize(&input);
+        assert_addition_expression(input);
+    }
 
+    #[test]
+    fn tokenize_addition_expression_no_space() {
+        let input = String::from("4+5");
+        assert_addition_expression(input);
+    }
+
+    fn assert_addition_expression(input: String) {
+        let tokens = tokenize(&input);
         assert_eq!(tokens.len(), 3);
 
         assert_eq!(
