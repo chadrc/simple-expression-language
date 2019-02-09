@@ -39,12 +39,7 @@ impl Tokenizer {
                 self.parse_state = ParseState::NoToken;
 
                 if self.current_token.len() > 0 {
-                    self.tokens.push(Token {
-                        token_type: self.current_token_type,
-                        token_str: self.current_token,
-                    });
-                    self.current_token = String::new();
-                    self.current_token_type = TokenType::Unknown;
+                    self.add_current_token();
                 }
 
                 continue;
@@ -57,13 +52,8 @@ impl Tokenizer {
                         self.parse_state = ParseState::ParsingInteger;
                         self.current_token_type = TokenType::Integer;
                     } else if self.current_token == "+" {
-                        self.tokens.push(Token {
-                            token_type: TokenType::PlusSign,
-                            token_str: self.current_token,
-                        });
-
-                        self.current_token = String::new();
-                        self.current_token_type = TokenType::Unknown;
+                        self.current_token_type = TokenType::PlusSign;
+                        self.add_current_token();
                     }
                 }
                 ParseState::ParsingInteger => {
@@ -72,25 +62,14 @@ impl Tokenizer {
                     } else {
                         self.parse_state = ParseState::NoToken;
 
-                        self.tokens.push(Token {
-                            token_type: self.current_token_type,
-                            token_str: self.current_token,
-                        });
-
-                        self.current_token = String::new();
-                        self.current_token_type = TokenType::Unknown;
+                        self.add_current_token();
 
                         // add non numeric char to next token
                         self.current_token.push(c);
 
                         if self.current_token == "+" {
-                            self.tokens.push(Token {
-                                token_type: TokenType::PlusSign,
-                                token_str: self.current_token,
-                            });
-
-                            self.current_token = String::new();
-                            self.current_token_type = TokenType::Unknown;
+                            self.current_token_type = TokenType::PlusSign;
+                            self.add_current_token();
                         }
                     }
                 }
@@ -106,6 +85,16 @@ impl Tokenizer {
         }
 
         return self.tokens;
+    }
+
+    fn add_current_token(&mut self) {
+        self.tokens.push(Token {
+            token_type: self.current_token_type,
+            token_str: self.current_token.clone(),
+        });
+
+        self.current_token = String::new();
+        self.current_token_type = TokenType::Unknown;
     }
 }
 
