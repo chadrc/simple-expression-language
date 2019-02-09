@@ -2,6 +2,7 @@
 pub enum TokenType {
     Integer,
     PlusSign,
+    Unknown,
 }
 
 #[derive(PartialEq, Debug)]
@@ -10,37 +11,80 @@ pub struct Token {
     token_str: String,
 }
 
+enum ParseState {
+    NoToken,
+    ParsingInteger,
+}
+
 pub fn tokenize(input: &String) -> Vec<Token> {
     let mut tokens: Vec<Token> = vec![];
 
     let mut current_token = String::new();
-    let mut current_token_type: TokenType = TokenType::Integer;
-    let mut parsing_integer: bool;
+    let mut current_token_type: TokenType = TokenType::Unknown;
+
+    let mut parse_state = ParseState::NoToken;
+
     for c in input.chars() {
         if c.is_whitespace() {
-            continue;
-        }
+            parse_state = ParseState::NoToken;
 
-        current_token.push(c);
-
-        if current_token.len() > 0 {
-            current_token_type = if current_token == "+" {
-                parsing_integer = false;
-                TokenType::PlusSign
-            } else {
-                parsing_integer = true;
-                TokenType::Integer
-            };
-
-            if !parsing_integer {
+            if current_token.len() > 0 {
                 tokens.push(Token {
                     token_type: current_token_type,
                     token_str: current_token,
                 });
                 current_token = String::new();
-                current_token_type = TokenType::Integer;
+                current_token_type = TokenType::Unknown;
             }
+
+            continue;
         }
+
+        match &parse_state {
+            ParseState::NoToken => {
+                current_token.push(c);
+                if c.is_numeric() {
+                    parse_state = ParseState::ParsingInteger;
+                    current_token_type = TokenType::Integer;
+                } else if current_token == "+" {
+                    tokens.push(Token {
+                        token_type: TokenType::PlusSign,
+                        token_str: current_token,
+                    });
+
+                    current_token = String::new();
+                    current_token_type = TokenType::Unknown;
+                }
+            }
+            ParseState::ParsingInteger => {
+                if c.is_numeric() {
+                    current_token.push(c);
+                } else {
+                    parse_state = ParseState::NoToken;
+
+                    tokens.push(Token {
+                        token_type: current_token_type,
+                        token_str: current_token,
+                    });
+
+                    current_token = String::new();
+                    current_token_type = TokenType::Unknown;
+
+                    // add non numeric char to next token
+                    current_token.push(c);
+
+                    if current_token == "+" {
+                        tokens.push(Token {
+                            token_type: TokenType::PlusSign,
+                            token_str: current_token,
+                        });
+
+                        current_token = String::new();
+                        current_token_type = TokenType::Unknown;
+                    }
+                }
+            }
+        };
     }
 
     // Add last token if exists
