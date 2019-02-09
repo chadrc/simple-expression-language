@@ -11,6 +11,7 @@ pub struct Token {
     token_str: String,
 }
 
+#[derive(PartialEq, Debug, Copy, Clone)]
 enum ParseState {
     NoToken,
     ParsingInteger,
@@ -43,7 +44,7 @@ impl Tokenizer {
                 continue;
             }
 
-            match &self.parse_state {
+            match self.parse_state {
                 ParseState::NoToken => {
                     self.start_new_token(c);
                 }
