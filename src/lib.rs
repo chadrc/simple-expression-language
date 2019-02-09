@@ -14,6 +14,8 @@ pub fn tokenize(input: &String) -> Vec<Token> {
     let mut tokens: Vec<Token> = vec![];
 
     let mut current_token = String::new();
+    let mut current_token_type: TokenType = TokenType::Integer;
+    let mut parsing_integer: bool;
     for c in input.chars() {
         if c.is_whitespace() {
             continue;
@@ -22,18 +24,31 @@ pub fn tokenize(input: &String) -> Vec<Token> {
         current_token.push(c);
 
         if current_token.len() > 0 {
-            let token_type = if current_token == "+" {
+            current_token_type = if current_token == "+" {
+                parsing_integer = false;
                 TokenType::PlusSign
             } else {
+                parsing_integer = true;
                 TokenType::Integer
             };
 
-            tokens.push(Token {
-                token_type: token_type,
-                token_str: current_token,
-            });
-            current_token = String::new();
+            if !parsing_integer {
+                tokens.push(Token {
+                    token_type: current_token_type,
+                    token_str: current_token,
+                });
+                current_token = String::new();
+                current_token_type = TokenType::Integer;
+            }
         }
+    }
+
+    // Add last token if exists
+    if current_token.len() > 0 {
+        tokens.push(Token {
+            token_type: current_token_type,
+            token_str: current_token,
+        });
     }
 
     return tokens;
@@ -54,6 +69,19 @@ mod tests {
 
         assert_eq!(only.token_type, TokenType::Integer);
         assert_eq!(only.token_str, "4");
+    }
+
+    #[test]
+    fn tokenize_two_digit_integer() {
+        let input = String::from("43");
+        let tokens = tokenize(&input);
+
+        assert_eq!(tokens.len(), 1);
+
+        let only = tokens.get(0).unwrap();
+
+        assert_eq!(only.token_type, TokenType::Integer);
+        assert_eq!(only.token_str, "43");
     }
 
     #[test]
