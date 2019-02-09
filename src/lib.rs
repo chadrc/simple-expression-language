@@ -36,14 +36,6 @@ impl Tokenizer {
 
     fn tokenize(mut self, input: &String) -> Vec<Token> {
         for c in input.chars() {
-            if c.is_whitespace() {
-                self.parse_state = ParseState::NoToken;
-
-                self.add_current_token();
-
-                continue;
-            }
-
             match self.parse_state {
                 ParseState::NoToken => {
                     self.start_new_token(c);
@@ -52,10 +44,7 @@ impl Tokenizer {
                     if c.is_numeric() {
                         self.current_token.push(c);
                     } else {
-                        self.parse_state = ParseState::NoToken;
-
                         self.add_current_token();
-
                         self.start_new_token(c);
                     }
                 }
@@ -69,6 +58,11 @@ impl Tokenizer {
     }
 
     fn start_new_token(&mut self, c: char) {
+        if c.is_whitespace() {
+            // no tokens start with a white space
+            return;
+        }
+
         self.current_token.push(c);
         if c.is_numeric() {
             self.parse_state = ParseState::ParsingInteger;
@@ -88,6 +82,7 @@ impl Tokenizer {
 
             self.current_token = String::new();
             self.current_token_type = TokenType::Unknown;
+            self.parse_state = ParseState::NoToken;
         }
     }
 }
