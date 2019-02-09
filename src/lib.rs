@@ -38,23 +38,14 @@ impl Tokenizer {
             if c.is_whitespace() {
                 self.parse_state = ParseState::NoToken;
 
-                if self.current_token.len() > 0 {
-                    self.add_current_token();
-                }
+                self.add_current_token();
 
                 continue;
             }
 
             match &self.parse_state {
                 ParseState::NoToken => {
-                    self.current_token.push(c);
-                    if c.is_numeric() {
-                        self.parse_state = ParseState::ParsingInteger;
-                        self.current_token_type = TokenType::Integer;
-                    } else if self.current_token == "+" {
-                        self.current_token_type = TokenType::PlusSign;
-                        self.add_current_token();
-                    }
+                    self.start_new_token(c);
                 }
                 ParseState::ParsingInteger => {
                     if c.is_numeric() {
@@ -64,37 +55,39 @@ impl Tokenizer {
 
                         self.add_current_token();
 
-                        // add non numeric char to next token
-                        self.current_token.push(c);
-
-                        if self.current_token == "+" {
-                            self.current_token_type = TokenType::PlusSign;
-                            self.add_current_token();
-                        }
+                        self.start_new_token(c);
                     }
                 }
             };
         }
 
         // Add last token if exists
-        if self.current_token.len() > 0 {
-            self.tokens.push(Token {
-                token_type: self.current_token_type,
-                token_str: self.current_token,
-            });
-        }
+        self.add_current_token();
 
         return self.tokens;
     }
 
-    fn add_current_token(&mut self) {
-        self.tokens.push(Token {
-            token_type: self.current_token_type,
-            token_str: self.current_token.clone(),
-        });
+    fn start_new_token(&mut self, c: char) {
+        self.current_token.push(c);
+        if c.is_numeric() {
+            self.parse_state = ParseState::ParsingInteger;
+            self.current_token_type = TokenType::Integer;
+        } else if self.current_token == "+" {
+            self.current_token_type = TokenType::PlusSign;
+            self.add_current_token();
+        }
+    }
 
-        self.current_token = String::new();
-        self.current_token_type = TokenType::Unknown;
+    fn add_current_token(&mut self) {
+        if self.current_token.len() > 0 {
+            self.tokens.push(Token {
+                token_type: self.current_token_type,
+                token_str: self.current_token.clone(),
+            });
+
+            self.current_token = String::new();
+            self.current_token_type = TokenType::Unknown;
+        }
     }
 }
 
