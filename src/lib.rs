@@ -1,4 +1,4 @@
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Copy, Clone)]
 pub enum TokenType {
     Integer,
     PlusSign,
@@ -16,86 +16,101 @@ enum ParseState {
     ParsingInteger,
 }
 
-pub fn tokenize(input: &String) -> Vec<Token> {
-    let mut tokens: Vec<Token> = vec![];
+struct Tokenizer {
+    tokens: Vec<Token>,
+    current_token: String,
+    current_token_type: TokenType,
+    parse_state: ParseState,
+}
 
-    let mut current_token = String::new();
-    let mut current_token_type: TokenType = TokenType::Unknown;
-
-    let mut parse_state = ParseState::NoToken;
-
-    for c in input.chars() {
-        if c.is_whitespace() {
-            parse_state = ParseState::NoToken;
-
-            if current_token.len() > 0 {
-                tokens.push(Token {
-                    token_type: current_token_type,
-                    token_str: current_token,
-                });
-                current_token = String::new();
-                current_token_type = TokenType::Unknown;
-            }
-
-            continue;
-        }
-
-        match &parse_state {
-            ParseState::NoToken => {
-                current_token.push(c);
-                if c.is_numeric() {
-                    parse_state = ParseState::ParsingInteger;
-                    current_token_type = TokenType::Integer;
-                } else if current_token == "+" {
-                    tokens.push(Token {
-                        token_type: TokenType::PlusSign,
-                        token_str: current_token,
-                    });
-
-                    current_token = String::new();
-                    current_token_type = TokenType::Unknown;
-                }
-            }
-            ParseState::ParsingInteger => {
-                if c.is_numeric() {
-                    current_token.push(c);
-                } else {
-                    parse_state = ParseState::NoToken;
-
-                    tokens.push(Token {
-                        token_type: current_token_type,
-                        token_str: current_token,
-                    });
-
-                    current_token = String::new();
-                    current_token_type = TokenType::Unknown;
-
-                    // add non numeric char to next token
-                    current_token.push(c);
-
-                    if current_token == "+" {
-                        tokens.push(Token {
-                            token_type: TokenType::PlusSign,
-                            token_str: current_token,
-                        });
-
-                        current_token = String::new();
-                        current_token_type = TokenType::Unknown;
-                    }
-                }
-            }
+impl Tokenizer {
+    fn new() -> Tokenizer {
+        return Tokenizer {
+            tokens: vec![],
+            current_token: String::new(),
+            current_token_type: TokenType::Unknown,
+            parse_state: ParseState::NoToken,
         };
     }
 
-    // Add last token if exists
-    if current_token.len() > 0 {
-        tokens.push(Token {
-            token_type: current_token_type,
-            token_str: current_token,
-        });
-    }
+    fn tokenize(mut self, input: &String) -> Vec<Token> {
+        for c in input.chars() {
+            if c.is_whitespace() {
+                self.parse_state = ParseState::NoToken;
 
-    return tokens;
+                if self.current_token.len() > 0 {
+                    self.tokens.push(Token {
+                        token_type: self.current_token_type,
+                        token_str: self.current_token,
+                    });
+                    self.current_token = String::new();
+                    self.current_token_type = TokenType::Unknown;
+                }
+
+                continue;
+            }
+
+            match &self.parse_state {
+                ParseState::NoToken => {
+                    self.current_token.push(c);
+                    if c.is_numeric() {
+                        self.parse_state = ParseState::ParsingInteger;
+                        self.current_token_type = TokenType::Integer;
+                    } else if self.current_token == "+" {
+                        self.tokens.push(Token {
+                            token_type: TokenType::PlusSign,
+                            token_str: self.current_token,
+                        });
+
+                        self.current_token = String::new();
+                        self.current_token_type = TokenType::Unknown;
+                    }
+                }
+                ParseState::ParsingInteger => {
+                    if c.is_numeric() {
+                        self.current_token.push(c);
+                    } else {
+                        self.parse_state = ParseState::NoToken;
+
+                        self.tokens.push(Token {
+                            token_type: self.current_token_type,
+                            token_str: self.current_token,
+                        });
+
+                        self.current_token = String::new();
+                        self.current_token_type = TokenType::Unknown;
+
+                        // add non numeric char to next token
+                        self.current_token.push(c);
+
+                        if self.current_token == "+" {
+                            self.tokens.push(Token {
+                                token_type: TokenType::PlusSign,
+                                token_str: self.current_token,
+                            });
+
+                            self.current_token = String::new();
+                            self.current_token_type = TokenType::Unknown;
+                        }
+                    }
+                }
+            };
+        }
+
+        // Add last token if exists
+        if self.current_token.len() > 0 {
+            self.tokens.push(Token {
+                token_type: self.current_token_type,
+                token_str: self.current_token,
+            });
+        }
+
+        return self.tokens;
+    }
+}
+
+pub fn tokenize(input: &String) -> Vec<Token> {
+    return Tokenizer::new().tokenize(input);
 }
 
 #[cfg(test)]
