@@ -419,7 +419,7 @@ $["last_name"]
 ```
 
 ## Results
-Each expression outputs a result. 
+Each expression outputs a result.
 
 The runtime will have access to each result after execution
 ```
@@ -456,8 +456,8 @@ Input = 10
 Group a set of expressions together to output a single value
 
 ```
-// Enclose expressions in a braces
-{
+// Enclose expressions in a braces, passing in input
+$ -> {
     8 * 5
     ? / 4
 }
@@ -467,16 +467,16 @@ Group a set of expressions together to output a single value
 // 100
 ```
 
-Blocks receive the last evaluated expression as input
+If you don't pass in any value to the block, it does nothing. These blocks are used to pass as parameters to other expressions and functions.
 ```
 5^2 // 25
 
 {
-    $ * 3 // 75
-    ? / 5 // 15
+    $ * 3
 }
 
-? * 4 // 60
+// ? == 25
+? * 4 // 100
 ```
 
 ## Functions
@@ -591,7 +591,7 @@ To reference a named expression later, use the `#` followed by the identifier.
 #plus_rand $ + rand()
 
 // Multi line
-// Opening brace can be on same line 
+// Opening brace can be on same line
 // or next line
 
 #is_even {
@@ -647,7 +647,7 @@ $ % 2 == 0
 ```
 
 Or reference named expressions within a file.
- 
+
 map.sel
 ```
 #plus_random {
@@ -865,7 +865,7 @@ Output is the value returned from right side expression
 
 $ <-> $.value * $.key
 // outputs the following in order
-// 0 
+// 0
 // 2
 // 6
 // 12
@@ -895,14 +895,14 @@ Where key is which ever keys was just processed and value is the value returned 
 
 $ <-> $.value * $.key
 // outputs the following in order
-// [key: 0, value: 0] 
+// [key: 0, value: 0]
 // [key: 1, value: 2]
 // [key: 2, value: 6]
 // [key: 3, value: 12]
 // [key: 4, value: 20]
 ```
 
-With keys 
+With keys
 ```
 // Input: [first_name: "John", last_name: "Smith", email: "johnsmith@example.com"]
 
