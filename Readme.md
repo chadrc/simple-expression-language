@@ -469,14 +469,14 @@ $ -> {
 
 If you don't pass in any value to the block, it does nothing. These blocks are used to pass as parameters to other expressions and functions.
 ```
-5^2 // 25
-
 {
     $ * 3
 }
+// resulting expression
 
-// ? == 25
-? * 4 // 100
+// ? is the above expression
+?(25)
+// 75
 ```
 
 ## Functions
