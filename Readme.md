@@ -601,6 +601,9 @@ To reference a named expression later, use the `#` followed by the identifier.
 init_array(10) -> map(#plus_rand)
 init_array(5) -> map(#plus_rand) -> filter(#is_even)
 
+// pass inline expression with a block
+init_array(5) -> map(#plus_rand) -> filter({ $ % 2 == 1 }) // is odd for filter
+
 // may also be called directly the same way as functions
 #plus_rand 5
 #plus_rand(5)
