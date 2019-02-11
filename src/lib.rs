@@ -18,23 +18,21 @@ enum ParseState {
 }
 
 struct Tokenizer<'a> {
-    // tokens: Vec<Token>,
     current_token: String,
     current_token_type: TokenType,
     parse_state: ParseState,
     chars: std::str::Chars<'a>,
-    // queue_token: Option<&'a Token>,
+    end_of_token: bool,
 }
 
 impl<'a> Tokenizer<'a> {
     fn new(input: &'a String) -> Tokenizer<'a> {
         return Tokenizer {
-            // tokens: vec![],
             current_token: String::new(),
             current_token_type: TokenType::Unknown,
             parse_state: ParseState::NoToken,
             chars: input.chars(),
-            // queue_token: None,
+            end_of_token: false,
         };
     }
 
@@ -50,16 +48,8 @@ impl<'a> Tokenizer<'a> {
             self.current_token_type = TokenType::Integer;
         } else if self.current_token == "+" {
             self.current_token_type = TokenType::PlusSign;
-            // return self.make_current_token();
+            self.end_of_token = true;
         }
-    }
-
-    fn is_end_of_current_token(&mut self) -> bool {
-        if self.current_token == "+" {
-            return true;
-        }
-
-        false
     }
 
     fn make_current_token(&mut self) -> Option<Token> {
@@ -85,7 +75,8 @@ impl<'a> Iterator for Tokenizer<'a> {
 
     fn next(&mut self) -> Option<Token> {
         loop {
-            if self.is_end_of_current_token() {
+            if self.end_of_token {
+                self.end_of_token = false;
                 return self.make_current_token();
             }
 
