@@ -38,10 +38,10 @@ impl<'a> Tokenizer<'a> {
         };
     }
 
-    fn start_new_token(&mut self, c: char) -> Option<Token> {
+    fn start_new_token(&mut self, c: char) {
         if c.is_whitespace() {
             // no tokens start with a white space
-            return None;
+            return;
         }
 
         self.current_token.push(c);
@@ -50,10 +50,16 @@ impl<'a> Tokenizer<'a> {
             self.current_token_type = TokenType::Integer;
         } else if self.current_token == "+" {
             self.current_token_type = TokenType::PlusSign;
-            return self.make_current_token();
+            // return self.make_current_token();
+        }
+    }
+
+    fn is_end_of_current_token(&mut self) -> bool {
+        if self.current_token == "+" {
+            return true;
         }
 
-        None
+        false
     }
 
     fn make_current_token(&mut self) -> Option<Token> {
@@ -79,14 +85,15 @@ impl<'a> Iterator for Tokenizer<'a> {
 
     fn next(&mut self) -> Option<Token> {
         loop {
+            if self.is_end_of_current_token() {
+                return self.make_current_token();
+            }
+
             match self.chars.next() {
                 Some(c) => {
                     match self.parse_state {
                         ParseState::NoToken => {
-                            let token = self.start_new_token(c);
-                            if token != None {
-                                return token;
-                            }
+                            self.start_new_token(c);
                         }
                         ParseState::ParsingInteger => {
                             if c.is_numeric() {
@@ -94,10 +101,6 @@ impl<'a> Iterator for Tokenizer<'a> {
                             } else {
                                 let token = self.make_current_token();
                                 self.start_new_token(c);
-                                // let new_token =
-                                // if new_token != None {
-                                //     self.queue_token = new_token;
-                                // }
                                 return token;
                             }
                         }
