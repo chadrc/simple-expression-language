@@ -5,7 +5,7 @@ pub enum TokenType {
     Unknown,
 }
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone)]
 pub struct Token {
     token_type: TokenType,
     token_str: String,
@@ -17,50 +17,31 @@ enum ParseState {
     ParsingInteger,
 }
 
-struct Tokenizer {
-    tokens: Vec<Token>,
+struct Tokenizer<'a> {
+    // tokens: Vec<Token>,
     current_token: String,
     current_token_type: TokenType,
     parse_state: ParseState,
+    chars: std::str::Chars<'a>,
+    // queue_token: Option<&'a Token>,
 }
 
-impl Tokenizer {
-    fn new() -> Tokenizer {
+impl<'a> Tokenizer<'a> {
+    fn new(input: &'a String) -> Tokenizer<'a> {
         return Tokenizer {
-            tokens: vec![],
+            // tokens: vec![],
             current_token: String::new(),
             current_token_type: TokenType::Unknown,
             parse_state: ParseState::NoToken,
+            chars: input.chars(),
+            // queue_token: None,
         };
     }
 
-    fn tokenize(mut self, input: &String) -> Vec<Token> {
-        for c in input.chars() {
-            match self.parse_state {
-                ParseState::NoToken => {
-                    self.start_new_token(c);
-                }
-                ParseState::ParsingInteger => {
-                    if c.is_numeric() {
-                        self.current_token.push(c);
-                    } else {
-                        self.add_current_token();
-                        self.start_new_token(c);
-                    }
-                }
-            };
-        }
-
-        // Add last token if exists
-        self.add_current_token();
-
-        return self.tokens;
-    }
-
-    fn start_new_token(&mut self, c: char) {
+    fn start_new_token(&mut self, c: char) -> Option<Token> {
         if c.is_whitespace() {
             // no tokens start with a white space
-            return;
+            return None;
         }
 
         self.current_token.push(c);
@@ -69,26 +50,64 @@ impl Tokenizer {
             self.current_token_type = TokenType::Integer;
         } else if self.current_token == "+" {
             self.current_token_type = TokenType::PlusSign;
-            self.add_current_token();
+            return self.make_current_token();
         }
+
+        None
     }
 
-    fn add_current_token(&mut self) {
-        if self.current_token.len() > 0 {
-            self.tokens.push(Token {
+    fn make_current_token(&mut self) -> Option<Token> {
+        return if self.current_token.len() > 0 {
+            let token = Token {
                 token_type: self.current_token_type,
                 token_str: self.current_token.clone(),
-            });
+            };
 
             self.current_token = String::new();
             self.current_token_type = TokenType::Unknown;
             self.parse_state = ParseState::NoToken;
-        }
+
+            Some(token)
+        } else {
+            None
+        };
     }
 }
 
-pub fn tokenize(input: &String) -> Vec<Token> {
-    return Tokenizer::new().tokenize(input);
+impl<'a> Iterator for Tokenizer<'a> {
+    type Item = Token;
+
+    fn next(&mut self) -> Option<Token> {
+        loop {
+            match self.chars.next() {
+                Some(c) => {
+                    match self.parse_state {
+                        ParseState::NoToken => {
+                            let token = self.start_new_token(c);
+                            if token != None {
+                                return token;
+                            }
+                        }
+                        ParseState::ParsingInteger => {
+                            if c.is_numeric() {
+                                self.current_token.push(c);
+                            } else {
+                                let token = self.make_current_token();
+                                self.start_new_token(c);
+                                // let new_token =
+                                // if new_token != None {
+                                //     self.queue_token = new_token;
+                                // }
+                                return token;
+                            }
+                        }
+                    };
+                }
+                // will return None if there is not a last token
+                None => return self.make_current_token(),
+            }
+        }
+    }
 }
 
 #[cfg(test)]
@@ -98,7 +117,10 @@ mod tests {
     #[test]
     fn tokenize_integer_expression() {
         let input = String::from("4");
-        let tokens = tokenize(&input);
+
+        let tokenizer = Tokenizer::new(&input);
+
+        let tokens: Vec<Token> = tokenizer.collect();
 
         assert_eq!(tokens.len(), 1);
 
@@ -111,7 +133,8 @@ mod tests {
     #[test]
     fn tokenize_two_digit_integer() {
         let input = String::from("43");
-        let tokens = tokenize(&input);
+        let tokenizer = Tokenizer::new(&input);
+        let tokens: Vec<Token> = tokenizer.collect();
 
         assert_eq!(tokens.len(), 1);
 
@@ -134,8 +157,10 @@ mod tests {
     }
 
     fn assert_addition_expression(input: String) {
-        let tokens = tokenize(&input);
-        assert_eq!(tokens.len(), 3);
+        let tokenizer = Tokenizer::new(&input);
+        let tokens: Vec<Token> = tokenizer.collect();
+
+        // assert_eq!(tokens.len(), 3);
 
         assert_eq!(
             *tokens.get(0).unwrap(),
