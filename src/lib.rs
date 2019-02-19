@@ -5,6 +5,7 @@ pub enum TokenType {
     SingleQuotedString,
     DoubleQuotedString,
     FormattedString,
+    ExclusiveRange,
     PlusSign,
     Unknown,
 }
@@ -19,9 +20,11 @@ pub struct Token {
 enum ParseState {
     NoToken,
     ParsingInteger,
+    ParsingDecimal,
     ParsingSingleQuotedString,
     ParsingDoubleQuotedString,
     FormattedString,
+    ParsingExclusiveRange,
 }
 
 struct Tokenizer<'a> {
@@ -65,6 +68,9 @@ impl<'a> Tokenizer<'a> {
         } else if c == '`' {
             self.current_token_type = TokenType::FormattedString;
             self.parse_state = ParseState::FormattedString;
+        } else if c == '.' {
+            self.current_token_type = TokenType::ExclusiveRange;
+            self.parse_state = ParseState::ParsingExclusiveRange;
         }
     }
 
@@ -110,10 +116,54 @@ impl<'a> Iterator for Tokenizer<'a> {
                                 // convert to decimal token
                                 self.current_token.push(c);
                                 self.current_token_type = TokenType::Decimal;
+                                self.parse_state = ParseState::ParsingDecimal;
                             } else {
                                 let token = self.make_current_token();
                                 self.start_new_token(c);
                                 return token;
+                            }
+                        }
+                        ParseState::ParsingDecimal => {
+                            if c == '.' {
+                                // have one '.' in current token to be here
+                                // if we receive another one, we're parsing a range
+
+                                // remove first '.' char from current_token
+                                // and change it back to an integer
+                                self.current_token.pop();
+                                self.current_token_type = TokenType::Integer;
+
+                                // generate current token
+                                // and store to be returned later
+                                let integer_token = self.make_current_token();
+
+                                // start with single dot (one we just removed)
+                                self.start_new_token('.');
+                                // add current one as well
+                                self.current_token.push(c);
+
+                                // return integer token that just ended
+                                return integer_token;
+                            } else if c.is_numeric() {
+                                // continue decimal number
+                                self.current_token.push(c);
+                            } else {
+                                // end token
+                                let token = self.make_current_token();
+                                self.start_new_token(c);
+                                return token;
+                            }
+                        }
+                        ParseState::ParsingExclusiveRange => {
+                            // expecting another integer
+                            // if that is so
+                            // end this token and start new integer token
+                            if c.is_numeric() {
+                                let range_token = self.make_current_token();
+
+                                self.start_new_token(c);
+
+                                return range_token;
                             }
                         }
                         ParseState::ParsingSingleQuotedString => {
@@ -274,5 +324,27 @@ mod tests {
 
         assert_eq!(only.token_type, TokenType::FormattedString);
         assert_eq!(only.token_str, "`Hello World`");
+    }
+
+    #[test]
+    fn tokenize_exclusive_range() {
+        let input = String::from("1..10");
+        let tokenizer = Tokenizer::new(&input);
+        let tokens: Vec<Token> = tokenizer.collect();
+
+        assert_eq!(tokens.len(), 3);
+
+        let first = tokens.get(0).unwrap();
+        let second = tokens.get(1).unwrap();
+        let third = tokens.get(2).unwrap();
+
+        assert_eq!(first.token_type, TokenType::Integer);
+        assert_eq!(first.token_str, "1");
+
+        assert_eq!(second.token_type, TokenType::ExclusiveRange);
+        assert_eq!(second.token_str, "..");
+
+        assert_eq!(third.token_type, TokenType::Integer);
+        assert_eq!(third.token_str, "10");
     }
 }
