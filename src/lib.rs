@@ -2,6 +2,7 @@
 pub enum TokenType {
     Integer,
     SingleQuotedString,
+    DoubleQuotedString,
     PlusSign,
     Unknown,
 }
@@ -17,6 +18,7 @@ enum ParseState {
     NoToken,
     ParsingInteger,
     ParsingSingleQuotedString,
+    ParsingDoubleQuotedString,
 }
 
 struct Tokenizer<'a> {
@@ -54,6 +56,9 @@ impl<'a> Tokenizer<'a> {
         } else if c == '\'' {
             self.current_token_type = TokenType::SingleQuotedString;
             self.parse_state = ParseState::ParsingSingleQuotedString;
+        } else if c == '"' {
+            self.current_token_type = TokenType::DoubleQuotedString;
+            self.parse_state = ParseState::ParsingDoubleQuotedString;
         }
     }
 
@@ -103,8 +108,13 @@ impl<'a> Iterator for Tokenizer<'a> {
                         ParseState::ParsingSingleQuotedString => {
                             self.current_token.push(c);
                             if c == '\'' {
-                                let token = self.make_current_token();
-                                return token;
+                                return self.make_current_token();
+                            }
+                        }
+                        ParseState::ParsingDoubleQuotedString => {
+                            self.current_token.push(c);
+                            if c == '"' {
+                                return self.make_current_token();
                             }
                         }
                     };
@@ -205,5 +215,19 @@ mod tests {
 
         assert_eq!(only.token_type, TokenType::SingleQuotedString);
         assert_eq!(only.token_str, "'Hello World'");
+    }
+
+    #[test]
+    fn tokenize_string_double_quote() {
+        let input = String::from("\"Hello World\"");
+        let tokenizer = Tokenizer::new(&input);
+        let tokens: Vec<Token> = tokenizer.collect();
+
+        assert_eq!(tokens.len(), 1);
+
+        let only = tokens.get(0).unwrap();
+
+        assert_eq!(only.token_type, TokenType::DoubleQuotedString);
+        assert_eq!(only.token_str, "\"Hello World\"");
     }
 }
