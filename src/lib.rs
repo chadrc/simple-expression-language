@@ -3,6 +3,7 @@ pub enum TokenType {
     Integer,
     SingleQuotedString,
     DoubleQuotedString,
+    FormattedString,
     PlusSign,
     Unknown,
 }
@@ -19,6 +20,7 @@ enum ParseState {
     ParsingInteger,
     ParsingSingleQuotedString,
     ParsingDoubleQuotedString,
+    FormattedString,
 }
 
 struct Tokenizer<'a> {
@@ -59,6 +61,9 @@ impl<'a> Tokenizer<'a> {
         } else if c == '"' {
             self.current_token_type = TokenType::DoubleQuotedString;
             self.parse_state = ParseState::ParsingDoubleQuotedString;
+        } else if c == '`' {
+            self.current_token_type = TokenType::FormattedString;
+            self.parse_state = ParseState::FormattedString;
         }
     }
 
@@ -114,6 +119,12 @@ impl<'a> Iterator for Tokenizer<'a> {
                         ParseState::ParsingDoubleQuotedString => {
                             self.current_token.push(c);
                             if c == '"' {
+                                return self.make_current_token();
+                            }
+                        }
+                        ParseState::FormattedString => {
+                            self.current_token.push(c);
+                            if c == '`' {
                                 return self.make_current_token();
                             }
                         }
@@ -229,5 +240,19 @@ mod tests {
 
         assert_eq!(only.token_type, TokenType::DoubleQuotedString);
         assert_eq!(only.token_str, "\"Hello World\"");
+    }
+
+    #[test]
+    fn tokenize_string_formatted() {
+        let input = String::from("`Hello World`");
+        let tokenizer = Tokenizer::new(&input);
+        let tokens: Vec<Token> = tokenizer.collect();
+
+        assert_eq!(tokens.len(), 1);
+
+        let only = tokens.get(0).unwrap();
+
+        assert_eq!(only.token_type, TokenType::FormattedString);
+        assert_eq!(only.token_str, "`Hello World`");
     }
 }
