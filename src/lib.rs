@@ -1,6 +1,7 @@
 #[derive(PartialEq, Debug, Copy, Clone)]
 pub enum TokenType {
     Integer,
+    SingleQuotedString,
     PlusSign,
     Unknown,
 }
@@ -15,6 +16,7 @@ pub struct Token {
 enum ParseState {
     NoToken,
     ParsingInteger,
+    ParsingSingleQuotedString,
 }
 
 struct Tokenizer<'a> {
@@ -49,6 +51,9 @@ impl<'a> Tokenizer<'a> {
         } else if self.current_token == "+" {
             self.current_token_type = TokenType::PlusSign;
             self.end_of_token = true;
+        } else if c == '\'' {
+            self.current_token_type = TokenType::SingleQuotedString;
+            self.parse_state = ParseState::ParsingSingleQuotedString;
         }
     }
 
@@ -92,6 +97,13 @@ impl<'a> Iterator for Tokenizer<'a> {
                             } else {
                                 let token = self.make_current_token();
                                 self.start_new_token(c);
+                                return token;
+                            }
+                        }
+                        ParseState::ParsingSingleQuotedString => {
+                            self.current_token.push(c);
+                            if c == '\'' {
+                                let token = self.make_current_token();
                                 return token;
                             }
                         }
@@ -179,5 +191,19 @@ mod tests {
                 token_str: String::from("5")
             }
         );
+    }
+
+    #[test]
+    fn tokenize_string_single_quote() {
+        let input = String::from("'Hello World'");
+        let tokenizer = Tokenizer::new(&input);
+        let tokens: Vec<Token> = tokenizer.collect();
+
+        assert_eq!(tokens.len(), 1);
+
+        let only = tokens.get(0).unwrap();
+
+        assert_eq!(only.token_type, TokenType::SingleQuotedString);
+        assert_eq!(only.token_str, "'Hello World'");
     }
 }
