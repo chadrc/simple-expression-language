@@ -1,6 +1,7 @@
 # Simple Expression Language
 
 ## Literals
+
 ```
 // Comments start with double slash an continue to end of line
 
@@ -37,9 +38,11 @@ false
 ```
 
 ### Non-existence
+
 There is no null value but the unit value `()` is provided to represent something that is uninitialized or empty.
 
 ## Math operations
+
 ```
 // Addition
 10 + 5
@@ -64,6 +67,7 @@ There is no null value but the unit value `()` is provided to represent somethin
 ```
 
 ## String operations
+
 ```
 // Concatenation
 "Hello, " + "World"
@@ -82,6 +86,7 @@ There is no null value but the unit value `()` is provided to represent somethin
 ```
 
 ## Range operations
+
 ```
 // Length
 |5..10|
@@ -92,6 +97,7 @@ There is no null value but the unit value `()` is provided to represent somethin
 ```
 
 ## Logical operations
+
 ```
 // Equality
 5 == 4
@@ -130,21 +136,25 @@ There is no null value but the unit value `()` is provided to represent somethin
 ```
 
 ## Exposed References
+
 If runtime exposes a variable or function it can be referenced just by its name.
 
 Ex. exposed variable `name` = "SEL"
+
 ```
 "Hello, " + name
 // result "Hello, SEL"
 ```
 
 Ex. exposed function `rand` that takes no parameters
+
 ```
 rand()
 // result is a randomly generated number
 ```
 
 ### Associative Array
+
 A single collection type is provided being a combination of associative array and a regular array.
 
 The types of the values do not have to be the same.
@@ -160,6 +170,7 @@ To use like a map. Provide a list of key-value pairs where key is specified firs
 ```
 
 If you want to include an exposed variable inside a map using the variable identifier as the key and variable value as the value. You may omit the value, keeping the tailing semi-colon.
+
 ```
 [
     first_name:,
@@ -169,6 +180,7 @@ If you want to include an exposed variable inside a map using the variable ident
 ```
 
 To use like an array. Provide only the values, no semi-colon.
+
 ```
 [10, 20, 30, 40, 50]
 
@@ -177,6 +189,7 @@ To use like an array. Provide only the values, no semi-colon.
 ```
 
 To use as both. Provide a combination of above items.
+
 ```
 [
     10, // index 0
@@ -189,9 +202,11 @@ To use as both. Provide a combination of above items.
 ```
 
 #### Concatenation
+
 Can use piping operators on associative arrays to concat them together or with other primitives
 
 Prepend
+
 ```
 0 -> [1, 2, 3, 4, 5]
 // [0, 1, 2, 3, 4, 5]
@@ -207,6 +222,7 @@ Prepend
 ```
 
 Append
+
 ```
 6 |> [1, 2, 3, 4, 5]
 // [1, 2, 3, 4, 5, 6]
@@ -220,12 +236,29 @@ Append
 [1, 2, 3, 4, 5] <| [6, 7]
 // [1, 2, 3, 4, 5, 6, 7]
 ```
+
 _Note: that these operators produce a new associative array. The original arrays are unmodified._
 
+##### With key-values
+
+When using concatenation operations with key-value pairs, 'prepend' and 'append' are equivalent since key-value pairs are unordered. Same is true for the direction of the operator.
+
+```
+[email: "john@example.com"] -> [first_name: "John", last_name: "Smith"]
+[email: "john@example.com"] <- [first_name: "John", last_name: "Smith"]
+[email: "john@example.com"] |> [first_name: "John", last_name: "Smith"]
+[email: "john@example.com"] <| [first_name: "John", last_name: "Smith"]
+
+// All above have same result
+// [first_name: "John", last_name: "Smith", email: "john@example.com"]
+```
+
 #### Comparison
+
 Associative arrays can be compared by values, key-value pairs, and keys.
 
 Values - Checks to see if the two arrays contain the same values
+
 ```
 [1, 2, 3, 4, 5] $= [1, 2, 3, 4, 5]
 // true
@@ -253,6 +286,7 @@ Values - Checks to see if the two arrays contain the same values
 ```
 
 Key-value Pairs - Check to see if the two arrays contain all the same keys with their matching values.
+
 ```
 [1, 2, 3, 4, 5] == [1, 2, 3, 4, 5]
 // true
@@ -274,6 +308,7 @@ Key-value Pairs - Check to see if the two arrays contain all the same keys with 
 ```
 
 Keys - Checks to see if the two arrays contain all the same keys.
+
 ```
 [1, 2, 3, 4, 5] := [1, 2, 3, 4, 5]
 // true
@@ -301,9 +336,11 @@ Keys - Checks to see if the two arrays contain all the same keys.
 ```
 
 #### Contains
+
 Can check if an associative array contains a specific value, key-value, or key with the `~` operator.
 
 Contains Value
+
 ```
 [1, 2, 3, 4, 5] ~ [1]
 // true
@@ -319,6 +356,7 @@ Contains Value
 ```
 
 Contains Key-Value pair
+
 ```
 [1, 2, 3, 4, 5] ~ [0: 1]
 // true
@@ -334,6 +372,7 @@ Contains Key-Value pair
 ```
 
 Contains Key
+
 ```
 [1, 2, 3, 4, 5] ~ [1:]
 // true
@@ -349,6 +388,7 @@ Contains Key
 ```
 
 Can also specify multiple and a mix of the checks
+
 ```
 // Contains the value 2, the pair [2: 3], and the key 4
 [1, 2, 3, 4, 5] ~ [2, 2: 3, 4:]
@@ -356,6 +396,7 @@ Can also specify multiple and a mix of the checks
 ```
 
 #### Accessing
+
 Collections may be index with either an number (index to an array) or a string (key to a map).
 
 Map values may also be accessed with the dot operator.
@@ -363,8 +404,9 @@ Map values may also be accessed with the dot operator.
 Arrays are 0 indexed.
 
 Exposed variables:
-* `numbers` = [1, 2, 3, 4, 5]
-* `user` = [first_name: "James", last_name: "Smith", age: 36]
+
+- `numbers` = [1, 2, 3, 4, 5]
+- `user` = [first_name: "James", last_name: "Smith", age: 36]
 
 ```
 numbers[3]
@@ -382,6 +424,7 @@ numbers["1"] // doesn't exist
 ```
 
 #### Length
+
 Can use the length operator on associative arrays but note that it will return total number of values even if there is a mix of index keys and string keys.
 
 ```
@@ -396,38 +439,45 @@ Can use the length operator on associative arrays but note that it will return t
 ```
 
 ## Input
+
 Input to an expression is referenced by the `$` character.
 
 Input may also be an associative array, in which it can be index to obtain other values.
 
 Input = "Hello"
+
 ```
 $ + ", SEL!"
 // "Hello, SEL!"
 ```
 
 Input = [1, 2, 3, 4, 5]
+
 ```
 $[3]
 // 4
 ```
 
 Input = [first_name: "James", last_name: "Smith", age: 36]
+
 ```
 $["last_name"]
 // "Smith"
 ```
 
 ## Results
+
 Each expression outputs a result.
 
 The runtime will have access to each result after execution
+
 ```
 4 + 5
 // 9
 ```
 
 The last result may be referenced with the `?` symbol
+
 ```
 4 + 5
 // 9
@@ -447,12 +497,14 @@ rand_range(0, ?)
 
 The input is set as the first result of an expression
 Input = 10
+
 ```
 ? + $ // 10 / 10
 // 1
 ```
 
 ## Expression Blocks
+
 Group a set of expressions together to output a single value
 
 ```
@@ -468,6 +520,7 @@ $ -> {
 ```
 
 If you don't pass in any value to the block, it does nothing. These blocks are used to pass as parameters to other expressions and functions.
+
 ```
 {
     $ * 3
@@ -480,14 +533,18 @@ If you don't pass in any value to the block, it does nothing. These blocks are u
 ```
 
 ## Functions
+
 Exposed functions can be invoke in two ways:
+
 1. Specify function name followed by arguments in a space separated list
 2. Specify function name followed by arguments in a comma separated list surrounded by parenthesis
 
 Ex. exposed functions
-* `rand()`
-* `rand_range(min: int, max: int)`
-* `clamp(num: int, min: int, max: int)`
+
+- `rand()`
+- `rand_range(min: int, max: int)`
+- `clamp(num: int, min: int, max: int)`
+
 ```
 // 1
 rand // no arguments, so no argument list necessary
@@ -500,6 +557,7 @@ rand_range(10, 20)
 ```
 
 ### Pass by parameter name
+
 Can also pass arguments by parameter name for clarity.
 
 ```
@@ -511,23 +569,28 @@ clamp(num=3, min=10, max=20)
 ```
 
 ### Functional operations
+
 Operators for piping arguments into functions/named expressions.
 
 Exposed for all examples
 
 Variables:
-* `min` = 10
-* `max` = 20
-* `numbers` = [1, 2, 3, 4, 5]
+
+- `min` = 10
+- `max` = 20
+- `numbers` = [1, 2, 3, 4, 5]
 
 Functions:
-* `rand_range(min: int, max: int)`
-* `map(ary: array, mapExpr: expression)`
-* `is_even(num: int)`
-* `clamp(num: int, min: int, max: int)`
+
+- `rand_range(min: int, max: int)`
+- `map(ary: array, mapExpr: expression)`
+- `is_even(num: int)`
+- `clamp(num: int, min: int, max: int)`
 
 #### Right Piping
+
 Pass result of a expression (on left) into the first variable position of the another expression (on right).
+
 ```
 rand_range(min, max) -> is_even
 
@@ -537,10 +600,13 @@ is_even(rand_range(min, max))
 // may also split out the arguments to rand_range
 min, max -> rand_range -> is_even
 ```
+
 `min` and `max` are evaluated and piped into `rand_range` and then the result of `rand_range` is piped into `init_array`.
 
 #### Left Piping
+
 Pass result of a expression (on right) into the first variable position of the another expression (on left).
+
 ```
 clamp(11, 15) <- rand_range(min, max)
 
@@ -554,10 +620,12 @@ clamp(rand_range(min, max), 11, 15)
 rand_range(min, max) -> clamp(11, 15)
 ```
 
-*Since equivalent expressions can be made with both left and right piping, when to use either will be more of a stylistic and readability choice*
+_Since equivalent expressions can be made with both left and right piping, when to use either will be more of a stylistic and readability choice_
 
 #### Pipe Last
+
 Also provided is the ability to pipe into a function starting from the end of the argument list.
+
 ```
 max |> rand_range(min)
 
@@ -581,11 +649,13 @@ clamp(34, min, max)
 ```
 
 ## Named Expressions
+
 Named expressions are denoted by a `#` followed by an identifier and then curly braces `{}`.
 
 These expressions are not evaluated right away, but instead must be called like a function.
 
 To reference a named expression later, use the `#` followed by the identifier.
+
 ```
 // Single line
 #plus_rand $ + rand()
@@ -611,6 +681,7 @@ init_array(5) -> map(#plus_rand) -> filter({ $ % 2 == 1 }) // is odd for filter
 ```
 
 ### Multiple inputs
+
 An expression technically will always only have one input represented by the `$` symbol.
 
 But you may pass multiple values and the `$` will be converted to an array with those values in the same order.
@@ -625,6 +696,7 @@ But you may pass multiple values and the `$` will be converted to an array with 
 ```
 
 #### Passing by parameter name
+
 Just like functions, you can pass parameters by name to a named expression. However this changes how they can be accessed in the named expression.
 
 ```
@@ -635,9 +707,11 @@ Just like functions, you can pass parameters by name to a named expression. Howe
 #sum_divisible_by_3(num1=7, num2=3)
 // false
 ```
+
 The parameters may no longer be accessed from the input with their index position and must you must always pass parameters by name for this named expression.
 
 ### External Expressions
+
 Named expressions may also be referenced from other sources.
 
 Can reference files directly if entire file as a single expression.
@@ -645,6 +719,7 @@ Can reference files directly if entire file as a single expression.
 Following example uses external expressions in separate files, but external expressions may be resolved other ways depending on the runtime.
 
 filter.sel
+
 ```
 $ % 2 == 0
 ```
@@ -652,6 +727,7 @@ $ % 2 == 0
 Or reference named expressions within a file.
 
 map.sel
+
 ```
 #plus_random {
     $ + rand()
@@ -663,16 +739,20 @@ map.sel
 ```
 
 main.sel
+
 ```
 init_array(10) -> map(#squared)
 init_array(5) -> map(#plus_random) -> filter(#filter)
 ```
 
 ## Currying
+
 Both functions and named expressions can be curried.
 
 Functions:
-* `clamp(num: int, min: int, max: int)`
+
+- `clamp(num: int, min: int, max: int)`
+
 ```
 #clamp_10 ~ clamp(10)
 // this new expresson now has takes 2 arguments, min and max
@@ -691,9 +771,11 @@ Functions:
 ```
 
 ### Currying by name
+
 You may also provide a parameter by its name. This lets you avoid the need to ignore parameters.
 
 Assuming clamp accesses its inputs by name (see Functions _TODO: add link_ section).
+
 ```
 #clamp_min_5 ~ clamp(min=5)
 
@@ -703,6 +785,7 @@ Assuming clamp accesses its inputs by name (see Functions _TODO: add link_ secti
 ```
 
 ## Matching
+
 Can perform pattern matching on a value.
 
 On input or last result
@@ -750,16 +833,20 @@ _ => "Several"
 ```
 
 ### Something or Nothing
+
 To check if a value has not been initialized the unit `()` as the match condition.
+
 ```
 () => "Value is uninitialized",
 _ => "Since value is not uninitialized, it has some type of value"
 ```
 
 ### Matching with Associative Arrays
+
 Matching on associative arrays allows matching on multiple values and wildcard matching.
 
 Match positionally
+
 ```
 // Input: [10, "foo"]
 
@@ -772,6 +859,7 @@ _ => "baz"
 ```
 
 Ignoring positions
+
 ```
 // Input: [10, "foo", true]
 
@@ -784,6 +872,7 @@ _ => "baz"
 ```
 
 Each arm expression receives the value being match as the input.
+
 ```
 // Input: [10, "foo"]
 
@@ -794,6 +883,7 @@ _ => "baz"
 ```
 
 Match on keys of an associative array
+
 ```
 // Input: [first_name: "John", last_name: "Smith", email: "johnsmith@example.com"]
 
@@ -807,6 +897,7 @@ _ => ...
 ```
 
 ### Matching with Functions and Named Expressions
+
 Functions and named expressions may be used in the conditional part of a match expression.
 
 ```
@@ -829,32 +920,39 @@ _ => ()
 ```
 
 ### Exhaustiveness
-Since there are no variants, enums or types, in order to be an exhaustive match the '_' catch all pattern must be specified, expect for the following cases.
 
-The following exceptions are exhaustive by definition and do not require the '_' catch all. However, the '\_' could be used in place of any 1 of the patterns and still be considered exhaustive.
+Since there are no variants, enums or types, in order to be an exhaustive match the '\_' catch all pattern must be specified, expect for the following cases.
+
+The following exceptions are exhaustive by definition and do not require the '\_' catch all. However, the '\_' could be used in place of any 1 of the patterns and still be considered exhaustive.
 
 True or False
+
 ```
 true => ...,
 false => ...
 ```
 
 Exists or Not
+
 ```
 [some_key: _] => "some_key exists",
 [some_key: ()] => "some_key does not exist"
 ```
+
 This type of exhaustiveness only works with a single key in the left side.
 
 ## Iteration
+
 There are two operations for iteration of associative arrays.
 
 ### Streaming
+
 Streaming takes in an associative array and outputs each value one at a time.
 
 It is performed with the following operators.
-* `<->` - Iterate over index-value pairs
-* `<=>` - Iterate over key-value pairs
+
+- `<->` - Iterate over index-value pairs
+- `<=>` - Iterate over key-value pairs
 
 Left side is the collection to map. Right side is an expression that receives input with shape.
 
@@ -863,6 +961,7 @@ Left side is the collection to map. Right side is an expression that receives in
 #### Value stream
 
 Output is the value returned from right side expression
+
 ```
 // Input: [1, 2, 3, 4, 5]
 
@@ -876,6 +975,7 @@ $ <-> $.value * $.key
 ```
 
 With keys
+
 ```
 // Input: [first_name: "John", last_name: "Smith", email: "johnsmith@example.com"]
 
@@ -893,6 +993,7 @@ Output is an associative array with shape:
 [key: number | string, value: any]
 
 Where key is which ever keys was just processed and value is the value returned from right side expression
+
 ```
 // Input: [1, 2, 3, 4, 5]
 
@@ -906,6 +1007,7 @@ $ <-> $.value * $.key
 ```
 
 With keys
+
 ```
 // Input: [first_name: "John", last_name: "Smith", email: "johnsmith@example.com"]
 
@@ -918,6 +1020,7 @@ $ <=> $.key + ": " + $.value
 ```
 
 ### Collecting
+
 Collecting is initialized with a seed value, takes in a associative array, range or stream and passes each value into a given expression.
 
 Operator in form `<any>` where 'any' is the seed value. Must be a value literal value.
@@ -931,6 +1034,7 @@ Where result is the type of the seed value and value is the current value being 
 Result becomes the value returned from the expression
 
 Sum numbers in an array
+
 ```
 // Input: [1, 2, 3, 4, 5]
 
@@ -939,6 +1043,7 @@ $ <-> $ * 2 <0> $.value + $.result
 ```
 
 Map an array
+
 ```
 // Input: [1, 2, 3, 4, 5]
 
@@ -947,15 +1052,18 @@ $ <-> $ * 2 <[]> $.value -> $.result
 ```
 
 For convenience, if doing a simple assignment to a new associative array like the above, the right side expression may be omitted
+
 ```
 // Input: [1, 2, 3, 4, 5]
 
 $ <-> $ * 2 <[]>
 // [2, 4, 6, 8, 10]
 ```
+
 This will take the input stream and insert them into the new array in order received, for value-stream, or into the received key for key-pair stream.
 
 May also opt out of collecting by not specifying a seed value. This will output the input to the stream.
+
 ```
 // Input: [1, 2, 3, 4, 5]
 
@@ -964,6 +1072,7 @@ $ <-> log($) <>
 ```
 
 Can use the first value in the stream as the input with the `?` symbol as the seed.
+
 ```
 // Input: [1, 2, 3, 4, 5]
 
@@ -971,9 +1080,11 @@ Can use the first value in the stream as the input with the `?` symbol as the se
 $ <-> $ * 2 <?> ($.result + $.value) / 2
 // 6
 ```
+
 The first execution of the collection expression is performed with [result: 1, value: 2] since it was seeded with the first value of the array.
 
 Use collection directly on an associative array, by omitting the stream all together.
+
 ```
 // Input: [1, 2, 3, 4, 5]
 
@@ -987,9 +1098,11 @@ $ <[]>
 ```
 
 ## Annotations
+
 Annotations are used to provide a runtime with metadata about expressions.
 
 Annotations are defined starting with `@` symbol followed by an identifier. Then an optional set of parenthesis that may contain any number of values separated by commas. This value is not parse as SEL, instead being passed to the run-context for handling.
+
 ```
 @NoValue
 
@@ -999,21 +1112,26 @@ Annotations are defined starting with `@` symbol followed by an identifier. Then
 ```
 
 ### Standard Annotations
+
 Although, mostly reserved for a runtime to add customization, there are some standard annotations.
 
 #### @Context
+
 Used to specify which run-contexts an expression is expecting.
 
 One per expression.
+
 ```
 @Context(MyContext)
 @Context(FirstContext, SecondContext)
 ```
 
 #### @Shape
+
 Used to describe which values and their types that my appear in an associative array.
 
 Any number may be defined
+
 ```
 // Object shape
 @Shape(MyShape, [value1: int, value2: string])
@@ -1026,9 +1144,11 @@ Any number may be defined
 ```
 
 #### @Input
+
 Describes the shape of the input to an expression.
 
 One per expression
+
 ```
 // Single input, my omit brackets
 @Input(int)
@@ -1042,9 +1162,11 @@ One per expression
 ```
 
 #### @Result
+
 Describes the shape of the output of an expression.
 
 One per expression
+
 ```
 // Single ouput, my omit brackets
 @Result(int)
@@ -1058,9 +1180,11 @@ One per expression
 ```
 
 #### @Test
+
 Flags a test expression. Test expressions may be used in two ways.
 
 1 - Test the expression file.
+
 ```
 @Input([int...])
 
@@ -1070,9 +1194,11 @@ $ <?> ($.value + $.result) / 2
 @Test([1, 2, 3, 4, 5)
 $ == 3
 ```
+
 Here, the [1, 2, 3, 4, 5] inside of the @Test annotation will be passed into the expression generated from the file and its output will be passed to the expression below the @Test annotation.
 
 2 - Test a named expression within a file.
+
 ```
 @Input([int...])
 #sum $ <0> $.result + $.value
@@ -1086,6 +1212,7 @@ Here, the [1, 2, 3, 4, 5] inside of the @Test annotation will be passed into the
 @Test
 #sum([1, 2, 3, 4, 5]) == 15
 ```
+
 Here, we call the named expressions directly inside the test expression.
 
 Test expressions must return a boolean, either `true` or `false`.
@@ -1093,13 +1220,15 @@ Test expressions must return a boolean, either `true` or `false`.
 They are also omitted from final compiled output.
 
 #### @Mock
+
 Input to functions and named expressions may be mocked for testing in isolation. These mocks apply to all tests that come after their declaration.
 
 @Mock(expression_name, result, input)
 
-* expression_name - name of the function or named expression to mock
-* result - result that will be used when invoking the expression
-* input - _optional_ result will only be output if input during test matches input specified here
+- expression_name - name of the function or named expression to mock
+- result - result that will be used when invoking the expression
+- input - _optional_ result will only be output if input during test matches input specified here
+
 ```
 @Input(string)
 
@@ -1116,7 +1245,9 @@ $ == ()
 ```
 
 ##### MockOnce
+
 To apply a mock to only the next test in the file use @MockOnce. Takes same parameters as @Mock.
+
 ```
 @Input(string)
 
@@ -1133,6 +1264,7 @@ $ == "John"
 ```
 
 #### @Exhaustive
+
 For cases where a match expression is exhaustive due to how the run context defines the input and the compiler can't figure that out we can flag it as such.
 
 ```
