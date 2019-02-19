@@ -1,6 +1,7 @@
 #[derive(PartialEq, Debug, Copy, Clone)]
 pub enum TokenType {
     Integer,
+    Decimal,
     SingleQuotedString,
     DoubleQuotedString,
     FormattedString,
@@ -104,6 +105,11 @@ impl<'a> Iterator for Tokenizer<'a> {
                         ParseState::ParsingInteger => {
                             if c.is_numeric() {
                                 self.current_token.push(c);
+                            } else if c == '.' {
+                                // consume and
+                                // convert to decimal token
+                                self.current_token.push(c);
+                                self.current_token_type = TokenType::Decimal;
                             } else {
                                 let token = self.make_current_token();
                                 self.start_new_token(c);
@@ -169,6 +175,20 @@ mod tests {
 
         assert_eq!(only.token_type, TokenType::Integer);
         assert_eq!(only.token_str, "43");
+    }
+
+    #[test]
+    fn tokenize_decimal_number() {
+        let input = String::from("3.14");
+        let tokenizer = Tokenizer::new(&input);
+        let tokens: Vec<Token> = tokenizer.collect();
+
+        assert_eq!(tokens.len(), 1);
+
+        let only = tokens.get(0).unwrap();
+
+        assert_eq!(only.token_type, TokenType::Decimal);
+        assert_eq!(only.token_str, "3.14");
     }
 
     #[test]
