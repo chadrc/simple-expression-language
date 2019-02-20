@@ -96,12 +96,6 @@ impl<'a> Iterator for Tokenizer<'a> {
 
     fn next(&mut self) -> Option<Token> {
         loop {
-            // if self.end_of_token {
-            //     self.end_of_token = false;
-            //     return self.make_current_token();
-            // }
-
-            println!("{:?}", self.parse_state);
             match self.chars.next() {
                 Some(c) => {
                     match self.parse_state {
