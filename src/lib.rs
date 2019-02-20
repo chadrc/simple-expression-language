@@ -24,7 +24,7 @@ enum ParseState {
     ParsingDecimal,
     ParsingSingleQuotedString,
     ParsingDoubleQuotedString,
-    FormattedString,
+    ParsingFormattedString,
     ParsingExclusiveRange,
 }
 
@@ -68,7 +68,7 @@ impl<'a> Tokenizer<'a> {
             self.parse_state = ParseState::ParsingDoubleQuotedString;
         } else if c == '`' {
             self.current_token_type = TokenType::FormattedString;
-            self.parse_state = ParseState::FormattedString;
+            self.parse_state = ParseState::ParsingFormattedString;
         } else if c == '.' {
             self.current_token_type = TokenType::ExclusiveRange;
             self.parse_state = ParseState::ParsingExclusiveRange;
@@ -190,7 +190,7 @@ impl<'a> Iterator for Tokenizer<'a> {
                                 return self.make_current_token();
                             }
                         }
-                        ParseState::FormattedString => {
+                        ParseState::ParsingFormattedString => {
                             self.current_token.push(c);
                             if c == '`' {
                                 return self.make_current_token();
