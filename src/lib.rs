@@ -6,6 +6,7 @@ pub enum TokenType {
     DoubleQuotedString,
     FormattedString,
     ExclusiveRange,
+    InclusiveRange,
     PlusSign,
     Unknown,
 }
@@ -158,12 +159,23 @@ impl<'a> Iterator for Tokenizer<'a> {
                             // expecting another integer
                             // if that is so
                             // end this token and start new integer token
-                            if c.is_numeric() {
-                                let range_token = self.make_current_token();
+                            if c == '.' {
+                                // already have 2 dots to be here
+                                // if next is a third convert to inclusive range
+                                self.current_token.push(c);
+                                self.current_token_type = TokenType::InclusiveRange;
+
+                                // this is furthest this token can go
+                                // end token
+                                return self.make_current_token();
+                            } else {
+                                // not an inclusive range
+                                // end with exclusive range token
+                                let token = self.make_current_token();
 
                                 self.start_new_token(c);
 
-                                return range_token;
+                                return token;
                             }
                         }
                         ParseState::ParsingSingleQuotedString => {
@@ -343,6 +355,28 @@ mod tests {
 
         assert_eq!(second.token_type, TokenType::ExclusiveRange);
         assert_eq!(second.token_str, "..");
+
+        assert_eq!(third.token_type, TokenType::Integer);
+        assert_eq!(third.token_str, "10");
+    }
+
+    #[test]
+    fn tokenize_inxclusive_range() {
+        let input = String::from("1...10");
+        let tokenizer = Tokenizer::new(&input);
+        let tokens: Vec<Token> = tokenizer.collect();
+
+        assert_eq!(tokens.len(), 3);
+
+        let first = tokens.get(0).unwrap();
+        let second = tokens.get(1).unwrap();
+        let third = tokens.get(2).unwrap();
+
+        assert_eq!(first.token_type, TokenType::Integer);
+        assert_eq!(first.token_str, "1");
+
+        assert_eq!(second.token_type, TokenType::InclusiveRange);
+        assert_eq!(second.token_str, "...");
 
         assert_eq!(third.token_type, TokenType::Integer);
         assert_eq!(third.token_str, "10");
