@@ -7,7 +7,6 @@ struct Tokenizer<'a> {
     current_token_type: TokenType,
     parse_state: ParseState,
     chars: std::str::Chars<'a>,
-    // end_of_token: bool,
     escaped_character: bool,
 }
 
@@ -18,7 +17,6 @@ impl<'a> Tokenizer<'a> {
             current_token_type: TokenType::Unknown,
             parse_state: ParseState::NoToken,
             chars: input.chars(),
-            // end_of_token: false,
             escaped_character: false,
         };
     }
