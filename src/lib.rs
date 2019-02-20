@@ -218,11 +218,7 @@ mod tests {
         let tokens: Vec<Token> = tokenizer.collect();
 
         assert_eq!(tokens.len(), 1);
-
-        let only = tokens.get(0).unwrap();
-
-        assert_eq!(only.token_type, TokenType::Integer);
-        assert_eq!(only.token_str, "4");
+        assert_token(tokens.get(0).unwrap(), TokenType::Integer, "4");
     }
 
     #[test]
@@ -232,11 +228,7 @@ mod tests {
         let tokens: Vec<Token> = tokenizer.collect();
 
         assert_eq!(tokens.len(), 1);
-
-        let only = tokens.get(0).unwrap();
-
-        assert_eq!(only.token_type, TokenType::Integer);
-        assert_eq!(only.token_str, "43");
+        assert_token(tokens.get(0).unwrap(), TokenType::Integer, "43");
     }
 
     #[test]
@@ -246,11 +238,7 @@ mod tests {
         let tokens: Vec<Token> = tokenizer.collect();
 
         assert_eq!(tokens.len(), 1);
-
-        let only = tokens.get(0).unwrap();
-
-        assert_eq!(only.token_type, TokenType::Decimal);
-        assert_eq!(only.token_str, "3.14");
+        assert_token(tokens.get(0).unwrap(), TokenType::Decimal, "3.14");
     }
 
     #[test]
@@ -269,31 +257,10 @@ mod tests {
         let tokenizer = Tokenizer::new(&input);
         let tokens: Vec<Token> = tokenizer.collect();
 
-        // assert_eq!(tokens.len(), 3);
-
-        assert_eq!(
-            *tokens.get(0).unwrap(),
-            Token {
-                token_type: TokenType::Integer,
-                token_str: String::from("4")
-            }
-        );
-
-        assert_eq!(
-            *tokens.get(1).unwrap(),
-            Token {
-                token_type: TokenType::PlusSign,
-                token_str: String::from("+")
-            }
-        );
-
-        assert_eq!(
-            *tokens.get(2).unwrap(),
-            Token {
-                token_type: TokenType::Integer,
-                token_str: String::from("5")
-            }
-        );
+        assert_eq!(tokens.len(), 3);
+        assert_token(tokens.get(0).unwrap(), TokenType::Integer, "4");
+        assert_token(tokens.get(1).unwrap(), TokenType::PlusSign, "+");
+        assert_token(tokens.get(2).unwrap(), TokenType::Integer, "5");
     }
 
     #[test]
@@ -303,11 +270,11 @@ mod tests {
         let tokens: Vec<Token> = tokenizer.collect();
 
         assert_eq!(tokens.len(), 1);
-
-        let only = tokens.get(0).unwrap();
-
-        assert_eq!(only.token_type, TokenType::SingleQuotedString);
-        assert_eq!(only.token_str, "'Hello World'");
+        assert_token(
+            tokens.get(0).unwrap(),
+            TokenType::SingleQuotedString,
+            "'Hello World'",
+        );
     }
 
     #[test]
@@ -317,11 +284,11 @@ mod tests {
         let tokens: Vec<Token> = tokenizer.collect();
 
         assert_eq!(tokens.len(), 1);
-
-        let only = tokens.get(0).unwrap();
-
-        assert_eq!(only.token_type, TokenType::DoubleQuotedString);
-        assert_eq!(only.token_str, "\"Hello World\"");
+        assert_token(
+            tokens.get(0).unwrap(),
+            TokenType::DoubleQuotedString,
+            "\"Hello World\"",
+        );
     }
 
     #[test]
@@ -331,11 +298,11 @@ mod tests {
         let tokens: Vec<Token> = tokenizer.collect();
 
         assert_eq!(tokens.len(), 1);
-
-        let only = tokens.get(0).unwrap();
-
-        assert_eq!(only.token_type, TokenType::FormattedString);
-        assert_eq!(only.token_str, "`Hello World`");
+        assert_token(
+            tokens.get(0).unwrap(),
+            TokenType::FormattedString,
+            "`Hello World`",
+        );
     }
 
     #[test]
@@ -345,19 +312,9 @@ mod tests {
         let tokens: Vec<Token> = tokenizer.collect();
 
         assert_eq!(tokens.len(), 3);
-
-        let first = tokens.get(0).unwrap();
-        let second = tokens.get(1).unwrap();
-        let third = tokens.get(2).unwrap();
-
-        assert_eq!(first.token_type, TokenType::Integer);
-        assert_eq!(first.token_str, "1");
-
-        assert_eq!(second.token_type, TokenType::ExclusiveRange);
-        assert_eq!(second.token_str, "..");
-
-        assert_eq!(third.token_type, TokenType::Integer);
-        assert_eq!(third.token_str, "10");
+        assert_token(tokens.get(0).unwrap(), TokenType::Integer, "1");
+        assert_token(tokens.get(1).unwrap(), TokenType::ExclusiveRange, "..");
+        assert_token(tokens.get(2).unwrap(), TokenType::Integer, "10");
     }
 
     #[test]
@@ -367,18 +324,13 @@ mod tests {
         let tokens: Vec<Token> = tokenizer.collect();
 
         assert_eq!(tokens.len(), 3);
+        assert_token(tokens.get(0).unwrap(), TokenType::Integer, "1");
+        assert_token(tokens.get(1).unwrap(), TokenType::InclusiveRange, "...");
+        assert_token(tokens.get(2).unwrap(), TokenType::Integer, "10");
+    }
 
-        let first = tokens.get(0).unwrap();
-        let second = tokens.get(1).unwrap();
-        let third = tokens.get(2).unwrap();
-
-        assert_eq!(first.token_type, TokenType::Integer);
-        assert_eq!(first.token_str, "1");
-
-        assert_eq!(second.token_type, TokenType::InclusiveRange);
-        assert_eq!(second.token_str, "...");
-
-        assert_eq!(third.token_type, TokenType::Integer);
-        assert_eq!(third.token_str, "10");
+    fn assert_token(token: &Token, token_type: TokenType, token_str: &str) {
+        assert_eq!(token.token_type, token_type);
+        assert_eq!(token.token_str, token_str);
     }
 }
