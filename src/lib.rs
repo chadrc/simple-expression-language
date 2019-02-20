@@ -54,24 +54,34 @@ impl<'a> Tokenizer<'a> {
         }
 
         self.current_token.push(c);
-        if c.is_numeric() {
-            self.parse_state = ParseState::ParsingInteger;
-            self.current_token_type = TokenType::Integer;
-        } else if self.current_token == "+" {
-            self.current_token_type = TokenType::PlusSign;
-            self.end_of_token = true;
-        } else if c == '\'' {
-            self.current_token_type = TokenType::SingleQuotedString;
-            self.parse_state = ParseState::ParsingSingleQuotedString;
-        } else if c == '"' {
-            self.current_token_type = TokenType::DoubleQuotedString;
-            self.parse_state = ParseState::ParsingDoubleQuotedString;
-        } else if c == '`' {
-            self.current_token_type = TokenType::FormattedString;
-            self.parse_state = ParseState::ParsingFormattedString;
-        } else if c == '.' {
-            self.current_token_type = TokenType::ExclusiveRange;
-            self.parse_state = ParseState::ParsingExclusiveRange;
+
+        match c {
+            '+' => {
+                self.current_token_type = TokenType::PlusSign;
+                self.end_of_token = true;
+            }
+            '\'' => {
+                self.current_token_type = TokenType::SingleQuotedString;
+                self.parse_state = ParseState::ParsingSingleQuotedString;
+            }
+            '"' => {
+                self.current_token_type = TokenType::DoubleQuotedString;
+                self.parse_state = ParseState::ParsingDoubleQuotedString;
+            }
+            '`' => {
+                self.current_token_type = TokenType::FormattedString;
+                self.parse_state = ParseState::ParsingFormattedString;
+            }
+            '.' => {
+                self.current_token_type = TokenType::ExclusiveRange;
+                self.parse_state = ParseState::ParsingExclusiveRange;
+            }
+            _ => {
+                if c.is_numeric() {
+                    self.parse_state = ParseState::ParsingInteger;
+                    self.current_token_type = TokenType::Integer;
+                }
+            }
         }
     }
 
