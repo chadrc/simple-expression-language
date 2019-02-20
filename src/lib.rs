@@ -137,9 +137,6 @@ impl<'a> Iterator for Tokenizer<'a> {
                             }
                         }
                         ParseState::ParsingExclusiveRange => {
-                            // expecting another integer
-                            // if that is so
-                            // end this token and start new integer token
                             if c == '.' {
                                 // already have 2 dots to be here
                                 // if next is a third convert to inclusive range
