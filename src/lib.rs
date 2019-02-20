@@ -1,32 +1,6 @@
-#[derive(PartialEq, Debug, Copy, Clone)]
-pub enum TokenType {
-    Integer,
-    Decimal,
-    SingleQuotedString,
-    DoubleQuotedString,
-    FormattedString,
-    ExclusiveRange,
-    InclusiveRange,
-    PlusSign,
-    Unknown,
-}
+mod tokenizer;
 
-#[derive(PartialEq, Debug, Clone)]
-pub struct Token {
-    token_type: TokenType,
-    token_str: String,
-}
-
-#[derive(PartialEq, Debug, Copy, Clone)]
-enum ParseState {
-    NoToken,
-    ParsingInteger,
-    ParsingDecimal,
-    ParsingSingleQuotedString,
-    ParsingDoubleQuotedString,
-    ParsingFormattedString,
-    ParsingExclusiveRange,
-}
+use tokenizer::types::{ParseState, Token, TokenType};
 
 struct Tokenizer<'a> {
     current_token: String,
@@ -87,10 +61,7 @@ impl<'a> Tokenizer<'a> {
 
     fn make_current_token(&mut self) -> Option<Token> {
         return if self.current_token.len() > 0 {
-            let token = Token {
-                token_type: self.current_token_type,
-                token_str: self.current_token.clone(),
-            };
+            let token = Token::new(self.current_token_type, self.current_token.clone());
 
             self.current_token = String::new();
             self.current_token_type = TokenType::Unknown;
@@ -326,7 +297,7 @@ mod tests {
     }
 
     fn assert_token(token: &Token, token_type: TokenType, token_str: &str) {
-        assert_eq!(token.token_type, token_type);
-        assert_eq!(token.token_str, token_str);
+        assert_eq!(token.get_token_type(), token_type);
+        assert_eq!(token.get_token_str(), token_str);
     }
 }
