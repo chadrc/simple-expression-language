@@ -50,6 +50,10 @@ impl<'a> Tokenizer<'a> {
                 self.current_token_type = TokenType::ExclusiveRange;
                 self.parse_state = ParseState::ParsingExclusiveRange;
             }
+            '(' => {
+                self.current_token_type = TokenType::Unit;
+                self.parse_state = ParseState::ParsingUnit;
+            }
             _ => {
                 if c.is_numeric() {
                     self.parse_state = ParseState::ParsingInteger;
@@ -186,6 +190,12 @@ impl<'a> Iterator for Tokenizer<'a> {
                             self.current_token.push(c);
                             self.parse_state = self.deferred_parse_state;
                             self.deferred_parse_state = ParseState::NoToken;
+                        }
+                        ParseState::ParsingUnit => {
+                            if c == ')' {
+                                self.current_token.push(c);
+                                return self.make_current_token();
+                            }
                         }
                     };
                 }
@@ -324,6 +334,14 @@ mod tests {
         assert_token(tokens.get(0).unwrap(), TokenType::Integer, "1");
         assert_token(tokens.get(1).unwrap(), TokenType::ExclusiveRange, "..");
         assert_token(tokens.get(2).unwrap(), TokenType::Integer, "10");
+    }
+
+    #[test]
+    fn tokenize_unit() {
+        let tokens: Vec<Token> = tokens_from_str("()");
+
+        assert_eq!(tokens.len(), 1);
+        assert_token(tokens.get(0).unwrap(), TokenType::Unit, "()");
     }
 
     #[test]

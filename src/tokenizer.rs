@@ -9,6 +9,7 @@ pub mod types {
         ExclusiveRange,
         InclusiveRange,
         PlusSign,
+        Unit,
         Unknown,
     }
 
@@ -23,6 +24,7 @@ pub mod types {
         ParsingFormattedString,
         EscapeCharacter,
         ParsingExclusiveRange,
+        ParsingUnit,
     }
 
     #[derive(PartialEq, Debug, Clone)]
