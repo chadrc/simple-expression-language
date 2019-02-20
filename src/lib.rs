@@ -6,8 +6,8 @@ struct Tokenizer<'a> {
     current_token: String,
     current_token_type: TokenType,
     parse_state: ParseState,
+    deferred_parse_state: ParseState,
     chars: std::str::Chars<'a>,
-    escaped_character: bool,
 }
 
 impl<'a> Tokenizer<'a> {
@@ -16,8 +16,8 @@ impl<'a> Tokenizer<'a> {
             current_token: String::new(),
             current_token_type: TokenType::Unknown,
             parse_state: ParseState::NoToken,
+            deferred_parse_state: ParseState::NoToken,
             chars: input.chars(),
-            escaped_character: false,
         };
     }
 
@@ -60,13 +60,10 @@ impl<'a> Tokenizer<'a> {
     }
 
     fn check_escape_character(&mut self, current_character: char, end_character: char) {
-        if self.escaped_character {
-            self.current_token.push(current_character);
-            self.escaped_character = false;
-        } else if current_character == '\\' {
-            // escape character
-            // consume next character no matter what
-            self.escaped_character = true;
+        if current_character == '\\' {
+            // defer current state to escape next character
+            self.deferred_parse_state = self.parse_state;
+            self.parse_state = ParseState::EscapeCharacter;
         } else {
             self.current_token.push(current_character);
 
@@ -190,6 +187,11 @@ impl<'a> Iterator for Tokenizer<'a> {
                         }
                         ParseState::ParsingFormattedString => {
                             self.check_escape_character(c, '`');
+                        }
+                        ParseState::EscapeCharacter => {
+                            self.current_token.push(c);
+                            self.parse_state = self.deferred_parse_state;
+                            self.deferred_parse_state = ParseState::NoToken;
                         }
                     };
                 }

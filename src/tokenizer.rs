@@ -21,6 +21,7 @@ pub mod types {
         ParsingSingleQuotedString,
         ParsingDoubleQuotedString,
         ParsingFormattedString,
+        EscapeCharacter,
         ParsingExclusiveRange,
     }
 
