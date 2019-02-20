@@ -211,11 +211,7 @@ mod tests {
 
     #[test]
     fn tokenize_integer_expression() {
-        let input = String::from("4");
-
-        let tokenizer = Tokenizer::new(&input);
-
-        let tokens: Vec<Token> = tokenizer.collect();
+        let tokens: Vec<Token> = tokens_from_str("4");
 
         assert_eq!(tokens.len(), 1);
         assert_token(tokens.get(0).unwrap(), TokenType::Integer, "4");
@@ -223,9 +219,7 @@ mod tests {
 
     #[test]
     fn tokenize_two_digit_integer() {
-        let input = String::from("43");
-        let tokenizer = Tokenizer::new(&input);
-        let tokens: Vec<Token> = tokenizer.collect();
+        let tokens: Vec<Token> = tokens_from_str("43");
 
         assert_eq!(tokens.len(), 1);
         assert_token(tokens.get(0).unwrap(), TokenType::Integer, "43");
@@ -233,9 +227,7 @@ mod tests {
 
     #[test]
     fn tokenize_decimal_number() {
-        let input = String::from("3.14");
-        let tokenizer = Tokenizer::new(&input);
-        let tokens: Vec<Token> = tokenizer.collect();
+        let tokens: Vec<Token> = tokens_from_str("3.14");
 
         assert_eq!(tokens.len(), 1);
         assert_token(tokens.get(0).unwrap(), TokenType::Decimal, "3.14");
@@ -243,19 +235,17 @@ mod tests {
 
     #[test]
     fn tokenize_addition_expression() {
-        let input = String::from("4 + 5");
-        assert_addition_expression(input);
+        let tokens: Vec<Token> = tokens_from_str("4 + 5");
+
+        assert_eq!(tokens.len(), 3);
+        assert_token(tokens.get(0).unwrap(), TokenType::Integer, "4");
+        assert_token(tokens.get(1).unwrap(), TokenType::PlusSign, "+");
+        assert_token(tokens.get(2).unwrap(), TokenType::Integer, "5");
     }
 
     #[test]
     fn tokenize_addition_expression_no_space() {
-        let input = String::from("4+5");
-        assert_addition_expression(input);
-    }
-
-    fn assert_addition_expression(input: String) {
-        let tokenizer = Tokenizer::new(&input);
-        let tokens: Vec<Token> = tokenizer.collect();
+        let tokens: Vec<Token> = tokens_from_str("4+5");
 
         assert_eq!(tokens.len(), 3);
         assert_token(tokens.get(0).unwrap(), TokenType::Integer, "4");
@@ -265,9 +255,7 @@ mod tests {
 
     #[test]
     fn tokenize_string_single_quote() {
-        let input = String::from("'Hello World'");
-        let tokenizer = Tokenizer::new(&input);
-        let tokens: Vec<Token> = tokenizer.collect();
+        let tokens: Vec<Token> = tokens_from_str("'Hello World'");
 
         assert_eq!(tokens.len(), 1);
         assert_token(
@@ -279,9 +267,7 @@ mod tests {
 
     #[test]
     fn tokenize_string_double_quote() {
-        let input = String::from("\"Hello World\"");
-        let tokenizer = Tokenizer::new(&input);
-        let tokens: Vec<Token> = tokenizer.collect();
+        let tokens: Vec<Token> = tokens_from_str("\"Hello World\"");
 
         assert_eq!(tokens.len(), 1);
         assert_token(
@@ -293,9 +279,7 @@ mod tests {
 
     #[test]
     fn tokenize_string_formatted() {
-        let input = String::from("`Hello World`");
-        let tokenizer = Tokenizer::new(&input);
-        let tokens: Vec<Token> = tokenizer.collect();
+        let tokens: Vec<Token> = tokens_from_str("`Hello World`");
 
         assert_eq!(tokens.len(), 1);
         assert_token(
@@ -307,9 +291,7 @@ mod tests {
 
     #[test]
     fn tokenize_exclusive_range() {
-        let input = String::from("1..10");
-        let tokenizer = Tokenizer::new(&input);
-        let tokens: Vec<Token> = tokenizer.collect();
+        let tokens: Vec<Token> = tokens_from_str("1..10");
 
         assert_eq!(tokens.len(), 3);
         assert_token(tokens.get(0).unwrap(), TokenType::Integer, "1");
@@ -319,14 +301,18 @@ mod tests {
 
     #[test]
     fn tokenize_inxclusive_range() {
-        let input = String::from("1...10");
-        let tokenizer = Tokenizer::new(&input);
-        let tokens: Vec<Token> = tokenizer.collect();
+        let tokens: Vec<Token> = tokens_from_str("1...10");
 
         assert_eq!(tokens.len(), 3);
         assert_token(tokens.get(0).unwrap(), TokenType::Integer, "1");
         assert_token(tokens.get(1).unwrap(), TokenType::InclusiveRange, "...");
         assert_token(tokens.get(2).unwrap(), TokenType::Integer, "10");
+    }
+
+    fn tokens_from_str(s: &str) -> Vec<Token> {
+        let input = String::from(s);
+        let tokenizer = Tokenizer::new(&input);
+        return tokenizer.collect();
     }
 
     fn assert_token(token: &Token, token_type: TokenType, token_str: &str) {
