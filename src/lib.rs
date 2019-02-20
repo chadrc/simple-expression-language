@@ -7,7 +7,7 @@ struct Tokenizer<'a> {
     current_token_type: TokenType,
     parse_state: ParseState,
     chars: std::str::Chars<'a>,
-    end_of_token: bool,
+    // end_of_token: bool,
     escaped_character: bool,
 }
 
@@ -18,7 +18,7 @@ impl<'a> Tokenizer<'a> {
             current_token_type: TokenType::Unknown,
             parse_state: ParseState::NoToken,
             chars: input.chars(),
-            end_of_token: false,
+            // end_of_token: false,
             escaped_character: false,
         };
     }
@@ -34,7 +34,7 @@ impl<'a> Tokenizer<'a> {
         match c {
             '+' => {
                 self.current_token_type = TokenType::PlusSign;
-                self.end_of_token = true;
+                self.parse_state = ParseState::EndOfToken;
             }
             '\'' => {
                 self.current_token_type = TokenType::SingleQuotedString;
@@ -76,7 +76,7 @@ impl<'a> Tokenizer<'a> {
             // means its end of token
             if current_character == end_character {
                 // mark state to output token in next iteration
-                self.end_of_token = true;
+                self.parse_state = ParseState::EndOfToken;
             }
         }
     }
@@ -101,16 +101,22 @@ impl<'a> Iterator for Tokenizer<'a> {
 
     fn next(&mut self) -> Option<Token> {
         loop {
-            if self.end_of_token {
-                self.end_of_token = false;
-                return self.make_current_token();
-            }
+            // if self.end_of_token {
+            //     self.end_of_token = false;
+            //     return self.make_current_token();
+            // }
 
+            println!("{:?}", self.parse_state);
             match self.chars.next() {
                 Some(c) => {
                     match self.parse_state {
                         ParseState::NoToken => {
                             self.start_new_token(c);
+                        }
+                        ParseState::EndOfToken => {
+                            let token = self.make_current_token();
+                            self.start_new_token(c);
+                            return token;
                         }
                         ParseState::ParsingInteger => {
                             if c.is_numeric() {
