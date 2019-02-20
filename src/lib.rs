@@ -8,6 +8,7 @@ struct Tokenizer<'a> {
     parse_state: ParseState,
     chars: std::str::Chars<'a>,
     end_of_token: bool,
+    escaped_character: bool,
 }
 
 impl<'a> Tokenizer<'a> {
@@ -18,6 +19,7 @@ impl<'a> Tokenizer<'a> {
             parse_state: ParseState::NoToken,
             chars: input.chars(),
             end_of_token: false,
+            escaped_character: false,
         };
     }
 
@@ -55,6 +57,26 @@ impl<'a> Tokenizer<'a> {
                     self.parse_state = ParseState::ParsingInteger;
                     self.current_token_type = TokenType::Integer;
                 }
+            }
+        }
+    }
+
+    fn check_escape_character(&mut self, current_character: char, end_character: char) {
+        if self.escaped_character {
+            self.current_token.push(current_character);
+            self.escaped_character = false;
+        } else if current_character == '\\' {
+            // escape character
+            // consume next character no matter what
+            self.escaped_character = true;
+        } else {
+            self.current_token.push(current_character);
+
+            // character not escaped,
+            // means its end of token
+            if current_character == end_character {
+                // mark state to output token in next iteration
+                self.end_of_token = true;
             }
         }
     }
@@ -157,22 +179,13 @@ impl<'a> Iterator for Tokenizer<'a> {
                             }
                         }
                         ParseState::ParsingSingleQuotedString => {
-                            self.current_token.push(c);
-                            if c == '\'' {
-                                return self.make_current_token();
-                            }
+                            self.check_escape_character(c, '\'');
                         }
                         ParseState::ParsingDoubleQuotedString => {
-                            self.current_token.push(c);
-                            if c == '"' {
-                                return self.make_current_token();
-                            }
+                            self.check_escape_character(c, '"');
                         }
                         ParseState::ParsingFormattedString => {
-                            self.current_token.push(c);
-                            if c == '`' {
-                                return self.make_current_token();
-                            }
+                            self.check_escape_character(c, '`');
                         }
                     };
                 }
@@ -244,6 +257,18 @@ mod tests {
     }
 
     #[test]
+    fn tokenize_string_single_quote_with_escape() {
+        let tokens: Vec<Token> = tokens_from_str("'Hello\\' World'");
+
+        assert_eq!(tokens.len(), 1);
+        assert_token(
+            tokens.get(0).unwrap(),
+            TokenType::SingleQuotedString,
+            "'Hello' World'",
+        );
+    }
+
+    #[test]
     fn tokenize_string_double_quote() {
         let tokens: Vec<Token> = tokens_from_str("\"Hello World\"");
 
@@ -256,6 +281,18 @@ mod tests {
     }
 
     #[test]
+    fn tokenize_string_double_quote_with_escape() {
+        let tokens: Vec<Token> = tokens_from_str("\"Hello\\\" World\"");
+
+        assert_eq!(tokens.len(), 1);
+        assert_token(
+            tokens.get(0).unwrap(),
+            TokenType::DoubleQuotedString,
+            "\"Hello\" World\"",
+        );
+    }
+
+    #[test]
     fn tokenize_string_formatted() {
         let tokens: Vec<Token> = tokens_from_str("`Hello World`");
 
@@ -264,6 +301,18 @@ mod tests {
             tokens.get(0).unwrap(),
             TokenType::FormattedString,
             "`Hello World`",
+        );
+    }
+
+    #[test]
+    fn tokenize_string_formatted_with_escape() {
+        let tokens: Vec<Token> = tokens_from_str("`Hello\\` World`");
+
+        assert_eq!(tokens.len(), 1);
+        assert_token(
+            tokens.get(0).unwrap(),
+            TokenType::FormattedString,
+            "`Hello` World`",
         );
     }
 
