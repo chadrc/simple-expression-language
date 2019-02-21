@@ -380,6 +380,23 @@ mod tests {
         SymbolTree::new();
     }
 
+    #[test]
+    fn symbol_tree_one_symbol() {
+        let tree = SymbolTree::new();
+
+        let t_branch = tree.get_branch("t").unwrap();
+        assert_eq!(t_branch.get_character(), "t");
+
+        let r_branch = t_branch.get("r").unwrap();
+        assert_eq!(r_branch.get_character(), "r");
+
+        let u_branch = r_branch.get("u").unwrap();
+        assert_eq!(u_branch.get_character(), "u");
+
+        let e_branch = u_branch.get("e").unwrap();
+        assert_eq!(e_branch.get_character(), "e");
+    }
+
     //#endregion Symbol Tree
 
     // Test utils
