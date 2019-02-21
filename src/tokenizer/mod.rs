@@ -101,20 +101,22 @@ pub mod types {
 
     impl SymbolTree {
         pub fn new() -> SymbolTree {
-            let mut branches = HashMap::new();
-
-            match SymbolTreeNode::from("true") {
-                Some(t) => {
-                    branches.insert(t.get_character(), t);
-                }
-                None => (),
-            }
-
-            return SymbolTree { branches: branches };
+            return SymbolTree {
+                branches: HashMap::new(),
+            };
         }
 
         pub fn get_branch(&self, s: &str) -> Option<&SymbolTreeNode> {
             return self.branches.get(&String::from(s));
+        }
+
+        pub fn attach(&mut self, s: &str) {
+            match SymbolTreeNode::from("true") {
+                Some(t) => {
+                    self.branches.insert(t.get_character(), t);
+                }
+                None => (),
+            }
         }
     }
 }

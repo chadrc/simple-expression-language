@@ -382,7 +382,9 @@ mod tests {
 
     #[test]
     fn symbol_tree_one_symbol() {
-        let tree = SymbolTree::new();
+        let mut tree = SymbolTree::new();
+
+        tree.attach("true");
 
         let t_branch = tree.get_branch("t").unwrap();
         assert_eq!(t_branch.get_character(), "t");
