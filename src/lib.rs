@@ -210,6 +210,7 @@ impl<'a> Iterator for Tokenizer<'a> {
 mod tests {
     use super::*;
 
+    //#region Tokenizing
     #[test]
     fn tokenize_integer_expression() {
         let tokens: Vec<Token> = tokens_from_str("4");
@@ -370,13 +371,17 @@ mod tests {
     //     assert_token(tokens.get(0).unwrap(), TokenType::Boolean, "false");
     // }
 
-    // Symbol Tree
+    //#endregion Tokenizing
+
+    //#region Symbol Tree
 
     #[test]
     fn symbol_tree_make_empty() {
         let tree = SymbolTree::new();
         assert_eq!(tree.num_children(), 0);
     }
+
+    //#endregion Symbol Tree
 
     // Test utils
     fn tokens_from_str(s: &str) -> Vec<Token> {
