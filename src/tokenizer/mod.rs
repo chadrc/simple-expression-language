@@ -61,11 +61,29 @@ pub mod types {
     }
 
     impl SymbolTreeNode {
-        fn new(c: &str, children: HashMap<String, SymbolTreeNode>) -> SymbolTreeNode {
+        fn new(s: &str, children: HashMap<String, SymbolTreeNode>) -> SymbolTreeNode {
             return SymbolTreeNode {
-                character: String::from(c),
+                character: String::from(s),
                 children: children,
             };
+        }
+
+        fn from(s: &str) -> Option<SymbolTreeNode> {
+            let mut map = HashMap::new();
+            let mut last: Option<SymbolTreeNode> = None;
+            for c in s.graphemes(true).rev() {
+                match last {
+                    Some(l) => {
+                        map.insert(l.get_character(), l);
+                    }
+                    None => (),
+                }
+
+                last = Some(SymbolTreeNode::new(c, map));
+                map = HashMap::new();
+            }
+
+            return last;
         }
 
         pub fn get_character(&self) -> String {
@@ -85,7 +103,7 @@ pub mod types {
         pub fn new() -> SymbolTree {
             let mut branches = HashMap::new();
 
-            match SymbolTree::make_t_branch() {
+            match SymbolTreeNode::from("true") {
                 Some(t) => {
                     branches.insert(t.get_character(), t);
                 }
@@ -93,38 +111,6 @@ pub mod types {
             }
 
             return SymbolTree { branches: branches };
-        }
-
-        fn make_t_branch() -> Option<SymbolTreeNode> {
-            let mut map = HashMap::new();
-            let mut last: Option<SymbolTreeNode> = None;
-            for c in "true".graphemes(true).rev() {
-                match last {
-                    Some(l) => {
-                        map.insert(l.get_character(), l);
-                    }
-                    None => (),
-                }
-
-                last = Some(SymbolTreeNode::new(c, map));
-                map = HashMap::new();
-            }
-
-            // let e = SymbolTreeNode::new('r', HashMap::new());
-
-            // let mut uc = HashMap::new();
-            // uc.insert('e', e);
-            // let u = SymbolTreeNode::new('r', uc);
-
-            // let mut rc = HashMap::new();
-            // rc.insert('u', u);
-            // let r = SymbolTreeNode::new('r', rc);
-
-            // let mut tc = HashMap::new();
-            // tc.insert('r', r);
-            // let t = SymbolTreeNode::new('t', tc);
-
-            return last;
         }
 
         pub fn get_branch(&self, s: &str) -> Option<&SymbolTreeNode> {
