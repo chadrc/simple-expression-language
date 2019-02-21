@@ -1,6 +1,6 @@
 mod tokenizer;
 
-use tokenizer::types::{ParseState, Token, TokenType};
+use tokenizer::types::{ParseState, SymbolTree, Token, TokenType};
 
 struct Tokenizer<'a> {
     current_token: String,
@@ -337,14 +337,6 @@ mod tests {
     }
 
     #[test]
-    fn tokenize_unit() {
-        let tokens: Vec<Token> = tokens_from_str("()");
-
-        assert_eq!(tokens.len(), 1);
-        assert_token(tokens.get(0).unwrap(), TokenType::Unit, "()");
-    }
-
-    #[test]
     fn tokenize_inxclusive_range() {
         let tokens: Vec<Token> = tokens_from_str("1...10");
 
@@ -354,6 +346,39 @@ mod tests {
         assert_token(tokens.get(2).unwrap(), TokenType::Integer, "10");
     }
 
+    #[test]
+    fn tokenize_unit() {
+        let tokens: Vec<Token> = tokens_from_str("()");
+
+        assert_eq!(tokens.len(), 1);
+        assert_token(tokens.get(0).unwrap(), TokenType::Unit, "()");
+    }
+
+    // #[test]
+    // fn tokenize_boolean_true() {
+    //     let tokens: Vec<Token> = tokens_from_str("true");
+
+    //     assert_eq!(tokens.len(), 1);
+    //     assert_token(tokens.get(0).unwrap(), TokenType::Boolean, "true");
+    // }
+
+    // #[test]
+    // fn tokenize_boolean_false() {
+    //     let tokens: Vec<Token> = tokens_from_str("false");
+
+    //     assert_eq!(tokens.len(), 1);
+    //     assert_token(tokens.get(0).unwrap(), TokenType::Boolean, "false");
+    // }
+
+    // Symbol Tree
+
+    #[test]
+    fn symbol_tree_make_empty() {
+        let tree = SymbolTree::new();
+        assert_eq!(tree.num_children(), 0);
+    }
+
+    // Test utils
     fn tokens_from_str(s: &str) -> Vec<Token> {
         let input = String::from(s);
         let tokenizer = Tokenizer::new(&input);

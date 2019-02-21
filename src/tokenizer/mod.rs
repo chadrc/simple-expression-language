@@ -8,6 +8,7 @@ pub mod types {
         FormattedString,
         ExclusiveRange,
         InclusiveRange,
+        Boolean,
         PlusSign,
         Unit,
         Unknown,
@@ -47,6 +48,17 @@ pub mod types {
 
         pub fn get_token_str(&self) -> String {
             return self.token_str.clone();
+        }
+    }
+
+    pub struct SymbolTree {}
+
+    impl SymbolTree {
+        pub fn new() -> SymbolTree {
+            return SymbolTree {};
+        }
+        pub fn num_children(self) -> u64 {
+            return 0;
         }
     }
 }
