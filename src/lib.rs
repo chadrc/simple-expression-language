@@ -377,8 +377,7 @@ mod tests {
 
     #[test]
     fn symbol_tree_make_empty() {
-        let tree = SymbolTree::new();
-        assert_eq!(tree.num_children(), 0);
+        SymbolTree::new();
     }
 
     //#endregion Symbol Tree

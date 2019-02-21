@@ -57,8 +57,5 @@ pub mod types {
         pub fn new() -> SymbolTree {
             return SymbolTree {};
         }
-        pub fn num_children(self) -> u64 {
-            return 0;
-        }
     }
 }
