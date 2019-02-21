@@ -383,19 +383,33 @@ mod tests {
     #[test]
     fn symbol_tree_one_symbol() {
         let mut tree = SymbolTree::new();
+        tree.attach("true");
+        check_tree_for_true(&tree);
+    }
+
+    #[test]
+    fn symbol_tree_two_symbols() {
+        let mut tree = SymbolTree::new();
 
         tree.attach("true");
+        tree.attach("false");
 
-        let t_branch = tree.get_branch("t").unwrap();
-        assert_eq!(t_branch.get_character(), "t");
+        check_tree_for_true(&tree);
 
-        let r_branch = t_branch.get("r").unwrap();
-        assert_eq!(r_branch.get_character(), "r");
+        // false check
+        let f_branch = tree.get_branch("f").unwrap();
+        assert_eq!(f_branch.get_character(), "f");
 
-        let u_branch = r_branch.get("u").unwrap();
-        assert_eq!(u_branch.get_character(), "u");
+        let a_branch = f_branch.get("a").unwrap();
+        assert_eq!(a_branch.get_character(), "a");
 
-        let e_branch = u_branch.get("e").unwrap();
+        let l_branch = a_branch.get("l").unwrap();
+        assert_eq!(l_branch.get_character(), "l");
+
+        let s_branch = l_branch.get("s").unwrap();
+        assert_eq!(s_branch.get_character(), "s");
+
+        let e_branch = s_branch.get("e").unwrap();
         assert_eq!(e_branch.get_character(), "e");
     }
 
@@ -411,5 +425,19 @@ mod tests {
     fn assert_token(token: &Token, token_type: TokenType, token_str: &str) {
         assert_eq!(token.get_token_type(), token_type);
         assert_eq!(token.get_token_str(), token_str);
+    }
+
+    fn check_tree_for_true(tree: &SymbolTree) {
+        let t_branch = tree.get_branch("t").unwrap();
+        assert_eq!(t_branch.get_character(), "t");
+
+        let r_branch = t_branch.get("r").unwrap();
+        assert_eq!(r_branch.get_character(), "r");
+
+        let u_branch = r_branch.get("u").unwrap();
+        assert_eq!(u_branch.get_character(), "u");
+
+        let e_branch = u_branch.get("e").unwrap();
+        assert_eq!(e_branch.get_character(), "e");
     }
 }

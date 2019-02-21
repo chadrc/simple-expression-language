@@ -111,7 +111,7 @@ pub mod types {
         }
 
         pub fn attach(&mut self, s: &str) {
-            match SymbolTreeNode::from("true") {
+            match SymbolTreeNode::from(s) {
                 Some(t) => {
                     self.branches.insert(t.get_character(), t);
                 }
