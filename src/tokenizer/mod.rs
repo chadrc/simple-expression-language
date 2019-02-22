@@ -93,29 +93,64 @@ pub mod types {
         pub fn get(&self, s: &str) -> Option<&SymbolTreeNode> {
             return self.children.get(&String::from(s));
         }
+
+        fn get_mut(&mut self, s: &str) -> Option<&mut SymbolTreeNode> {
+            return self.children.get_mut(&String::from(s));
+        }
     }
 
     pub struct SymbolTree {
-        branches: HashMap<String, SymbolTreeNode>,
+        root: SymbolTreeNode,
     }
 
     impl SymbolTree {
         pub fn new() -> SymbolTree {
             return SymbolTree {
-                branches: HashMap::new(),
+                root: SymbolTreeNode::new("", HashMap::new()),
             };
         }
 
         pub fn get_branch(&self, s: &str) -> Option<&SymbolTreeNode> {
-            return self.branches.get(&String::from(s));
+            return self.root.get(&String::from(s));
+        }
+
+        fn get_branch_mut(&mut self, s: &str) -> Option<&mut SymbolTreeNode> {
+            return self.root.get_mut(&String::from(s));
+        }
+
+        fn root_mut(&mut self) -> &mut SymbolTreeNode {
+            return &mut self.root;
         }
 
         pub fn attach(&mut self, s: &str) {
-            match SymbolTreeNode::from(s) {
-                Some(t) => {
-                    self.branches.insert(t.get_character(), t);
+            SymbolTree::attach_deep(&String::from(s), 0, &mut self.root);
+        }
+
+        fn attach_deep(s: &String, character_index: usize, node: &mut SymbolTreeNode) {
+            if character_index + 1 > s.len() {
+                return;
+            }
+
+            // Drill down branch add non-exisiting nodes
+            let next_character = &s[character_index..character_index + 1];
+
+            match node.get_mut(next_character) {
+                Some(b1) => {
+                    // continue drill
+                    SymbolTree::attach_deep(s, character_index + 1, b1);
                 }
-                None => (),
+                None => {
+                    // attach here
+                    let remaining_characters = &s[character_index..];
+                    match SymbolTreeNode::from(remaining_characters) {
+                        Some(t) => {
+                            node.children.insert(t.get_character(), t);
+                        }
+                        None => {
+                            println!("end {:?} {:?}", s, character_index);
+                        }
+                    }
+                }
             }
         }
     }

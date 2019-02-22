@@ -413,6 +413,22 @@ mod tests {
         assert_eq!(e_branch.get_character(), "e");
     }
 
+    #[test]
+    fn symbol_tree_similar_symbols() {
+        let mut tree = SymbolTree::new();
+
+        tree.attach("true");
+        tree.attach("tree");
+
+        let r_branch = tree.get_branch("t").unwrap().get("r").unwrap();
+
+        let e_branch = r_branch.get("e").unwrap();
+        assert_eq!(e_branch.get_character(), "e");
+
+        let u_branch = r_branch.get("u").unwrap();
+        assert_eq!(u_branch.get_character(), "u");
+    }
+
     //#endregion Symbol Tree
 
     // Test utils
