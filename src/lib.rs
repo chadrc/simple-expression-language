@@ -22,6 +22,15 @@ impl<'a> Tokenizer<'a> {
         symbol_tree.attach("/", TokenType::DivisionSign);
         symbol_tree.attach("^", TokenType::ExponentialSign);
         symbol_tree.attach("%", TokenType::ModulusSign);
+        symbol_tree.attach("==", TokenType::Equal);
+        symbol_tree.attach("!=", TokenType::NotEqual);
+        symbol_tree.attach(">", TokenType::GreaterThan);
+        symbol_tree.attach(">=", TokenType::GreaterThanOrEqual);
+        symbol_tree.attach("<", TokenType::LessThan);
+        symbol_tree.attach("<=", TokenType::LessThanOrEqual);
+        symbol_tree.attach("&&", TokenType::LogicalAnd);
+        symbol_tree.attach("||", TokenType::LogicalOr);
+        symbol_tree.attach("!", TokenType::LogicalNot);
 
         return Tokenizer {
             current_token: String::new(),
@@ -439,6 +448,55 @@ mod tests {
         assert_eq!(tokens.len(), 2);
         assert_token(tokens.get(0).unwrap(), TokenType::MinusSign, "-");
         assert_token(tokens.get(1).unwrap(), TokenType::Integer, "2");
+    }
+
+    #[test]
+    fn tokenize_equality() {
+        assert_4_5_binary_operation("==", TokenType::Equal);
+    }
+
+    #[test]
+    fn tokenize_inequality() {
+        assert_4_5_binary_operation("!=", TokenType::NotEqual);
+    }
+
+    #[test]
+    fn tokenize_greater_than() {
+        assert_4_5_binary_operation(">", TokenType::GreaterThan);
+    }
+
+    #[test]
+    fn tokenize_greater_than_or_equal() {
+        assert_4_5_binary_operation(">=", TokenType::GreaterThanOrEqual);
+    }
+
+    #[test]
+    fn tokenize_less_than() {
+        assert_4_5_binary_operation("<", TokenType::LessThan);
+    }
+
+    #[test]
+    fn tokenize_less_than_or_equal() {
+        assert_4_5_binary_operation("<=", TokenType::LessThanOrEqual);
+    }
+
+    #[test]
+    fn tokenize_logicial_and() {
+        assert_4_5_binary_operation("&&", TokenType::LogicalAnd);
+    }
+
+    #[test]
+    fn tokenize_logical_or() {
+        assert_4_5_binary_operation("||", TokenType::LogicalOr);
+    }
+
+    #[test]
+    fn tokenize_logical_not() {
+        let tokens: Vec<Token> = tokens_from_str("!true");
+
+        assert_eq!(tokens.len(), 2);
+        assert_token(tokens.get(0).unwrap(), TokenType::LogicalNot, "!");
+        assert_token(tokens.get(1).unwrap(), TokenType::Boolean, "true");
     }
 
     //#endregion Tokenizing
