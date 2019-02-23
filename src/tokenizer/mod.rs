@@ -13,6 +13,11 @@ pub mod types {
         InclusiveRange,
         Boolean,
         PlusSign,
+        MinusSign,
+        MultiplicationSign,
+        DivisionSign,
+        ModulusSign,
+        ExponentialSign,
         Unit,
         Unknown,
     }

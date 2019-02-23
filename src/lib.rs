@@ -17,6 +17,11 @@ impl<'a> Tokenizer<'a> {
         symbol_tree.attach("false", TokenType::Boolean);
         symbol_tree.attach("()", TokenType::Unit);
         symbol_tree.attach("+", TokenType::PlusSign);
+        symbol_tree.attach("-", TokenType::MinusSign);
+        symbol_tree.attach("*", TokenType::MultiplicationSign);
+        symbol_tree.attach("/", TokenType::DivisionSign);
+        symbol_tree.attach("^", TokenType::ExponentialSign);
+        symbol_tree.attach("%", TokenType::ModulusSign);
 
         return Tokenizer {
             current_token: String::new(),
@@ -399,7 +404,41 @@ mod tests {
 
     #[test]
     fn tokenize_addition_expression_no_space() {
-        assert_4_5_binary_operation("+");
+        assert_4_5_binary_operation("+", TokenType::PlusSign);
+    }
+
+    #[test]
+    fn tokenize_subtraction() {
+        assert_4_5_binary_operation("-", TokenType::MinusSign);
+    }
+
+    #[test]
+    fn tokenize_multiplication() {
+        assert_4_5_binary_operation("*", TokenType::MultiplicationSign);
+    }
+
+    #[test]
+    fn tokenize_division() {
+        assert_4_5_binary_operation("/", TokenType::DivisionSign);
+    }
+
+    #[test]
+    fn tokenize_modulus() {
+        assert_4_5_binary_operation("%", TokenType::ModulusSign);
+    }
+
+    #[test]
+    fn tokenize_exponential() {
+        assert_4_5_binary_operation("^", TokenType::ExponentialSign);
+    }
+
+    #[test]
+    fn tokenize_negation() {
+        let tokens: Vec<Token> = tokens_from_str("-2");
+
+        assert_eq!(tokens.len(), 2);
+        assert_token(tokens.get(0).unwrap(), TokenType::MinusSign, "-");
+        assert_token(tokens.get(1).unwrap(), TokenType::Integer, "2");
     }
 
     //#endregion Tokenizing
@@ -474,13 +513,13 @@ mod tests {
         assert_eq!(token.get_token_str(), token_str);
     }
 
-    fn assert_4_5_binary_operation(op: &str) {
+    fn assert_4_5_binary_operation(op: &str, op_token_type: TokenType) {
         let tokens: Vec<Token> =
             tokens_from_str(&("4".to_owned() + &op.to_owned() + &"5".to_owned()));
 
         assert_eq!(tokens.len(), 3);
         assert_token(tokens.get(0).unwrap(), TokenType::Integer, "4");
-        assert_token(tokens.get(1).unwrap(), TokenType::PlusSign, op);
+        assert_token(tokens.get(1).unwrap(), op_token_type, op);
         assert_token(tokens.get(2).unwrap(), TokenType::Integer, "5");
     }
 
