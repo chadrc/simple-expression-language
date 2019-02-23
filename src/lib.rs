@@ -584,15 +584,15 @@ mod tests {
     fn check_tree_for_true(tree: &SymbolTree) {
         let t_branch = tree.get_branch("t").unwrap();
         assert_eq!(t_branch.get_character(), "t");
-        assert_eq!(t_branch.get_token_type(), TokenType::Boolean);
+        assert_eq!(t_branch.get_token_type(), TokenType::Unknown);
 
         let r_branch = t_branch.get("r").unwrap();
         assert_eq!(r_branch.get_character(), "r");
-        assert_eq!(r_branch.get_token_type(), TokenType::Boolean);
+        assert_eq!(r_branch.get_token_type(), TokenType::Unknown);
 
         let u_branch = r_branch.get("u").unwrap();
         assert_eq!(u_branch.get_character(), "u");
-        assert_eq!(u_branch.get_token_type(), TokenType::Boolean);
+        assert_eq!(u_branch.get_token_type(), TokenType::Unknown);
 
         let e_branch = u_branch.get("e").unwrap();
         assert_eq!(e_branch.get_character(), "e");

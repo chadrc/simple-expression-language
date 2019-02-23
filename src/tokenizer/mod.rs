@@ -91,15 +91,19 @@ pub mod types {
         fn from(s: &str, token_type: TokenType) -> Option<SymbolTreeNode> {
             let mut map = HashMap::new();
             let mut last: Option<SymbolTreeNode> = None;
+
             for c in s.graphemes(true).rev() {
+                let mut t = TokenType::Unknown;
                 match last {
                     Some(l) => {
                         map.insert(l.get_character(), l);
                     }
-                    None => (),
+                    None => {
+                        t = token_type;
+                    }
                 }
 
-                last = Some(SymbolTreeNode::new(c, token_type, map));
+                last = Some(SymbolTreeNode::new(c, t, map));
                 map = HashMap::new();
             }
 
@@ -157,6 +161,7 @@ pub mod types {
             node: &mut SymbolTreeNode,
         ) {
             if character_index + 1 > s.len() {
+                node.token_type = token_type;
                 return;
             }
 
