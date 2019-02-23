@@ -110,6 +110,12 @@ impl<'a> Tokenizer<'a> {
             None
         };
     }
+
+    fn end_current_token(&mut self, c: char) -> Option<Token> {
+        let token = self.make_current_token();
+        self.start_new_token(c);
+        return token;
+    }
 }
 
 impl<'a> Iterator for Tokenizer<'a> {
@@ -124,9 +130,7 @@ impl<'a> Iterator for Tokenizer<'a> {
                             self.start_new_token(c);
                         }
                         ParseState::EndOfToken => {
-                            let token = self.make_current_token();
-                            self.start_new_token(c);
-                            return token;
+                            return self.end_current_token(c);
                         }
                         ParseState::ParsingInteger => {
                             if c.is_numeric() {
@@ -138,9 +142,7 @@ impl<'a> Iterator for Tokenizer<'a> {
                                 self.current_token_type = TokenType::Decimal;
                                 self.parse_state = ParseState::ParsingDecimal;
                             } else {
-                                let token = self.make_current_token();
-                                self.start_new_token(c);
-                                return token;
+                                return self.end_current_token(c);
                             }
                         }
                         ParseState::ParsingDecimal => {
@@ -169,9 +171,7 @@ impl<'a> Iterator for Tokenizer<'a> {
                                 self.current_token.push(c);
                             } else {
                                 // end token
-                                let token = self.make_current_token();
-                                self.start_new_token(c);
-                                return token;
+                                return self.end_current_token(c);
                             }
                         }
                         ParseState::ParsingExclusiveRange => {
@@ -187,9 +187,7 @@ impl<'a> Iterator for Tokenizer<'a> {
                             } else {
                                 // not an inclusive range
                                 // end with exclusive range token
-                                let token = self.make_current_token();
-                                self.start_new_token(c);
-                                return token;
+                                return self.end_current_token(c);
                             }
                         }
                         ParseState::ParsingSingleQuotedString => {
@@ -237,9 +235,7 @@ impl<'a> Iterator for Tokenizer<'a> {
                                     ns.push(c);
                                     match n.get(&ns) {
                                         None => {
-                                            let token = self.make_current_token();
-                                            self.start_new_token(c);
-                                            return token;
+                                            return self.end_current_token(c);
                                         }
                                         Some(next) => {
                                             // has child for current character
