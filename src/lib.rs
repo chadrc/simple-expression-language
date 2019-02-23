@@ -1,6 +1,6 @@
 mod tokenizer;
-
-use tokenizer::types::{ParseState, SymbolTree, Token, TokenType};
+use std::rc::Rc;
+use tokenizer::types::{ParseState, SymbolTree, SymbolTreeNode, Token, TokenType};
 
 struct Tokenizer<'a> {
     current_token: String,
@@ -8,16 +8,24 @@ struct Tokenizer<'a> {
     parse_state: ParseState,
     deferred_parse_state: ParseState,
     chars: std::str::Chars<'a>,
+    symbol_tree: SymbolTree,
+    current_symbol_node: Option<&'a SymbolTreeNode>,
 }
 
 impl<'a> Tokenizer<'a> {
     fn new(input: &'a String) -> Tokenizer<'a> {
+        let mut symbol_tree = SymbolTree::new();
+        symbol_tree.attach("true", TokenType::Boolean);
+        symbol_tree.attach("false", TokenType::Boolean);
+
         return Tokenizer {
             current_token: String::new(),
             current_token_type: TokenType::Unknown,
             parse_state: ParseState::NoToken,
             deferred_parse_state: ParseState::NoToken,
             chars: input.chars(),
+            symbol_tree: symbol_tree,
+            current_symbol_node: None,
         };
     }
 
@@ -58,6 +66,15 @@ impl<'a> Tokenizer<'a> {
                 if c.is_numeric() {
                     self.parse_state = ParseState::ParsingInteger;
                     self.current_token_type = TokenType::Integer;
+                } else {
+                    let mut s = String::new();
+                    s.push(c);
+                    match self.symbol_tree.get_branch(&s) {
+                        Some(_) => {
+                            self.parse_state = ParseState::ParsingSymbol;
+                        }
+                        None => (),
+                    }
                 }
             }
         }
@@ -171,9 +188,7 @@ impl<'a> Iterator for Tokenizer<'a> {
                                 // not an inclusive range
                                 // end with exclusive range token
                                 let token = self.make_current_token();
-
                                 self.start_new_token(c);
-
                                 return token;
                             }
                         }
@@ -195,6 +210,45 @@ impl<'a> Iterator for Tokenizer<'a> {
                             if c == ')' {
                                 self.current_token.push(c);
                                 return self.make_current_token();
+                            }
+                        }
+                        ParseState::ParsingSymbol => {
+                            let mut node: Option<&SymbolTreeNode> = None;
+
+                            // Get current node based on current token characters
+                            for nc in self.current_token.chars() {
+                                let mut ns = String::new();
+                                ns.push(nc);
+                                match node {
+                                    None => {
+                                        node = self.symbol_tree.get_branch(&ns);
+                                    }
+                                    Some(n) => {
+                                        node = n.get(&ns);
+                                    }
+                                }
+                            }
+
+                            // make sure node exists
+                            match node {
+                                None => (),
+                                Some(n) => {
+                                    let mut ns = String::new();
+                                    ns.push(c);
+                                    match n.get(&ns) {
+                                        None => {
+                                            let token = self.make_current_token();
+                                            self.start_new_token(c);
+                                            return token;
+                                        }
+                                        Some(next) => {
+                                            // has child for current character
+                                            // update token type and push character to token
+                                            self.current_token_type = next.get_token_type();
+                                            self.current_token.push(c);
+                                        }
+                                    }
+                                }
                             }
                         }
                     };
@@ -355,21 +409,21 @@ mod tests {
         assert_token(tokens.get(0).unwrap(), TokenType::Unit, "()");
     }
 
-    // #[test]
-    // fn tokenize_boolean_true() {
-    //     let tokens: Vec<Token> = tokens_from_str("true");
+    #[test]
+    fn tokenize_boolean_true() {
+        let tokens: Vec<Token> = tokens_from_str("true");
 
-    //     assert_eq!(tokens.len(), 1);
-    //     assert_token(tokens.get(0).unwrap(), TokenType::Boolean, "true");
-    // }
+        assert_eq!(tokens.len(), 1);
+        assert_token(tokens.get(0).unwrap(), TokenType::Boolean, "true");
+    }
 
-    // #[test]
-    // fn tokenize_boolean_false() {
-    //     let tokens: Vec<Token> = tokens_from_str("false");
+    #[test]
+    fn tokenize_boolean_false() {
+        let tokens: Vec<Token> = tokens_from_str("false");
 
-    //     assert_eq!(tokens.len(), 1);
-    //     assert_token(tokens.get(0).unwrap(), TokenType::Boolean, "false");
-    // }
+        assert_eq!(tokens.len(), 1);
+        assert_token(tokens.get(0).unwrap(), TokenType::Boolean, "false");
+    }
 
     //#endregion Tokenizing
 
@@ -383,7 +437,7 @@ mod tests {
     #[test]
     fn symbol_tree_one_symbol() {
         let mut tree = SymbolTree::new();
-        tree.attach("true");
+        tree.attach("true", TokenType::Boolean);
         check_tree_for_true(&tree);
     }
 
@@ -391,8 +445,8 @@ mod tests {
     fn symbol_tree_two_symbols() {
         let mut tree = SymbolTree::new();
 
-        tree.attach("true");
-        tree.attach("false");
+        tree.attach("true", TokenType::Boolean);
+        tree.attach("false", TokenType::Boolean);
 
         check_tree_for_true(&tree);
 
@@ -417,8 +471,8 @@ mod tests {
     fn symbol_tree_similar_symbols() {
         let mut tree = SymbolTree::new();
 
-        tree.attach("true");
-        tree.attach("tree");
+        tree.attach("true", TokenType::Boolean);
+        tree.attach("tree", TokenType::Unknown);
 
         let r_branch = tree.get_branch("t").unwrap().get("r").unwrap();
 
@@ -446,14 +500,18 @@ mod tests {
     fn check_tree_for_true(tree: &SymbolTree) {
         let t_branch = tree.get_branch("t").unwrap();
         assert_eq!(t_branch.get_character(), "t");
+        assert_eq!(t_branch.get_token_type(), TokenType::Boolean);
 
         let r_branch = t_branch.get("r").unwrap();
         assert_eq!(r_branch.get_character(), "r");
+        assert_eq!(r_branch.get_token_type(), TokenType::Boolean);
 
         let u_branch = r_branch.get("u").unwrap();
         assert_eq!(u_branch.get_character(), "u");
+        assert_eq!(u_branch.get_token_type(), TokenType::Boolean);
 
         let e_branch = u_branch.get("e").unwrap();
         assert_eq!(e_branch.get_character(), "e");
+        assert_eq!(e_branch.get_token_type(), TokenType::Boolean);
     }
 }
