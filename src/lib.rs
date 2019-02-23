@@ -272,26 +272,6 @@ mod tests {
     }
 
     #[test]
-    fn tokenize_addition_expression() {
-        let tokens: Vec<Token> = tokens_from_str("4 + 5");
-
-        assert_eq!(tokens.len(), 3);
-        assert_token(tokens.get(0).unwrap(), TokenType::Integer, "4");
-        assert_token(tokens.get(1).unwrap(), TokenType::PlusSign, "+");
-        assert_token(tokens.get(2).unwrap(), TokenType::Integer, "5");
-    }
-
-    #[test]
-    fn tokenize_addition_expression_no_space() {
-        let tokens: Vec<Token> = tokens_from_str("4+5");
-
-        assert_eq!(tokens.len(), 3);
-        assert_token(tokens.get(0).unwrap(), TokenType::Integer, "4");
-        assert_token(tokens.get(1).unwrap(), TokenType::PlusSign, "+");
-        assert_token(tokens.get(2).unwrap(), TokenType::Integer, "5");
-    }
-
-    #[test]
     fn tokenize_string_single_quote() {
         let tokens: Vec<Token> = tokens_from_str("'Hello World'");
 
@@ -407,6 +387,21 @@ mod tests {
         assert_token(tokens.get(0).unwrap(), TokenType::Boolean, "false");
     }
 
+    #[test]
+    fn tokenize_addition_expression() {
+        let tokens: Vec<Token> = tokens_from_str("4 + 5");
+
+        assert_eq!(tokens.len(), 3);
+        assert_token(tokens.get(0).unwrap(), TokenType::Integer, "4");
+        assert_token(tokens.get(1).unwrap(), TokenType::PlusSign, "+");
+        assert_token(tokens.get(2).unwrap(), TokenType::Integer, "5");
+    }
+
+    #[test]
+    fn tokenize_addition_expression_no_space() {
+        assert_4_5_binary_operation("+");
+    }
+
     //#endregion Tokenizing
 
     //#region Symbol Tree
@@ -477,6 +472,16 @@ mod tests {
     fn assert_token(token: &Token, token_type: TokenType, token_str: &str) {
         assert_eq!(token.get_token_type(), token_type);
         assert_eq!(token.get_token_str(), token_str);
+    }
+
+    fn assert_4_5_binary_operation(op: &str) {
+        let tokens: Vec<Token> =
+            tokens_from_str(&("4".to_owned() + &op.to_owned() + &"5".to_owned()));
+
+        assert_eq!(tokens.len(), 3);
+        assert_token(tokens.get(0).unwrap(), TokenType::Integer, "4");
+        assert_token(tokens.get(1).unwrap(), TokenType::PlusSign, op);
+        assert_token(tokens.get(2).unwrap(), TokenType::Integer, "5");
     }
 
     fn check_tree_for_true(tree: &SymbolTree) {
