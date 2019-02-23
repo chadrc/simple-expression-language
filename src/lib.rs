@@ -31,6 +31,8 @@ impl<'a> Tokenizer<'a> {
         symbol_tree.attach("&&", TokenType::LogicalAnd);
         symbol_tree.attach("||", TokenType::LogicalOr);
         symbol_tree.attach("!", TokenType::LogicalNot);
+        symbol_tree.attach("$", TokenType::Input);
+        symbol_tree.attach("?", TokenType::CurrentResult);
 
         return Tokenizer {
             current_token: String::new(),
@@ -497,6 +499,18 @@ mod tests {
         assert_eq!(tokens.len(), 2);
         assert_token(tokens.get(0).unwrap(), TokenType::LogicalNot, "!");
         assert_token(tokens.get(1).unwrap(), TokenType::Boolean, "true");
+    }
+
+    #[test]
+    fn tokenize_input_symbol() {
+        let tokens: Vec<Token> = tokens_from_str("$");
+        assert_token(tokens.get(0).unwrap(), TokenType::Input, "$");
+    }
+
+    #[test]
+    fn tokenize_result_symbol() {
+        let tokens: Vec<Token> = tokens_from_str("?");
+        assert_token(tokens.get(0).unwrap(), TokenType::CurrentResult, "?");
     }
 
     //#endregion Tokenizing

@@ -28,6 +28,8 @@ pub mod types {
         LogicalOr,
         LogicalNot,
         Unit,
+        Input,
+        CurrentResult,
         Unknown,
     }
 
