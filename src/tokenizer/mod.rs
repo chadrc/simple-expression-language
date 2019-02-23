@@ -28,7 +28,6 @@ pub mod types {
         ParsingFormattedString,
         EscapeCharacter,
         ParsingExclusiveRange,
-        ParsingUnit,
         ParsingSymbol,
     }
 

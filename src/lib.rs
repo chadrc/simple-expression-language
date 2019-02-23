@@ -1,5 +1,4 @@
 mod tokenizer;
-use std::rc::Rc;
 use tokenizer::types::{ParseState, SymbolTree, SymbolTreeNode, Token, TokenType};
 
 struct Tokenizer<'a> {
@@ -9,7 +8,6 @@ struct Tokenizer<'a> {
     deferred_parse_state: ParseState,
     chars: std::str::Chars<'a>,
     symbol_tree: SymbolTree,
-    current_symbol_node: Option<&'a SymbolTreeNode>,
 }
 
 impl<'a> Tokenizer<'a> {
@@ -17,6 +15,8 @@ impl<'a> Tokenizer<'a> {
         let mut symbol_tree = SymbolTree::new();
         symbol_tree.attach("true", TokenType::Boolean);
         symbol_tree.attach("false", TokenType::Boolean);
+        symbol_tree.attach("()", TokenType::Unit);
+        symbol_tree.attach("+", TokenType::PlusSign);
 
         return Tokenizer {
             current_token: String::new(),
@@ -25,7 +25,6 @@ impl<'a> Tokenizer<'a> {
             deferred_parse_state: ParseState::NoToken,
             chars: input.chars(),
             symbol_tree: symbol_tree,
-            current_symbol_node: None,
         };
     }
 
@@ -38,10 +37,6 @@ impl<'a> Tokenizer<'a> {
         self.current_token.push(c);
 
         match c {
-            '+' => {
-                self.current_token_type = TokenType::PlusSign;
-                self.parse_state = ParseState::EndOfToken;
-            }
             '\'' => {
                 self.current_token_type = TokenType::SingleQuotedString;
                 self.parse_state = ParseState::ParsingSingleQuotedString;
@@ -58,10 +53,6 @@ impl<'a> Tokenizer<'a> {
                 self.current_token_type = TokenType::ExclusiveRange;
                 self.parse_state = ParseState::ParsingExclusiveRange;
             }
-            '(' => {
-                self.current_token_type = TokenType::Unit;
-                self.parse_state = ParseState::ParsingUnit;
-            }
             _ => {
                 if c.is_numeric() {
                     self.parse_state = ParseState::ParsingInteger;
@@ -70,8 +61,9 @@ impl<'a> Tokenizer<'a> {
                     let mut s = String::new();
                     s.push(c);
                     match self.symbol_tree.get_branch(&s) {
-                        Some(_) => {
+                        Some(node) => {
                             self.parse_state = ParseState::ParsingSymbol;
+                            self.current_token_type = node.get_token_type();
                         }
                         None => (),
                     }
@@ -203,12 +195,6 @@ impl<'a> Iterator for Tokenizer<'a> {
                             self.current_token.push(c);
                             self.parse_state = self.deferred_parse_state;
                             self.deferred_parse_state = ParseState::NoToken;
-                        }
-                        ParseState::ParsingUnit => {
-                            if c == ')' {
-                                self.current_token.push(c);
-                                return self.make_current_token();
-                            }
                         }
                         ParseState::ParsingSymbol => {
                             let mut node: Option<&SymbolTreeNode> = None;
