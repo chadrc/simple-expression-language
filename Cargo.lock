@@ -1,5 +1,5 @@
 [[package]]
-name = "simple-expression-language"
+name = "sel-tokenizer"
 version = "0.1.0"
 dependencies = [
  "unicode-segmentation 1.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
