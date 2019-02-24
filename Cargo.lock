@@ -1,8 +1,15 @@
 [[package]]
-name = "sel-tokenizer"
+name = "sel_tokenizer"
 version = "0.1.0"
 dependencies = [
  "unicode-segmentation 1.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "test_bed"
+version = "0.1.0"
+dependencies = [
+ "sel_tokenizer 0.1.0",
 ]
 
 [[package]]

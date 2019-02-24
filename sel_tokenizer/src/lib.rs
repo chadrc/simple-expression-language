@@ -1,7 +1,7 @@
 mod tokenizer;
 use tokenizer::types::{ParseState, SymbolTree, SymbolTreeNode, Token, TokenType};
 
-struct Tokenizer<'a> {
+pub struct Tokenizer<'a> {
     current_token: String,
     current_token_type: TokenType,
     parse_state: ParseState,
@@ -11,7 +11,7 @@ struct Tokenizer<'a> {
 }
 
 impl<'a> Tokenizer<'a> {
-    fn new(input: &'a String) -> Tokenizer<'a> {
+    pub fn new(input: &'a String) -> Tokenizer<'a> {
         let mut symbol_tree = SymbolTree::new();
         symbol_tree.attach("true", TokenType::Boolean);
         symbol_tree.attach("false", TokenType::Boolean);

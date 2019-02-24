@@ -7,5 +7,6 @@
 [workspace]
 
 members = [
-    "tokenizer"
+    "sel_tokenizer",
+    "test_bed"
 ]
