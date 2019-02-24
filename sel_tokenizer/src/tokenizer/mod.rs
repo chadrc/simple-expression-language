@@ -112,10 +112,6 @@ pub mod types {
             return last;
         }
 
-        pub fn to_borrowed(&self) -> &SymbolTreeNode {
-            return &self;
-        }
-
         pub fn get_character(&self) -> String {
             return self.character.clone();
         }
@@ -146,10 +142,6 @@ pub mod types {
 
         pub fn get_branch(&self, s: &str) -> Option<&SymbolTreeNode> {
             return self.root.get(&String::from(s));
-        }
-
-        fn get_branch_mut(&mut self, s: &str) -> Option<&mut SymbolTreeNode> {
-            return self.root.get_mut(&String::from(s));
         }
 
         pub fn attach(&mut self, s: &str, token_type: TokenType) {
