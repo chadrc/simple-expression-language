@@ -7,6 +7,7 @@
 [workspace]
 
 members = [
+    "sel_compiler",
     "sel_tokenizer",
     "test_bed"
 ]

@@ -9,11 +9,9 @@ pub use tokenizer::Tokenizer;
 #[cfg(test)]
 mod tests {
     use super::*;
-    use symbol_tree::SymbolTree;
     use token::Token;
     use token_type::TokenType;
 
-    //#region Tokenizing
     #[test]
     fn tokenize_integer_expression() {
         let tokens: Vec<Token> = tokens_from_str("4");
@@ -264,66 +262,6 @@ mod tests {
         assert_token(tokens.get(0).unwrap(), TokenType::CurrentResult, "?");
     }
 
-    //#endregion Tokenizing
-
-    //#region Symbol Tree
-
-    #[test]
-    fn symbol_tree_make_empty() {
-        SymbolTree::new();
-    }
-
-    #[test]
-    fn symbol_tree_one_symbol() {
-        let mut tree = SymbolTree::new();
-        tree.attach("true", TokenType::Boolean);
-        check_tree_for_true(&tree);
-    }
-
-    #[test]
-    fn symbol_tree_two_symbols() {
-        let mut tree = SymbolTree::new();
-
-        tree.attach("true", TokenType::Boolean);
-        tree.attach("false", TokenType::Boolean);
-
-        check_tree_for_true(&tree);
-
-        // false check
-        let f_branch = tree.get_branch("f").unwrap();
-        assert_eq!(f_branch.get_character(), "f");
-
-        let a_branch = f_branch.get("a").unwrap();
-        assert_eq!(a_branch.get_character(), "a");
-
-        let l_branch = a_branch.get("l").unwrap();
-        assert_eq!(l_branch.get_character(), "l");
-
-        let s_branch = l_branch.get("s").unwrap();
-        assert_eq!(s_branch.get_character(), "s");
-
-        let e_branch = s_branch.get("e").unwrap();
-        assert_eq!(e_branch.get_character(), "e");
-    }
-
-    #[test]
-    fn symbol_tree_similar_symbols() {
-        let mut tree = SymbolTree::new();
-
-        tree.attach("true", TokenType::Boolean);
-        tree.attach("tree", TokenType::Unknown);
-
-        let r_branch = tree.get_branch("t").unwrap().get("r").unwrap();
-
-        let e_branch = r_branch.get("e").unwrap();
-        assert_eq!(e_branch.get_character(), "e");
-
-        let u_branch = r_branch.get("u").unwrap();
-        assert_eq!(u_branch.get_character(), "u");
-    }
-
-    //#endregion Symbol Tree
-
     // Test utils
     fn tokens_from_str(s: &str) -> Vec<Token> {
         let input = String::from(s);
@@ -344,23 +282,5 @@ mod tests {
         assert_token(tokens.get(0).unwrap(), TokenType::Integer, "4");
         assert_token(tokens.get(1).unwrap(), op_token_type, op);
         assert_token(tokens.get(2).unwrap(), TokenType::Integer, "5");
-    }
-
-    fn check_tree_for_true(tree: &SymbolTree) {
-        let t_branch = tree.get_branch("t").unwrap();
-        assert_eq!(t_branch.get_character(), "t");
-        assert_eq!(t_branch.get_token_type(), TokenType::Unknown);
-
-        let r_branch = t_branch.get("r").unwrap();
-        assert_eq!(r_branch.get_character(), "r");
-        assert_eq!(r_branch.get_token_type(), TokenType::Unknown);
-
-        let u_branch = r_branch.get("u").unwrap();
-        assert_eq!(u_branch.get_character(), "u");
-        assert_eq!(u_branch.get_token_type(), TokenType::Unknown);
-
-        let e_branch = u_branch.get("e").unwrap();
-        assert_eq!(e_branch.get_character(), "e");
-        assert_eq!(e_branch.get_token_type(), TokenType::Boolean);
     }
 }
