@@ -10,6 +10,7 @@ pub enum Operation {
 pub enum DataType {
     Unit,
     Integer,
+    String,
 }
 
 #[derive(PartialEq, Debug, Clone, Copy)]
@@ -65,9 +66,16 @@ impl Compiler {
         let mut data_type = DataType::Unit;
 
         for token in tokenizer {
-            if token.get_token_type() == TokenType::Integer {
+            let token_type = token.get_token_type();
+            if token_type == TokenType::Integer {
                 op = Operation::Touch;
                 data_type = DataType::Integer;
+            } else if token_type == TokenType::SingleQuotedString
+                || token_type == TokenType::DoubleQuotedString
+                || token_type == TokenType::FormattedString
+            {
+                op = Operation::Touch;
+                data_type = DataType::String;
             }
         }
 
@@ -105,6 +113,14 @@ mod tests {
 
         assert_eq!(root.get_operation(), Operation::Touch);
         assert_eq!(root.get_value().get_type(), DataType::Integer);
+    }
+
+    #[test]
+    fn compiles_touch_string() {
+        let root = get_compiled_root("'hello world'");
+
+        assert_eq!(root.get_operation(), Operation::Touch);
+        assert_eq!(root.get_value().get_type(), DataType::String);
     }
 
     // Helpers
