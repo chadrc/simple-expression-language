@@ -8,6 +8,7 @@ pub enum Operation {
 
 #[derive(PartialEq, Debug, Clone, Copy)]
 pub enum DataType {
+    Unit,
     Integer,
 }
 
@@ -61,7 +62,7 @@ impl Compiler {
 
         // assume some defaults
         let mut op = Operation::None;
-        let mut data_type = DataType::Integer;
+        let mut data_type = DataType::Unit;
 
         for token in tokenizer {
             if token.get_token_type() == TokenType::Integer {
@@ -100,6 +101,7 @@ mod tests {
         let root = tree.get_root();
 
         assert_eq!(root.get_operation(), Operation::None);
+        assert_eq!(root.get_value().get_type(), DataType::Unit);
     }
 
     #[test]
