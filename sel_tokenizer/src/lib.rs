@@ -4,6 +4,8 @@ mod token;
 mod token_type;
 mod tokenizer;
 
+pub use token_type::TokenType;
+pub use token::Token;
 pub use tokenizer::Tokenizer;
 
 #[cfg(test)]
