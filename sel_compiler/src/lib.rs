@@ -10,6 +10,7 @@ pub enum Operation {
 pub enum DataType {
     Unit,
     Integer,
+    Decimal,
     String,
     Boolean,
 }
@@ -71,6 +72,9 @@ impl Compiler {
             if token_type == TokenType::Integer {
                 op = Operation::Touch;
                 data_type = DataType::Integer;
+            } else if token_type == TokenType::Decimal {
+                op = Operation::Touch;
+                data_type = DataType::Decimal;
             } else if token_type == TokenType::SingleQuotedString
                 || token_type == TokenType::DoubleQuotedString
                 || token_type == TokenType::FormattedString
@@ -117,6 +121,14 @@ mod tests {
 
         assert_eq!(root.get_operation(), Operation::Touch);
         assert_eq!(root.get_value().get_type(), DataType::Integer);
+    }
+
+    #[test]
+    fn compiles_touch_decimal() {
+        let root = get_compiled_root("3.14");
+
+        assert_eq!(root.get_operation(), Operation::Touch);
+        assert_eq!(root.get_value().get_type(), DataType::Decimal);
     }
 
     #[test]
