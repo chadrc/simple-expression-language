@@ -93,12 +93,7 @@ mod tests {
 
     #[test]
     fn compiles_empty() {
-        let input = String::from("");
-        let compiler = Compiler::new();
-
-        let tree = compiler.compile(&input);
-
-        let root = tree.get_root();
+        let root = get_compiled_root("");
 
         assert_eq!(root.get_operation(), Operation::None);
         assert_eq!(root.get_value().get_type(), DataType::Unit);
@@ -106,14 +101,20 @@ mod tests {
 
     #[test]
     fn compiles_touch_integer() {
-        let input = String::from("9");
+        let root = get_compiled_root("9");
+
+        assert_eq!(root.get_operation(), Operation::Touch);
+        assert_eq!(root.get_value().get_type(), DataType::Integer);
+    }
+
+    // Helpers
+
+    fn get_compiled_root(s: &str) -> SELTreeNode {
+        let input = String::from(s);
         let compiler = Compiler::new();
 
         let tree = compiler.compile(&input);
 
-        let root = tree.get_root();
-
-        assert_eq!(root.get_operation(), Operation::Touch);
-        assert_eq!(root.get_value().get_type(), DataType::Integer);
+        return tree.get_root();
     }
 }
