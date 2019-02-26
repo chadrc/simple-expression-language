@@ -11,6 +11,7 @@ pub enum DataType {
     Unit,
     Integer,
     String,
+    Boolean,
 }
 
 #[derive(PartialEq, Debug, Clone, Copy)]
@@ -76,6 +77,9 @@ impl Compiler {
             {
                 op = Operation::Touch;
                 data_type = DataType::String;
+            } else if token_type == TokenType::Boolean {
+                op = Operation::Touch;
+                data_type = DataType::Boolean;
             }
         }
 
@@ -137,6 +141,14 @@ mod tests {
 
         assert_eq!(root.get_operation(), Operation::Touch);
         assert_eq!(root.get_value().get_type(), DataType::String);
+    }
+
+    #[test]
+    fn compiles_touch_boolean() {
+        let root = get_compiled_root("true");
+
+        assert_eq!(root.get_operation(), Operation::Touch);
+        assert_eq!(root.get_value().get_type(), DataType::Boolean);
     }
 
     // Helpers
