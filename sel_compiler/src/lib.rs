@@ -1,7 +1,17 @@
+pub struct Compiler {}
+
+impl Compiler {
+    pub fn new() -> Self {
+        return Compiler {};
+    }
+}
+
 #[cfg(test)]
 mod tests {
+    use super::*;
+
     #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
+    fn create_compiler() {
+        Compiler::new();
     }
 }
