@@ -116,8 +116,24 @@ mod tests {
     }
 
     #[test]
-    fn compiles_touch_string() {
+    fn compiles_touch_single_quote_string() {
         let root = get_compiled_root("'hello world'");
+
+        assert_eq!(root.get_operation(), Operation::Touch);
+        assert_eq!(root.get_value().get_type(), DataType::String);
+    }
+
+    #[test]
+    fn compiles_touch_double_quote_string() {
+        let root = get_compiled_root("\"hello world\"");
+
+        assert_eq!(root.get_operation(), Operation::Touch);
+        assert_eq!(root.get_value().get_type(), DataType::String);
+    }
+
+    #[test]
+    fn compiles_touch_formatted_string() {
+        let root = get_compiled_root("`hello world`");
 
         assert_eq!(root.get_operation(), Operation::Touch);
         assert_eq!(root.get_value().get_type(), DataType::String);
