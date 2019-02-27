@@ -97,9 +97,6 @@ impl Compiler {
     pub fn compile(&self, s: &String) -> SELTree {
         let mut tokenizer = Tokenizer::new(s);
 
-        let mut last_node: Option<&SELTreeNode> = None;
-        let mut last_op_node: Option<SELTreeNode> = None;
-
         // process first token
         let token = match tokenizer.next() {
             None => {
