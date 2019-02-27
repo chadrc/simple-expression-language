@@ -37,9 +37,6 @@ pub struct SELTreeNode {
     right: Box<Option<SELTreeNode>>,
 }
 
-const LEFT_OP_INDEX: usize = 0;
-const RIGHT_OP_INDEX: usize = 1;
-
 impl SELTreeNode {
     fn new(op: Operation, data_type: DataType) -> Self {
         return SELTreeNode {
