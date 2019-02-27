@@ -162,8 +162,45 @@ impl Compiler {
 
         let mut second_op_node = SELTreeNode::new(op, data_type);
 
-        // insert previous op_node as left operand to new one
-        second_op_node.left = Box::new(Some(op_node));
+        // check priority
+        let higher_priority = op_node.get_operation() == Operation::Addition
+            && second_op_node.get_operation() == Operation::Multiplication;
+
+        if higher_priority {
+            // if second op has higher priority
+            // need to take the right operand of previous op
+            // and make it the left operand of second op
+            second_op_node.left = op_node.right;
+
+            // checking for another op node
+            let token = match tokenizer.next() {
+                None => {
+                    // no right operand
+                    // return the incomplete op
+                    return SELTree {
+                        root: second_op_node,
+                    };
+                }
+                Some(t) => t,
+            };
+
+            // first token should be a value token
+            let op = Operation::Touch;
+            let data_type = get_value_type_for_token(token);
+
+            let third_node = SELTreeNode::new(op, data_type);
+
+            second_op_node.right = Box::new(Some(third_node));
+
+            op_node.right = Box::new(Some(second_op_node));
+
+            // the first op node remains the root node
+            return SELTree { root: op_node };
+        } else {
+            // same or less priority
+            // insert previous op_node as left operand to new one
+            second_op_node.left = Box::new(Some(op_node));
+        }
 
         // checking for another op node
         let token = match tokenizer.next() {
@@ -421,8 +458,8 @@ mod tests {
         let left = root.get_left().unwrap();
         let right = root.get_right().unwrap();
 
-        let l2_left = left.get_left().unwrap();
-        let l2_right = left.get_right().unwrap();
+        let r2_left = right.get_left().unwrap();
+        let r2_right = right.get_right().unwrap();
 
         assert_eq!(root.get_operation(), Operation::Addition);
         assert_eq!(root.get_value().get_type(), DataType::Unknown);
@@ -432,6 +469,43 @@ mod tests {
 
         assert_eq!(right.get_operation(), Operation::Multiplication);
         assert_eq!(right.get_value().get_type(), DataType::Unknown);
+
+        assert_eq!(r2_left.get_operation(), Operation::Touch);
+        assert_eq!(r2_left.get_value().get_type(), DataType::Integer);
+
+        assert_eq!(r2_right.get_operation(), Operation::Touch);
+        assert_eq!(r2_right.get_value().get_type(), DataType::Integer);
+    }
+    #[test]
+    fn compiles_multiplication_addition_operations() {
+        let input = String::from("5 * 10 + 15");
+        let compiler = Compiler::new();
+
+        let tree = compiler.compile(&input);
+
+        // tree should look like
+        //          +
+        //         / \
+        //        *   15
+        //       / \
+        //      5   10
+
+        let root = tree.get_root();
+
+        let left = root.get_left().unwrap();
+        let right = root.get_right().unwrap();
+
+        let l2_left = left.get_left().unwrap();
+        let l2_right = left.get_right().unwrap();
+
+        assert_eq!(root.get_operation(), Operation::Addition);
+        assert_eq!(root.get_value().get_type(), DataType::Unknown);
+
+        assert_eq!(left.get_operation(), Operation::Multiplication);
+        assert_eq!(left.get_value().get_type(), DataType::Unknown);
+
+        assert_eq!(right.get_operation(), Operation::Touch);
+        assert_eq!(right.get_value().get_type(), DataType::Integer);
 
         assert_eq!(l2_left.get_operation(), Operation::Touch);
         assert_eq!(l2_left.get_value().get_type(), DataType::Integer);
