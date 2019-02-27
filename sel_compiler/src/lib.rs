@@ -67,10 +67,6 @@ impl SELTreeNode {
         };
     }
 
-    // fn set_left(&mut self, node: SELTreeNode) {
-    //     self.
-    // }
-
     pub fn get_right(&self) -> Option<&SELTreeNode> {
         return match &*self.right {
             None => None,
@@ -307,5 +303,43 @@ mod tests {
 
         assert_eq!(right.unwrap().get_operation(), Operation::Touch);
         assert_eq!(right.unwrap().get_value().get_type(), DataType::Integer);
+    }
+
+    #[test]
+    fn compiles_two_addition_operations() {
+        let input = String::from("5 + 10 + 15");
+        let compiler = Compiler::new();
+
+        let tree = compiler.compile(&input);
+
+        // tree should look like
+        //          +
+        //         / \
+        //        +   15
+        //       / \
+        //      5   10
+
+        let root = tree.get_root();
+
+        let left = root.get_left().unwrap();
+        let right = root.get_right().unwrap();
+
+        let l2_left = left.get_left().unwrap();
+        let l2_right = left.get_right().unwrap();
+
+        assert_eq!(root.get_operation(), Operation::Addition);
+        assert_eq!(root.get_value().get_type(), DataType::Unknown);
+
+        assert_eq!(left.get_operation(), Operation::Addition);
+        assert_eq!(left.get_value().get_type(), DataType::Unknown);
+
+        assert_eq!(right.get_operation(), Operation::Touch);
+        assert_eq!(right.get_value().get_type(), DataType::Integer);
+
+        assert_eq!(l2_left.get_operation(), Operation::Touch);
+        assert_eq!(l2_left.get_value().get_type(), DataType::Integer);
+
+        assert_eq!(l2_right.get_operation(), Operation::Touch);
+        assert_eq!(l2_right.get_value().get_type(), DataType::Integer);
     }
 }
