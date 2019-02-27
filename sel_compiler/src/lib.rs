@@ -30,14 +30,14 @@ impl Value {
 }
 
 #[derive(Debug, Clone)]
-pub struct SELTreeNode {
+pub struct SELTreeNode<'a> {
     operation: Operation,
     value: Value,
-    left: Box<Option<SELTreeNode>>,
-    right: Box<Option<SELTreeNode>>,
+    left: Option<&'a SELTreeNode<'a>>,
+    right: Option<&'a SELTreeNode<'a>>,
 }
 
-impl SELTreeNode {
+impl<'a> SELTreeNode<'a> {
     fn new(op: Operation, data_type: DataType) -> Self {
         return SELTreeNode {
             operation: op,
@@ -45,8 +45,8 @@ impl SELTreeNode {
                 data_type: data_type,
             },
             // largest operation has two operands
-            left: Box::new(None),
-            right: Box::new(None),
+            left: None,
+            right: None,
         };
     }
 
@@ -58,28 +58,22 @@ impl SELTreeNode {
         return self.value;
     }
 
-    pub fn get_left(&self) -> Option<&SELTreeNode> {
-        return match &*self.left {
-            None => None,
-            Some(n) => Some(&n),
-        };
+    pub fn get_left(&self) -> Option<&'a SELTreeNode> {
+        return self.left;
     }
 
-    pub fn get_right(&self) -> Option<&SELTreeNode> {
-        return match &*self.right {
-            None => None,
-            Some(n) => Some(&n),
-        };
+    pub fn get_right(&self) -> Option<&'a SELTreeNode> {
+        return self.right;
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct SELTree {
-    root: SELTreeNode,
+pub struct SELTree<'a> {
+    root: SELTreeNode<'a>,
 }
 
-impl SELTree {
-    pub fn get_root(&self) -> &SELTreeNode {
+impl<'a> SELTree<'a> {
+    pub fn get_root(&self) -> &'a SELTreeNode {
         return &self.root;
     }
 }
@@ -92,7 +86,7 @@ impl Compiler {
     }
 
     pub fn compile(&self, s: &String) -> SELTree {
-        let mut tokenizer = Tokenizer::new(s);
+        let tokens: Vec<Token> = Tokenizer::new(s).collect();
 
         return SELTree {
             root: SELTreeNode::new(Operation::None, DataType::Unknown),
