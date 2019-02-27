@@ -152,7 +152,47 @@ impl Compiler {
 
         op_node.right = Box::new(Some(second_node));
 
-        return SELTree { root: op_node };
+        // checking for another op node
+        let token = match tokenizer.next() {
+            None => {
+                // no other operations
+                // return the touch operation
+                return SELTree { root: op_node };
+            }
+            Some(t) => t,
+        };
+
+        let op = get_operation_type_for_token(token);
+        let data_type = DataType::Unknown;
+
+        let mut second_op_node = SELTreeNode::new(op, data_type);
+
+        // insert previous op_node as left operand to new one
+        second_op_node.left = Box::new(Some(op_node));
+
+        // checking for another op node
+        let token = match tokenizer.next() {
+            None => {
+                // no right operand
+                // return the incomplete op
+                return SELTree {
+                    root: second_op_node,
+                };
+            }
+            Some(t) => t,
+        };
+
+        // first token should be a value token
+        let op = Operation::Touch;
+        let data_type = get_value_type_for_token(token);
+
+        let third_node = SELTreeNode::new(op, data_type);
+
+        second_op_node.right = Box::new(Some(third_node));
+
+        return SELTree {
+            root: second_op_node,
+        };
     }
 }
 
