@@ -113,8 +113,6 @@ impl Compiler {
             Some(t) => t,
         };
 
-        let token_type = token.get_token_type();
-
         // first token should be a value token
         let op = Operation::Touch;
         let data_type = get_value_type_for_token(token);
