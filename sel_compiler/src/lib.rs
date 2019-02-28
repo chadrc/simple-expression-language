@@ -30,16 +30,15 @@ impl Value {
 }
 
 #[derive(Debug, Clone)]
-pub struct SELTreeNode<'a> {
+pub struct SELTreeNode {
     operation: Operation,
     value: Value,
     left: usize,
     right: usize,
-    tree: &'a SELTree<'a>,
 }
 
-impl<'a> SELTreeNode<'a> {
-    fn new(op: Operation, data_type: DataType, tree: &'a SELTree<'a>) -> Self {
+impl SELTreeNode {
+    fn new(op: Operation, data_type: DataType) -> Self {
         return SELTreeNode {
             operation: op,
             value: Value {
@@ -48,7 +47,6 @@ impl<'a> SELTreeNode<'a> {
             // largest operation has two operands
             left: 0,
             right: 0,
-            tree: tree,
         };
     }
 
@@ -60,27 +58,35 @@ impl<'a> SELTreeNode<'a> {
         return self.value;
     }
 
-    pub fn get_left(&self) -> Option<&'a SELTreeNode> {
-        return self.tree.nodes.get(self.left);
+    pub fn get_left(&self) -> usize {
+        return self.left;
     }
 
-    pub fn get_right(&self) -> Option<&'a SELTreeNode> {
-        return self.tree.nodes.get(self.right);
+    pub fn get_right(&self) -> usize {
+        return self.right;
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct SELTree<'a> {
-    root: Option<SELTreeNode<'a>>,
-    nodes: Vec<SELTreeNode<'a>>,
+pub struct SELTree {
+    root: SELTreeNode,
 }
 
-impl<'a> SELTree<'a> {
-    fn new(tokens: Vec<Token>) -> Self {
-        let tree = SELTree {
-            root: None,
-            nodes: vec![],
-        };
+impl SELTree {
+    pub fn get_root(&self) -> &SELTreeNode {
+        return &self.root;
+    }
+}
+
+pub struct Compiler {}
+
+impl Compiler {
+    pub fn new() -> Self {
+        return Compiler {};
+    }
+
+    pub fn compile(&self, s: &String) -> SELTree {
+        let tokens: Vec<Token> = Tokenizer::new(s).collect();
 
         let mut nodes: Vec<SELTreeNode> = vec![];
 
@@ -92,7 +98,6 @@ impl<'a> SELTree<'a> {
             let mut node = SELTreeNode::new(
                 get_operation_type_for_token(&token),
                 get_data_type_for_token(&token),
-                &tree,
             );
 
             let inserted_index = nodes.len() - 1;
@@ -109,27 +114,9 @@ impl<'a> SELTree<'a> {
             nodes.push(node);
         }
 
-        return tree;
-    }
-
-    pub fn get_root(&self) -> Option<&SELTreeNode> {
-        return match &self.root {
-            None => None,
-            Some(r) => Some(&r),
+        return SELTree {
+            root: SELTreeNode::new(Operation::None, DataType::Unknown),
         };
-    }
-}
-
-pub struct Compiler {}
-
-impl Compiler {
-    pub fn new() -> Self {
-        return Compiler {};
-    }
-
-    pub fn compile(&self, s: &String) -> SELTree {
-        let tokens: Vec<Token> = Tokenizer::new(s).collect();
-        return SELTree::new(tokens);
     }
 }
 
@@ -178,7 +165,7 @@ mod tests {
 
         let tree = compiler.compile(&input);
 
-        let root = tree.get_root().unwrap();
+        let root = tree.get_root();
 
         assert_eq!(root.get_operation(), Operation::None);
         assert_eq!(root.get_value().get_type(), DataType::Unit);
@@ -191,7 +178,7 @@ mod tests {
 
         let tree = compiler.compile(&input);
 
-        let root = tree.get_root().unwrap();
+        let root = tree.get_root();
 
         assert_eq!(root.get_operation(), Operation::Touch);
         assert_eq!(root.get_value().get_type(), DataType::Integer);
@@ -204,7 +191,7 @@ mod tests {
 
         let tree = compiler.compile(&input);
 
-        let root = tree.get_root().unwrap();
+        let root = tree.get_root();
 
         assert_eq!(root.get_operation(), Operation::Touch);
         assert_eq!(root.get_value().get_type(), DataType::Decimal);
@@ -217,7 +204,7 @@ mod tests {
 
         let tree = compiler.compile(&input);
 
-        let root = tree.get_root().unwrap();
+        let root = tree.get_root();
 
         assert_eq!(root.get_operation(), Operation::Touch);
         assert_eq!(root.get_value().get_type(), DataType::String);
@@ -230,7 +217,7 @@ mod tests {
 
         let tree = compiler.compile(&input);
 
-        let root = tree.get_root().unwrap();
+        let root = tree.get_root();
 
         assert_eq!(root.get_operation(), Operation::Touch);
         assert_eq!(root.get_value().get_type(), DataType::String);
@@ -243,7 +230,7 @@ mod tests {
 
         let tree = compiler.compile(&input);
 
-        let root = tree.get_root().unwrap();
+        let root = tree.get_root();
 
         assert_eq!(root.get_operation(), Operation::Touch);
         assert_eq!(root.get_value().get_type(), DataType::String);
@@ -256,7 +243,7 @@ mod tests {
 
         let tree = compiler.compile(&input);
 
-        let root = tree.get_root().unwrap();
+        let root = tree.get_root();
 
         assert_eq!(root.get_operation(), Operation::Touch);
         assert_eq!(root.get_value().get_type(), DataType::Boolean);
@@ -269,7 +256,7 @@ mod tests {
 
         let tree = compiler.compile(&input);
 
-        let root = tree.get_root().unwrap();
+        let root = tree.get_root();
 
         let left = root.get_left();
         let right = root.get_right();
@@ -291,7 +278,7 @@ mod tests {
 
         let tree = compiler.compile(&input);
 
-        let root = tree.get_root().unwrap();
+        let root = tree.get_root();
 
         let left = root.get_left();
         let right = root.get_right();
@@ -320,7 +307,7 @@ mod tests {
         //       / \
         //      5   10
 
-        let root = tree.get_root().unwrap();
+        let root = tree.get_root();
 
         let left = root.get_left().unwrap();
         let right = root.get_right().unwrap();
@@ -358,7 +345,7 @@ mod tests {
         //           / \
         //         10   15
 
-        let root = tree.get_root().unwrap();
+        let root = tree.get_root();
 
         let left = root.get_left().unwrap();
         let right = root.get_right().unwrap();
@@ -395,7 +382,7 @@ mod tests {
         //       / \
         //      5   10
 
-        let root = tree.get_root().unwrap();
+        let root = tree.get_root();
 
         let left = root.get_left().unwrap();
         let right = root.get_right().unwrap();
