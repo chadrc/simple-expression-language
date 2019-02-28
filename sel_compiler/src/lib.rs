@@ -87,14 +87,14 @@ impl Compiler {
     }
 
     pub fn compile(&self, s: &String) -> SELTree {
-        let tokens: Vec<Token> = Tokenizer::new(s).collect();
+        let tokenizer = Tokenizer::new(s);
 
         let mut nodes: Vec<SELTreeNode> = vec![];
 
         // loop trough all tokens
         // convert them to tree nodes
         // and link them together
-        for token in tokens {
+        for token in tokenizer {
             let mut node = SELTreeNode::new(
                 get_operation_type_for_token(&token),
                 get_data_type_for_token(&token),
