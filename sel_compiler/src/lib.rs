@@ -29,7 +29,7 @@ impl Value {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(PartialEq, Debug, Clone, Copy)]
 pub struct SELTreeNode {
     operation: Operation,
     value: Value,
@@ -70,6 +70,7 @@ impl SELTreeNode {
 #[derive(Debug, Clone)]
 pub struct SELTree {
     root: SELTreeNode,
+    nodes: Vec<SELTreeNode>,
 }
 
 impl SELTree {
@@ -116,6 +117,7 @@ impl Compiler {
 
         return SELTree {
             root: SELTreeNode::new(Operation::None, DataType::Unknown),
+            nodes: nodes,
         };
     }
 }
