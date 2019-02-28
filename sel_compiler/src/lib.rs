@@ -30,14 +30,14 @@ impl Value {
 }
 
 #[derive(Debug, Clone)]
-pub struct SELTreeNode<'a> {
+pub struct SELTreeNode {
     operation: Operation,
     value: Value,
-    left: Option<&'a SELTreeNode<'a>>,
-    right: Option<&'a SELTreeNode<'a>>,
+    left: usize,
+    right: usize,
 }
 
-impl<'a> SELTreeNode<'a> {
+impl SELTreeNode {
     fn new(op: Operation, data_type: DataType) -> Self {
         return SELTreeNode {
             operation: op,
@@ -45,8 +45,8 @@ impl<'a> SELTreeNode<'a> {
                 data_type: data_type,
             },
             // largest operation has two operands
-            left: None,
-            right: None,
+            left: 0,
+            right: 0,
         };
     }
 
@@ -58,22 +58,22 @@ impl<'a> SELTreeNode<'a> {
         return self.value;
     }
 
-    pub fn get_left(&self) -> Option<&'a SELTreeNode> {
+    pub fn get_left(&self) -> usize {
         return self.left;
     }
 
-    pub fn get_right(&self) -> Option<&'a SELTreeNode> {
+    pub fn get_right(&self) -> usize {
         return self.right;
     }
 }
 
 #[derive(Debug, Clone)]
-pub struct SELTree<'a> {
-    root: SELTreeNode<'a>,
+pub struct SELTree {
+    root: SELTreeNode,
 }
 
-impl<'a> SELTree<'a> {
-    pub fn get_root(&self) -> &'a SELTreeNode {
+impl SELTree {
+    pub fn get_root(&self) -> &SELTreeNode {
         return &self.root;
     }
 }
@@ -88,10 +88,65 @@ impl Compiler {
     pub fn compile(&self, s: &String) -> SELTree {
         let tokens: Vec<Token> = Tokenizer::new(s).collect();
 
+        let mut nodes: Vec<SELTreeNode> = vec![];
+
+        // loop trough all tokens
+        // convert them to tree nodes
+        // and link them together
+
+        for token in tokens {
+            let mut node = SELTreeNode::new(
+                get_operation_type_for_token(&token),
+                get_data_type_for_token(&token),
+            );
+
+            let inserted_index = nodes.len() - 1;
+
+            // if we have at least one previous node
+            if inserted_index > 0 {
+                let previous_index = inserted_index - 1;
+                let mut previous_node = nodes.get_mut(previous_index).unwrap();
+
+                node.left = previous_index;
+                previous_node.right = inserted_index;
+            }
+
+            nodes.push(node);
+        }
+
         return SELTree {
             root: SELTreeNode::new(Operation::None, DataType::Unknown),
         };
     }
+}
+
+fn get_data_type_for_token(token: &Token) -> DataType {
+    let token_type = token.get_token_type();
+
+    return if token_type == TokenType::Integer {
+        DataType::Integer
+    } else if token_type == TokenType::Decimal {
+        DataType::Decimal
+    } else if token_type == TokenType::SingleQuotedString
+        || token_type == TokenType::DoubleQuotedString
+        || token_type == TokenType::FormattedString
+    {
+        DataType::String
+    } else if token_type == TokenType::Boolean {
+        DataType::Boolean
+    } else {
+        DataType::Unknown
+    };
+}
+
+fn get_operation_type_for_token(token: &Token) -> Operation {
+    return if token.get_token_type() == TokenType::PlusSign {
+        Operation::Addition
+    } else if token.get_token_type() == TokenType::MultiplicationSign {
+        Operation::Multiplication
+    } else {
+        Operation::None
+    };
 }
 
 #[cfg(test)]
