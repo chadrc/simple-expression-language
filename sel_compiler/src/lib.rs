@@ -94,7 +94,6 @@ impl Compiler {
         // loop trough all tokens
         // convert them to tree nodes
         // and link them together
-
         for token in tokens {
             let mut node = SELTreeNode::new(
                 get_operation_type_for_token(&token),
@@ -114,6 +113,10 @@ impl Compiler {
 
             nodes.push(node);
         }
+
+        // starting with lowest priority operators
+        // go through nodes and move pointers to their operands
+        // to point at operator
 
         return SELTree {
             root: SELTreeNode::new(Operation::None, DataType::Unknown),
