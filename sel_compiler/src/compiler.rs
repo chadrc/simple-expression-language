@@ -157,7 +157,7 @@ impl Compiler {
         mut nodes: Vec<SELTreeNode>,
         indicies_to_resolve: &Vec<usize>,
     ) -> Vec<SELTreeNode> {
-        // println!("{:?}", indicies_to_resolve);
+        println!("{:?}", indicies_to_resolve);
 
         for i in indicies_to_resolve {
             let mut changes: Vec<Change> = vec![];
@@ -237,8 +237,22 @@ impl Compiler {
                                             .get(&parent.get_operation())
                                             .unwrap();
 
+                                        // TODO: priority should make a difference, but doesn't right now
                                         if their_priority >= my_priority {
                                             // same or lower
+                                            changes.push(Change {
+                                                index_to_change: parent.get_own_index(),
+                                                new_index: node.get_own_index(),
+                                                side_to_set: NodeSide::Parent,
+                                            });
+
+                                            changes.push(Change {
+                                                index_to_change: node.get_own_index(),
+                                                new_index: parent.get_own_index(),
+                                                side_to_set: NodeSide::Left,
+                                            });
+                                        } else {
+                                            // higher priority
                                             changes.push(Change {
                                                 index_to_change: parent.get_own_index(),
                                                 new_index: node.get_own_index(),
@@ -318,7 +332,7 @@ impl Compiler {
                 for change in changes {
                     let node = nodes.get_mut(change.index_to_change).unwrap();
 
-                    // println!("performing change {:?}", change);
+                    println!("performing change {:?}", change);
 
                     match change.side_to_set {
                         NodeSide::Left => node.set_left(change.new_index),
@@ -341,8 +355,9 @@ impl Compiler {
         // to point at operator
         // let nodes = &mut nodes;
 
-        for priority in priority_map {
+        for (i, priority) in priority_map.iter().enumerate() {
             if priority.len() > 0 {
+                println!("priority {:?}", i);
                 nodes = self.resolve_tree(nodes, &priority);
             }
         }
