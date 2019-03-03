@@ -26,8 +26,11 @@ const ADDITION_PRECEDENCE: usize = 1;
 impl Compiler {
     pub fn new() -> Self {
         let mut operation_priorities = HashMap::new();
+
         operation_priorities.insert(Operation::Multiplication, MULTIPLICATION_PRECEDENCE);
         operation_priorities.insert(Operation::Division, MULTIPLICATION_PRECEDENCE);
+        operation_priorities.insert(Operation::Modulo, MULTIPLICATION_PRECEDENCE);
+
         operation_priorities.insert(Operation::Addition, ADDITION_PRECEDENCE);
         operation_priorities.insert(Operation::Subtraction, ADDITION_PRECEDENCE);
 
@@ -470,6 +473,28 @@ mod tests {
         let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
 
         assert_eq!(root.get_operation(), Operation::Division);
+        assert_eq!(root.get_value().get_data_type(), DataType::Unknown);
+
+        assert_eq!(left.get_operation(), Operation::Touch);
+        assert_eq!(left.get_value().get_data_type(), DataType::Integer);
+
+        assert_eq!(right.get_operation(), Operation::Touch);
+        assert_eq!(right.get_value().get_data_type(), DataType::Integer);
+    }
+
+    #[test]
+    fn compiles_modulus_operation() {
+        let input = String::from("5 % 10");
+        let compiler = Compiler::new();
+
+        let tree = compiler.compile(&input);
+
+        let root = tree.get_root();
+
+        let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
+        let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
+
+        assert_eq!(root.get_operation(), Operation::Modulo);
         assert_eq!(root.get_value().get_data_type(), DataType::Unknown);
 
         assert_eq!(left.get_operation(), Operation::Touch);

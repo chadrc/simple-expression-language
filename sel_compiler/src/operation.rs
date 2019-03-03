@@ -6,6 +6,7 @@ pub enum Operation {
     Addition,
     Subtraction,
     Multiplication,
+    Modulo,
     Division,
     None,
     Start,
@@ -20,6 +21,8 @@ pub fn get_operation_type_for_token(token: &Token) -> Operation {
         Operation::Multiplication
     } else if token.get_token_type() == TokenType::DivisionSign {
         Operation::Division
+    } else if token.get_token_type() == TokenType::ModulusSign {
+        Operation::Modulo
     } else if token.get_token_type() == TokenType::Boolean
         || token.get_token_type() == TokenType::Integer
         || token.get_token_type() == TokenType::Decimal
