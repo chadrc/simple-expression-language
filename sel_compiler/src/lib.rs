@@ -214,93 +214,89 @@ impl Compiler {
                 let nodes = &nodes;
                 let node = nodes.get(*i).unwrap();
 
-                if node.get_operation() == Operation::Addition
-                    || node.get_operation() == Operation::Multiplication
-                {
-                    match node.get_left() {
-                        None => (),
-                        Some(left_index) => {
-                            let left = nodes.get(left_index).unwrap();
-                            // only need to update if a value type
-                            if left.value.data_type != DataType::Unknown {
-                                // update operands parent to point to operator
-                                changes.push(Change {
-                                    index_to_change: left.own_index,
-                                    new_index: node.own_index,
-                                    side_to_set: NodeSide::Parent,
-                                });
+                match node.get_left() {
+                    None => (),
+                    Some(left_index) => {
+                        let left = nodes.get(left_index).unwrap();
+                        // only need to update if a value type
+                        if left.value.data_type != DataType::Unknown {
+                            // update operands parent to point to operator
+                            changes.push(Change {
+                                index_to_change: left.own_index,
+                                new_index: node.own_index,
+                                side_to_set: NodeSide::Parent,
+                            });
 
-                                match left.get_left() {
-                                    None => (),
-                                    Some(left_left_index) => {
-                                        let left_left = nodes.get(left_left_index).unwrap();
-                                        if left_left.get_operation() != Operation::Addition {
-                                            // if lower priority
-                                            // make its right point to node
-                                            changes.push(Change {
-                                                index_to_change: left_left.own_index,
-                                                new_index: node.own_index,
-                                                side_to_set: NodeSide::Right,
-                                            });
+                            match left.get_left() {
+                                None => (),
+                                Some(left_left_index) => {
+                                    let left_left = nodes.get(left_left_index).unwrap();
+                                    if left_left.get_operation() != Operation::Addition {
+                                        // if lower priority
+                                        // make its right point to node
+                                        changes.push(Change {
+                                            index_to_change: left_left.own_index,
+                                            new_index: node.own_index,
+                                            side_to_set: NodeSide::Right,
+                                        });
 
-                                            changes.push(Change {
-                                                index_to_change: node.own_index,
-                                                new_index: left_left.own_index,
-                                                side_to_set: NodeSide::Parent,
-                                            });
-                                        } else {
-                                            // same or higher priority
-                                            // make node's left point to it
-                                            changes.push(Change {
-                                                index_to_change: node.own_index,
-                                                new_index: left_left.own_index,
-                                                side_to_set: NodeSide::Left,
-                                            });
-                                        }
+                                        changes.push(Change {
+                                            index_to_change: node.own_index,
+                                            new_index: left_left.own_index,
+                                            side_to_set: NodeSide::Parent,
+                                        });
+                                    } else {
+                                        // same or higher priority
+                                        // make node's left point to it
+                                        changes.push(Change {
+                                            index_to_change: node.own_index,
+                                            new_index: left_left.own_index,
+                                            side_to_set: NodeSide::Left,
+                                        });
                                     }
                                 }
                             }
                         }
                     }
+                }
 
-                    // might not have right
-                    match node.get_right() {
-                        None => (),
-                        Some(right_index) => {
-                            let right = nodes.get(right_index).unwrap();
-                            // only need to update if a value type
-                            if right.value.data_type != DataType::Unknown {
-                                changes.push(Change {
-                                    index_to_change: right.own_index,
-                                    new_index: node.own_index,
-                                    side_to_set: NodeSide::Parent,
-                                });
-                                match right.get_right() {
-                                    None => (),
-                                    Some(right_right_index) => {
-                                        let right_right = nodes.get(right_right_index).unwrap();
+                // might not have right
+                match node.get_right() {
+                    None => (),
+                    Some(right_index) => {
+                        let right = nodes.get(right_index).unwrap();
+                        // only need to update if a value type
+                        if right.value.data_type != DataType::Unknown {
+                            changes.push(Change {
+                                index_to_change: right.own_index,
+                                new_index: node.own_index,
+                                side_to_set: NodeSide::Parent,
+                            });
+                            match right.get_right() {
+                                None => (),
+                                Some(right_right_index) => {
+                                    let right_right = nodes.get(right_right_index).unwrap();
 
-                                        if right_right.get_operation() != Operation::Addition {
-                                            // lower priority
-                                            // make its left point to node
-                                            changes.push(Change {
-                                                index_to_change: right_right.own_index,
-                                                new_index: node.own_index,
-                                                side_to_set: NodeSide::Left,
-                                            });
+                                    if right_right.get_operation() != Operation::Addition {
+                                        // lower priority
+                                        // make its left point to node
+                                        changes.push(Change {
+                                            index_to_change: right_right.own_index,
+                                            new_index: node.own_index,
+                                            side_to_set: NodeSide::Left,
+                                        });
 
-                                            changes.push(Change {
-                                                index_to_change: node.own_index,
-                                                new_index: right_right.own_index,
-                                                side_to_set: NodeSide::Parent,
-                                            });
-                                        } else {
-                                            changes.push(Change {
-                                                index_to_change: node.own_index,
-                                                new_index: right_right.own_index,
-                                                side_to_set: NodeSide::Parent,
-                                            });
-                                        }
+                                        changes.push(Change {
+                                            index_to_change: node.own_index,
+                                            new_index: right_right.own_index,
+                                            side_to_set: NodeSide::Parent,
+                                        });
+                                    } else {
+                                        changes.push(Change {
+                                            index_to_change: node.own_index,
+                                            new_index: right_right.own_index,
+                                            side_to_set: NodeSide::Parent,
+                                        });
                                     }
                                 }
                             }
