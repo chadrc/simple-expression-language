@@ -24,6 +24,8 @@ pub fn get_data_type_for_token(token: &Token) -> DataType {
         DataType::String
     } else if token_type == TokenType::Boolean {
         DataType::Boolean
+    } else if token_type == TokenType::Unit {
+        DataType::Unit
     } else {
         DataType::Unknown
     };

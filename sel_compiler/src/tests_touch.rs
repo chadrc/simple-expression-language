@@ -18,6 +18,19 @@ mod tests {
     }
 
     #[test]
+    fn compiles_unit() {
+        let input = String::from("()");
+        let compiler = Compiler::new();
+
+        let tree = compiler.compile(&input);
+
+        let root = tree.get_root();
+
+        assert_eq!(root.get_operation(), Operation::Touch);
+        assert_eq!(root.get_value().get_data_type(), DataType::Unit);
+    }
+
+    #[test]
     fn compiles_touch_integer() {
         let input = String::from("9");
         let compiler = Compiler::new();

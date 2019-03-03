@@ -28,6 +28,7 @@ pub fn get_operation_type_for_token(token: &Token) -> Operation {
         || token.get_token_type() == TokenType::SingleQuotedString
         || token.get_token_type() == TokenType::DoubleQuotedString
         || token.get_token_type() == TokenType::FormattedString
+        || token.get_token_type() == TokenType::Unit
     {
         // all value tokens result in a touch operation
         Operation::Touch
