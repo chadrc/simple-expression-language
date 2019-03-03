@@ -647,43 +647,43 @@ mod tests {
         assert_eq!(r2_right.get_value().get_type(), DataType::Integer);
     }
 
-    // #[test]
-    // fn compiles_multiplication_addition_operations() {
-    //     let input = String::from("5 * 10 + 15");
-    //     let compiler = Compiler::new();
+    #[test]
+    fn compiles_multiplication_addition_operations() {
+        let input = String::from("5 * 10 + 15");
+        let compiler = Compiler::new();
 
-    //     let tree = compiler.compile(&input);
+        let tree = compiler.compile(&input);
 
-    //     // tree should look like
-    //     //          +
-    //     //         / \
-    //     //        *   15
-    //     //       / \
-    //     //      5   10
+        // tree should look like
+        //          +
+        //         / \
+        //        *   15
+        //       / \
+        //      5   10
 
-    //     let root = tree.get_root();
+        let root = tree.get_root();
 
-    //     let left = root.get_left().unwrap();
-    //     let right = root.get_right().unwrap();
+        let left = tree.nodes.get(root.get_left().unwrap()).unwrap();
+        let right = tree.nodes.get(root.get_right().unwrap()).unwrap();
 
-    //     let l2_left = left.get_left().unwrap();
-    //     let l2_right = left.get_right().unwrap();
+        let l2_left = tree.nodes.get(left.get_left().unwrap()).unwrap();
+        let l2_right = tree.nodes.get(left.get_right().unwrap()).unwrap();
 
-    //     assert_eq!(root.get_operation(), Operation::Addition);
-    //     assert_eq!(root.get_value().get_type(), DataType::Unknown);
+        assert_eq!(root.get_operation(), Operation::Addition);
+        assert_eq!(root.get_value().get_type(), DataType::Unknown);
 
-    //     assert_eq!(left.get_operation(), Operation::Multiplication);
-    //     assert_eq!(left.get_value().get_type(), DataType::Unknown);
+        assert_eq!(left.get_operation(), Operation::Multiplication);
+        assert_eq!(left.get_value().get_type(), DataType::Unknown);
 
-    //     assert_eq!(right.get_operation(), Operation::Touch);
-    //     assert_eq!(right.get_value().get_type(), DataType::Integer);
+        assert_eq!(right.get_operation(), Operation::Touch);
+        assert_eq!(right.get_value().get_type(), DataType::Integer);
 
-    //     assert_eq!(l2_left.get_operation(), Operation::Touch);
-    //     assert_eq!(l2_left.get_value().get_type(), DataType::Integer);
+        assert_eq!(l2_left.get_operation(), Operation::Touch);
+        assert_eq!(l2_left.get_value().get_type(), DataType::Integer);
 
-    //     assert_eq!(l2_right.get_operation(), Operation::Touch);
-    //     assert_eq!(l2_right.get_value().get_type(), DataType::Integer);
-    // }
+        assert_eq!(l2_right.get_operation(), Operation::Touch);
+        assert_eq!(l2_right.get_value().get_type(), DataType::Integer);
+    }
 
     fn print_nodes(nodes: &Vec<SELTreeNode>) {
         for node in nodes {
