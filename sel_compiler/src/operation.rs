@@ -14,33 +14,23 @@ pub enum Operation {
 }
 
 pub fn get_operation_type_for_token(token: &Token) -> Operation {
-    return if token.get_token_type() == TokenType::PlusSign {
-        Operation::Addition
-    } else if token.get_token_type() == TokenType::MinusSign {
-        Operation::Subtraction
-    } else if token.get_token_type() == TokenType::MultiplicationSign {
-        Operation::Multiplication
-    } else if token.get_token_type() == TokenType::DivisionSign {
-        Operation::Division
-    } else if token.get_token_type() == TokenType::ModulusSign {
-        Operation::Modulo
-    } else if token.get_token_type() == TokenType::ExclusiveRange {
-        Operation::ExclusiveRange
-    } else if token.get_token_type() == TokenType::InclusiveRange {
-        Operation::InclusiveRange
-    } else if token.get_token_type() == TokenType::Boolean
-        || token.get_token_type() == TokenType::Integer
-        || token.get_token_type() == TokenType::Decimal
-        || token.get_token_type() == TokenType::SingleQuotedString
-        || token.get_token_type() == TokenType::DoubleQuotedString
-        || token.get_token_type() == TokenType::FormattedString
-        || token.get_token_type() == TokenType::Unit
-        || token.get_token_type() == TokenType::Input
-        || token.get_token_type() == TokenType::CurrentResult
-    {
-        // all value tokens result in a touch operation
-        Operation::Touch
-    } else {
-        Operation::None
+    return match token.get_token_type() {
+        TokenType::PlusSign => Operation::Addition,
+        TokenType::MinusSign => Operation::Subtraction,
+        TokenType::MultiplicationSign => Operation::Multiplication,
+        TokenType::DivisionSign => Operation::Division,
+        TokenType::ModulusSign => Operation::Modulo,
+        TokenType::ExclusiveRange => Operation::ExclusiveRange,
+        TokenType::InclusiveRange => Operation::InclusiveRange,
+        TokenType::Boolean
+        | TokenType::Integer
+        | TokenType::Decimal
+        | TokenType::SingleQuotedString
+        | TokenType::DoubleQuotedString
+        | TokenType::FormattedString
+        | TokenType::Unit
+        | TokenType::Input
+        | TokenType::CurrentResult => Operation::Touch,
+        _ => Operation::None,
     };
 }
