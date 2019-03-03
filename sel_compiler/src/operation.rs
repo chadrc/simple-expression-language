@@ -19,6 +19,7 @@ pub enum Operation {
     Inequality,
     LogicalAnd,
     LogicalOr,
+    LogicalNot,
     None,
 }
 
@@ -40,6 +41,7 @@ pub fn get_operation_type_for_token(token: &Token) -> Operation {
         TokenType::NotEqual => Operation::Inequality,
         TokenType::LogicalAnd => Operation::LogicalAnd,
         TokenType::LogicalOr => Operation::LogicalOr,
+        TokenType::LogicalNot => Operation::LogicalNot,
         TokenType::Boolean
         | TokenType::Integer
         | TokenType::Decimal

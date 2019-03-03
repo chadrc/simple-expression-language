@@ -16,14 +16,15 @@ pub struct Compiler {
 }
 
 // lower number means higher priority
-const RANGE_PRECEDENCE: usize = 0;
-const EXPONENTIAL_PRECEDENCE: usize = 1;
-const MULTIPLICATION_PRECEDENCE: usize = 2;
-const ADDITION_PRECEDENCE: usize = 3;
-const RELATIONAL_PRECEDENCE: usize = 4;
-const EQUALITY_PRECEDENCE: usize = 5;
-const AND_PRECEDENCE: usize = 5;
-const OR_PRECEDENCE: usize = 5;
+const NOT_PRECEDENCE: usize = 0;
+const RANGE_PRECEDENCE: usize = NOT_PRECEDENCE + 1;
+const EXPONENTIAL_PRECEDENCE: usize = RANGE_PRECEDENCE + 1;
+const MULTIPLICATION_PRECEDENCE: usize = EXPONENTIAL_PRECEDENCE + 1;
+const ADDITION_PRECEDENCE: usize = MULTIPLICATION_PRECEDENCE + 1;
+const RELATIONAL_PRECEDENCE: usize = ADDITION_PRECEDENCE + 1;
+const EQUALITY_PRECEDENCE: usize = RELATIONAL_PRECEDENCE + 1;
+const AND_PRECEDENCE: usize = EQUALITY_PRECEDENCE + 1;
+const OR_PRECEDENCE: usize = AND_PRECEDENCE + 1;
 
 impl Compiler {
     pub fn new() -> Self {
@@ -52,6 +53,8 @@ impl Compiler {
         operation_priorities.insert(Operation::LogicalAnd, AND_PRECEDENCE);
 
         operation_priorities.insert(Operation::LogicalOr, OR_PRECEDENCE);
+
+        operation_priorities.insert(Operation::LogicalNot, NOT_PRECEDENCE);
 
         return Compiler {
             operation_priorities: operation_priorities,
