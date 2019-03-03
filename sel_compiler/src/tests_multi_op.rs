@@ -130,10 +130,10 @@ mod tests {
         let tree = compiler.compile(&input);
 
         // tree should look like
-        //                          __ "-" __
-        //                         /         \
-        //                    __ "+" __       3
-        //                   /         \
+        //                           __ "-" __
+        //                          /         \
+        //                     __ "+" __       3
+        //                    /         \
         //               __ "-" __      4
         //              /         \
         //          _ "+" _       "%"
