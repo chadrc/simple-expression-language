@@ -283,12 +283,6 @@ impl Compiler {
                                             changes.push(Change {
                                                 index_to_change: node.own_index,
                                                 new_index: right_right.own_index,
-                                                side_to_set: NodeSide::Right,
-                                            });
-
-                                            changes.push(Change {
-                                                index_to_change: right_right.own_index,
-                                                new_index: node.own_index,
                                                 side_to_set: NodeSide::Parent,
                                             });
                                         }
