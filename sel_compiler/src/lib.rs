@@ -207,7 +207,9 @@ impl Compiler {
             let nodes = &nodes;
 
             for node in nodes.iter() {
-                if node.get_operation() == Operation::Addition {
+                if node.get_operation() == Operation::Addition
+                    || node.get_operation() == Operation::Multiplication
+                {
                     match node.get_left() {
                         None => (),
                         Some(left_index) => {
@@ -502,27 +504,27 @@ mod tests {
         assert_eq!(right.get_value().get_type(), DataType::Integer);
     }
 
-    // #[test]
-    // fn compiles_multiplication_operation() {
-    //     let input = String::from("5 * 10");
-    //     let compiler = Compiler::new();
+    #[test]
+    fn compiles_multiplication_operation() {
+        let input = String::from("5 * 10");
+        let compiler = Compiler::new();
 
-    //     let tree = compiler.compile(&input);
+        let tree = compiler.compile(&input);
 
-    //     let root = tree.get_root();
+        let root = tree.get_root();
 
-    //     let left = root.get_left();
-    //     let right = root.get_right();
+        let left = tree.nodes.get(root.get_left().unwrap()).unwrap();
+        let right = tree.nodes.get(root.get_right().unwrap()).unwrap();
 
-    //     assert_eq!(root.get_operation(), Operation::Multiplication);
-    //     assert_eq!(root.get_value().get_type(), DataType::Unknown);
+        assert_eq!(root.get_operation(), Operation::Multiplication);
+        assert_eq!(root.get_value().get_type(), DataType::Unknown);
 
-    //     assert_eq!(left.unwrap().get_operation(), Operation::Touch);
-    //     assert_eq!(left.unwrap().get_value().get_type(), DataType::Integer);
+        assert_eq!(left.get_operation(), Operation::Touch);
+        assert_eq!(left.get_value().get_type(), DataType::Integer);
 
-    //     assert_eq!(right.unwrap().get_operation(), Operation::Touch);
-    //     assert_eq!(right.unwrap().get_value().get_type(), DataType::Integer);
-    // }
+        assert_eq!(right.get_operation(), Operation::Touch);
+        assert_eq!(right.get_value().get_type(), DataType::Integer);
+    }
 
     // #[test]
     // fn compiles_two_addition_operations() {
