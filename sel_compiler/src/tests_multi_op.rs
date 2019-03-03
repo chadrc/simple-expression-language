@@ -123,18 +123,22 @@ mod tests {
     }
 
     #[test]
-    fn arithmetic_operations_1() {
-        let input = String::from("5 * 10 + 15 / 2 - 5");
+    fn arithmetic_operations_2() {
+        let input = String::from("5 * 10 + 15 / 2 - 5 % 3 + 4 - 3");
         let compiler = Compiler::new();
 
         let tree = compiler.compile(&input);
 
         // tree should look like
-        //               _ "-" _
-        //              /       \
-        //          _ "+" _      5
-        //         /       \
-        //       "*"       "/"
+        //                          __ "-" __
+        //                         /         \
+        //                    __ "+" __       3
+        //                   /         \
+        //               __ "-" __      4
+        //              /         \
+        //          _ "+" _       "%"
+        //         /       \      / \
+        //       "*"       "/"   5   3
         //       / \       / \
         //      5   10   15   2
 
@@ -153,25 +157,51 @@ mod tests {
         let l_left = tree.get_nodes().get(left.get_left().unwrap()).unwrap();
         let l_right = tree.get_nodes().get(left.get_right().unwrap()).unwrap();
 
-        assert_eq!(l_left.get_operation(), Operation::Multiplication);
-        assert_eq!(l_right.get_operation(), Operation::Division);
+        assert_eq!(l_left.get_operation(), Operation::Subtraction);
+
+        assert_eq!(l_right.get_operation(), Operation::Touch);
+        assert_eq!(l_right.get_value().get_data_type(), DataType::Integer);
 
         let ll_left = tree.get_nodes().get(l_left.get_left().unwrap()).unwrap();
         let ll_right = tree.get_nodes().get(l_left.get_right().unwrap()).unwrap();
 
-        assert_eq!(ll_left.get_operation(), Operation::Touch);
-        assert_eq!(ll_left.get_value().get_data_type(), DataType::Integer);
+        assert_eq!(ll_left.get_operation(), Operation::Addition);
+        assert_eq!(ll_right.get_operation(), Operation::Modulo);
 
-        assert_eq!(ll_right.get_operation(), Operation::Touch);
-        assert_eq!(ll_right.get_value().get_data_type(), DataType::Integer);
+        let llr_left = tree.get_nodes().get(ll_right.get_left().unwrap()).unwrap();
+        let llr_right = tree.get_nodes().get(ll_right.get_right().unwrap()).unwrap();
 
-        let lr_left = tree.get_nodes().get(l_right.get_left().unwrap()).unwrap();
-        let lr_right = tree.get_nodes().get(l_right.get_right().unwrap()).unwrap();
+        assert_eq!(llr_left.get_operation(), Operation::Touch);
+        assert_eq!(llr_left.get_value().get_data_type(), DataType::Integer);
 
-        assert_eq!(lr_left.get_operation(), Operation::Touch);
-        assert_eq!(lr_left.get_value().get_data_type(), DataType::Integer);
+        assert_eq!(llr_right.get_operation(), Operation::Touch);
+        assert_eq!(llr_right.get_value().get_data_type(), DataType::Integer);
 
-        assert_eq!(lr_right.get_operation(), Operation::Touch);
-        assert_eq!(lr_right.get_value().get_data_type(), DataType::Integer);
+        let lll_left = tree.get_nodes().get(ll_left.get_left().unwrap()).unwrap();
+        let lll_right = tree.get_nodes().get(ll_left.get_right().unwrap()).unwrap();
+
+        assert_eq!(lll_left.get_operation(), Operation::Multiplication);
+        assert_eq!(lll_right.get_operation(), Operation::Division);
+
+        let lllr_left = tree.get_nodes().get(lll_right.get_left().unwrap()).unwrap();
+        let lllr_right = tree
+            .get_nodes()
+            .get(lll_right.get_right().unwrap())
+            .unwrap();
+
+        assert_eq!(lllr_left.get_operation(), Operation::Touch);
+        assert_eq!(lllr_left.get_value().get_data_type(), DataType::Integer);
+
+        assert_eq!(lllr_right.get_operation(), Operation::Touch);
+        assert_eq!(lllr_right.get_value().get_data_type(), DataType::Integer);
+
+        let llll_left = tree.get_nodes().get(lll_left.get_left().unwrap()).unwrap();
+        let llll_right = tree.get_nodes().get(lll_left.get_right().unwrap()).unwrap();
+
+        assert_eq!(llll_left.get_operation(), Operation::Touch);
+        assert_eq!(llll_left.get_value().get_data_type(), DataType::Integer);
+
+        assert_eq!(llll_right.get_operation(), Operation::Touch);
+        assert_eq!(llll_right.get_value().get_data_type(), DataType::Integer);
     }
 }
