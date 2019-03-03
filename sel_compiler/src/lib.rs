@@ -192,21 +192,13 @@ impl Compiler {
         return node.own_index;
     }
 
-    pub fn compile(&self, s: &String) -> SELTree {
-        let mut tokenizer = Tokenizer::new(s);
-        let mut nodes = Compiler::make_nodes_from_tokenizer(&mut tokenizer);
+    fn resolve_tree(nodes_len: usize, mut nodes: Vec<SELTreeNode>) -> Vec<SELTreeNode> {
+        for i in 0..nodes_len {
+            let mut changes: Vec<Change> = vec![];
+            {
+                let nodes = &nodes;
+                let node = nodes.get(i).unwrap();
 
-        // starting with highest priority operators
-        // go through nodes and move pointers to their operands
-        // to point at operator
-        // let nodes = &mut nodes;
-
-        let mut changes: Vec<Change> = vec![];
-
-        {
-            let nodes = &nodes;
-
-            for node in nodes.iter() {
                 if node.get_operation() == Operation::Addition
                     || node.get_operation() == Operation::Multiplication
                 {
@@ -214,46 +206,42 @@ impl Compiler {
                         None => (),
                         Some(left_index) => {
                             let left = nodes.get(left_index).unwrap();
+                            // only need to update if a value type
+                            if left.value.data_type != DataType::Unknown {
+                                // update operands parent to point to operator
+                                changes.push(Change {
+                                    index_to_change: left.own_index,
+                                    new_index: node.own_index,
+                                    side_to_set: NodeSide::Parent,
+                                });
 
-                            // update operands parent to point to operator
-                            changes.push(Change {
-                                index_to_change: left.own_index,
-                                new_index: node.own_index,
-                                side_to_set: NodeSide::Parent,
-                            });
+                                match left.get_left() {
+                                    None => (),
+                                    Some(left_left_index) => {
+                                        let left_left = nodes.get(left_left_index).unwrap();
+                                        if left_left.get_operation() != Operation::Addition {
+                                            // if lower priority
+                                            // make its right point to node
+                                            changes.push(Change {
+                                                index_to_change: left_left.own_index,
+                                                new_index: node.own_index,
+                                                side_to_set: NodeSide::Right,
+                                            });
 
-                            match left.get_left() {
-                                None => (),
-                                Some(left_left_index) => {
-                                    let left_left = nodes.get(left_left_index).unwrap();
-                                    if left_left.get_operation() == Operation::Addition {
-                                        // if lower priority
-                                        // make its right point to node
-                                        changes.push(Change {
-                                            index_to_change: left_left.own_index,
-                                            new_index: node.own_index,
-                                            side_to_set: NodeSide::Right,
-                                        });
-
-                                        changes.push(Change {
-                                            index_to_change: node.own_index,
-                                            new_index: left_left.own_index,
-                                            side_to_set: NodeSide::Parent,
-                                        });
-                                    } else {
-                                        // same or higher priority
-                                        // make node's left point to it
-                                        changes.push(Change {
-                                            index_to_change: node.own_index,
-                                            new_index: left_left.own_index,
-                                            side_to_set: NodeSide::Left,
-                                        });
-
-                                        changes.push(Change {
-                                            index_to_change: left_left.own_index,
-                                            new_index: node.own_index,
-                                            side_to_set: NodeSide::Parent,
-                                        });
+                                            changes.push(Change {
+                                                index_to_change: node.own_index,
+                                                new_index: left_left.own_index,
+                                                side_to_set: NodeSide::Parent,
+                                            });
+                                        } else {
+                                            // same or higher priority
+                                            // make node's left point to it
+                                            changes.push(Change {
+                                                index_to_change: node.own_index,
+                                                new_index: left_left.own_index,
+                                                side_to_set: NodeSide::Left,
+                                            });
+                                        }
                                     }
                                 }
                             }
@@ -265,43 +253,45 @@ impl Compiler {
                         None => (),
                         Some(right_index) => {
                             let right = nodes.get(right_index).unwrap();
-                            changes.push(Change {
-                                index_to_change: right.own_index,
-                                new_index: node.own_index,
-                                side_to_set: NodeSide::Parent,
-                            });
+                            // only need to update if a value type
+                            if right.value.data_type != DataType::Unknown {
+                                changes.push(Change {
+                                    index_to_change: right.own_index,
+                                    new_index: node.own_index,
+                                    side_to_set: NodeSide::Parent,
+                                });
+                                match right.get_right() {
+                                    None => (),
+                                    Some(right_right_index) => {
+                                        let right_right = nodes.get(right_right_index).unwrap();
 
-                            match right.get_right() {
-                                None => (),
-                                Some(right_right_index) => {
-                                    let right_right = nodes.get(right_right_index).unwrap();
+                                        if right_right.get_operation() != Operation::Addition {
+                                            // lower priority
+                                            // make its left point to node
+                                            changes.push(Change {
+                                                index_to_change: right_right.own_index,
+                                                new_index: node.own_index,
+                                                side_to_set: NodeSide::Left,
+                                            });
 
-                                    if right_right.get_operation() == Operation::Addition {
-                                        // lower priority
-                                        // make its left point to node
-                                        changes.push(Change {
-                                            index_to_change: right_right.own_index,
-                                            new_index: node.own_index,
-                                            side_to_set: NodeSide::Left,
-                                        });
+                                            changes.push(Change {
+                                                index_to_change: node.own_index,
+                                                new_index: right_right.own_index,
+                                                side_to_set: NodeSide::Parent,
+                                            });
+                                        } else {
+                                            changes.push(Change {
+                                                index_to_change: node.own_index,
+                                                new_index: right_right.own_index,
+                                                side_to_set: NodeSide::Right,
+                                            });
 
-                                        changes.push(Change {
-                                            index_to_change: node.own_index,
-                                            new_index: right_right.own_index,
-                                            side_to_set: NodeSide::Parent,
-                                        });
-                                    } else {
-                                        changes.push(Change {
-                                            index_to_change: node.own_index,
-                                            new_index: right_right.own_index,
-                                            side_to_set: NodeSide::Right,
-                                        });
-
-                                        changes.push(Change {
-                                            index_to_change: right_right.own_index,
-                                            new_index: node.own_index,
-                                            side_to_set: NodeSide::Parent,
-                                        });
+                                            changes.push(Change {
+                                                index_to_change: right_right.own_index,
+                                                new_index: node.own_index,
+                                                side_to_set: NodeSide::Parent,
+                                            });
+                                        }
                                     }
                                 }
                             }
@@ -309,23 +299,37 @@ impl Compiler {
                     }
                 }
             }
-        }
 
-        {
-            let nodes = &mut nodes;
+            {
+                let nodes = &mut nodes;
 
-            for change in changes {
-                let node = nodes.get_mut(change.index_to_change).unwrap();
+                for change in changes {
+                    let node = nodes.get_mut(change.index_to_change).unwrap();
 
-                println!("performing change {:?}", change);
+                    println!("performing change {:?}", change);
 
-                match change.side_to_set {
-                    NodeSide::Left => node.set_left(change.new_index),
-                    NodeSide::Right => node.set_right(change.new_index),
-                    NodeSide::Parent => node.set_parent(change.new_index),
+                    match change.side_to_set {
+                        NodeSide::Left => node.set_left(change.new_index),
+                        NodeSide::Right => node.set_right(change.new_index),
+                        NodeSide::Parent => node.set_parent(change.new_index),
+                    }
                 }
             }
         }
+
+        return nodes;
+    }
+
+    pub fn compile(&self, s: &String) -> SELTree {
+        let mut tokenizer = Tokenizer::new(s);
+        let nodes = Compiler::make_nodes_from_tokenizer(&mut tokenizer);
+
+        // starting with highest priority operators
+        // go through nodes and move pointers to their operands
+        // to point at operator
+        // let nodes = &mut nodes;
+
+        let nodes = Compiler::resolve_tree(nodes.len(), nodes);
 
         // next priority
         // for (i, node) in nodes.iter().enumerate() {
@@ -526,43 +530,45 @@ mod tests {
         assert_eq!(right.get_value().get_type(), DataType::Integer);
     }
 
-    // #[test]
-    // fn compiles_two_addition_operations() {
-    //     let input = String::from("5 + 10 + 15");
-    //     let compiler = Compiler::new();
+    #[test]
+    fn compiles_two_addition_operations() {
+        let input = String::from("5 + 10 + 15");
+        let compiler = Compiler::new();
 
-    //     let tree = compiler.compile(&input);
+        let tree = compiler.compile(&input);
 
-    //     // tree should look like
-    //     //          +
-    //     //         / \
-    //     //        +   15
-    //     //       / \
-    //     //      5   10
+        // tree should look like
+        //          +
+        //         / \
+        //        +   15
+        //       / \
+        //      5   10
 
-    //     let root = tree.get_root();
+        print_nodes(&tree.nodes);
 
-    //     let left = root.get_left().unwrap();
-    //     let right = root.get_right().unwrap();
+        let root = tree.get_root();
 
-    //     let l2_left = left.get_left().unwrap();
-    //     let l2_right = left.get_right().unwrap();
+        let left = tree.nodes.get(root.get_left().unwrap()).unwrap();
+        let right = tree.nodes.get(root.get_right().unwrap()).unwrap();
 
-    //     assert_eq!(root.get_operation(), Operation::Addition);
-    //     assert_eq!(root.get_value().get_type(), DataType::Unknown);
+        let l2_left = tree.nodes.get(left.get_left().unwrap()).unwrap();
+        let l2_right = tree.nodes.get(left.get_right().unwrap()).unwrap();
 
-    //     assert_eq!(left.get_operation(), Operation::Addition);
-    //     assert_eq!(left.get_value().get_type(), DataType::Unknown);
+        assert_eq!(root.get_operation(), Operation::Addition);
+        assert_eq!(root.get_value().get_type(), DataType::Unknown);
 
-    //     assert_eq!(right.get_operation(), Operation::Touch);
-    //     assert_eq!(right.get_value().get_type(), DataType::Integer);
+        assert_eq!(left.get_operation(), Operation::Addition);
+        assert_eq!(left.get_value().get_type(), DataType::Unknown);
 
-    //     assert_eq!(l2_left.get_operation(), Operation::Touch);
-    //     assert_eq!(l2_left.get_value().get_type(), DataType::Integer);
+        assert_eq!(right.get_operation(), Operation::Touch);
+        assert_eq!(right.get_value().get_type(), DataType::Integer);
 
-    //     assert_eq!(l2_right.get_operation(), Operation::Touch);
-    //     assert_eq!(l2_right.get_value().get_type(), DataType::Integer);
-    // }
+        assert_eq!(l2_left.get_operation(), Operation::Touch);
+        assert_eq!(l2_left.get_value().get_type(), DataType::Integer);
+
+        assert_eq!(l2_right.get_operation(), Operation::Touch);
+        assert_eq!(l2_right.get_value().get_type(), DataType::Integer);
+    }
 
     // #[test]
     // fn compiles_addition_multiplication_operations() {
@@ -638,4 +644,10 @@ mod tests {
     //     assert_eq!(l2_right.get_operation(), Operation::Touch);
     //     assert_eq!(l2_right.get_value().get_type(), DataType::Integer);
     // }
+
+    fn print_nodes(nodes: &Vec<SELTreeNode>) {
+        for node in nodes {
+            println!("{:?}", node);
+        }
+    }
 }
