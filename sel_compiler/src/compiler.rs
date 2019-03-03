@@ -66,6 +66,7 @@ impl Compiler {
         tokenizer: &mut Tokenizer,
     ) -> (Vec<SELTreeNode>, Vec<Vec<usize>>) {
         let mut priority_map: Vec<Vec<usize>> = vec![];
+        priority_map.push(vec![]); // NOT_PRECEDENCE
         priority_map.push(vec![]); // RANGE_PRECEDENCE
         priority_map.push(vec![]); // EXPONENTIAL_PRECEDENCE
         priority_map.push(vec![]); // MULTIPLICATION_PRECEDENCE
