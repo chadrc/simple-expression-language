@@ -3,6 +3,7 @@ mod data_type;
 mod operation;
 mod sel_tree;
 
+mod tests_multi_op;
 mod tests_single_op;
 mod tests_touch;
 

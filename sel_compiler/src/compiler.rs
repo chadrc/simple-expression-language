@@ -157,16 +157,25 @@ impl Compiler {
         mut nodes: Vec<SELTreeNode>,
         indicies_to_resolve: &Vec<usize>,
     ) -> Vec<SELTreeNode> {
+        println!("{:?}", indicies_to_resolve);
+
         for i in indicies_to_resolve {
             let mut changes: Vec<Change> = vec![];
             {
                 let nodes = &nodes;
                 let node = nodes.get(*i).unwrap();
+                let mut pending_parent = false;
+
+                let my_priority = self
+                    .operation_priorities
+                    .get(&node.get_operation())
+                    .unwrap();
 
                 match node.get_left() {
                     None => (),
                     Some(left_index) => {
                         let left = nodes.get(left_index).unwrap();
+
                         // only need to update if a value type
                         if left.get_value().get_data_type() != DataType::Unknown {
                             // update operands parent to point to operator
@@ -180,11 +189,6 @@ impl Compiler {
                                 None => (),
                                 Some(left_left_index) => {
                                     let left_left = nodes.get(left_left_index).unwrap();
-
-                                    let my_priority = self
-                                        .operation_priorities
-                                        .get(&node.get_operation())
-                                        .unwrap();
 
                                     let their_priority = self
                                         .operation_priorities
@@ -208,6 +212,8 @@ impl Compiler {
                                             new_index: left_left.get_own_index(),
                                             side_to_set: NodeSide::Parent,
                                         });
+
+                                        pending_parent = true;
                                     } else {
                                         // same or higher priority
                                         // make node's left point to it
@@ -216,6 +222,35 @@ impl Compiler {
                                             new_index: left_left.get_own_index(),
                                             side_to_set: NodeSide::Left,
                                         });
+                                    }
+                                }
+                            }
+                        } else {
+                            match left.get_parent() {
+                                None => (),
+                                Some(parent_index) => {
+                                    if parent_index != node.get_own_index() {
+                                        let parent = nodes.get(parent_index).unwrap();
+
+                                        let their_priority = self
+                                            .operation_priorities
+                                            .get(&parent.get_operation())
+                                            .unwrap();
+
+                                        if their_priority >= my_priority {
+                                            // same or lower
+                                            changes.push(Change {
+                                                index_to_change: parent.get_own_index(),
+                                                new_index: node.get_own_index(),
+                                                side_to_set: NodeSide::Parent,
+                                            });
+
+                                            changes.push(Change {
+                                                index_to_change: node.get_own_index(),
+                                                new_index: parent.get_own_index(),
+                                                side_to_set: NodeSide::Left,
+                                            });
+                                        }
                                     }
                                 }
                             }
@@ -240,11 +275,6 @@ impl Compiler {
                                 Some(right_right_index) => {
                                     let right_right = nodes.get(right_right_index).unwrap();
 
-                                    let my_priority = self
-                                        .operation_priorities
-                                        .get(&node.get_operation())
-                                        .unwrap();
-
                                     let their_priority = self
                                         .operation_priorities
                                         .get(&right_right.get_operation())
@@ -259,11 +289,15 @@ impl Compiler {
                                             side_to_set: NodeSide::Left,
                                         });
 
-                                        changes.push(Change {
-                                            index_to_change: node.get_own_index(),
-                                            new_index: right_right.get_own_index(),
-                                            side_to_set: NodeSide::Parent,
-                                        });
+                                        // only queue one parent change
+                                        // left checked first so it decideds
+                                        if !pending_parent {
+                                            changes.push(Change {
+                                                index_to_change: node.get_own_index(),
+                                                new_index: right_right.get_own_index(),
+                                                side_to_set: NodeSide::Parent,
+                                            });
+                                        }
                                     } else {
                                         changes.push(Change {
                                             index_to_change: node.get_own_index(),
@@ -284,7 +318,7 @@ impl Compiler {
                 for change in changes {
                     let node = nodes.get_mut(change.index_to_change).unwrap();
 
-                    // println!("performing change {:?}", change);
+                    println!("performing change {:?}", change);
 
                     match change.side_to_set {
                         NodeSide::Left => node.set_left(change.new_index),
@@ -308,7 +342,9 @@ impl Compiler {
         // let nodes = &mut nodes;
 
         for priority in priority_map {
-            nodes = self.resolve_tree(nodes, &priority);
+            if priority.len() > 0 {
+                nodes = self.resolve_tree(nodes, &priority);
+            }
         }
 
         // next priority
