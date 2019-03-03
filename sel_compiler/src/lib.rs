@@ -143,6 +143,14 @@ impl Compiler {
             nodes.push(node);
         }
 
+        // no tokens
+        // insert unit node as default
+        if nodes.len() == 1 {
+            let mut default_node = SELTreeNode::new(Operation::None, DataType::Unit);
+            default_node.own_index = 1;
+            nodes.push(default_node);
+        }
+
         return nodes;
     }
 
@@ -151,9 +159,11 @@ impl Compiler {
         // so start with second node
         let mut node = nodes.get(1).unwrap();
         let mut count = 0;
+        println!("{:?}", node);
         while node.parent != 0 {
             node = nodes.get(node.parent).unwrap();
 
+            println!("{:?}", node);
             // fail safe
             // stop after checking all nodes
             count += 1;
