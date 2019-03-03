@@ -8,6 +8,8 @@ pub enum Operation {
     Multiplication,
     Modulo,
     Division,
+    ExclusiveRange,
+    InclusiveRange,
     None,
 }
 
@@ -22,6 +24,10 @@ pub fn get_operation_type_for_token(token: &Token) -> Operation {
         Operation::Division
     } else if token.get_token_type() == TokenType::ModulusSign {
         Operation::Modulo
+    } else if token.get_token_type() == TokenType::ExclusiveRange {
+        Operation::ExclusiveRange
+    } else if token.get_token_type() == TokenType::InclusiveRange {
+        Operation::InclusiveRange
     } else if token.get_token_type() == TokenType::Boolean
         || token.get_token_type() == TokenType::Integer
         || token.get_token_type() == TokenType::Decimal
