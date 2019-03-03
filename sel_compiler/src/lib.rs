@@ -1,6 +1,7 @@
 use sel_tokenizer::{Token, TokenType, Tokenizer};
+use std::collections::HashMap;
 
-#[derive(PartialEq, Debug, Clone, Copy)]
+#[derive(Hash, Eq, PartialEq, Debug, Clone, Copy)]
 pub enum Operation {
     Touch,
     Addition,
@@ -121,7 +122,13 @@ impl Compiler {
         return Compiler {};
     }
 
-    fn make_nodes_from_tokenizer(tokenizer: &mut Tokenizer) -> Vec<SELTreeNode> {
+    fn make_nodes_from_tokenizer(
+        tokenizer: &mut Tokenizer,
+    ) -> (Vec<SELTreeNode>, HashMap<Operation, Vec<usize>>) {
+        let mut priority_map: HashMap<Operation, Vec<usize>> = HashMap::new();
+        priority_map.insert(Operation::Multiplication, vec![]);
+        priority_map.insert(Operation::Addition, vec![]);
+
         let mut nodes: Vec<SELTreeNode> = vec![];
 
         // loop trough all tokens
@@ -151,6 +158,11 @@ impl Compiler {
             }
 
             nodes.push(node);
+
+            if priority_map.contains_key(&node.get_operation()) {
+                let v = priority_map.get_mut(&node.get_operation()).unwrap();
+                v.push(node.own_index);
+            }
         }
 
         // no tokens
@@ -159,7 +171,7 @@ impl Compiler {
             nodes.push(SELTreeNode::new(Operation::None, DataType::Unit, 0));
         }
 
-        return nodes;
+        return (nodes, priority_map);
     }
 
     fn find_root_index(nodes: &Vec<SELTreeNode>) -> usize {
@@ -192,12 +204,15 @@ impl Compiler {
         return node.own_index;
     }
 
-    fn resolve_tree(nodes_len: usize, mut nodes: Vec<SELTreeNode>) -> Vec<SELTreeNode> {
-        for i in 0..nodes_len {
+    fn resolve_tree(
+        mut nodes: Vec<SELTreeNode>,
+        indicies_to_resolve: &Vec<usize>,
+    ) -> Vec<SELTreeNode> {
+        for i in indicies_to_resolve {
             let mut changes: Vec<Change> = vec![];
             {
                 let nodes = &nodes;
-                let node = nodes.get(i).unwrap();
+                let node = nodes.get(*i).unwrap();
 
                 if node.get_operation() == Operation::Addition
                     || node.get_operation() == Operation::Multiplication
@@ -316,14 +331,16 @@ impl Compiler {
 
     pub fn compile(&self, s: &String) -> SELTree {
         let mut tokenizer = Tokenizer::new(s);
-        let nodes = Compiler::make_nodes_from_tokenizer(&mut tokenizer);
+        let (nodes, priority_map) = Compiler::make_nodes_from_tokenizer(&mut tokenizer);
 
         // starting with highest priority operators
         // go through nodes and move pointers to their operands
         // to point at operator
         // let nodes = &mut nodes;
 
-        let nodes = Compiler::resolve_tree(nodes.len(), nodes);
+        let nodes =
+            Compiler::resolve_tree(nodes, priority_map.get(&Operation::Multiplication).unwrap());
+        let nodes = Compiler::resolve_tree(nodes, priority_map.get(&Operation::Addition).unwrap());
 
         // next priority
         // for (i, node) in nodes.iter().enumerate() {
