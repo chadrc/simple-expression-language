@@ -157,7 +157,7 @@ impl Compiler {
         mut nodes: Vec<SELTreeNode>,
         indicies_to_resolve: &Vec<usize>,
     ) -> Vec<SELTreeNode> {
-        println!("{:?}", indicies_to_resolve);
+        // println!("{:?}", indicies_to_resolve);
 
         for i in indicies_to_resolve {
             let mut changes: Vec<Change> = vec![];
@@ -318,7 +318,7 @@ impl Compiler {
                 for change in changes {
                     let node = nodes.get_mut(change.index_to_change).unwrap();
 
-                    println!("performing change {:?}", change);
+                    // println!("performing change {:?}", change);
 
                     match change.side_to_set {
                         NodeSide::Left => node.set_left(change.new_index),
