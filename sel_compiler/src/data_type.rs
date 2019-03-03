@@ -8,6 +8,8 @@ pub enum DataType {
     Decimal,
     String,
     Boolean,
+    Input,
+    CurrentResult,
 }
 
 pub fn get_data_type_for_token(token: &Token) -> DataType {
@@ -26,6 +28,10 @@ pub fn get_data_type_for_token(token: &Token) -> DataType {
         DataType::Boolean
     } else if token_type == TokenType::Unit {
         DataType::Unit
+    } else if token_type == TokenType::Input {
+        DataType::Input
+    } else if token_type == TokenType::CurrentResult {
+        DataType::CurrentResult
     } else {
         DataType::Unknown
     };
