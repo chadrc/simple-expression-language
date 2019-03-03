@@ -187,7 +187,7 @@ impl Compiler {
         let mut node = nodes.get(0).unwrap();
         let mut count = 0;
 
-        println!("finding root {:?}", node);
+        // println!("finding root {:?}", node);
 
         loop {
             match node.parent {
@@ -197,7 +197,7 @@ impl Compiler {
                 Some(parent) => {
                     node = nodes.get(parent).unwrap();
 
-                    println!("finding root {:?}", node);
+                    // println!("finding root {:?}", node);
 
                     // fail safe
                     // stop after checking all nodes
@@ -344,7 +344,7 @@ impl Compiler {
                 for change in changes {
                     let node = nodes.get_mut(change.index_to_change).unwrap();
 
-                    println!("performing change {:?}", change);
+                    // println!("performing change {:?}", change);
 
                     match change.side_to_set {
                         NodeSide::Left => node.set_left(change.new_index),
@@ -376,7 +376,7 @@ impl Compiler {
         // }
 
         let root = Compiler::find_root_index(&nodes);
-        println!("{}", root);
+        // println!("{}", root);
 
         return SELTree {
             root: root,
@@ -530,8 +530,6 @@ mod tests {
 
         let tree = compiler.compile(&input);
 
-        println!("{:?}", tree.nodes);
-
         let root = tree.get_root();
 
         let left = tree.nodes.get(root.get_left().unwrap()).unwrap();
@@ -582,8 +580,6 @@ mod tests {
         //        +   15
         //       / \
         //      5   10
-
-        print_nodes(&tree.nodes);
 
         let root = tree.get_root();
 
