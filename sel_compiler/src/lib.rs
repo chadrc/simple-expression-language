@@ -1,112 +1,12 @@
-use sel_tokenizer::{Token, TokenType, Tokenizer};
+mod data_type;
+mod operation;
+mod sel_tree;
+
+use data_type::{get_data_type_for_token, DataType};
+use operation::{get_operation_type_for_token, Operation};
+use sel_tokenizer::Tokenizer;
+use sel_tree::{NodeSide, SELTree, SELTreeNode};
 use std::collections::HashMap;
-
-#[derive(Hash, Eq, PartialEq, Debug, Clone, Copy)]
-pub enum Operation {
-    Touch,
-    Addition,
-    Multiplication,
-    None,
-    Start,
-}
-
-#[derive(PartialEq, Debug, Clone, Copy)]
-pub enum DataType {
-    Unknown,
-    Unit,
-    Integer,
-    Decimal,
-    String,
-    Boolean,
-}
-
-#[derive(PartialEq, Debug, Clone, Copy)]
-pub struct Value {
-    data_type: DataType,
-}
-
-impl Value {
-    pub fn get_type(&self) -> DataType {
-        return self.data_type;
-    }
-}
-
-#[derive(PartialEq, Debug, Clone, Copy)]
-pub struct SELTreeNode {
-    operation: Operation,
-    value: Value,
-    own_index: usize,
-    parent: Option<usize>,
-    left: Option<usize>,
-    right: Option<usize>,
-}
-
-impl SELTreeNode {
-    fn new(op: Operation, data_type: DataType, own_index: usize) -> Self {
-        return SELTreeNode {
-            operation: op,
-            value: Value {
-                data_type: data_type,
-            },
-            // largest operation has two operands
-            left: None,
-            right: None,
-            parent: None,
-            own_index: own_index,
-        };
-    }
-
-    pub fn get_operation(&self) -> Operation {
-        return self.operation;
-    }
-
-    pub fn get_value(&self) -> Value {
-        return self.value;
-    }
-
-    pub fn get_left(&self) -> Option<usize> {
-        return self.left;
-    }
-
-    pub fn get_right(&self) -> Option<usize> {
-        return self.right;
-    }
-
-    pub fn get_parent(&self) -> Option<usize> {
-        return self.parent;
-    }
-
-    fn set_left(&mut self, left: usize) {
-        self.left = Some(left)
-    }
-
-    fn set_right(&mut self, right: usize) {
-        self.right = Some(right);
-    }
-
-    fn set_parent(&mut self, parent: usize) {
-        self.parent = Some(parent);
-    }
-}
-
-#[derive(Debug, Clone)]
-pub struct SELTree {
-    root: usize,
-    nodes: Vec<SELTreeNode>,
-}
-
-impl SELTree {
-    pub fn get_root(&self) -> &SELTreeNode {
-        return &self.nodes.get(self.root).unwrap();
-    }
-}
-
-#[derive(PartialEq, Debug, Clone, Copy)]
-enum NodeSide {
-    Left,
-    Right,
-    Parent,
-}
 
 #[derive(PartialEq, Debug, Clone, Copy)]
 struct Change {
@@ -151,8 +51,6 @@ impl Compiler {
                 inserted_index,
             );
 
-            node.own_index = inserted_index;
-
             // because of starter node, there is always a previous node
             if inserted_index > 0 {
                 let previous_index = inserted_index - 1;
@@ -169,7 +67,7 @@ impl Compiler {
 
             if priority_map.contains_key(&node.get_operation()) {
                 let v = priority_map.get_mut(&node.get_operation()).unwrap();
-                v.push(node.own_index);
+                v.push(node.get_own_index());
             }
         }
 
@@ -190,7 +88,7 @@ impl Compiler {
         // println!("finding root {:?}", node);
 
         loop {
-            match node.parent {
+            match node.get_parent() {
                 None => {
                     break;
                 }
@@ -209,7 +107,7 @@ impl Compiler {
             }
         }
 
-        return node.own_index;
+        return node.get_own_index();
     }
 
     fn resolve_tree(
@@ -228,11 +126,11 @@ impl Compiler {
                     Some(left_index) => {
                         let left = nodes.get(left_index).unwrap();
                         // only need to update if a value type
-                        if left.value.data_type != DataType::Unknown {
+                        if left.get_value().get_data_type() != DataType::Unknown {
                             // update operands parent to point to operator
                             changes.push(Change {
-                                index_to_change: left.own_index,
-                                new_index: node.own_index,
+                                index_to_change: left.get_own_index(),
+                                new_index: node.get_own_index(),
                                 side_to_set: NodeSide::Parent,
                             });
 
@@ -258,22 +156,22 @@ impl Compiler {
                                         // if lower priority
                                         // make its right point to node
                                         changes.push(Change {
-                                            index_to_change: left_left.own_index,
-                                            new_index: node.own_index,
+                                            index_to_change: left_left.get_own_index(),
+                                            new_index: node.get_own_index(),
                                             side_to_set: NodeSide::Right,
                                         });
 
                                         changes.push(Change {
-                                            index_to_change: node.own_index,
-                                            new_index: left_left.own_index,
+                                            index_to_change: node.get_own_index(),
+                                            new_index: left_left.get_own_index(),
                                             side_to_set: NodeSide::Parent,
                                         });
                                     } else {
                                         // same or higher priority
                                         // make node's left point to it
                                         changes.push(Change {
-                                            index_to_change: node.own_index,
-                                            new_index: left_left.own_index,
+                                            index_to_change: node.get_own_index(),
+                                            new_index: left_left.get_own_index(),
                                             side_to_set: NodeSide::Left,
                                         });
                                     }
@@ -289,10 +187,10 @@ impl Compiler {
                     Some(right_index) => {
                         let right = nodes.get(right_index).unwrap();
                         // only need to update if a value type
-                        if right.value.data_type != DataType::Unknown {
+                        if right.get_value().get_data_type() != DataType::Unknown {
                             changes.push(Change {
-                                index_to_change: right.own_index,
-                                new_index: node.own_index,
+                                index_to_change: right.get_own_index(),
+                                new_index: node.get_own_index(),
                                 side_to_set: NodeSide::Parent,
                             });
                             match right.get_right() {
@@ -314,20 +212,20 @@ impl Compiler {
                                         // lower priority
                                         // make its left point to node
                                         changes.push(Change {
-                                            index_to_change: right_right.own_index,
-                                            new_index: node.own_index,
+                                            index_to_change: right_right.get_own_index(),
+                                            new_index: node.get_own_index(),
                                             side_to_set: NodeSide::Left,
                                         });
 
                                         changes.push(Change {
-                                            index_to_change: node.own_index,
-                                            new_index: right_right.own_index,
+                                            index_to_change: node.get_own_index(),
+                                            new_index: right_right.get_own_index(),
                                             side_to_set: NodeSide::Parent,
                                         });
                                     } else {
                                         changes.push(Change {
-                                            index_to_change: node.own_index,
-                                            new_index: right_right.own_index,
+                                            index_to_change: node.get_own_index(),
+                                            new_index: right_right.get_own_index(),
                                             side_to_set: NodeSide::Parent,
                                         });
                                     }
@@ -378,49 +276,8 @@ impl Compiler {
         let root = Compiler::find_root_index(&nodes);
         // println!("{}", root);
 
-        return SELTree {
-            root: root,
-            nodes: nodes,
-        };
+        return SELTree::new(root, nodes);
     }
-}
-
-fn get_data_type_for_token(token: &Token) -> DataType {
-    let token_type = token.get_token_type();
-
-    return if token_type == TokenType::Integer {
-        DataType::Integer
-    } else if token_type == TokenType::Decimal {
-        DataType::Decimal
-    } else if token_type == TokenType::SingleQuotedString
-        || token_type == TokenType::DoubleQuotedString
-        || token_type == TokenType::FormattedString
-    {
-        DataType::String
-    } else if token_type == TokenType::Boolean {
-        DataType::Boolean
-    } else {
-        DataType::Unknown
-    };
-}
-
-fn get_operation_type_for_token(token: &Token) -> Operation {
-    return if token.get_token_type() == TokenType::PlusSign {
-        Operation::Addition
-    } else if token.get_token_type() == TokenType::MultiplicationSign {
-        Operation::Multiplication
-    } else if token.get_token_type() == TokenType::Boolean
-        || token.get_token_type() == TokenType::Integer
-        || token.get_token_type() == TokenType::Decimal
-        || token.get_token_type() == TokenType::SingleQuotedString
-        || token.get_token_type() == TokenType::DoubleQuotedString
-        || token.get_token_type() == TokenType::FormattedString
-    {
-        // all value tokens result in a touch operation
-        Operation::Touch
-    } else {
-        Operation::None
-    };
 }
 
 #[cfg(test)]
@@ -442,7 +299,7 @@ mod tests {
         let root = tree.get_root();
 
         assert_eq!(root.get_operation(), Operation::None);
-        assert_eq!(root.get_value().get_type(), DataType::Unit);
+        assert_eq!(root.get_value().get_data_type(), DataType::Unit);
     }
 
     #[test]
@@ -455,7 +312,7 @@ mod tests {
         let root = tree.get_root();
 
         assert_eq!(root.get_operation(), Operation::Touch);
-        assert_eq!(root.get_value().get_type(), DataType::Integer);
+        assert_eq!(root.get_value().get_data_type(), DataType::Integer);
     }
 
     #[test]
@@ -468,7 +325,7 @@ mod tests {
         let root = tree.get_root();
 
         assert_eq!(root.get_operation(), Operation::Touch);
-        assert_eq!(root.get_value().get_type(), DataType::Decimal);
+        assert_eq!(root.get_value().get_data_type(), DataType::Decimal);
     }
 
     #[test]
@@ -481,7 +338,7 @@ mod tests {
         let root = tree.get_root();
 
         assert_eq!(root.get_operation(), Operation::Touch);
-        assert_eq!(root.get_value().get_type(), DataType::String);
+        assert_eq!(root.get_value().get_data_type(), DataType::String);
     }
 
     #[test]
@@ -494,7 +351,7 @@ mod tests {
         let root = tree.get_root();
 
         assert_eq!(root.get_operation(), Operation::Touch);
-        assert_eq!(root.get_value().get_type(), DataType::String);
+        assert_eq!(root.get_value().get_data_type(), DataType::String);
     }
 
     #[test]
@@ -507,7 +364,7 @@ mod tests {
         let root = tree.get_root();
 
         assert_eq!(root.get_operation(), Operation::Touch);
-        assert_eq!(root.get_value().get_type(), DataType::String);
+        assert_eq!(root.get_value().get_data_type(), DataType::String);
     }
 
     #[test]
@@ -520,7 +377,7 @@ mod tests {
         let root = tree.get_root();
 
         assert_eq!(root.get_operation(), Operation::Touch);
-        assert_eq!(root.get_value().get_type(), DataType::Boolean);
+        assert_eq!(root.get_value().get_data_type(), DataType::Boolean);
     }
 
     #[test]
@@ -532,17 +389,17 @@ mod tests {
 
         let root = tree.get_root();
 
-        let left = tree.nodes.get(root.get_left().unwrap()).unwrap();
-        let right = tree.nodes.get(root.get_right().unwrap()).unwrap();
+        let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
+        let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
 
         assert_eq!(root.get_operation(), Operation::Addition);
-        assert_eq!(root.get_value().get_type(), DataType::Unknown);
+        assert_eq!(root.get_value().get_data_type(), DataType::Unknown);
 
         assert_eq!(left.get_operation(), Operation::Touch);
-        assert_eq!(left.get_value().get_type(), DataType::Integer);
+        assert_eq!(left.get_value().get_data_type(), DataType::Integer);
 
         assert_eq!(right.get_operation(), Operation::Touch);
-        assert_eq!(right.get_value().get_type(), DataType::Integer);
+        assert_eq!(right.get_value().get_data_type(), DataType::Integer);
     }
 
     #[test]
@@ -554,17 +411,17 @@ mod tests {
 
         let root = tree.get_root();
 
-        let left = tree.nodes.get(root.get_left().unwrap()).unwrap();
-        let right = tree.nodes.get(root.get_right().unwrap()).unwrap();
+        let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
+        let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
 
         assert_eq!(root.get_operation(), Operation::Multiplication);
-        assert_eq!(root.get_value().get_type(), DataType::Unknown);
+        assert_eq!(root.get_value().get_data_type(), DataType::Unknown);
 
         assert_eq!(left.get_operation(), Operation::Touch);
-        assert_eq!(left.get_value().get_type(), DataType::Integer);
+        assert_eq!(left.get_value().get_data_type(), DataType::Integer);
 
         assert_eq!(right.get_operation(), Operation::Touch);
-        assert_eq!(right.get_value().get_type(), DataType::Integer);
+        assert_eq!(right.get_value().get_data_type(), DataType::Integer);
     }
 
     #[test]
@@ -583,26 +440,26 @@ mod tests {
 
         let root = tree.get_root();
 
-        let left = tree.nodes.get(root.get_left().unwrap()).unwrap();
-        let right = tree.nodes.get(root.get_right().unwrap()).unwrap();
+        let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
+        let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
 
-        let l2_left = tree.nodes.get(left.get_left().unwrap()).unwrap();
-        let l2_right = tree.nodes.get(left.get_right().unwrap()).unwrap();
+        let l2_left = tree.get_nodes().get(left.get_left().unwrap()).unwrap();
+        let l2_right = tree.get_nodes().get(left.get_right().unwrap()).unwrap();
 
         assert_eq!(root.get_operation(), Operation::Addition);
-        assert_eq!(root.get_value().get_type(), DataType::Unknown);
+        assert_eq!(root.get_value().get_data_type(), DataType::Unknown);
 
         assert_eq!(left.get_operation(), Operation::Addition);
-        assert_eq!(left.get_value().get_type(), DataType::Unknown);
+        assert_eq!(left.get_value().get_data_type(), DataType::Unknown);
 
         assert_eq!(right.get_operation(), Operation::Touch);
-        assert_eq!(right.get_value().get_type(), DataType::Integer);
+        assert_eq!(right.get_value().get_data_type(), DataType::Integer);
 
         assert_eq!(l2_left.get_operation(), Operation::Touch);
-        assert_eq!(l2_left.get_value().get_type(), DataType::Integer);
+        assert_eq!(l2_left.get_value().get_data_type(), DataType::Integer);
 
         assert_eq!(l2_right.get_operation(), Operation::Touch);
-        assert_eq!(l2_right.get_value().get_type(), DataType::Integer);
+        assert_eq!(l2_right.get_value().get_data_type(), DataType::Integer);
     }
 
     #[test]
@@ -621,26 +478,26 @@ mod tests {
 
         let root = tree.get_root();
 
-        let left = tree.nodes.get(root.get_left().unwrap()).unwrap();
-        let right = tree.nodes.get(root.get_right().unwrap()).unwrap();
+        let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
+        let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
 
-        let r2_left = tree.nodes.get(right.get_left().unwrap()).unwrap();
-        let r2_right = tree.nodes.get(right.get_right().unwrap()).unwrap();
+        let r2_left = tree.get_nodes().get(right.get_left().unwrap()).unwrap();
+        let r2_right = tree.get_nodes().get(right.get_right().unwrap()).unwrap();
 
         assert_eq!(root.get_operation(), Operation::Addition);
-        assert_eq!(root.get_value().get_type(), DataType::Unknown);
+        assert_eq!(root.get_value().get_data_type(), DataType::Unknown);
 
         assert_eq!(left.get_operation(), Operation::Touch);
-        assert_eq!(left.get_value().get_type(), DataType::Integer);
+        assert_eq!(left.get_value().get_data_type(), DataType::Integer);
 
         assert_eq!(right.get_operation(), Operation::Multiplication);
-        assert_eq!(right.get_value().get_type(), DataType::Unknown);
+        assert_eq!(right.get_value().get_data_type(), DataType::Unknown);
 
         assert_eq!(r2_left.get_operation(), Operation::Touch);
-        assert_eq!(r2_left.get_value().get_type(), DataType::Integer);
+        assert_eq!(r2_left.get_value().get_data_type(), DataType::Integer);
 
         assert_eq!(r2_right.get_operation(), Operation::Touch);
-        assert_eq!(r2_right.get_value().get_type(), DataType::Integer);
+        assert_eq!(r2_right.get_value().get_data_type(), DataType::Integer);
     }
 
     #[test]
@@ -659,26 +516,26 @@ mod tests {
 
         let root = tree.get_root();
 
-        let left = tree.nodes.get(root.get_left().unwrap()).unwrap();
-        let right = tree.nodes.get(root.get_right().unwrap()).unwrap();
+        let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
+        let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
 
-        let l2_left = tree.nodes.get(left.get_left().unwrap()).unwrap();
-        let l2_right = tree.nodes.get(left.get_right().unwrap()).unwrap();
+        let l2_left = tree.get_nodes().get(left.get_left().unwrap()).unwrap();
+        let l2_right = tree.get_nodes().get(left.get_right().unwrap()).unwrap();
 
         assert_eq!(root.get_operation(), Operation::Addition);
-        assert_eq!(root.get_value().get_type(), DataType::Unknown);
+        assert_eq!(root.get_value().get_data_type(), DataType::Unknown);
 
         assert_eq!(left.get_operation(), Operation::Multiplication);
-        assert_eq!(left.get_value().get_type(), DataType::Unknown);
+        assert_eq!(left.get_value().get_data_type(), DataType::Unknown);
 
         assert_eq!(right.get_operation(), Operation::Touch);
-        assert_eq!(right.get_value().get_type(), DataType::Integer);
+        assert_eq!(right.get_value().get_data_type(), DataType::Integer);
 
         assert_eq!(l2_left.get_operation(), Operation::Touch);
-        assert_eq!(l2_left.get_value().get_type(), DataType::Integer);
+        assert_eq!(l2_left.get_value().get_data_type(), DataType::Integer);
 
         assert_eq!(l2_right.get_operation(), Operation::Touch);
-        assert_eq!(l2_right.get_value().get_type(), DataType::Integer);
+        assert_eq!(l2_right.get_value().get_data_type(), DataType::Integer);
     }
 
     // Debugging utils
