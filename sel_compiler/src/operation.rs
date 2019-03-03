@@ -8,6 +8,7 @@ pub enum Operation {
     Multiplication,
     Modulo,
     Division,
+    Exponential,
     ExclusiveRange,
     InclusiveRange,
     None,
@@ -20,6 +21,7 @@ pub fn get_operation_type_for_token(token: &Token) -> Operation {
         TokenType::MultiplicationSign => Operation::Multiplication,
         TokenType::DivisionSign => Operation::Division,
         TokenType::ModulusSign => Operation::Modulo,
+        TokenType::ExponentialSign => Operation::Exponential,
         TokenType::ExclusiveRange => Operation::ExclusiveRange,
         TokenType::InclusiveRange => Operation::InclusiveRange,
         TokenType::Boolean

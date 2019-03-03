@@ -17,8 +17,9 @@ pub struct Compiler {
 
 // lower number means higher priority
 const RANGE_PRECEDENCE: usize = 0;
-const MULTIPLICATION_PRECEDENCE: usize = 1;
-const ADDITION_PRECEDENCE: usize = 2;
+const EXPONENTIAL_PRECEDENCE: usize = 1;
+const MULTIPLICATION_PRECEDENCE: usize = 2;
+const ADDITION_PRECEDENCE: usize = 3;
 
 impl Compiler {
     pub fn new() -> Self {
@@ -26,6 +27,8 @@ impl Compiler {
 
         operation_priorities.insert(Operation::ExclusiveRange, RANGE_PRECEDENCE);
         operation_priorities.insert(Operation::InclusiveRange, RANGE_PRECEDENCE);
+
+        operation_priorities.insert(Operation::Exponential, EXPONENTIAL_PRECEDENCE);
 
         operation_priorities.insert(Operation::Multiplication, MULTIPLICATION_PRECEDENCE);
         operation_priorities.insert(Operation::Division, MULTIPLICATION_PRECEDENCE);
@@ -45,6 +48,7 @@ impl Compiler {
     ) -> (Vec<SELTreeNode>, Vec<Vec<usize>>) {
         let mut priority_map: Vec<Vec<usize>> = vec![];
         priority_map.push(vec![]); // RANGE_PRECEDENCE
+        priority_map.push(vec![]); // EXPONENTIAL_PRECEDENCE
         priority_map.push(vec![]); // MULTIPLICATION_PRECEDENCE
         priority_map.push(vec![]); // ADDITION_PRECEDENCE
 
