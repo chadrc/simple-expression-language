@@ -19,23 +19,30 @@ pub struct Compiler {
     operation_priorities: HashMap<Operation, usize>,
 }
 
+// lower number means higher priority
+const MULTIPLICATION_PRECEDENCE: usize = 0;
+const ADDITION_PRECEDENCE: usize = 1;
+
 impl Compiler {
     pub fn new() -> Self {
         let mut operation_priorities = HashMap::new();
-        // lower number means higher priority
-        operation_priorities.insert(Operation::Multiplication, 0);
-        operation_priorities.insert(Operation::Addition, 1);
+        operation_priorities.insert(Operation::Multiplication, MULTIPLICATION_PRECEDENCE);
+        operation_priorities.insert(Operation::Division, MULTIPLICATION_PRECEDENCE);
+        operation_priorities.insert(Operation::Addition, ADDITION_PRECEDENCE);
+        operation_priorities.insert(Operation::Subtraction, ADDITION_PRECEDENCE);
+
         return Compiler {
             operation_priorities: operation_priorities,
         };
     }
 
     fn make_nodes_from_tokenizer(
+        &self,
         tokenizer: &mut Tokenizer,
-    ) -> (Vec<SELTreeNode>, HashMap<Operation, Vec<usize>>) {
-        let mut priority_map: HashMap<Operation, Vec<usize>> = HashMap::new();
-        priority_map.insert(Operation::Multiplication, vec![]);
-        priority_map.insert(Operation::Addition, vec![]);
+    ) -> (Vec<SELTreeNode>, Vec<Vec<usize>>) {
+        let mut priority_map: Vec<Vec<usize>> = vec![];
+        priority_map.push(vec![]); // MULTIPLICATION_PRECEDENCE
+        priority_map.push(vec![]); // ADDITION_PRECEDENCE
 
         let mut nodes: Vec<SELTreeNode> = vec![];
 
@@ -65,9 +72,12 @@ impl Compiler {
 
             nodes.push(node);
 
-            if priority_map.contains_key(&node.get_operation()) {
-                let v = priority_map.get_mut(&node.get_operation()).unwrap();
-                v.push(node.get_own_index());
+            match self.operation_priorities.get(&node.get_operation()) {
+                None => (),
+                Some(node_priority) => {
+                    let v = priority_map.get_mut(*node_priority).unwrap();
+                    v.push(node.get_own_index());
+                }
             }
         }
 
@@ -258,15 +268,16 @@ impl Compiler {
 
     pub fn compile(&self, s: &String) -> SELTree {
         let mut tokenizer = Tokenizer::new(s);
-        let (nodes, priority_map) = Compiler::make_nodes_from_tokenizer(&mut tokenizer);
+        let (mut nodes, priority_map) = self.make_nodes_from_tokenizer(&mut tokenizer);
 
         // starting with highest priority operators
         // go through nodes and move pointers to their operands
         // to point at operator
         // let nodes = &mut nodes;
 
-        let nodes = self.resolve_tree(nodes, priority_map.get(&Operation::Multiplication).unwrap());
-        let nodes = self.resolve_tree(nodes, priority_map.get(&Operation::Addition).unwrap());
+        for priority in priority_map {
+            nodes = self.resolve_tree(nodes, &priority);
+        }
 
         // next priority
         // for (i, node) in nodes.iter().enumerate() {
@@ -415,6 +426,50 @@ mod tests {
         let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
 
         assert_eq!(root.get_operation(), Operation::Multiplication);
+        assert_eq!(root.get_value().get_data_type(), DataType::Unknown);
+
+        assert_eq!(left.get_operation(), Operation::Touch);
+        assert_eq!(left.get_value().get_data_type(), DataType::Integer);
+
+        assert_eq!(right.get_operation(), Operation::Touch);
+        assert_eq!(right.get_value().get_data_type(), DataType::Integer);
+    }
+
+    #[test]
+    fn compiles_subtraction_operation() {
+        let input = String::from("5 - 10");
+        let compiler = Compiler::new();
+
+        let tree = compiler.compile(&input);
+
+        let root = tree.get_root();
+
+        let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
+        let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
+
+        assert_eq!(root.get_operation(), Operation::Subtraction);
+        assert_eq!(root.get_value().get_data_type(), DataType::Unknown);
+
+        assert_eq!(left.get_operation(), Operation::Touch);
+        assert_eq!(left.get_value().get_data_type(), DataType::Integer);
+
+        assert_eq!(right.get_operation(), Operation::Touch);
+        assert_eq!(right.get_value().get_data_type(), DataType::Integer);
+    }
+
+    #[test]
+    fn compiles_division_operation() {
+        let input = String::from("5 / 10");
+        let compiler = Compiler::new();
+
+        let tree = compiler.compile(&input);
+
+        let root = tree.get_root();
+
+        let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
+        let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
+
+        assert_eq!(root.get_operation(), Operation::Division);
         assert_eq!(root.get_value().get_data_type(), DataType::Unknown);
 
         assert_eq!(left.get_operation(), Operation::Touch);
