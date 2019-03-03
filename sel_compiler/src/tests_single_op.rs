@@ -179,4 +179,92 @@ mod tests {
         assert_eq!(right.get_operation(), Operation::Touch);
         assert_eq!(right.get_value().get_data_type(), DataType::Integer);
     }
+
+    #[test]
+    fn compiles_greater_than_operation() {
+        let input = String::from("5 > 10");
+        let compiler = Compiler::new();
+
+        let tree = compiler.compile(&input);
+
+        let root = tree.get_root();
+
+        let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
+        let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
+
+        assert_eq!(root.get_operation(), Operation::GreaterThan);
+        assert_eq!(root.get_value().get_data_type(), DataType::Unknown);
+
+        assert_eq!(left.get_operation(), Operation::Touch);
+        assert_eq!(left.get_value().get_data_type(), DataType::Integer);
+
+        assert_eq!(right.get_operation(), Operation::Touch);
+        assert_eq!(right.get_value().get_data_type(), DataType::Integer);
+    }
+
+    #[test]
+    fn compiles_greater_than_equal_operation() {
+        let input = String::from("5 >= 10");
+        let compiler = Compiler::new();
+
+        let tree = compiler.compile(&input);
+
+        let root = tree.get_root();
+
+        let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
+        let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
+
+        assert_eq!(root.get_operation(), Operation::GreaterThanOrEqual);
+        assert_eq!(root.get_value().get_data_type(), DataType::Unknown);
+
+        assert_eq!(left.get_operation(), Operation::Touch);
+        assert_eq!(left.get_value().get_data_type(), DataType::Integer);
+
+        assert_eq!(right.get_operation(), Operation::Touch);
+        assert_eq!(right.get_value().get_data_type(), DataType::Integer);
+    }
+
+    #[test]
+    fn compiles_less_than_operation() {
+        let input = String::from("5 < 10");
+        let compiler = Compiler::new();
+
+        let tree = compiler.compile(&input);
+
+        let root = tree.get_root();
+
+        let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
+        let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
+
+        assert_eq!(root.get_operation(), Operation::LessThan);
+        assert_eq!(root.get_value().get_data_type(), DataType::Unknown);
+
+        assert_eq!(left.get_operation(), Operation::Touch);
+        assert_eq!(left.get_value().get_data_type(), DataType::Integer);
+
+        assert_eq!(right.get_operation(), Operation::Touch);
+        assert_eq!(right.get_value().get_data_type(), DataType::Integer);
+    }
+
+    #[test]
+    fn compiles_less_than_equal_to_operation() {
+        let input = String::from("5 <= 10");
+        let compiler = Compiler::new();
+
+        let tree = compiler.compile(&input);
+
+        let root = tree.get_root();
+
+        let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
+        let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
+
+        assert_eq!(root.get_operation(), Operation::LessThanOrEqual);
+        assert_eq!(root.get_value().get_data_type(), DataType::Unknown);
+
+        assert_eq!(left.get_operation(), Operation::Touch);
+        assert_eq!(left.get_value().get_data_type(), DataType::Integer);
+
+        assert_eq!(right.get_operation(), Operation::Touch);
+        assert_eq!(right.get_value().get_data_type(), DataType::Integer);
+    }
 }

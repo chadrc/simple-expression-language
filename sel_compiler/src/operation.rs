@@ -11,6 +11,10 @@ pub enum Operation {
     Exponential,
     ExclusiveRange,
     InclusiveRange,
+    GreaterThan,
+    GreaterThanOrEqual,
+    LessThan,
+    LessThanOrEqual,
     None,
 }
 
@@ -24,6 +28,10 @@ pub fn get_operation_type_for_token(token: &Token) -> Operation {
         TokenType::ExponentialSign => Operation::Exponential,
         TokenType::ExclusiveRange => Operation::ExclusiveRange,
         TokenType::InclusiveRange => Operation::InclusiveRange,
+        TokenType::GreaterThan => Operation::GreaterThan,
+        TokenType::GreaterThanOrEqual => Operation::GreaterThanOrEqual,
+        TokenType::LessThan => Operation::LessThan,
+        TokenType::LessThanOrEqual => Operation::LessThanOrEqual,
         TokenType::Boolean
         | TokenType::Integer
         | TokenType::Decimal
