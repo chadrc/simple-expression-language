@@ -6,6 +6,7 @@ pub enum Operation {
     Addition,
     Multiplication,
     None,
+    Start,
 }
 
 #[derive(PartialEq, Debug, Clone, Copy)]
@@ -119,7 +120,7 @@ impl Compiler {
         let mut nodes: Vec<SELTreeNode> = vec![];
 
         // insert starter node to avoid later checks for length and end of list
-        nodes.push(SELTreeNode::new(Operation::None, DataType::Unknown));
+        nodes.push(SELTreeNode::new(Operation::Start, DataType::Unknown));
 
         // loop trough all tokens
         // convert them to tree nodes
@@ -130,7 +131,7 @@ impl Compiler {
                 get_data_type_for_token(&token),
             );
 
-            let inserted_index = nodes.len() - 1;
+            let inserted_index = nodes.len();
             node.own_index = inserted_index;
 
             // because of starter node, there is always a previous node
@@ -159,11 +160,10 @@ impl Compiler {
         // so start with second node
         let mut node = nodes.get(1).unwrap();
         let mut count = 0;
-        println!("{:?}", node);
+
         while node.parent != 0 {
             node = nodes.get(node.parent).unwrap();
 
-            println!("{:?}", node);
             // fail safe
             // stop after checking all nodes
             count += 1;
@@ -292,6 +292,8 @@ impl Compiler {
         //     if node.get_operation() == Operation::Addition {}
         // }
 
+        println!("{:?}", nodes);
+
         return SELTree {
             root: Compiler::find_root_index(&nodes),
             nodes: nodes,
@@ -323,6 +325,15 @@ fn get_operation_type_for_token(token: &Token) -> Operation {
         Operation::Addition
     } else if token.get_token_type() == TokenType::MultiplicationSign {
         Operation::Multiplication
+    } else if token.get_token_type() == TokenType::Boolean
+        || token.get_token_type() == TokenType::Integer
+        || token.get_token_type() == TokenType::Decimal
+        || token.get_token_type() == TokenType::SingleQuotedString
+        || token.get_token_type() == TokenType::DoubleQuotedString
+        || token.get_token_type() == TokenType::FormattedString
+    {
+        // all value tokens result in a touch operation
+        Operation::Touch
     } else {
         Operation::None
     };
