@@ -21,6 +21,7 @@ const EXPONENTIAL_PRECEDENCE: usize = 1;
 const MULTIPLICATION_PRECEDENCE: usize = 2;
 const ADDITION_PRECEDENCE: usize = 3;
 const RELATIONAL_PRECEDENCE: usize = 4;
+const EQUALITY_PRECEDENCE: usize = 5;
 
 impl Compiler {
     pub fn new() -> Self {
@@ -43,6 +44,9 @@ impl Compiler {
         operation_priorities.insert(Operation::LessThan, RELATIONAL_PRECEDENCE);
         operation_priorities.insert(Operation::LessThanOrEqual, RELATIONAL_PRECEDENCE);
 
+        operation_priorities.insert(Operation::Equality, EQUALITY_PRECEDENCE);
+        operation_priorities.insert(Operation::Inequality, EQUALITY_PRECEDENCE);
+
         return Compiler {
             operation_priorities: operation_priorities,
         };
@@ -58,6 +62,7 @@ impl Compiler {
         priority_map.push(vec![]); // MULTIPLICATION_PRECEDENCE
         priority_map.push(vec![]); // ADDITION_PRECEDENCE
         priority_map.push(vec![]); // RELATIONAL_PRECEDENCE
+        priority_map.push(vec![]); // EQUALITY_PRECEDENCE
 
         let mut nodes: Vec<SELTreeNode> = vec![];
 

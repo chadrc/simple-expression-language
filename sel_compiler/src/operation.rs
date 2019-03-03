@@ -15,6 +15,8 @@ pub enum Operation {
     GreaterThanOrEqual,
     LessThan,
     LessThanOrEqual,
+    Equality,
+    Inequality,
     None,
 }
 
@@ -32,6 +34,8 @@ pub fn get_operation_type_for_token(token: &Token) -> Operation {
         TokenType::GreaterThanOrEqual => Operation::GreaterThanOrEqual,
         TokenType::LessThan => Operation::LessThan,
         TokenType::LessThanOrEqual => Operation::LessThanOrEqual,
+        TokenType::Equal => Operation::Equality,
+        TokenType::NotEqual => Operation::Inequality,
         TokenType::Boolean
         | TokenType::Integer
         | TokenType::Decimal
