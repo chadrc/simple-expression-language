@@ -681,6 +681,8 @@ mod tests {
         assert_eq!(l2_right.get_value().get_type(), DataType::Integer);
     }
 
+    // Debugging utils
+    #[allow(dead_code)]
     fn print_nodes(nodes: &Vec<SELTreeNode>) {
         for node in nodes {
             println!("{:?}", node);
