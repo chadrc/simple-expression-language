@@ -115,11 +115,19 @@ struct Change {
     side_to_set: NodeSide,
 }
 
-pub struct Compiler {}
+pub struct Compiler {
+    operation_priorities: HashMap<Operation, usize>,
+}
 
 impl Compiler {
     pub fn new() -> Self {
-        return Compiler {};
+        let mut operation_priorities = HashMap::new();
+        // lower number means higher priority
+        operation_priorities.insert(Operation::Multiplication, 0);
+        operation_priorities.insert(Operation::Addition, 1);
+        return Compiler {
+            operation_priorities: operation_priorities,
+        };
     }
 
     fn make_nodes_from_tokenizer(
@@ -205,6 +213,7 @@ impl Compiler {
     }
 
     fn resolve_tree(
+        &self,
         mut nodes: Vec<SELTreeNode>,
         indicies_to_resolve: &Vec<usize>,
     ) -> Vec<SELTreeNode> {
@@ -231,7 +240,21 @@ impl Compiler {
                                 None => (),
                                 Some(left_left_index) => {
                                     let left_left = nodes.get(left_left_index).unwrap();
-                                    if left_left.get_operation() != Operation::Addition {
+
+                                    let my_priority = self
+                                        .operation_priorities
+                                        .get(&node.get_operation())
+                                        .unwrap();
+
+                                    let their_priority = self
+                                        .operation_priorities
+                                        .get(&left_left.get_operation())
+                                        .unwrap();
+
+                                    // lower number is higher priority
+                                    // i.e. priority of 0 is higher than 1
+                                    // 1 > 0 == true, means their_priority is lower than my_priority
+                                    if their_priority > my_priority {
                                         // if lower priority
                                         // make its right point to node
                                         changes.push(Change {
@@ -277,7 +300,17 @@ impl Compiler {
                                 Some(right_right_index) => {
                                     let right_right = nodes.get(right_right_index).unwrap();
 
-                                    if right_right.get_operation() != Operation::Addition {
+                                    let my_priority = self
+                                        .operation_priorities
+                                        .get(&node.get_operation())
+                                        .unwrap();
+
+                                    let their_priority = self
+                                        .operation_priorities
+                                        .get(&right_right.get_operation())
+                                        .unwrap();
+
+                                    if their_priority > my_priority {
                                         // lower priority
                                         // make its left point to node
                                         changes.push(Change {
@@ -334,9 +367,8 @@ impl Compiler {
         // to point at operator
         // let nodes = &mut nodes;
 
-        let nodes =
-            Compiler::resolve_tree(nodes, priority_map.get(&Operation::Multiplication).unwrap());
-        let nodes = Compiler::resolve_tree(nodes, priority_map.get(&Operation::Addition).unwrap());
+        let nodes = self.resolve_tree(nodes, priority_map.get(&Operation::Multiplication).unwrap());
+        let nodes = self.resolve_tree(nodes, priority_map.get(&Operation::Addition).unwrap());
 
         // next priority
         // for (i, node) in nodes.iter().enumerate() {
