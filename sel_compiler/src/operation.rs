@@ -9,7 +9,6 @@ pub enum Operation {
     Modulo,
     Division,
     None,
-    Start,
 }
 
 pub fn get_operation_type_for_token(token: &Token) -> Operation {
