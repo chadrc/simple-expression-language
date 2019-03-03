@@ -261,10 +261,6 @@ mod tests {
 
         let root = tree.get_root();
 
-        for node in tree.get_nodes() {
-            println!("{:?}", node);
-        }
-
         assert_eq!(root.get_operation(), Operation::LogicalOr);
 
         let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
@@ -321,5 +317,82 @@ mod tests {
 
         assert_eq!(lll_right.get_operation(), Operation::Touch);
         assert_eq!(lll_right.get_value().get_data_type(), DataType::Integer);
+    }
+
+    #[test]
+    fn logical_operations_3() {
+        let input = String::from("true || 5 + 3 == 4 && 10 >= 8 || false");
+        let compiler = Compiler::new();
+
+        let tree = compiler.compile(&input);
+
+        // tree should look like
+        //               ___ "||" ___
+        //              /            \
+        //        ___ "||" ___      false
+        //       /            \
+        //     true        _ "&&" _
+        //                /        \
+        //              "=="      ">="
+        //              /  \      /  \
+        //            "+"   4    15   2
+        //            / \
+        //           5   3
+
+        let root = tree.get_root();
+
+        for node in tree.get_nodes() {
+            println!("{:?}", node);
+        }
+
+        assert_eq!(root.get_operation(), Operation::LogicalOr);
+
+        let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
+        let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
+
+        assert_eq!(left.get_operation(), Operation::LogicalOr);
+
+        assert_eq!(right.get_operation(), Operation::Touch);
+        assert_eq!(right.get_value().get_data_type(), DataType::Boolean);
+
+        let l_left = tree.get_nodes().get(left.get_left().unwrap()).unwrap();
+        let l_right = tree.get_nodes().get(left.get_right().unwrap()).unwrap();
+
+        assert_eq!(l_left.get_operation(), Operation::Touch);
+        assert_eq!(l_left.get_value().get_data_type(), DataType::Boolean);
+
+        assert_eq!(l_right.get_operation(), Operation::LogicalAnd);
+
+        let lr_left = tree.get_nodes().get(l_right.get_left().unwrap()).unwrap();
+        let lr_right = tree.get_nodes().get(l_right.get_right().unwrap()).unwrap();
+
+        assert_eq!(lr_left.get_operation(), Operation::Equality);
+        assert_eq!(lr_right.get_operation(), Operation::GreaterThanOrEqual);
+
+        let lrr_left = tree.get_nodes().get(lr_right.get_left().unwrap()).unwrap();
+        let lrr_right = tree.get_nodes().get(lr_right.get_right().unwrap()).unwrap();
+
+        assert_eq!(lrr_left.get_operation(), Operation::Touch);
+        assert_eq!(lrr_left.get_value().get_data_type(), DataType::Integer);
+
+        assert_eq!(lrr_right.get_operation(), Operation::Touch);
+        assert_eq!(lrr_right.get_value().get_data_type(), DataType::Integer);
+
+        let lrl_left = tree.get_nodes().get(lr_left.get_left().unwrap()).unwrap();
+        let lrl_right = tree.get_nodes().get(lr_left.get_right().unwrap()).unwrap();
+
+        assert_eq!(lrl_left.get_operation(), Operation::Addition);
+
+        assert_eq!(lrl_right.get_operation(), Operation::Touch);
+        assert_eq!(lrl_right.get_value().get_data_type(), DataType::Integer);
+
+        let lrll_left = tree.get_nodes().get(lrl_left.get_left().unwrap()).unwrap();
+        let lrll_right = tree.get_nodes().get(lrl_left.get_right().unwrap()).unwrap();
+
+        assert_eq!(lrll_left.get_operation(), Operation::Touch);
+        assert_eq!(lrll_left.get_value().get_data_type(), DataType::Integer);
+
+        assert_eq!(lrll_right.get_operation(), Operation::Touch);
+        assert_eq!(lrll_right.get_value().get_data_type(), DataType::Integer);
     }
 }
