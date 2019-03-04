@@ -61,16 +61,16 @@ impl SELTreeNode {
         return self.parent;
     }
 
-    pub fn set_left(&mut self, left: usize) {
-        self.left = Some(left)
+    pub fn set_left(&mut self, left: Option<usize>) {
+        self.left = left;
     }
 
-    pub fn set_right(&mut self, right: usize) {
-        self.right = Some(right);
+    pub fn set_right(&mut self, right: Option<usize>) {
+        self.right = right;
     }
 
-    pub fn set_parent(&mut self, parent: usize) {
-        self.parent = Some(parent);
+    pub fn set_parent(&mut self, parent: Option<usize>) {
+        self.parent = parent;
     }
 }
 

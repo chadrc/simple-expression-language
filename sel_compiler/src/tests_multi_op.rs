@@ -11,9 +11,9 @@ mod tests {
 
         let tree = compiler.compile(&input);
 
-        for node in tree.get_nodes() {
-            println!("{:?}", node);
-        }
+        // for node in tree.get_nodes() {
+        //     println!("{:?}", node);
+        // }
 
         // tree should look like
         //          +
@@ -341,9 +341,9 @@ mod tests {
 
         let root = tree.get_root();
 
-        for node in tree.get_nodes() {
-            println!("{:?}", node);
-        }
+        // for node in tree.get_nodes() {
+        //     println!("{:?}", node);
+        // }
 
         assert_eq!(root.get_operation(), Operation::LogicalOr);
 
