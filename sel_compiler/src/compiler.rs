@@ -221,36 +221,22 @@ impl Compiler {
                             // left has lower priority
                         }
 
-                        // left node will no longer be pointing toward its left
-                        // need to update left's right to point to node
-                        match left_node.get_left() {
-                            None => (),
-                            Some(left_left_index) => {
-                                let left_left_node = nodes.get(left_left_index).unwrap();
-                                let _left_left_priority = self
-                                    .operation_priorities
-                                    .get(&left_left_node.get_operation())
-                                    .unwrap();
+                        // check and update next node only if this one was a value node
+                        if *left_priority == VALUE_PRECEDENCE {
+                            // left node will no longer be pointing toward its left
+                            // need to update left's right to point to node
+                            match left_node.get_left() {
+                                None => (),
+                                Some(left_left_index) => {
+                                    let left_left_node = nodes.get(left_left_index).unwrap();
 
-                                // lower priority
-                                // set right to be update by later iteration
-                                changes.push(Change {
-                                    index_to_change: left_left_node.get_own_index(),
-                                    new_index: Some(node.get_own_index()),
-                                    side_to_set: NodeSide::Right,
-                                });
-
-                                // if left_left_priority >= node_priority {
-                                //     // left has same or higher priority
-
-                                //     // make node the parent
-                                //     changes.push(Change {
-                                //         index_to_change: left_left_node.get_own_index(),
-                                //         new_index: Some(node.get_own_index()),
-                                //         side_to_set: NodeSide::Parent,
-                                //     });
-                                // } else {
-                                // }
+                                    // set right to be update by later iteration
+                                    changes.push(Change {
+                                        index_to_change: left_left_node.get_own_index(),
+                                        new_index: Some(node.get_own_index()),
+                                        side_to_set: NodeSide::Right,
+                                    });
+                                }
                             }
                         }
                     }
@@ -294,22 +280,21 @@ impl Compiler {
                             // right has lower priority
                         }
 
-                        // right node will no longer be pointing toward its right
-                        // need to update left's right to point to node
-                        match right_node.get_right() {
-                            None => (),
-                            Some(right_right_index) => {
-                                let right_right_node = nodes.get(right_right_index).unwrap();
-                                let _right_right_priority = self
-                                    .operation_priorities
-                                    .get(&right_right_node.get_operation())
-                                    .unwrap();
+                        // check and update next node only if this one was a value node
+                        if *right_priority == VALUE_PRECEDENCE {
+                            // right node will no longer be pointing toward its right
+                            // need to update left's right to point to node
+                            match right_node.get_right() {
+                                None => (),
+                                Some(right_right_index) => {
+                                    let right_right_node = nodes.get(right_right_index).unwrap();
 
-                                changes.push(Change {
-                                    index_to_change: right_right_node.get_own_index(),
-                                    new_index: Some(node.get_own_index()),
-                                    side_to_set: NodeSide::Left,
-                                });
+                                    changes.push(Change {
+                                        index_to_change: right_right_node.get_own_index(),
+                                        new_index: Some(node.get_own_index()),
+                                        side_to_set: NodeSide::Left,
+                                    });
+                                }
                             }
                         }
                     }
