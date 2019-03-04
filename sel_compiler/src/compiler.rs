@@ -187,17 +187,20 @@ impl Compiler {
                             // left has higher priority
 
                             // None left node's left and right
-                            changes.push(Change {
-                                index_to_change: left_node.get_own_index(),
-                                new_index: None,
-                                side_to_set: NodeSide::Left,
-                            });
+                            // if value precedence
+                            if *left_priority == VALUE_PRECEDENCE {
+                                changes.push(Change {
+                                    index_to_change: left_node.get_own_index(),
+                                    new_index: None,
+                                    side_to_set: NodeSide::Left,
+                                });
 
-                            changes.push(Change {
-                                index_to_change: left_node.get_own_index(),
-                                new_index: None,
-                                side_to_set: NodeSide::Right,
-                            });
+                                changes.push(Change {
+                                    index_to_change: left_node.get_own_index(),
+                                    new_index: None,
+                                    side_to_set: NodeSide::Right,
+                                });
+                            }
 
                             // Set left node's parent to node
                             changes.push(Change {
@@ -266,17 +269,20 @@ impl Compiler {
                             // right has higher priority
 
                             // None right node's left and right
-                            changes.push(Change {
-                                index_to_change: right_node.get_own_index(),
-                                new_index: None,
-                                side_to_set: NodeSide::Left,
-                            });
+                            // if value precedence
+                            if *right_priority == VALUE_PRECEDENCE {
+                                changes.push(Change {
+                                    index_to_change: right_node.get_own_index(),
+                                    new_index: None,
+                                    side_to_set: NodeSide::Left,
+                                });
 
-                            changes.push(Change {
-                                index_to_change: right_node.get_own_index(),
-                                new_index: None,
-                                side_to_set: NodeSide::Right,
-                            });
+                                changes.push(Change {
+                                    index_to_change: right_node.get_own_index(),
+                                    new_index: None,
+                                    side_to_set: NodeSide::Right,
+                                });
+                            }
 
                             // Set right node's parent to node
                             changes.push(Change {

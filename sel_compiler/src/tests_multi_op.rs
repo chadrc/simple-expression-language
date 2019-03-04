@@ -11,10 +11,6 @@ mod tests {
 
         let tree = compiler.compile(&input);
 
-        for node in tree.get_nodes() {
-            println!("{:?}", node);
-        }
-
         // tree should look like
         //          +
         //         / \
@@ -52,6 +48,10 @@ mod tests {
         let compiler = Compiler::new();
 
         let tree = compiler.compile(&input);
+
+        for node in tree.get_nodes() {
+            println!("{:?}", node);
+        }
 
         // tree should look like
         //          +
