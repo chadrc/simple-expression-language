@@ -183,8 +183,8 @@ impl Compiler {
                             .get(&left_node.get_operation())
                             .unwrap();
 
-                        if left_priority <= node_priority {
-                            // left has same or higher priority
+                        if left_priority < node_priority {
+                            // left has higher priority
 
                             // None left node's left and right
                             changes.push(Change {
@@ -205,6 +205,15 @@ impl Compiler {
                                 new_index: Some(node.get_own_index()),
                                 side_to_set: NodeSide::Parent,
                             });
+                        } else if left_priority == node_priority {
+                            // same priority
+
+                            // make node, left's parent
+                            changes.push(Change {
+                                index_to_change: left_node.get_own_index(),
+                                new_index: Some(node.get_own_index()),
+                                side_to_set: NodeSide::Parent,
+                            });
                         } else {
                             // left has lower priority
                         }
@@ -215,7 +224,7 @@ impl Compiler {
                             None => (),
                             Some(left_left_index) => {
                                 let left_left_node = nodes.get(left_left_index).unwrap();
-                                let left_left_priority = self
+                                let _left_left_priority = self
                                     .operation_priorities
                                     .get(&left_left_node.get_operation())
                                     .unwrap();
@@ -253,9 +262,10 @@ impl Compiler {
                             .get(&right_node.get_operation())
                             .unwrap();
 
-                        if right_priority <= node_priority {
-                            // left has same or higher priority
-                            // None left node's left and right
+                        if right_priority < node_priority {
+                            // right has higher priority
+
+                            // None right node's left and right
                             changes.push(Change {
                                 index_to_change: right_node.get_own_index(),
                                 new_index: None,
@@ -268,23 +278,23 @@ impl Compiler {
                                 side_to_set: NodeSide::Right,
                             });
 
-                            // Set left node's parent to node
+                            // Set right node's parent to node
                             changes.push(Change {
                                 index_to_change: right_node.get_own_index(),
                                 new_index: Some(node.get_own_index()),
                                 side_to_set: NodeSide::Parent,
                             });
                         } else {
-                            // left has lower priority
+                            // right has lower priority
                         }
 
-                        // left node will no longer be pointing toward its left
+                        // right node will no longer be pointing toward its right
                         // need to update left's right to point to node
                         match right_node.get_right() {
                             None => (),
                             Some(right_right_index) => {
                                 let right_right_node = nodes.get(right_right_index).unwrap();
-                                let right_right_priority = self
+                                let _right_right_priority = self
                                     .operation_priorities
                                     .get(&right_right_node.get_operation())
                                     .unwrap();
@@ -330,7 +340,7 @@ impl Compiler {
         // let nodes = &mut nodes;
 
         // skip VALUE_PRECEDENCE
-        for (i, priority) in priority_map.iter().skip(1).enumerate() {
+        for (_i, priority) in priority_map.iter().skip(1).enumerate() {
             if priority.len() > 0 {
                 // println!("priority {:?}", i);
                 nodes = self.resolve_tree(nodes, &priority);

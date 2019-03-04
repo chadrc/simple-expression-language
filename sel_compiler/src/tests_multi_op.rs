@@ -11,9 +11,9 @@ mod tests {
 
         let tree = compiler.compile(&input);
 
-        // for node in tree.get_nodes() {
-        //     println!("{:?}", node);
-        // }
+        for node in tree.get_nodes() {
+            println!("{:?}", node);
+        }
 
         // tree should look like
         //          +
@@ -27,8 +27,8 @@ mod tests {
         let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
         let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
 
-        let l2_left = tree.get_nodes().get(left.get_left().unwrap()).unwrap();
-        let l2_right = tree.get_nodes().get(left.get_right().unwrap()).unwrap();
+        let l_left = tree.get_nodes().get(left.get_left().unwrap()).unwrap();
+        let l_right = tree.get_nodes().get(left.get_right().unwrap()).unwrap();
 
         assert_eq!(root.get_operation(), Operation::Addition);
         assert_eq!(root.get_value().get_data_type(), DataType::Unknown);
@@ -39,11 +39,11 @@ mod tests {
         assert_eq!(right.get_operation(), Operation::Touch);
         assert_eq!(right.get_value().get_data_type(), DataType::Integer);
 
-        assert_eq!(l2_left.get_operation(), Operation::Touch);
-        assert_eq!(l2_left.get_value().get_data_type(), DataType::Integer);
+        assert_eq!(l_left.get_operation(), Operation::Touch);
+        assert_eq!(l_left.get_value().get_data_type(), DataType::Integer);
 
-        assert_eq!(l2_right.get_operation(), Operation::Touch);
-        assert_eq!(l2_right.get_value().get_data_type(), DataType::Integer);
+        assert_eq!(l_right.get_operation(), Operation::Touch);
+        assert_eq!(l_right.get_value().get_data_type(), DataType::Integer);
     }
 
     #[test]
