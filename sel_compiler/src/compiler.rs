@@ -11,6 +11,24 @@ struct Change {
     side_to_set: NodeSide,
 }
 
+fn none_left_right(index: usize) -> Vec<Change> {
+    let mut changes: Vec<Change> = vec![];
+
+    changes.push(Change {
+        index_to_change: index,
+        new_index: None,
+        side_to_set: NodeSide::Left,
+    });
+
+    changes.push(Change {
+        index_to_change: index,
+        new_index: None,
+        side_to_set: NodeSide::Right,
+    });
+
+    return changes;
+}
+
 pub struct Compiler {
     operation_priorities: HashMap<Operation, usize>,
 }
@@ -214,17 +232,7 @@ impl Compiler {
                             // None left node's left and right
                             // if value precedence
                             if *left_priority == VALUE_PRECEDENCE {
-                                changes.push(Change {
-                                    index_to_change: left_node.get_own_index(),
-                                    new_index: None,
-                                    side_to_set: NodeSide::Left,
-                                });
-
-                                changes.push(Change {
-                                    index_to_change: left_node.get_own_index(),
-                                    new_index: None,
-                                    side_to_set: NodeSide::Right,
-                                });
+                                changes.append(&mut none_left_right(left_node.get_own_index()));
                             }
 
                             // Set left node's parent to node
@@ -289,17 +297,7 @@ impl Compiler {
                             // None right node's left and right
                             // if value precedence
                             if *right_priority == VALUE_PRECEDENCE {
-                                changes.push(Change {
-                                    index_to_change: right_node.get_own_index(),
-                                    new_index: None,
-                                    side_to_set: NodeSide::Left,
-                                });
-
-                                changes.push(Change {
-                                    index_to_change: right_node.get_own_index(),
-                                    new_index: None,
-                                    side_to_set: NodeSide::Right,
-                                });
+                                changes.append(&mut none_left_right(right_node.get_own_index()));
                             }
 
                             // Set right node's parent to node
