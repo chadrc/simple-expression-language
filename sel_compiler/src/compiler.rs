@@ -226,79 +226,61 @@ impl Compiler {
                         return None;
                     };
 
-                match node.get_left() {
-                    None => (),
-                    Some(left_index) => {
-                        let left_node = parent_of_index(left_index);
+                let index_for_side = |side: NodeSide| match side {
+                    NodeSide::Parent => panic!("NodeSide::Parent can't be updated."),
+                    NodeSide::Right => node.get_right(),
+                    NodeSide::Left => node.get_left(),
+                };
 
-                        changes.push(Change {
-                            index_to_change: node.get_own_index(),
-                            new_index: Some(left_node.get_own_index()),
-                            side_to_set: NodeSide::Left,
-                        });
+                let mut update_node_side = |side: NodeSide| {
+                    let start_index = index_for_side(side);
 
-                        let left_priority = self
-                            .operation_priorities
-                            .get(&left_node.get_operation())
-                            .unwrap();
+                    match start_index {
+                        None => (), // shouldn't happen
+                        Some(node_index) => {
+                            let next_node = parent_of_index(node_index);
 
-                        if *left_priority == VALUE_PRECEDENCE {
-                            changes.append(&mut none_left_right(left_node.get_own_index()));
-                        }
+                            changes.push(Change {
+                                index_to_change: node.get_own_index(),
+                                new_index: Some(next_node.get_own_index()),
+                                side_to_set: side,
+                            });
 
-                        changes.push(Change {
-                            index_to_change: left_node.get_own_index(),
-                            new_index: Some(node.get_own_index()),
-                            side_to_set: NodeSide::Parent,
-                        });
+                            let priority = self
+                                .operation_priorities
+                                .get(&next_node.get_operation())
+                                .unwrap();
 
-                        match change_to_node_if_value(
-                            *left_priority,
-                            left_node.get_left(),
-                            NodeSide::Right,
-                        ) {
-                            None => (),
-                            Some(change) => changes.push(change),
-                        }
-                    }
-                }
+                            if *priority == VALUE_PRECEDENCE {
+                                changes.append(&mut none_left_right(next_node.get_own_index()));
+                            }
 
-                match node.get_right() {
-                    None => (),
-                    Some(right_index) => {
-                        let right_node = parent_of_index(right_index);
+                            changes.push(Change {
+                                index_to_change: next_node.get_own_index(),
+                                new_index: Some(node.get_own_index()),
+                                side_to_set: NodeSide::Parent,
+                            });
 
-                        changes.push(Change {
-                            index_to_change: node.get_own_index(),
-                            new_index: Some(right_node.get_own_index()),
-                            side_to_set: NodeSide::Right,
-                        });
+                            let opposite_side = match side {
+                                NodeSide::Parent => panic!("NodeSide::Parent can't be updated."), // would've already paniced by now
+                                NodeSide::Right => NodeSide::Right,
+                                NodeSide::Left => NodeSide::Left,
+                            };
 
-                        let right_priority = self
-                            .operation_priorities
-                            .get(&right_node.get_operation())
-                            .unwrap();
-
-                        if *right_priority == VALUE_PRECEDENCE {
-                            changes.append(&mut none_left_right(right_node.get_own_index()));
-                        }
-
-                        changes.push(Change {
-                            index_to_change: right_node.get_own_index(),
-                            new_index: Some(node.get_own_index()),
-                            side_to_set: NodeSide::Parent,
-                        });
-
-                        match change_to_node_if_value(
-                            *right_priority,
-                            right_node.get_right(),
-                            NodeSide::Left,
-                        ) {
-                            None => (),
-                            Some(change) => changes.push(change),
+                            match change_to_node_if_value(
+                                *priority,
+                                index_for_side(opposite_side),
+                                opposite_side,
+                            ) {
+                                None => (),
+                                Some(change) => changes.push(change),
+                            }
                         }
                     }
-                }
+                };
+
+                update_node_side(NodeSide::Left);
+                update_node_side(NodeSide::Right);
             }
 
             {
