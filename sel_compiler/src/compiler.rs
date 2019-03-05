@@ -205,11 +205,6 @@ impl Compiler {
                     return node;
                 };
 
-                let node_priority = self
-                    .operation_priorities
-                    .get(&node.get_operation())
-                    .unwrap();
-
                 match node.get_left() {
                     None => (),
                     Some(left_index) => {
@@ -226,14 +221,10 @@ impl Compiler {
                             .get(&left_node.get_operation())
                             .unwrap();
 
-                        if left_priority < node_priority {
-                            // left has higher priority
-
-                            // None left node's left and right
-                            // if value precedence
-                            if *left_priority == VALUE_PRECEDENCE {
-                                changes.append(&mut none_left_right(left_node.get_own_index()));
-                            }
+                        // None left node's left and right
+                        // if value precedence
+                        if *left_priority == VALUE_PRECEDENCE {
+                            changes.append(&mut none_left_right(left_node.get_own_index()));
                         }
 
                         changes.push(Change {
@@ -279,13 +270,9 @@ impl Compiler {
                             .get(&right_node.get_operation())
                             .unwrap();
 
-                        if right_priority < node_priority {
-                            // right has higher priority
-
-                            // if value precedence
-                            if *right_priority == VALUE_PRECEDENCE {
-                                changes.append(&mut none_left_right(right_node.get_own_index()));
-                            }
+                        // if value precedence
+                        if *right_priority == VALUE_PRECEDENCE {
+                            changes.append(&mut none_left_right(right_node.get_own_index()));
                         }
 
                         changes.push(Change {
