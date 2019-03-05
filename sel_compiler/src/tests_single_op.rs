@@ -7,7 +7,7 @@ mod tests {
     #[test]
     fn compiles_addition_operation() {
         let input = String::from("5 + 10");
-        let compiler = Compiler::new();
+        let mut compiler = Compiler::new();
 
         let tree = compiler.compile(&input);
 
@@ -29,7 +29,7 @@ mod tests {
     #[test]
     fn compiles_multiplication_operation() {
         let input = String::from("5 * 10");
-        let compiler = Compiler::new();
+        let mut compiler = Compiler::new();
 
         let tree = compiler.compile(&input);
 
@@ -51,7 +51,7 @@ mod tests {
     #[test]
     fn compiles_subtraction_operation() {
         let input = String::from("5 - 10");
-        let compiler = Compiler::new();
+        let mut compiler = Compiler::new();
 
         let tree = compiler.compile(&input);
 
@@ -73,7 +73,7 @@ mod tests {
     #[test]
     fn compiles_division_operation() {
         let input = String::from("5 / 10");
-        let compiler = Compiler::new();
+        let mut compiler = Compiler::new();
 
         let tree = compiler.compile(&input);
 
@@ -95,7 +95,7 @@ mod tests {
     #[test]
     fn compiles_modulus_operation() {
         let input = String::from("5 % 10");
-        let compiler = Compiler::new();
+        let mut compiler = Compiler::new();
 
         let tree = compiler.compile(&input);
 
@@ -117,7 +117,7 @@ mod tests {
     #[test]
     fn compiles_exponential_operation() {
         let input = String::from("5^10");
-        let compiler = Compiler::new();
+        let mut compiler = Compiler::new();
 
         let tree = compiler.compile(&input);
 
@@ -139,7 +139,7 @@ mod tests {
     #[test]
     fn compiles_exclusive_range_operation() {
         let input = String::from("5..10");
-        let compiler = Compiler::new();
+        let mut compiler = Compiler::new();
 
         let tree = compiler.compile(&input);
 
@@ -161,7 +161,7 @@ mod tests {
     #[test]
     fn compiles_inclusive_range_operation() {
         let input = String::from("5...10");
-        let compiler = Compiler::new();
+        let mut compiler = Compiler::new();
 
         let tree = compiler.compile(&input);
 
@@ -183,7 +183,7 @@ mod tests {
     #[test]
     fn compiles_greater_than_operation() {
         let input = String::from("5 > 10");
-        let compiler = Compiler::new();
+        let mut compiler = Compiler::new();
 
         let tree = compiler.compile(&input);
 
@@ -205,7 +205,7 @@ mod tests {
     #[test]
     fn compiles_greater_than_equal_operation() {
         let input = String::from("5 >= 10");
-        let compiler = Compiler::new();
+        let mut compiler = Compiler::new();
 
         let tree = compiler.compile(&input);
 
@@ -227,7 +227,7 @@ mod tests {
     #[test]
     fn compiles_less_than_operation() {
         let input = String::from("5 < 10");
-        let compiler = Compiler::new();
+        let mut compiler = Compiler::new();
 
         let tree = compiler.compile(&input);
 
@@ -249,7 +249,7 @@ mod tests {
     #[test]
     fn compiles_less_than_equal_to_operation() {
         let input = String::from("5 <= 10");
-        let compiler = Compiler::new();
+        let mut compiler = Compiler::new();
 
         let tree = compiler.compile(&input);
 
@@ -271,7 +271,7 @@ mod tests {
     #[test]
     fn compiles_equality_operation() {
         let input = String::from("5 == 10");
-        let compiler = Compiler::new();
+        let mut compiler = Compiler::new();
 
         let tree = compiler.compile(&input);
 
@@ -293,7 +293,7 @@ mod tests {
     #[test]
     fn compiles_inequality_operation() {
         let input = String::from("5 != 10");
-        let compiler = Compiler::new();
+        let mut compiler = Compiler::new();
 
         let tree = compiler.compile(&input);
 
@@ -315,7 +315,7 @@ mod tests {
     #[test]
     fn compiles_logical_and_operation() {
         let input = String::from("5 && 10");
-        let compiler = Compiler::new();
+        let mut compiler = Compiler::new();
 
         let tree = compiler.compile(&input);
 
@@ -337,7 +337,7 @@ mod tests {
     #[test]
     fn compiles_logical_or_operation() {
         let input = String::from("5 || 10");
-        let compiler = Compiler::new();
+        let mut compiler = Compiler::new();
 
         let tree = compiler.compile(&input);
 
@@ -359,7 +359,7 @@ mod tests {
     #[test]
     fn compiles_logical_not_operation() {
         let input = String::from("!true");
-        let compiler = Compiler::new();
+        let mut compiler = Compiler::new();
 
         let tree = compiler.compile(&input);
 

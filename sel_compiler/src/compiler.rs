@@ -1,8 +1,8 @@
 use super::data_type::{get_data_type_for_token, DataType};
 use super::operation::{get_operation_type_for_token, Operation};
+use super::precedence_manager::PrecedenceManager;
 use super::sel_tree::{opposite_of_side, NodeSide, SELTree, SELTreeNode};
 use sel_tokenizer::Tokenizer;
-use std::collections::HashMap;
 
 #[derive(PartialEq, Debug, Clone, Copy)]
 struct Change {
@@ -30,74 +30,17 @@ fn none_left_right(index: usize) -> Vec<Change> {
 }
 
 pub struct Compiler {
-    operation_priorities: HashMap<Operation, usize>,
+    precedence_manager: PrecedenceManager,
 }
-
-// lower number means higher priority
-const VALUE_PRECEDENCE: usize = 0;
-const NOT_PRECEDENCE: usize = VALUE_PRECEDENCE + 1;
-const RANGE_PRECEDENCE: usize = NOT_PRECEDENCE + 1;
-const EXPONENTIAL_PRECEDENCE: usize = RANGE_PRECEDENCE + 1;
-const MULTIPLICATION_PRECEDENCE: usize = EXPONENTIAL_PRECEDENCE + 1;
-const ADDITION_PRECEDENCE: usize = MULTIPLICATION_PRECEDENCE + 1;
-const RELATIONAL_PRECEDENCE: usize = ADDITION_PRECEDENCE + 1;
-const EQUALITY_PRECEDENCE: usize = RELATIONAL_PRECEDENCE + 1;
-const AND_PRECEDENCE: usize = EQUALITY_PRECEDENCE + 1;
-const OR_PRECEDENCE: usize = AND_PRECEDENCE + 1;
 
 impl Compiler {
     pub fn new() -> Self {
-        let mut operation_priorities = HashMap::new();
-
-        operation_priorities.insert(Operation::Touch, VALUE_PRECEDENCE);
-
-        operation_priorities.insert(Operation::ExclusiveRange, RANGE_PRECEDENCE);
-        operation_priorities.insert(Operation::InclusiveRange, RANGE_PRECEDENCE);
-
-        operation_priorities.insert(Operation::Exponential, EXPONENTIAL_PRECEDENCE);
-
-        operation_priorities.insert(Operation::Multiplication, MULTIPLICATION_PRECEDENCE);
-        operation_priorities.insert(Operation::Division, MULTIPLICATION_PRECEDENCE);
-        operation_priorities.insert(Operation::Modulo, MULTIPLICATION_PRECEDENCE);
-
-        operation_priorities.insert(Operation::Addition, ADDITION_PRECEDENCE);
-        operation_priorities.insert(Operation::Subtraction, ADDITION_PRECEDENCE);
-
-        operation_priorities.insert(Operation::GreaterThan, RELATIONAL_PRECEDENCE);
-        operation_priorities.insert(Operation::GreaterThanOrEqual, RELATIONAL_PRECEDENCE);
-        operation_priorities.insert(Operation::LessThan, RELATIONAL_PRECEDENCE);
-        operation_priorities.insert(Operation::LessThanOrEqual, RELATIONAL_PRECEDENCE);
-
-        operation_priorities.insert(Operation::Equality, EQUALITY_PRECEDENCE);
-        operation_priorities.insert(Operation::Inequality, EQUALITY_PRECEDENCE);
-
-        operation_priorities.insert(Operation::LogicalAnd, AND_PRECEDENCE);
-
-        operation_priorities.insert(Operation::LogicalOr, OR_PRECEDENCE);
-
-        operation_priorities.insert(Operation::LogicalNot, NOT_PRECEDENCE);
-
         return Compiler {
-            operation_priorities: operation_priorities,
+            precedence_manager: PrecedenceManager::new(),
         };
     }
 
-    fn make_nodes_from_tokenizer(
-        &self,
-        tokenizer: &mut Tokenizer,
-    ) -> (Vec<SELTreeNode>, Vec<Vec<usize>>) {
-        let mut priority_map: Vec<Vec<usize>> = vec![];
-        priority_map.push(vec![]); // VALUE_PRECEDENCE
-        priority_map.push(vec![]); // NOT_PRECEDENCE
-        priority_map.push(vec![]); // RANGE_PRECEDENCE
-        priority_map.push(vec![]); // EXPONENTIAL_PRECEDENCE
-        priority_map.push(vec![]); // MULTIPLICATION_PRECEDENCE
-        priority_map.push(vec![]); // ADDITION_PRECEDENCE
-        priority_map.push(vec![]); // RELATIONAL_PRECEDENCE
-        priority_map.push(vec![]); // EQUALITY_PRECEDENCE
-        priority_map.push(vec![]); // AND_PRECEDENCE
-        priority_map.push(vec![]); // OR_PRECEDENCE
-
+    fn make_nodes_from_tokenizer(&mut self, tokenizer: &mut Tokenizer) -> Vec<SELTreeNode> {
         let mut nodes: Vec<SELTreeNode> = vec![];
 
         // loop trough all tokens
@@ -126,13 +69,8 @@ impl Compiler {
 
             nodes.push(node);
 
-            match self.operation_priorities.get(&node.get_operation()) {
-                None => (),
-                Some(node_priority) => {
-                    let v = priority_map.get_mut(*node_priority).unwrap();
-                    v.push(node.get_own_index());
-                }
-            }
+            self.precedence_manager
+                .add_index_with_operation(node.get_operation(), node.get_own_index());
         }
 
         // no tokens
@@ -141,15 +79,13 @@ impl Compiler {
             nodes.push(SELTreeNode::new(Operation::None, DataType::Unit, 0));
         }
 
-        return (nodes, priority_map);
+        return nodes;
     }
 
     fn find_root_index(nodes: &Vec<SELTreeNode>) -> usize {
         // will always have at least one node
         let mut node = nodes.get(0).unwrap();
         let mut count = 0;
-
-        // println!("finding root {:?}", node);
 
         loop {
             match node.get_parent() {
@@ -158,8 +94,6 @@ impl Compiler {
                 }
                 Some(parent) => {
                     node = nodes.get(parent).unwrap();
-
-                    // println!("finding root {:?}", node);
 
                     // fail safe
                     // stop after checking all nodes
@@ -179,8 +113,6 @@ impl Compiler {
         mut nodes: Vec<SELTreeNode>,
         indicies_to_resolve: &Vec<usize>,
     ) -> Vec<SELTreeNode> {
-        // println!("{:?}", indicies_to_resolve);
-
         for i in indicies_to_resolve {
             let mut changes: Vec<Change> = vec![];
             {
@@ -219,12 +151,11 @@ impl Compiler {
                                 side_to_set: side,
                             });
 
-                            let priority = self
-                                .operation_priorities
-                                .get(&next_node.get_operation())
-                                .unwrap();
+                            let is_value_precedence = self
+                                .precedence_manager
+                                .is_op_value_precedence(next_node.get_operation());
 
-                            if *priority == VALUE_PRECEDENCE {
+                            if is_value_precedence {
                                 changes.append(&mut none_left_right(next_node.get_own_index()));
                             }
 
@@ -236,7 +167,7 @@ impl Compiler {
 
                             let opposite_side = opposite_of_side(side);
 
-                            if *priority == VALUE_PRECEDENCE {
+                            if is_value_precedence {
                                 // node will no longer be pointing toward node in same direction
                                 // need to update to point to current node
                                 match index_for_side(opposite_side) {
@@ -265,8 +196,6 @@ impl Compiler {
                 for change in changes {
                     let node = nodes.get_mut(change.index_to_change).unwrap();
 
-                    // println!("performing change {:?}", change);
-
                     match change.side_to_set {
                         NodeSide::Left => node.set_left(change.new_index),
                         NodeSide::Right => node.set_right(change.new_index),
@@ -279,20 +208,18 @@ impl Compiler {
         return nodes;
     }
 
-    pub fn compile(&self, s: &String) -> SELTree {
+    pub fn compile(&mut self, s: &String) -> SELTree {
         let mut tokenizer = Tokenizer::new(s);
-        let (mut nodes, priority_map) = self.make_nodes_from_tokenizer(&mut tokenizer);
+        let mut nodes = self.make_nodes_from_tokenizer(&mut tokenizer);
 
         // skip VALUE_PRECEDENCE
-        for (_i, priority) in priority_map.iter().skip(1).enumerate() {
-            if priority.len() > 0 {
-                // println!("priority {:?}", i);
-                nodes = self.resolve_tree(nodes, &priority);
+        for bucket in self.precedence_manager.get_buckets().iter().skip(1) {
+            if bucket.len() > 0 {
+                nodes = self.resolve_tree(nodes, &bucket);
             }
         }
 
         let root = Compiler::find_root_index(&nodes);
-        // println!("{}", root);
 
         return SELTree::new(root, nodes);
     }
