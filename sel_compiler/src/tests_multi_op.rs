@@ -7,7 +7,7 @@ mod tests {
     #[test]
     fn compiles_two_addition_operations() {
         let input = String::from("5 + 10 + 15");
-        let mut compiler = Compiler::new();
+        let compiler = Compiler::new();
 
         let tree = compiler.compile(&input);
 
@@ -45,7 +45,7 @@ mod tests {
     #[test]
     fn compiles_addition_multiplication_operations() {
         let input = String::from("5 + 10 * 15");
-        let mut compiler = Compiler::new();
+        let compiler = Compiler::new();
 
         let tree = compiler.compile(&input);
 
@@ -83,7 +83,7 @@ mod tests {
     #[test]
     fn compiles_multiplication_addition_operations() {
         let input = String::from("5 * 10 + 15");
-        let mut compiler = Compiler::new();
+        let compiler = Compiler::new();
 
         let tree = compiler.compile(&input);
 
@@ -121,7 +121,7 @@ mod tests {
     #[test]
     fn arithmetic_operations_2() {
         let input = String::from("5 * 10 + 15 / 2 - 5 % 3 + 4 - 3");
-        let mut compiler = Compiler::new();
+        let compiler = Compiler::new();
 
         let tree = compiler.compile(&input);
 
@@ -204,7 +204,7 @@ mod tests {
     #[test]
     fn logical_operations_1() {
         let input = String::from("true && false || true");
-        let mut compiler = Compiler::new();
+        let compiler = Compiler::new();
 
         let tree = compiler.compile(&input);
 
@@ -240,7 +240,7 @@ mod tests {
     #[test]
     fn logical_operations_2() {
         let input = String::from("5 + 3 == 4 && 10 >= 8 || 15 < 3 - 20");
-        let mut compiler = Compiler::new();
+        let compiler = Compiler::new();
 
         let tree = compiler.compile(&input);
 
@@ -318,7 +318,7 @@ mod tests {
     #[test]
     fn logical_operations_3() {
         let input = String::from("true || 5 + 3 == 4 && 10 >= 8 || false");
-        let mut compiler = Compiler::new();
+        let compiler = Compiler::new();
 
         let tree = compiler.compile(&input);
 

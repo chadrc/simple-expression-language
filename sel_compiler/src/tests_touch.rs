@@ -7,7 +7,7 @@ mod tests {
     #[test]
     fn compiles_empty() {
         let input = String::from("");
-        let mut compiler = Compiler::new();
+        let compiler = Compiler::new();
 
         let tree = compiler.compile(&input);
 
@@ -20,7 +20,7 @@ mod tests {
     #[test]
     fn compiles_unit() {
         let input = String::from("()");
-        let mut compiler = Compiler::new();
+        let compiler = Compiler::new();
 
         let tree = compiler.compile(&input);
 
@@ -33,7 +33,7 @@ mod tests {
     #[test]
     fn compiles_input() {
         let input = String::from("$");
-        let mut compiler = Compiler::new();
+        let compiler = Compiler::new();
 
         let tree = compiler.compile(&input);
 
@@ -46,7 +46,7 @@ mod tests {
     #[test]
     fn compiles_last_result() {
         let input = String::from("?");
-        let mut compiler = Compiler::new();
+        let compiler = Compiler::new();
 
         let tree = compiler.compile(&input);
 
@@ -59,7 +59,7 @@ mod tests {
     #[test]
     fn compiles_touch_integer() {
         let input = String::from("9");
-        let mut compiler = Compiler::new();
+        let compiler = Compiler::new();
 
         let tree = compiler.compile(&input);
 
@@ -72,7 +72,7 @@ mod tests {
     #[test]
     fn compiles_touch_decimal() {
         let input = String::from("3.14");
-        let mut compiler = Compiler::new();
+        let compiler = Compiler::new();
 
         let tree = compiler.compile(&input);
 
@@ -85,7 +85,7 @@ mod tests {
     #[test]
     fn compiles_touch_single_quote_string() {
         let input = String::from("'hello world'");
-        let mut compiler = Compiler::new();
+        let compiler = Compiler::new();
 
         let tree = compiler.compile(&input);
 
@@ -98,7 +98,7 @@ mod tests {
     #[test]
     fn compiles_touch_double_quote_string() {
         let input = String::from("\"hello world\"");
-        let mut compiler = Compiler::new();
+        let compiler = Compiler::new();
 
         let tree = compiler.compile(&input);
 
@@ -111,7 +111,7 @@ mod tests {
     #[test]
     fn compiles_touch_formatted_string() {
         let input = String::from("`hello world`");
-        let mut compiler = Compiler::new();
+        let compiler = Compiler::new();
 
         let tree = compiler.compile(&input);
 
@@ -124,7 +124,7 @@ mod tests {
     #[test]
     fn compiles_touch_boolean() {
         let input = String::from("true");
-        let mut compiler = Compiler::new();
+        let compiler = Compiler::new();
 
         let tree = compiler.compile(&input);
 

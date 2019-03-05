@@ -8,7 +8,7 @@ impl Compiler {
         return Compiler {};
     }
 
-    pub fn compile(&mut self, s: &String) -> SELTree {
+    pub fn compile(&self, s: &String) -> SELTree {
         let mut builder = SELTreeBuilder::new();
         return builder.build(s);
     }
