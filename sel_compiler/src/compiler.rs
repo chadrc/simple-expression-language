@@ -1,6 +1,6 @@
 use super::data_type::{get_data_type_for_token, DataType};
 use super::operation::{get_operation_type_for_token, Operation};
-use super::sel_tree::{NodeSide, SELTree, SELTreeNode};
+use super::sel_tree::{opposite_of_side, NodeSide, SELTree, SELTreeNode};
 use sel_tokenizer::Tokenizer;
 use std::collections::HashMap;
 
@@ -261,11 +261,7 @@ impl Compiler {
                                 side_to_set: NodeSide::Parent,
                             });
 
-                            let opposite_side = match side {
-                                NodeSide::Parent => panic!("NodeSide::Parent can't be updated."), // would've already paniced by now
-                                NodeSide::Right => NodeSide::Right,
-                                NodeSide::Left => NodeSide::Left,
-                            };
+                            let opposite_side = opposite_of_side(side);
 
                             match change_to_node_if_value(
                                 *priority,
