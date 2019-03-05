@@ -234,25 +234,13 @@ impl Compiler {
                             if *left_priority == VALUE_PRECEDENCE {
                                 changes.append(&mut none_left_right(left_node.get_own_index()));
                             }
-
-                            // Set left node's parent to node
-                            changes.push(Change {
-                                index_to_change: left_node.get_own_index(),
-                                new_index: Some(node.get_own_index()),
-                                side_to_set: NodeSide::Parent,
-                            });
-                        } else if left_priority == node_priority {
-                            // same priority
-
-                            // make node, left's parent
-                            changes.push(Change {
-                                index_to_change: left_node.get_own_index(),
-                                new_index: Some(node.get_own_index()),
-                                side_to_set: NodeSide::Parent,
-                            });
-                        } else {
-                            // left has lower priority
                         }
+
+                        changes.push(Change {
+                            index_to_change: left_node.get_own_index(),
+                            new_index: Some(node.get_own_index()),
+                            side_to_set: NodeSide::Parent,
+                        });
 
                         // check and update next node only if this one was a value node
                         if *left_priority == VALUE_PRECEDENCE {
@@ -294,21 +282,17 @@ impl Compiler {
                         if right_priority < node_priority {
                             // right has higher priority
 
-                            // None right node's left and right
                             // if value precedence
                             if *right_priority == VALUE_PRECEDENCE {
                                 changes.append(&mut none_left_right(right_node.get_own_index()));
                             }
-
-                            // Set right node's parent to node
-                            changes.push(Change {
-                                index_to_change: right_node.get_own_index(),
-                                new_index: Some(node.get_own_index()),
-                                side_to_set: NodeSide::Parent,
-                            });
-                        } else {
-                            // right has lower priority
                         }
+
+                        changes.push(Change {
+                            index_to_change: right_node.get_own_index(),
+                            new_index: Some(node.get_own_index()),
+                            side_to_set: NodeSide::Parent,
+                        });
 
                         // check and update next node only if this one was a value node
                         if *right_priority == VALUE_PRECEDENCE {
@@ -355,11 +339,6 @@ impl Compiler {
         let mut tokenizer = Tokenizer::new(s);
         let (mut nodes, priority_map) = self.make_nodes_from_tokenizer(&mut tokenizer);
 
-        // starting with highest priority operators
-        // go through nodes and move pointers to their operands
-        // to point at operator
-        // let nodes = &mut nodes;
-
         // skip VALUE_PRECEDENCE
         for (_i, priority) in priority_map.iter().skip(1).enumerate() {
             if priority.len() > 0 {
@@ -367,11 +346,6 @@ impl Compiler {
                 nodes = self.resolve_tree(nodes, &priority);
             }
         }
-
-        // next priority
-        // for (i, node) in nodes.iter().enumerate() {
-        //     if node.get_operation() == Operation::Addition {}
-        // }
 
         let root = Compiler::find_root_index(&nodes);
         // println!("{}", root);
