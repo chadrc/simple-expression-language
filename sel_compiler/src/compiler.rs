@@ -169,6 +169,24 @@ impl Compiler {
                 let nodes = &nodes;
                 let node = nodes.get(*i).unwrap();
 
+                let parent_of_index = |start_index: usize| -> &SELTreeNode {
+                    let mut node = nodes.get(start_index).unwrap();
+
+                    // walk up tree until no parent
+                    loop {
+                        match node.get_parent() {
+                            None => {
+                                break;
+                            }
+                            Some(parent_index) => {
+                                node = nodes.get(parent_index).unwrap();
+                            }
+                        }
+                    }
+
+                    return node;
+                };
+
                 let node_priority = self
                     .operation_priorities
                     .get(&node.get_operation())
@@ -177,19 +195,7 @@ impl Compiler {
                 match node.get_left() {
                     None => (),
                     Some(left_index) => {
-                        let mut left_node = nodes.get(left_index).unwrap();
-
-                        // walk up tree until no parent
-                        loop {
-                            match left_node.get_parent() {
-                                None => {
-                                    break;
-                                }
-                                Some(parent_index) => {
-                                    left_node = nodes.get(parent_index).unwrap();
-                                }
-                            }
-                        }
+                        let left_node = parent_of_index(left_index);
 
                         changes.push(Change {
                             index_to_change: node.get_own_index(),
@@ -264,19 +270,7 @@ impl Compiler {
                 match node.get_right() {
                     None => (),
                     Some(right_index) => {
-                        let mut right_node = nodes.get(right_index).unwrap();
-
-                        // walk up tree until no parent
-                        loop {
-                            match right_node.get_parent() {
-                                None => {
-                                    break;
-                                }
-                                Some(parent_index) => {
-                                    right_node = nodes.get(parent_index).unwrap();
-                                }
-                            }
-                        }
+                        let right_node = parent_of_index(right_index);
 
                         changes.push(Change {
                             index_to_change: node.get_own_index(),
