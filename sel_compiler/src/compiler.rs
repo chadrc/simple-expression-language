@@ -187,45 +187,6 @@ impl Compiler {
                 let nodes = &nodes;
                 let node = nodes.get(*i).unwrap();
 
-                let parent_of_index = |start_index: usize| -> &SELTreeNode {
-                    let mut node = nodes.get(start_index).unwrap();
-
-                    // walk up tree until no parent
-                    loop {
-                        match node.get_parent() {
-                            None => {
-                                break;
-                            }
-                            Some(parent_index) => {
-                                node = nodes.get(parent_index).unwrap();
-                            }
-                        }
-                    }
-
-                    return node;
-                };
-
-                let change_to_node_if_value =
-                    |priority: usize, index: Option<usize>, side: NodeSide| -> Option<Change> {
-                        if priority == VALUE_PRECEDENCE {
-                            // left node will no longer be pointing toward its left
-                            // need to update left's right to point to node
-                            return match index {
-                                None => None,
-                                Some(new_index) => {
-                                    // set right to be update by later iteration
-                                    return Some(Change {
-                                        index_to_change: new_index,
-                                        new_index: Some(node.get_own_index()),
-                                        side_to_set: side,
-                                    });
-                                }
-                            };
-                        }
-
-                        return None;
-                    };
-
                 let index_for_side = |side: NodeSide| match side {
                     NodeSide::Parent => panic!("NodeSide::Parent can't be updated."),
                     NodeSide::Right => node.get_right(),
@@ -238,7 +199,19 @@ impl Compiler {
                     match start_index {
                         None => (), // shouldn't happen
                         Some(node_index) => {
-                            let next_node = parent_of_index(node_index);
+                            let mut next_node = nodes.get(node_index).unwrap();
+
+                            // walk up tree until no parent
+                            loop {
+                                match next_node.get_parent() {
+                                    None => {
+                                        break;
+                                    }
+                                    Some(parent_index) => {
+                                        next_node = nodes.get(parent_index).unwrap();
+                                    }
+                                }
+                            }
 
                             changes.push(Change {
                                 index_to_change: node.get_own_index(),
@@ -263,13 +236,20 @@ impl Compiler {
 
                             let opposite_side = opposite_of_side(side);
 
-                            match change_to_node_if_value(
-                                *priority,
-                                index_for_side(opposite_side),
-                                opposite_side,
-                            ) {
-                                None => (),
-                                Some(change) => changes.push(change),
+                            if *priority == VALUE_PRECEDENCE {
+                                // node will no longer be pointing toward node in same direction
+                                // need to update to point to current node
+                                match index_for_side(opposite_side) {
+                                    None => (),
+                                    Some(new_index) => {
+                                        // set right to be update by later iteration
+                                        changes.push(Change {
+                                            index_to_change: new_index,
+                                            new_index: Some(node.get_own_index()),
+                                            side_to_set: opposite_side,
+                                        });
+                                    }
+                                }
                             }
                         }
                     }
