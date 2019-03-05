@@ -205,6 +205,27 @@ impl Compiler {
                     return node;
                 };
 
+                let change_to_node_if_value =
+                    |priority: usize, index: Option<usize>, side: NodeSide| -> Option<Change> {
+                        if priority == VALUE_PRECEDENCE {
+                            // left node will no longer be pointing toward its left
+                            // need to update left's right to point to node
+                            return match index {
+                                None => None,
+                                Some(new_index) => {
+                                    // set right to be update by later iteration
+                                    return Some(Change {
+                                        index_to_change: new_index,
+                                        new_index: Some(node.get_own_index()),
+                                        side_to_set: side,
+                                    });
+                                }
+                            };
+                        }
+
+                        return None;
+                    };
+
                 match node.get_left() {
                     None => (),
                     Some(left_index) => {
@@ -221,8 +242,6 @@ impl Compiler {
                             .get(&left_node.get_operation())
                             .unwrap();
 
-                        // None left node's left and right
-                        // if value precedence
                         if *left_priority == VALUE_PRECEDENCE {
                             changes.append(&mut none_left_right(left_node.get_own_index()));
                         }
@@ -233,23 +252,13 @@ impl Compiler {
                             side_to_set: NodeSide::Parent,
                         });
 
-                        // check and update next node only if this one was a value node
-                        if *left_priority == VALUE_PRECEDENCE {
-                            // left node will no longer be pointing toward its left
-                            // need to update left's right to point to node
-                            match left_node.get_left() {
-                                None => (),
-                                Some(left_left_index) => {
-                                    let left_left_node = nodes.get(left_left_index).unwrap();
-
-                                    // set right to be update by later iteration
-                                    changes.push(Change {
-                                        index_to_change: left_left_node.get_own_index(),
-                                        new_index: Some(node.get_own_index()),
-                                        side_to_set: NodeSide::Right,
-                                    });
-                                }
-                            }
+                        match change_to_node_if_value(
+                            *left_priority,
+                            left_node.get_left(),
+                            NodeSide::Right,
+                        ) {
+                            None => (),
+                            Some(change) => changes.push(change),
                         }
                     }
                 }
@@ -270,7 +279,6 @@ impl Compiler {
                             .get(&right_node.get_operation())
                             .unwrap();
 
-                        // if value precedence
                         if *right_priority == VALUE_PRECEDENCE {
                             changes.append(&mut none_left_right(right_node.get_own_index()));
                         }
@@ -281,22 +289,13 @@ impl Compiler {
                             side_to_set: NodeSide::Parent,
                         });
 
-                        // check and update next node only if this one was a value node
-                        if *right_priority == VALUE_PRECEDENCE {
-                            // right node will no longer be pointing toward its right
-                            // need to update left's right to point to node
-                            match right_node.get_right() {
-                                None => (),
-                                Some(right_right_index) => {
-                                    let right_right_node = nodes.get(right_right_index).unwrap();
-
-                                    changes.push(Change {
-                                        index_to_change: right_right_node.get_own_index(),
-                                        new_index: Some(node.get_own_index()),
-                                        side_to_set: NodeSide::Left,
-                                    });
-                                }
-                            }
+                        match change_to_node_if_value(
+                            *right_priority,
+                            right_node.get_right(),
+                            NodeSide::Left,
+                        ) {
+                            None => (),
+                            Some(change) => changes.push(change),
                         }
                     }
                 }
