@@ -1,5 +1,5 @@
 use super::sel_tree::SELTree;
-use super::sel_tree_builder::SELTreeBuilder;
+use super::sel_tree_builder::build_tree_from_string;
 
 pub struct Compiler {}
 
@@ -9,7 +9,6 @@ impl Compiler {
     }
 
     pub fn compile(&self, s: &String) -> SELTree {
-        let mut builder = SELTreeBuilder::new();
-        return builder.build(s);
+        return build_tree_from_string(s);
     }
 }

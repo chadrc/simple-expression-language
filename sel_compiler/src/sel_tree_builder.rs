@@ -29,7 +29,7 @@ fn none_left_right(index: usize) -> Vec<Change> {
     return changes;
 }
 
-pub struct SELTreeBuilder {
+struct SELTreeBuilder {
     precedence_manager: PrecedenceManager,
 }
 
@@ -208,7 +208,7 @@ impl SELTreeBuilder {
         return nodes;
     }
 
-    pub fn build(&mut self, s: &String) -> SELTree {
+    fn build(&mut self, s: &String) -> SELTree {
         let mut tokenizer = Tokenizer::new(s);
         let mut nodes = self.make_nodes_from_tokenizer(&mut tokenizer);
 
@@ -223,4 +223,9 @@ impl SELTreeBuilder {
 
         return SELTree::new(root, nodes);
     }
+}
+
+pub fn build_tree_from_string(s: &String) -> SELTree {
+    let mut builder = SELTreeBuilder::new();
+    return builder.build(s);
 }
