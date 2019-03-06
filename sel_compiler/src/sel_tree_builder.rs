@@ -196,6 +196,15 @@ impl SELTreeBuilder {
                                     new_index: Some(next_node.get_own_index()),
                                     side_to_set: NodeSide::Parent,
                                 });
+
+                                // just set the side we're checking to node's parent
+                                // set side we're checking to None, since we don't need it anymore
+
+                                changes.push(Change {
+                                    index_to_change: node.get_own_index(),
+                                    new_index: None,
+                                    side_to_set: side,
+                                });
                             } else {
                                 changes.push(Change {
                                     index_to_change: next_node.get_own_index(),
