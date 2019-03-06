@@ -373,4 +373,22 @@ mod tests {
         assert_eq!(right.get_operation(), Operation::Touch);
         assert_eq!(right.get_value().get_data_type(), DataType::Boolean);
     }
+
+    #[test]
+    fn compiles_negation_operation() {
+        let input = String::from("-4");
+        let compiler = Compiler::new();
+
+        let tree = compiler.compile(&input);
+
+        let root = tree.get_root();
+
+        let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
+
+        assert_eq!(root.get_operation(), Operation::Negation);
+        assert_eq!(root.get_value().get_data_type(), DataType::Unknown);
+
+        assert_eq!(right.get_operation(), Operation::Touch);
+        assert_eq!(right.get_value().get_data_type(), DataType::Integer);
+    }
 }

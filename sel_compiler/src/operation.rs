@@ -9,6 +9,7 @@ pub enum Operation {
     Modulo,
     Division,
     Exponential,
+    Negation,
     ExclusiveRange,
     InclusiveRange,
     GreaterThan,

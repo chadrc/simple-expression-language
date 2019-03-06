@@ -46,14 +46,22 @@ impl SELTreeBuilder {
         // loop trough all tokens
         // convert them to tree nodes
         // and link them together
+
+        let mut last_data_type = DataType::Unknown;
+
         for token in tokenizer {
             let inserted_index = nodes.len();
 
-            let mut node = SELTreeNode::new(
-                get_operation_type_for_token(&token),
-                get_data_type_for_token(&token),
-                inserted_index,
-            );
+            let mut op = get_operation_type_for_token(&token);
+            let data_type = get_data_type_for_token(&token);
+
+            if op == Operation::Subtraction && last_data_type == DataType::Unknown {
+                // if previous node is not a value
+                // this op is actually a Negation operation
+                op = Operation::Negation;
+            }
+
+            let mut node = SELTreeNode::new(op, data_type, inserted_index);
 
             // because of starter node, there is always a previous node
             if inserted_index > 0 {
@@ -71,6 +79,8 @@ impl SELTreeBuilder {
 
             self.precedence_manager
                 .add_index_with_operation(node.get_operation(), node.get_own_index());
+
+            last_data_type = data_type;
         }
 
         // no tokens
