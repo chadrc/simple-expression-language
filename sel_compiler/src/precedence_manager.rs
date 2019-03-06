@@ -3,8 +3,8 @@ use std::collections::HashMap;
 
 // lower number means higher priority
 const VALUE_PRECEDENCE: usize = 0;
-const NOT_PRECEDENCE: usize = VALUE_PRECEDENCE + 1;
-const RANGE_PRECEDENCE: usize = NOT_PRECEDENCE + 1;
+const UNARY_PRECEDENCE: usize = VALUE_PRECEDENCE + 1;
+const RANGE_PRECEDENCE: usize = UNARY_PRECEDENCE + 1;
 const EXPONENTIAL_PRECEDENCE: usize = RANGE_PRECEDENCE + 1;
 const MULTIPLICATION_PRECEDENCE: usize = EXPONENTIAL_PRECEDENCE + 1;
 const ADDITION_PRECEDENCE: usize = MULTIPLICATION_PRECEDENCE + 1;
@@ -23,6 +23,9 @@ impl PrecedenceManager {
         let mut operation_priorities = HashMap::new();
 
         operation_priorities.insert(Operation::Touch, VALUE_PRECEDENCE);
+
+        operation_priorities.insert(Operation::LogicalNot, UNARY_PRECEDENCE);
+        operation_priorities.insert(Operation::Negation, UNARY_PRECEDENCE);
 
         operation_priorities.insert(Operation::ExclusiveRange, RANGE_PRECEDENCE);
         operation_priorities.insert(Operation::InclusiveRange, RANGE_PRECEDENCE);
@@ -48,12 +51,10 @@ impl PrecedenceManager {
 
         operation_priorities.insert(Operation::LogicalOr, OR_PRECEDENCE);
 
-        operation_priorities.insert(Operation::LogicalNot, NOT_PRECEDENCE);
-
         let mut precedence_buckets: Vec<Vec<usize>> = vec![];
 
         precedence_buckets.push(vec![]); // VALUE_PRECEDENCE
-        precedence_buckets.push(vec![]); // NOT_PRECEDENCE
+        precedence_buckets.push(vec![]); // UNARY_PRECEDENCE
         precedence_buckets.push(vec![]); // RANGE_PRECEDENCE
         precedence_buckets.push(vec![]); // EXPONENTIAL_PRECEDENCE
         precedence_buckets.push(vec![]); // MULTIPLICATION_PRECEDENCE
@@ -93,5 +94,20 @@ impl PrecedenceManager {
                 }
             },
         }
+    }
+
+    pub fn is_lower(&self, op: Operation, relative_to: Operation) -> bool {
+        let op_precedence = match self.operation_priorities.get(&op) {
+            None => return false,
+            Some(precedence) => precedence,
+        };
+
+        let relative_precedence = match self.operation_priorities.get(&relative_to) {
+            None => return false,
+            Some(precedence) => precedence,
+        };
+
+        // higher precedence's have lower priority
+        op_precedence > relative_precedence
     }
 }

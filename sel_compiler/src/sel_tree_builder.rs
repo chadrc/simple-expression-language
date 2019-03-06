@@ -169,28 +169,21 @@ impl SELTreeBuilder {
                                 changes.append(&mut none_left_right(next_node.get_own_index()));
                             }
 
-                            changes.push(Change {
-                                index_to_change: next_node.get_own_index(),
-                                new_index: Some(node.get_own_index()),
-                                side_to_set: NodeSide::Parent,
-                            });
-
-                            let opposite_side = opposite_of_side(side);
-
-                            if is_value_precedence {
-                                // node will no longer be pointing toward node in same direction
-                                // need to update to point to current node
-                                match index_for_side(opposite_side) {
-                                    None => (),
-                                    Some(new_index) => {
-                                        // set right to be update by later iteration
-                                        changes.push(Change {
-                                            index_to_change: new_index,
-                                            new_index: Some(node.get_own_index()),
-                                            side_to_set: opposite_side,
-                                        });
-                                    }
-                                }
+                            if self
+                                .precedence_manager
+                                .is_lower(next_node.get_operation(), node.get_operation())
+                            {
+                                changes.push(Change {
+                                    index_to_change: node.get_own_index(),
+                                    new_index: Some(next_node.get_own_index()),
+                                    side_to_set: NodeSide::Parent,
+                                });
+                            } else {
+                                changes.push(Change {
+                                    index_to_change: next_node.get_own_index(),
+                                    new_index: Some(node.get_own_index()),
+                                    side_to_set: NodeSide::Parent,
+                                });
                             }
                         }
                     }
