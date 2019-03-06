@@ -2,6 +2,7 @@ use super::data_type::{get_data_type_for_token, DataType};
 use super::operation::{get_operation_type_for_token, Operation};
 use super::precedence_manager::PrecedenceManager;
 use super::sel_tree::{NodeSide, SELTree, SELTreeNode};
+use super::utils::loop_max;
 use sel_tokenizer::Tokenizer;
 
 #[derive(PartialEq, Debug, Clone, Copy)]
@@ -95,25 +96,15 @@ impl SELTreeBuilder {
     fn find_root_index(nodes: &Vec<SELTreeNode>) -> usize {
         // will always have at least one node
         let mut node = nodes.get(0).unwrap();
-        let mut count = 0;
 
-        loop {
-            match node.get_parent() {
-                None => {
-                    break;
-                }
-                Some(parent) => {
-                    node = nodes.get(parent).unwrap();
-
-                    // fail safe
-                    // stop after checking all nodes
-                    count += 1;
-                    if count > nodes.len() {
-                        break;
-                    }
-                }
+        loop_max(nodes.len(), || match node.get_parent() {
+            None => {
+                return;
             }
-        }
+            Some(parent) => {
+                node = nodes.get(parent).unwrap();
+            }
+        });
 
         return node.get_own_index();
     }
@@ -143,30 +134,18 @@ impl SELTreeBuilder {
                         Some(node_index) => {
                             let mut next_node = nodes.get(node_index).unwrap();
 
-                            // walk up tree until no parent
-                            let mut loop_count = 0;
-                            loop {
-                                match next_node.get_parent() {
-                                    None => {
-                                        break;
-                                    }
-                                    Some(parent_index) => {
-                                        if parent_index == node.get_own_index() {
-                                            break;
-                                        }
-
-                                        next_node = nodes.get(parent_index).unwrap();
-                                    }
+                            loop_max(nodes.len(), || match next_node.get_parent() {
+                                None => {
+                                    return;
                                 }
+                                Some(parent_index) => {
+                                    if parent_index == node.get_own_index() {
+                                        return;
+                                    }
 
-                                // fail safe
-                                // iterate maximum of nodes length
-                                if loop_count > nodes.len() {
-                                    break;
+                                    next_node = nodes.get(parent_index).unwrap();
                                 }
-
-                                loop_count += 1;
-                            }
+                            });
 
                             let next_is_lower = self
                                 .precedence_manager

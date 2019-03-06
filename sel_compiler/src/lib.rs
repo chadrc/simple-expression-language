@@ -4,6 +4,7 @@ mod operation;
 mod precedence_manager;
 mod sel_tree;
 mod sel_tree_builder;
+mod utils;
 
 mod tests_multi_op;
 mod tests_single_op;
