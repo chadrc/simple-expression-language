@@ -103,11 +103,3 @@ pub enum NodeSide {
     Right,
     Parent,
 }
-
-pub fn opposite_of_side(side: NodeSide) -> NodeSide {
-    match side {
-        NodeSide::Parent => NodeSide::Parent,
-        NodeSide::Right => NodeSide::Right,
-        NodeSide::Left => NodeSide::Left,
-    }
-}
