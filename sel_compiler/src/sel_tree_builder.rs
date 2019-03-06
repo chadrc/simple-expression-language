@@ -123,6 +123,8 @@ impl SELTreeBuilder {
         mut nodes: Vec<SELTreeNode>,
         indicies_to_resolve: &Vec<usize>,
     ) -> Vec<SELTreeNode> {
+        println!("resolving {:?}", indicies_to_resolve);
+
         for i in indicies_to_resolve {
             let mut changes: Vec<Change> = vec![];
             {
@@ -139,27 +141,46 @@ impl SELTreeBuilder {
                     let start_index = index_for_side(side);
 
                     match start_index {
-                        None => (), // shouldn't happen
+                        None => (),
                         Some(node_index) => {
                             let mut next_node = nodes.get(node_index).unwrap();
 
                             // walk up tree until no parent
+                            let mut loop_count = 0;
                             loop {
                                 match next_node.get_parent() {
                                     None => {
                                         break;
                                     }
                                     Some(parent_index) => {
+                                        if parent_index == node.get_own_index() {
+                                            break;
+                                        }
+
                                         next_node = nodes.get(parent_index).unwrap();
                                     }
                                 }
+
+                                // fail safe
+                                // iterate maximum of nodes length
+                                if loop_count > nodes.len() {
+                                    break;
+                                }
+
+                                loop_count += 1;
                             }
 
-                            changes.push(Change {
-                                index_to_change: node.get_own_index(),
-                                new_index: Some(next_node.get_own_index()),
-                                side_to_set: side,
-                            });
+                            let next_is_lower = self
+                                .precedence_manager
+                                .is_lower(next_node.get_operation(), node.get_operation());
+
+                            if !next_is_lower {
+                                changes.push(Change {
+                                    index_to_change: node.get_own_index(),
+                                    new_index: Some(next_node.get_own_index()),
+                                    side_to_set: side,
+                                });
+                            }
 
                             let is_value_precedence = self
                                 .precedence_manager
@@ -169,10 +190,7 @@ impl SELTreeBuilder {
                                 changes.append(&mut none_left_right(next_node.get_own_index()));
                             }
 
-                            if self
-                                .precedence_manager
-                                .is_lower(next_node.get_operation(), node.get_operation())
-                            {
+                            if next_is_lower {
                                 changes.push(Change {
                                     index_to_change: node.get_own_index(),
                                     new_index: Some(next_node.get_own_index()),
@@ -198,6 +216,8 @@ impl SELTreeBuilder {
 
                 for change in changes {
                     let node = nodes.get_mut(change.index_to_change).unwrap();
+
+                    println!("change {:?}", change);
 
                     match change.side_to_set {
                         NodeSide::Left => node.set_left(change.new_index),
