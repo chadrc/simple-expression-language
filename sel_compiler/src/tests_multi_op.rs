@@ -55,6 +55,42 @@ mod tests {
     }
 
     #[test]
+    fn operation_with_not() {
+        let input = String::from("true && !false");
+        let compiler = Compiler::new();
+
+        let tree = compiler.compile(&input);
+
+        // tree should look like
+        //          &&
+        //         /  \
+        //      true   !
+        //            / \
+        //             false
+
+        let root = tree.get_root();
+
+        let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
+        let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
+
+        let r2_right = tree.get_nodes().get(right.get_right().unwrap()).unwrap();
+
+        assert_eq!(root.get_operation(), Operation::LogicalAnd);
+        assert_eq!(root.get_value().get_data_type(), DataType::Unknown);
+
+        assert_eq!(left.get_operation(), Operation::Touch);
+        assert_eq!(left.get_value().get_data_type(), DataType::Boolean);
+
+        assert_eq!(right.get_operation(), Operation::LogicalNot);
+        assert_eq!(right.get_value().get_data_type(), DataType::Unknown);
+
+        assert_eq!(right.get_left(), None);
+
+        assert_eq!(r2_right.get_operation(), Operation::Touch);
+        assert_eq!(r2_right.get_value().get_data_type(), DataType::Boolean);
+    }
+
+    #[test]
     fn compiles_two_addition_operations() {
         let input = String::from("5 + 10 + 15");
         let compiler = Compiler::new();
