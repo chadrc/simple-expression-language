@@ -11,6 +11,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "sel_executor"
+version = "0.1.0"
+dependencies = [
+ "sel_common 0.1.0",
+]
+
+[[package]]
 name = "sel_tokenizer"
 version = "0.1.0"
 dependencies = [
