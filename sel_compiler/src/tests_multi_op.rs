@@ -22,10 +22,6 @@ mod tests {
 
         let root = tree.get_root();
 
-        for node in tree.get_nodes() {
-            println!("{:?}", node);
-        }
-
         let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
         let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
 
