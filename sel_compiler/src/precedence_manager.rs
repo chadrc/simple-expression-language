@@ -1,4 +1,4 @@
-use super::operation::Operation;
+use sel_common::Operation;
 use std::collections::HashMap;
 
 // lower number means higher priority

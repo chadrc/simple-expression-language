@@ -1,7 +1,12 @@
 [[package]]
+name = "sel_common"
+version = "0.1.0"
+
+[[package]]
 name = "sel_compiler"
 version = "0.1.0"
 dependencies = [
+ "sel_common 0.1.0",
  "sel_tokenizer 0.1.0",
 ]
 

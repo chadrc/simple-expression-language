@@ -1,8 +1,7 @@
 #[cfg(test)]
 mod tests {
     use super::super::compiler::Compiler;
-    use super::super::data_type::DataType;
-    use super::super::operation::Operation;
+    use sel_common::{DataType, Operation};
 
     #[test]
     fn compiles_empty() {

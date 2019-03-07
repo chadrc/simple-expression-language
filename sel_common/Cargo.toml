@@ -1,9 +1,7 @@
 [package]
-name = "sel_compiler"
+name = "sel_common"
 version = "0.1.0"
 authors = ["chadcollins <chadrcollins91@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-sel_tokenizer = { path = "../sel_tokenizer" }
-sel_common = { path = "../sel_common" }

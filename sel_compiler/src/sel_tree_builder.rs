@@ -1,8 +1,6 @@
-use super::data_type::{get_data_type_for_token, DataType};
-use super::operation::{get_operation_type_for_token, Operation};
 use super::precedence_manager::PrecedenceManager;
-use super::sel_tree::{NodeSide, SELTree, SELTreeNode};
-use super::utils::loop_max;
+use sel_common::{NodeSide, SELTree, SELTreeNode, Operation, DataType};
+use super::utils::{loop_max, get_operation_type_for_token, get_data_type_for_token};
 use sel_tokenizer::Tokenizer;
 
 #[derive(PartialEq, Debug, Clone, Copy)]

@@ -1,0 +1,23 @@
+#[derive(Hash, Eq, PartialEq, Debug, Clone, Copy)]
+pub enum Operation {
+    Touch,
+    Addition,
+    Subtraction,
+    Multiplication,
+    Modulo,
+    Division,
+    Exponential,
+    Negation,
+    ExclusiveRange,
+    InclusiveRange,
+    GreaterThan,
+    GreaterThanOrEqual,
+    LessThan,
+    LessThanOrEqual,
+    Equality,
+    Inequality,
+    LogicalAnd,
+    LogicalOr,
+    LogicalNot,
+    None,
+}

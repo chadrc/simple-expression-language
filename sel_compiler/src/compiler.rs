@@ -1,5 +1,5 @@
-use super::sel_tree::SELTree;
 use super::sel_tree_builder::build_tree_from_string;
+use sel_common::SELTree;
 
 pub struct Compiler {}
 

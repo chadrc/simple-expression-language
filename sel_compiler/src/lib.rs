@@ -1,8 +1,5 @@
 mod compiler;
-mod data_type;
-mod operation;
 mod precedence_manager;
-mod sel_tree;
 mod sel_tree_builder;
 mod utils;
 
