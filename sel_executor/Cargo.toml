@@ -5,4 +5,4 @@ authors = ["chadcollins <chadrcollins91@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-sel_compiler = { path = "../sel_compiler" }
+sel_common = { path = "../sel_common" }
