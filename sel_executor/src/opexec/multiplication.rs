@@ -1,45 +1,18 @@
-use super::utils::{get_left_right_results, get_values_from_results};
+use super::utils::{match_math_ops, MathOps};
 use super::SELExecutionResult;
-use sel_common::{to_byte_vec, DataType, SELTree, SELTreeNode};
+use sel_common::{DataType, SELTree, SELTreeNode};
 
 pub fn multiplication_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult {
-    let (left_result, right_result) = get_left_right_results(tree, node);
-
-    return match (left_result.get_type(), right_result.get_type()) {
-        (DataType::Integer, DataType::Integer) => {
-            let (left_val, right_val) =
-                get_values_from_results::<i32, i32>(&left_result, &right_result);
-
-            let result = left_val * right_val;
-
-            SELExecutionResult::new(DataType::Integer, Some(to_byte_vec(result)))
-        }
-        (DataType::Integer, DataType::Decimal) => {
-            let (left_val, right_val) =
-                get_values_from_results::<i32, f64>(&left_result, &right_result);
-
-            let result = f64::from(left_val) * right_val;
-
-            SELExecutionResult::new(DataType::Decimal, Some(to_byte_vec(result)))
-        }
-        (DataType::Decimal, DataType::Integer) => {
-            let (left_val, right_val) =
-                get_values_from_results::<f64, i32>(&left_result, &right_result);
-
-            let result = left_val * f64::from(right_val);
-
-            SELExecutionResult::new(DataType::Decimal, Some(to_byte_vec(result)))
-        }
-        (DataType::Decimal, DataType::Decimal) => {
-            let (left_val, right_val) =
-                get_values_from_results::<f64, f64>(&left_result, &right_result);
-
-            let result = left_val * right_val;
-
-            SELExecutionResult::new(DataType::Decimal, Some(to_byte_vec(result)))
-        }
-        (_, DataType::Unit) | (DataType::Unit, _) => SELExecutionResult::new(DataType::Unit, None),
-        _ => SELExecutionResult::new(DataType::Unknown, Some(vec![])),
+    return match match_math_ops(
+        tree,
+        node,
+        MathOps {
+            perform_integer: |left, right| left * right,
+            perform_float: |left, right| left * right,
+        },
+    ) {
+        Some(result) => result,
+        None => SELExecutionResult::new(DataType::Unknown, Some(vec![])),
     };
 }
 
