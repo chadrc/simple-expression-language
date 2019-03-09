@@ -1,5 +1,6 @@
+use super::utils::to_byte_vec;
 use super::DataType;
-use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
+use byteorder::{LittleEndian, ReadBytesExt};
 use std::io::Cursor;
 use std::str::FromStr;
 
@@ -16,26 +17,17 @@ impl DataHeap {
     pub fn insert_from_string(&mut self, data_type: DataType, value_str: &String) -> Option<usize> {
         return match data_type {
             DataType::Integer => {
-                let mut datum: Vec<u8> = vec![];
                 let num = value_str.parse::<i64>().unwrap();
-                datum.write_i64::<LittleEndian>(num).unwrap();
-
-                self.data.push(datum);
-
+                self.data.push(to_byte_vec(num));
                 Some(self.data.len() - 1)
             }
             DataType::Decimal => {
-                let mut datum: Vec<u8> = vec![];
                 let num = value_str.parse::<f64>().unwrap();
-                datum.write_f64::<LittleEndian>(num).unwrap();
-
-                self.data.push(datum);
-
+                self.data.push(to_byte_vec(num));
                 Some(self.data.len() - 1)
             }
             DataType::String => {
-                self.data.push(value_str.clone().into_bytes());
-
+                self.data.push(to_byte_vec(value_str));
                 Some(self.data.len() - 1)
             }
             DataType::Boolean => {
@@ -44,13 +36,7 @@ impl DataHeap {
                     Err(_) => false, // probably panic?
                 };
 
-                let mut datum: Vec<u8> = vec![];
-                match b {
-                    true => datum.push(1),
-                    false => datum.push(0),
-                }
-
-                self.data.push(datum);
+                self.data.push(to_byte_vec(b));
                 Some(self.data.len() - 1)
             }
             _ => None,

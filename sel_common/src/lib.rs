@@ -2,6 +2,7 @@ mod data_heap;
 mod data_type;
 mod operation;
 mod sel_tree;
+mod utils;
 
 pub use data_heap::DataHeap;
 pub use data_type::DataType;
