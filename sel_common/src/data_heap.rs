@@ -1,7 +1,5 @@
-use super::utils::to_byte_vec;
+use super::utils::{from_byte_vec, to_byte_vec};
 use super::DataType;
-use byteorder::{LittleEndian, ReadBytesExt};
-use std::io::Cursor;
 use std::str::FromStr;
 
 #[derive(Debug, Clone)]
@@ -52,44 +50,28 @@ impl DataHeap {
 
     pub fn get_integer(&self, index: usize) -> Option<i64> {
         return match self.data.get(index) {
-            Some(datum) => match Cursor::new(datum).read_i64::<LittleEndian>() {
-                Ok(val) => Some(val),
-                Err(_) => None,
-            },
+            Some(datum) => Some(from_byte_vec(datum)),
             None => None,
         };
     }
 
     pub fn get_decimal(&self, index: usize) -> Option<f64> {
         return match self.data.get(index) {
-            Some(datum) => match Cursor::new(datum).read_f64::<LittleEndian>() {
-                Ok(val) => Some(val),
-                Err(_) => None,
-            },
+            Some(datum) => Some(from_byte_vec(datum)),
             None => None,
         };
     }
 
     pub fn get_string(&self, index: usize) -> Option<String> {
         return match self.data.get(index) {
-            Some(datum) => {
-                let cow = String::from_utf8_lossy(datum);
-                Some(cow.to_owned().to_string())
-            }
+            Some(datum) => Some(from_byte_vec(datum)),
             None => None,
         };
     }
 
     pub fn get_boolean(&self, index: usize) -> Option<bool> {
         return match self.data.get(index) {
-            Some(datum) => match datum.get(0) {
-                Some(num) => match num {
-                    0 => Some(false),
-                    1 => Some(true),
-                    _ => None,
-                },
-                None => None,
-            },
+            Some(datum) => Some(from_byte_vec(datum)),
             None => None,
         };
     }
