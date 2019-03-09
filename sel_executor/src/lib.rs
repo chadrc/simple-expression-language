@@ -38,11 +38,11 @@ pub fn execute_sel_tree(tree: SELTree) -> SELExecutionResult {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use sel_common::{DataType, Operation, SELTree, SELTreeNode};
+    use sel_common::{DataHeap, DataType, Operation, SELTree, SELTreeNode};
 
     #[test]
     fn executes_empty() {
-        let tree = SELTree::new(0, vec![], vec![]);
+        let tree = SELTree::new(0, vec![], DataHeap::new());
 
         let result = execute_sel_tree(tree);
 
@@ -55,7 +55,7 @@ mod tests {
         let mut nodes: Vec<SELTreeNode> = vec![];
         nodes.push(SELTreeNode::new(Operation::Touch, DataType::Unit, 0, None));
 
-        let tree = SELTree::new(0, nodes, vec![]);
+        let tree = SELTree::new(0, nodes, DataHeap::new());
 
         let result = execute_sel_tree(tree);
 

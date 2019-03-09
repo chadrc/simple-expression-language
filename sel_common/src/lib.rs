@@ -9,9 +9,4 @@ pub use operation::Operation;
 pub use sel_tree::{NodeSide, SELTree, SELTreeNode};
 
 #[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
-    }
-}
+mod tests {}
