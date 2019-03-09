@@ -1,5 +1,5 @@
-use super::SELExecutionResult;
-use sel_common::{from_byte_vec, FromByteVec};
+use super::{get_node_result, SELExecutionResult};
+use sel_common::{from_byte_vec, FromByteVec, SELTree, SELTreeNode};
 
 pub fn get_values_from_results<L: FromByteVec, R: FromByteVec>(
     left: &SELExecutionResult,
@@ -16,4 +16,14 @@ pub fn get_values_from_results<L: FromByteVec, R: FromByteVec>(
     };
 
     return (left_val.unwrap(), right_val.unwrap());
+}
+
+pub fn get_left_right_results(
+    tree: &SELTree,
+    node: &SELTreeNode,
+) -> (SELExecutionResult, SELExecutionResult) {
+    let left = tree.get_nodes().get(node.get_left().unwrap()).unwrap();
+    let right = tree.get_nodes().get(node.get_right().unwrap()).unwrap();
+
+    return (get_node_result(tree, &left), get_node_result(tree, &right));
 }

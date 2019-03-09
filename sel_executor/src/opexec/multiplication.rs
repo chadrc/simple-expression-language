@@ -1,14 +1,9 @@
-use super::get_node_result;
-use super::utils::get_values_from_results;
+use super::utils::{get_left_right_results, get_values_from_results};
 use super::SELExecutionResult;
 use sel_common::{to_byte_vec, DataType, SELTree, SELTreeNode};
 
 pub fn multiplication_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult {
-    let left = tree.get_nodes().get(node.get_left().unwrap()).unwrap();
-    let right = tree.get_nodes().get(node.get_right().unwrap()).unwrap();
-
-    let left_result = get_node_result(tree, &left);
-    let right_result = get_node_result(tree, &right);
+    let (left_result, right_result) = get_left_right_results(tree, node);
 
     return match (left_result.get_type(), right_result.get_type()) {
         (DataType::Integer, DataType::Integer) => {
