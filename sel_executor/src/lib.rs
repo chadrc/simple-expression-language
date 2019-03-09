@@ -197,4 +197,51 @@ mod tests {
         assert_eq!(result.get_type(), DataType::Boolean);
         assert_eq!(result_value, Some(true));
     }
+
+    #[test]
+    fn executes_integer_addition() {
+        let mut nodes: Vec<SELTreeNode> = vec![];
+        let mut heap = DataHeap::new();
+
+        let mut left = SELTreeNode::new(
+            Operation::Touch,
+            DataType::Integer,
+            0,
+            heap.insert_from_string(DataType::Integer, &String::from("9")),
+        );
+
+        let mut right = SELTreeNode::new(
+            Operation::Touch,
+            DataType::Integer,
+            1,
+            heap.insert_from_string(DataType::Integer, &String::from("5")),
+        );
+
+        let mut root = SELTreeNode::new(Operation::Addition, DataType::Unknown, 2, None);
+
+        left.set_parent(Some(2));
+        right.set_parent(Some(2));
+
+        root.set_left(Some(0));
+        root.set_right(Some(1));
+
+        nodes.push(left);
+        nodes.push(right);
+        nodes.push(root);
+
+        let tree = SELTree::new(2, nodes, heap);
+
+        let result = execute_sel_tree(tree);
+
+        let result_value = match result.get_value() {
+            Some(value) => match Cursor::new(value).read_i64::<LittleEndian>() {
+                Ok(val) => Some(val),
+                Err(_) => None,
+            },
+            None => None,
+        };
+
+        assert_eq!(result.get_type(), DataType::Integer);
+        assert_eq!(result_value, Some(14));
+    }
 }
