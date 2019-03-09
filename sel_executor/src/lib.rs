@@ -28,22 +28,12 @@ pub fn execute_sel_tree(tree: SELTree) -> SELExecutionResult {
                     data_type: DataType::Unit,
                     value: None,
                 },
-                DataType::Integer => SELExecutionResult {
-                    data_type: DataType::Integer,
-                    value: tree.get_value_bytes_of(root),
-                },
-                DataType::Decimal => SELExecutionResult {
-                    data_type: DataType::Decimal,
-                    value: tree.get_value_bytes_of(root),
-                },
-                DataType::String => SELExecutionResult {
-                    data_type: DataType::String,
-                    value: tree.get_value_bytes_of(root),
-                },
-                DataType::Boolean => SELExecutionResult {
-                    data_type: DataType::Boolean,
-                    value: tree.get_value_bytes_of(root),
-                },
+                DataType::Integer | DataType::Decimal | DataType::String | DataType::Boolean => {
+                    SELExecutionResult {
+                        data_type: root.get_data_type(),
+                        value: tree.get_value_bytes_of(root),
+                    }
+                }
                 _ => SELExecutionResult {
                     data_type: DataType::Unknown,
                     value: None,
