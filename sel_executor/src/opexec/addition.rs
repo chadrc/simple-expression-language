@@ -87,6 +87,12 @@ pub fn addition_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionRes
         (DataType::Decimal, DataType::String) => {
             concat_results::<f64, String>(&left_result, &right_result)
         }
+        (DataType::String, DataType::Boolean) => {
+            concat_results::<String, bool>(&left_result, &right_result)
+        }
+        (DataType::Boolean, DataType::String) => {
+            concat_results::<bool, String>(&left_result, &right_result)
+        }
         (_, DataType::Unit) | (DataType::Unit, _) => (None, DataType::Unit),
         _ => (Some(vec![]), DataType::Unknown),
     };
@@ -269,6 +275,44 @@ mod tests {
 
         assert_eq!(result.get_type(), DataType::String);
         assert_eq!(result_value, Some(String::from("3.14Number: ")));
+    }
+
+    #[test]
+    fn executes_boolean_string_addition() {
+        let result = result_of_binary_op(
+            Operation::Addition,
+            DataType::Boolean,
+            "true",
+            DataType::String,
+            " is True",
+        );
+
+        let result_value = match result.get_value() {
+            Some(value) => Some(from_byte_vec(value)),
+            None => None,
+        };
+
+        assert_eq!(result.get_type(), DataType::String);
+        assert_eq!(result_value, Some(String::from("true is True")));
+    }
+
+    #[test]
+    fn executes_string_boolean_addition() {
+        let result = result_of_binary_op(
+            Operation::Addition,
+            DataType::String,
+            "this is ",
+            DataType::Boolean,
+            "true",
+        );
+
+        let result_value = match result.get_value() {
+            Some(value) => Some(from_byte_vec(value)),
+            None => None,
+        };
+
+        assert_eq!(result.get_type(), DataType::String);
+        assert_eq!(result_value, Some(String::from("this is true")));
     }
 
     #[test]
