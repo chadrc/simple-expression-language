@@ -20,7 +20,7 @@ pub fn execute_sel_tree(tree: SELTree) -> SELExecutionResult {
         let root = tree.get_root();
 
         if root.get_operation() == Operation::Touch {
-            if root.get_value().get_data_type() == DataType::Unit {
+            if root.get_data_type() == DataType::Unit {
                 return SELExecutionResult {
                     data_type: DataType::Unit,
                     value: None,
@@ -42,7 +42,7 @@ mod tests {
 
     #[test]
     fn executes_empty() {
-        let tree = SELTree::new(0, vec![]);
+        let tree = SELTree::new(0, vec![], vec![]);
 
         let result = execute_sel_tree(tree);
 
@@ -53,9 +53,9 @@ mod tests {
     #[test]
     fn executes_unit_touch() {
         let mut nodes: Vec<SELTreeNode> = vec![];
-        nodes.push(SELTreeNode::new(Operation::Touch, DataType::Unit, 0));
+        nodes.push(SELTreeNode::new(Operation::Touch, DataType::Unit, 0, None));
 
-        let tree = SELTree::new(0, nodes);
+        let tree = SELTree::new(0, nodes, vec![]);
 
         let result = execute_sel_tree(tree);
 
