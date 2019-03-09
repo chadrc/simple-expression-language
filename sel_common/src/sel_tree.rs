@@ -95,7 +95,7 @@ impl SELTree {
         return self.data.get_bytes(node.get_own_index());
     }
 
-    pub fn get_integer_value_of(&self, node: &SELTreeNode) -> Option<i64> {
+    pub fn get_integer_value_of(&self, node: &SELTreeNode) -> Option<i32> {
         return self.data.get_integer(node.get_own_index());
     }
 
