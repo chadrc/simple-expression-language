@@ -1,4 +1,6 @@
-use sel_common::{DataType, Operation, SELTree};
+use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
+use sel_common::{DataType, Operation, SELTree, SELTreeNode};
+use std::io::Cursor;
 
 pub struct SELExecutionResult {
     data_type: DataType,
@@ -18,28 +20,69 @@ impl SELExecutionResult {
     }
 }
 
+fn get_node_result(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult {
+    return match node.get_operation() {
+        Operation::Touch => match node.get_data_type() {
+            DataType::Unit => SELExecutionResult {
+                data_type: DataType::Unit,
+                value: None,
+            },
+            DataType::Integer | DataType::Decimal | DataType::String | DataType::Boolean => {
+                SELExecutionResult {
+                    data_type: node.get_data_type(),
+                    value: tree.get_value_bytes_of(node),
+                }
+            }
+            _ => SELExecutionResult {
+                data_type: DataType::Unknown,
+                value: None,
+            },
+        },
+        Operation::Addition => {
+            let left = tree.get_nodes().get(node.get_left().unwrap()).unwrap();
+            let right = tree.get_nodes().get(node.get_right().unwrap()).unwrap();
+
+            let left_result = get_node_result(tree, &left);
+            let right_result = get_node_result(tree, &right);
+
+            let left_int = match left_result.get_value() {
+                Some(value) => match Cursor::new(value).read_i64::<LittleEndian>() {
+                    Ok(val) => Some(val),
+                    Err(_) => None,
+                },
+                None => None,
+            };
+
+            let right_int = match right_result.get_value() {
+                Some(value) => match Cursor::new(value).read_i64::<LittleEndian>() {
+                    Ok(val) => Some(val),
+                    Err(_) => None,
+                },
+                None => None,
+            };
+
+            let result = left_int.unwrap() + right_int.unwrap();
+
+            let mut bytes: Vec<u8> = vec![];
+            bytes.write_i64::<LittleEndian>(result).unwrap();
+
+            SELExecutionResult {
+                data_type: DataType::Integer,
+                value: Some(bytes),
+            }
+        }
+        _ => SELExecutionResult {
+            data_type: DataType::Unknown,
+            value: None,
+        },
+    };
+}
+
 pub fn execute_sel_tree(tree: SELTree) -> SELExecutionResult {
     if tree.get_nodes().len() > 0 {
         let root = tree.get_root();
 
-        if root.get_operation() == Operation::Touch {
-            return match root.get_data_type() {
-                DataType::Unit => SELExecutionResult {
-                    data_type: DataType::Unit,
-                    value: None,
-                },
-                DataType::Integer | DataType::Decimal | DataType::String | DataType::Boolean => {
-                    SELExecutionResult {
-                        data_type: root.get_data_type(),
-                        value: tree.get_value_bytes_of(root),
-                    }
-                }
-                _ => SELExecutionResult {
-                    data_type: DataType::Unknown,
-                    value: None,
-                },
-            };
-        }
+        return get_node_result(&tree, &root);
     }
 
     return SELExecutionResult {

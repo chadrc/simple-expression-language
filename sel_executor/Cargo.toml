@@ -6,6 +6,4 @@ edition = "2018"
 
 [dependencies]
 sel_common = { path = "../sel_common" }
-
-[dev-dependencies]
 byteorder = "1.3.1"
