@@ -2,7 +2,7 @@ use sel_common::{DataType, Operation, SELTree};
 
 pub struct SELExecutionResult {
     data_type: DataType,
-    value: Option<usize>,
+    value: Option<Vec<u8>>,
 }
 
 impl SELExecutionResult {
@@ -10,8 +10,11 @@ impl SELExecutionResult {
         return self.data_type;
     }
 
-    pub fn get_value(&self) -> Option<usize> {
-        return self.value;
+    pub fn get_value(&self) -> Option<&Vec<u8>> {
+        return match &self.value {
+            Some(v) => Some(&v),
+            None => None,
+        };
     }
 }
 
@@ -38,7 +41,9 @@ pub fn execute_sel_tree(tree: SELTree) -> SELExecutionResult {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use byteorder::{LittleEndian, ReadBytesExt};
     use sel_common::{DataHeap, DataType, Operation, SELTree, SELTreeNode};
+    use std::io::Cursor;
 
     #[test]
     fn executes_empty() {
@@ -61,5 +66,29 @@ mod tests {
 
         assert_eq!(result.get_type(), DataType::Unit);
         assert_eq!(result.get_value(), None);
+    }
+
+    #[test]
+    fn executes_integer_touch() {
+        let mut nodes: Vec<SELTreeNode> = vec![];
+        let mut heap = DataHeap::new();
+
+        let value = heap.insert_from_string(DataType::Integer, &String::from("9"));
+        nodes.push(SELTreeNode::new(Operation::Touch, DataType::Unit, 0, value));
+
+        let tree = SELTree::new(0, nodes, heap);
+
+        let result = execute_sel_tree(tree);
+
+        let result_value = match result.get_value() {
+            Some(value) => match Cursor::new(value).read_i64::<LittleEndian>() {
+                Ok(val) => Some(val),
+                Err(_) => None,
+            },
+            None => None,
+        };
+
+        assert_eq!(result.get_type(), DataType::Integer);
+        assert_eq!(result_value, Some(9));
     }
 }
