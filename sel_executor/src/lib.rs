@@ -1,6 +1,4 @@
-use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
-use sel_common::{DataType, Operation, SELTree, SELTreeNode};
-use std::io::Cursor;
+use sel_common::{from_byte_vec, to_byte_vec, DataType, Operation, SELTree, SELTreeNode};
 
 pub struct SELExecutionResult {
     data_type: DataType,
@@ -45,30 +43,21 @@ fn get_node_result(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult {
             let left_result = get_node_result(tree, &left);
             let right_result = get_node_result(tree, &right);
 
-            let left_int = match left_result.get_value() {
-                Some(value) => match Cursor::new(value).read_i64::<LittleEndian>() {
-                    Ok(val) => Some(val),
-                    Err(_) => None,
-                },
+            let left_int: Option<i64> = match left_result.get_value() {
+                Some(value) => Some(from_byte_vec(value)),
                 None => None,
             };
 
-            let right_int = match right_result.get_value() {
-                Some(value) => match Cursor::new(value).read_i64::<LittleEndian>() {
-                    Ok(val) => Some(val),
-                    Err(_) => None,
-                },
+            let right_int: Option<i64> = match right_result.get_value() {
+                Some(value) => Some(from_byte_vec(value)),
                 None => None,
             };
 
             let result = left_int.unwrap() + right_int.unwrap();
 
-            let mut bytes: Vec<u8> = vec![];
-            bytes.write_i64::<LittleEndian>(result).unwrap();
-
             SELExecutionResult {
                 data_type: DataType::Integer,
-                value: Some(bytes),
+                value: Some(to_byte_vec(result)),
             }
         }
         _ => SELExecutionResult {
@@ -94,9 +83,7 @@ pub fn execute_sel_tree(tree: SELTree) -> SELExecutionResult {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use byteorder::{LittleEndian, ReadBytesExt};
     use sel_common::{DataHeap, DataType, Operation, SELTree, SELTreeNode};
-    use std::io::Cursor;
 
     #[test]
     fn executes_empty() {
@@ -139,10 +126,7 @@ mod tests {
         let result = execute_sel_tree(tree);
 
         let result_value = match result.get_value() {
-            Some(value) => match Cursor::new(value).read_i64::<LittleEndian>() {
-                Ok(val) => Some(val),
-                Err(_) => None,
-            },
+            Some(value) => Some(from_byte_vec(value)),
             None => None,
         };
 
@@ -168,10 +152,7 @@ mod tests {
         let result = execute_sel_tree(tree);
 
         let result_value = match result.get_value() {
-            Some(value) => match Cursor::new(value).read_f64::<LittleEndian>() {
-                Ok(val) => Some(val),
-                Err(_) => None,
-            },
+            Some(value) => Some(from_byte_vec(value)),
             None => None,
         };
 
@@ -197,10 +178,7 @@ mod tests {
         let result = execute_sel_tree(tree);
 
         let result_value = match result.get_value() {
-            Some(value) => {
-                let cow = String::from_utf8_lossy(value);
-                Some(cow.to_owned().to_string())
-            }
+            Some(value) => Some(from_byte_vec(value)),
             None => None,
         };
 
@@ -226,14 +204,7 @@ mod tests {
         let result = execute_sel_tree(tree);
 
         let result_value = match result.get_value() {
-            Some(value) => match value.get(0) {
-                Some(num) => match num {
-                    0 => Some(false),
-                    1 => Some(true),
-                    _ => None,
-                },
-                None => None,
-            },
+            Some(value) => Some(from_byte_vec(value)),
             None => None,
         };
 
@@ -277,10 +248,7 @@ mod tests {
         let result = execute_sel_tree(tree);
 
         let result_value = match result.get_value() {
-            Some(value) => match Cursor::new(value).read_i64::<LittleEndian>() {
-                Ok(val) => Some(val),
-                Err(_) => None,
-            },
+            Some(value) => Some(from_byte_vec(value)),
             None => None,
         };
 
