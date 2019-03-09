@@ -1,6 +1,7 @@
 mod addition;
 mod division;
 mod execution_result;
+mod exponential;
 mod modulo;
 mod multiplication;
 mod subtraction;
@@ -19,6 +20,7 @@ pub fn get_node_result(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult
         Operation::Multiplication => multiplication::multiplication_operation(tree, node),
         Operation::Division => division::division_operation(tree, node),
         Operation::Modulo => modulo::modulo_operation(tree, node),
+        Operation::Exponential => exponential::exponential_operation(tree, node),
         _ => SELExecutionResult::new(DataType::Unknown, None),
     };
 }
