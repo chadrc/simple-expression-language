@@ -1,6 +1,23 @@
 use super::execution_result::SELExecutionResult;
 use super::get_node_result;
-use sel_common::{from_byte_vec, to_byte_vec, DataType, SELTree, SELTreeNode};
+use sel_common::{from_byte_vec, to_byte_vec, DataType, FromByteVec, SELTree, SELTreeNode};
+
+fn get_values_from_results<L: FromByteVec, R: FromByteVec>(
+    left: &SELExecutionResult,
+    right: &SELExecutionResult,
+) -> (L, R) {
+    let left_val: Option<L> = match left.get_value() {
+        Some(value) => Some(from_byte_vec(value)),
+        None => None,
+    };
+
+    let right_val: Option<R> = match right.get_value() {
+        Some(value) => Some(from_byte_vec(value)),
+        None => None,
+    };
+
+    return (left_val.unwrap(), right_val.unwrap());
+}
 
 pub fn addition_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult {
     let left = tree.get_nodes().get(node.get_left().unwrap()).unwrap();
@@ -13,62 +30,34 @@ pub fn addition_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionRes
 
     let (result, result_type) = match operand_types {
         (DataType::Integer, DataType::Integer) => {
-            let left_int: Option<i32> = match left_result.get_value() {
-                Some(value) => Some(from_byte_vec(value)),
-                None => None,
-            };
+            let (left_val, right_val) =
+                get_values_from_results::<i32, i32>(&left_result, &right_result);
 
-            let right_int: Option<i32> = match right_result.get_value() {
-                Some(value) => Some(from_byte_vec(value)),
-                None => None,
-            };
-
-            let result = left_int.unwrap() + right_int.unwrap();
+            let result = left_val + right_val;
 
             (Some(to_byte_vec(result)), DataType::Integer)
         }
         (DataType::Integer, DataType::Decimal) => {
-            let left_int: Option<i32> = match left_result.get_value() {
-                Some(value) => Some(from_byte_vec(value)),
-                None => None,
-            };
+            let (left_val, right_val) =
+                get_values_from_results::<i32, f64>(&left_result, &right_result);
 
-            let right_int: Option<f64> = match right_result.get_value() {
-                Some(value) => Some(from_byte_vec(value)),
-                None => None,
-            };
-
-            let result = f64::from(left_int.unwrap()) + right_int.unwrap();
+            let result = f64::from(left_val) + right_val;
 
             (Some(to_byte_vec(result)), DataType::Decimal)
         }
         (DataType::Decimal, DataType::Integer) => {
-            let left_int: Option<f64> = match left_result.get_value() {
-                Some(value) => Some(from_byte_vec(value)),
-                None => None,
-            };
+            let (left_val, right_val) =
+                get_values_from_results::<f64, i32>(&left_result, &right_result);
 
-            let right_int: Option<i32> = match right_result.get_value() {
-                Some(value) => Some(from_byte_vec(value)),
-                None => None,
-            };
-
-            let result = left_int.unwrap() + f64::from(right_int.unwrap());
+            let result = left_val + f64::from(right_val);
 
             (Some(to_byte_vec(result)), DataType::Decimal)
         }
         (DataType::Decimal, DataType::Decimal) => {
-            let left_int: Option<f64> = match left_result.get_value() {
-                Some(value) => Some(from_byte_vec(value)),
-                None => None,
-            };
+            let (left_val, right_val) =
+                get_values_from_results::<f64, f64>(&left_result, &right_result);
 
-            let right_int: Option<f64> = match right_result.get_value() {
-                Some(value) => Some(from_byte_vec(value)),
-                None => None,
-            };
-
-            let result = left_int.unwrap() + right_int.unwrap();
+            let result = left_val + right_val;
 
             (Some(to_byte_vec(result)), DataType::Decimal)
         }
