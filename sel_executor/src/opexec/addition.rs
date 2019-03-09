@@ -69,11 +69,27 @@ pub fn addition_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionRes
 
             (Some(to_byte_vec(&result)), DataType::String)
         }
+        (DataType::Integer, DataType::String) => {
+            let (left_val, right_val) =
+                get_values_from_results::<i32, String>(&left_result, &right_result);
+
+            let result = left_val.to_string() + &right_val;
+
+            (Some(to_byte_vec(&result)), DataType::String)
+        }
         (DataType::String, DataType::Decimal) => {
             let (left_val, right_val) =
                 get_values_from_results::<String, f64>(&left_result, &right_result);
 
             let result = left_val + &right_val.to_string();
+
+            (Some(to_byte_vec(&result)), DataType::String)
+        }
+        (DataType::Decimal, DataType::String) => {
+            let (left_val, right_val) =
+                get_values_from_results::<f64, String>(&left_result, &right_result);
+
+            let result = left_val.to_string() + &right_val;
 
             (Some(to_byte_vec(&result)), DataType::String)
         }
@@ -309,6 +325,50 @@ mod tests {
     }
 
     #[test]
+    fn executes_integer_string_addition() {
+        let mut nodes: Vec<SELTreeNode> = vec![];
+        let mut heap = DataHeap::new();
+
+        let mut left = SELTreeNode::new(
+            Operation::Touch,
+            DataType::Integer,
+            0,
+            heap.insert_from_string(DataType::Integer, &String::from("6")),
+        );
+
+        let mut right = SELTreeNode::new(
+            Operation::Touch,
+            DataType::String,
+            1,
+            heap.insert_from_string(DataType::String, &String::from("Number: ")),
+        );
+
+        let mut root = SELTreeNode::new(Operation::Addition, DataType::Unknown, 2, None);
+
+        left.set_parent(Some(2));
+        right.set_parent(Some(2));
+
+        root.set_left(Some(0));
+        root.set_right(Some(1));
+
+        nodes.push(left);
+        nodes.push(right);
+        nodes.push(root);
+
+        let tree = SELTree::new(2, nodes, heap);
+
+        let result = get_node_result(&tree, tree.get_root());
+
+        let result_value = match result.get_value() {
+            Some(value) => Some(from_byte_vec(value)),
+            None => None,
+        };
+
+        assert_eq!(result.get_type(), DataType::String);
+        assert_eq!(result_value, Some(String::from("6Number: ")));
+    }
+
+    #[test]
     fn executes_string_decimal_addition() {
         let mut nodes: Vec<SELTreeNode> = vec![];
         let mut heap = DataHeap::new();
@@ -350,5 +410,49 @@ mod tests {
 
         assert_eq!(result.get_type(), DataType::String);
         assert_eq!(result_value, Some(String::from("Number: 3.14")));
+    }
+
+    #[test]
+    fn executes_decimal_string_addition() {
+        let mut nodes: Vec<SELTreeNode> = vec![];
+        let mut heap = DataHeap::new();
+
+        let mut left = SELTreeNode::new(
+            Operation::Touch,
+            DataType::Decimal,
+            0,
+            heap.insert_from_string(DataType::Decimal, &String::from("3.14")),
+        );
+
+        let mut right = SELTreeNode::new(
+            Operation::Touch,
+            DataType::String,
+            1,
+            heap.insert_from_string(DataType::String, &String::from("Number: ")),
+        );
+
+        let mut root = SELTreeNode::new(Operation::Addition, DataType::Unknown, 2, None);
+
+        left.set_parent(Some(2));
+        right.set_parent(Some(2));
+
+        root.set_left(Some(0));
+        root.set_right(Some(1));
+
+        nodes.push(left);
+        nodes.push(right);
+        nodes.push(root);
+
+        let tree = SELTree::new(2, nodes, heap);
+
+        let result = get_node_result(&tree, tree.get_root());
+
+        let result_value = match result.get_value() {
+            Some(value) => Some(from_byte_vec(value)),
+            None => None,
+        };
+
+        assert_eq!(result.get_type(), DataType::String);
+        assert_eq!(result_value, Some(String::from("3.14Number: ")));
     }
 }
