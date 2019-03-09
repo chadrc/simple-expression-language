@@ -1,23 +1,7 @@
 use super::execution_result::SELExecutionResult;
 use super::get_node_result;
-use sel_common::{from_byte_vec, to_byte_vec, DataType, FromByteVec, SELTree, SELTreeNode};
-
-fn get_values_from_results<L: FromByteVec, R: FromByteVec>(
-    left: &SELExecutionResult,
-    right: &SELExecutionResult,
-) -> (L, R) {
-    let left_val: Option<L> = match left.get_value() {
-        Some(value) => Some(from_byte_vec(value)),
-        None => None,
-    };
-
-    let right_val: Option<R> = match right.get_value() {
-        Some(value) => Some(from_byte_vec(value)),
-        None => None,
-    };
-
-    return (left_val.unwrap(), right_val.unwrap());
-}
+use super::utils::get_values_from_results;
+use sel_common::{to_byte_vec, DataType, FromByteVec, SELTree, SELTreeNode};
 
 fn concat_results<L: FromByteVec + ToString, R: FromByteVec + ToString>(
     left: &SELExecutionResult,
@@ -98,9 +82,8 @@ pub fn addition_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionRes
 
 #[cfg(test)]
 mod tests {
-    use super::super::get_node_result;
-    use super::*;
-    use sel_common::{from_byte_vec, DataHeap, DataType, Operation, SELTree, SELTreeNode};
+    use super::super::test_utils::result_of_binary_op;
+    use sel_common::{from_byte_vec, DataType, Operation};
 
     #[test]
     fn executes_integer_addition() {
@@ -337,46 +320,5 @@ mod tests {
 
         assert_eq!(result.get_type(), DataType::Unit);
         assert_eq!(result.get_value(), None);
-    }
-
-    fn result_of_binary_op(
-        op: Operation,
-        left_type: DataType,
-        left_value: &str,
-        right_type: DataType,
-        right_value: &str,
-    ) -> SELExecutionResult {
-        let mut nodes: Vec<SELTreeNode> = vec![];
-        let mut heap = DataHeap::new();
-
-        let mut left = SELTreeNode::new(
-            Operation::Touch,
-            left_type,
-            0,
-            heap.insert_from_string(left_type, &String::from(left_value)),
-        );
-
-        let mut right = SELTreeNode::new(
-            Operation::Touch,
-            right_type,
-            1,
-            heap.insert_from_string(right_type, &String::from(right_value)),
-        );
-
-        let mut root = SELTreeNode::new(op, DataType::Unknown, 2, None);
-
-        left.set_parent(Some(2));
-        right.set_parent(Some(2));
-
-        root.set_left(Some(0));
-        root.set_right(Some(1));
-
-        nodes.push(left);
-        nodes.push(right);
-        nodes.push(root);
-
-        let tree = SELTree::new(2, nodes, heap);
-
-        return get_node_result(&tree, tree.get_root());
     }
 }
