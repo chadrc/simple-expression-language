@@ -1,6 +1,7 @@
 use super::precedence_manager::PrecedenceManager;
-use sel_common::{NodeSide, SELTree, SELTreeNode, Operation, DataType};
-use super::utils::{loop_max, get_operation_type_for_token, get_data_type_for_token};
+use super::utils::{get_data_type_for_token, get_operation_type_for_token, loop_max};
+use byteorder::{LittleEndian, WriteBytesExt};
+use sel_common::{DataType, NodeSide, Operation, SELTree, SELTreeNode};
 use sel_tokenizer::Tokenizer;
 
 #[derive(PartialEq, Debug, Clone, Copy)]
@@ -39,8 +40,12 @@ impl SELTreeBuilder {
         };
     }
 
-    fn make_nodes_from_tokenizer(&mut self, tokenizer: &mut Tokenizer) -> Vec<SELTreeNode> {
+    fn make_nodes_from_tokenizer(
+        &mut self,
+        tokenizer: &mut Tokenizer,
+    ) -> (Vec<SELTreeNode>, Vec<Vec<u8>>) {
         let mut nodes: Vec<SELTreeNode> = vec![];
+        let mut data: Vec<Vec<u8>> = vec![];
 
         // loop trough all tokens
         // convert them to tree nodes
@@ -88,7 +93,7 @@ impl SELTreeBuilder {
             nodes.push(SELTreeNode::new(Operation::None, DataType::Unit, 0));
         }
 
-        return nodes;
+        return (nodes, data);
     }
 
     fn find_root_index(nodes: &Vec<SELTreeNode>) -> usize {
@@ -215,7 +220,7 @@ impl SELTreeBuilder {
 
     fn build(&mut self, s: &String) -> SELTree {
         let mut tokenizer = Tokenizer::new(s);
-        let mut nodes = self.make_nodes_from_tokenizer(&mut tokenizer);
+        let (mut nodes, data) = self.make_nodes_from_tokenizer(&mut tokenizer);
 
         // skip VALUE_PRECEDENCE
         for bucket in self.precedence_manager.get_buckets().iter().skip(1) {
@@ -226,7 +231,7 @@ impl SELTreeBuilder {
 
         let root = SELTreeBuilder::find_root_index(&nodes);
 
-        return SELTree::new(root, nodes);
+        return SELTree::new(root, nodes, data);
     }
 }
 

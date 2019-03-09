@@ -7,3 +7,4 @@ edition = "2018"
 [dependencies]
 sel_tokenizer = { path = "../sel_tokenizer" }
 sel_common = { path = "../sel_common" }
+byteorder = "1.3.1"

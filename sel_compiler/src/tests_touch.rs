@@ -67,9 +67,11 @@ mod tests {
         let tree = compiler.compile(&input);
 
         let root = tree.get_root();
+        let root_value: i64 = tree.get_integer_value_of(&root).unwrap();
 
         assert_eq!(root.get_operation(), Operation::Touch);
         assert_eq!(root.get_data_type(), DataType::Integer);
+        assert_eq!(root_value, 9);
     }
 
     #[test]

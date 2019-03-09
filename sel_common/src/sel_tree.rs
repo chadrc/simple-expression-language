@@ -68,15 +68,17 @@ impl SELTreeNode {
 
 #[derive(Debug, Clone)]
 pub struct SELTree {
+    data: Vec<Vec<u8>>,
     root: usize,
     nodes: Vec<SELTreeNode>,
 }
 
 impl SELTree {
-    pub fn new(root: usize, nodes: Vec<SELTreeNode>) -> SELTree {
+    pub fn new(root: usize, nodes: Vec<SELTreeNode>, data: Vec<Vec<u8>>) -> SELTree {
         return SELTree {
             root: root,
             nodes: nodes,
+            data: data,
         };
     }
 
