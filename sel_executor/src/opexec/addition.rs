@@ -22,12 +22,12 @@ fn get_values_from_results<L: FromByteVec, R: FromByteVec>(
 fn concat_results<L: FromByteVec + ToString, R: FromByteVec + ToString>(
     left: &SELExecutionResult,
     right: &SELExecutionResult,
-) -> (Option<Vec<u8>>, DataType) {
+) -> SELExecutionResult {
     let (left_val, right_val) = get_values_from_results::<L, R>(left, right);
 
     let result = left_val.to_string() + &right_val.to_string();
 
-    (Some(to_byte_vec(&result)), DataType::String)
+    SELExecutionResult::new(DataType::String, Some(to_byte_vec(&result)))
 }
 
 pub fn addition_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult {
@@ -39,14 +39,14 @@ pub fn addition_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionRes
 
     let operand_types = (left_result.get_type(), right_result.get_type());
 
-    let (result, result_type) = match operand_types {
+    return match operand_types {
         (DataType::Integer, DataType::Integer) => {
             let (left_val, right_val) =
                 get_values_from_results::<i32, i32>(&left_result, &right_result);
 
             let result = left_val + right_val;
 
-            (Some(to_byte_vec(result)), DataType::Integer)
+            SELExecutionResult::new(DataType::Integer, Some(to_byte_vec(result)))
         }
         (DataType::Integer, DataType::Decimal) => {
             let (left_val, right_val) =
@@ -54,7 +54,7 @@ pub fn addition_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionRes
 
             let result = f64::from(left_val) + right_val;
 
-            (Some(to_byte_vec(result)), DataType::Decimal)
+            SELExecutionResult::new(DataType::Decimal, Some(to_byte_vec(result)))
         }
         (DataType::Decimal, DataType::Integer) => {
             let (left_val, right_val) =
@@ -62,7 +62,7 @@ pub fn addition_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionRes
 
             let result = left_val + f64::from(right_val);
 
-            (Some(to_byte_vec(result)), DataType::Decimal)
+            SELExecutionResult::new(DataType::Decimal, Some(to_byte_vec(result)))
         }
         (DataType::Decimal, DataType::Decimal) => {
             let (left_val, right_val) =
@@ -70,7 +70,7 @@ pub fn addition_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionRes
 
             let result = left_val + right_val;
 
-            (Some(to_byte_vec(result)), DataType::Decimal)
+            SELExecutionResult::new(DataType::Decimal, Some(to_byte_vec(result)))
         }
         (DataType::String, DataType::String) => {
             concat_results::<String, String>(&left_result, &right_result)
@@ -93,11 +93,9 @@ pub fn addition_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionRes
         (DataType::Boolean, DataType::String) => {
             concat_results::<bool, String>(&left_result, &right_result)
         }
-        (_, DataType::Unit) | (DataType::Unit, _) => (None, DataType::Unit),
-        _ => (Some(vec![]), DataType::Unknown),
+        (_, DataType::Unit) | (DataType::Unit, _) => SELExecutionResult::new(DataType::Unit, None),
+        _ => SELExecutionResult::new(DataType::Unknown, Some(vec![])),
     };
-
-    return SELExecutionResult::new(result_type, result);
 }
 
 #[cfg(test)]
