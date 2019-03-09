@@ -32,6 +32,10 @@ pub fn execute_sel_tree(tree: SELTree) -> SELExecutionResult {
                     data_type: DataType::Integer,
                     value: tree.get_value_bytes_of(root),
                 },
+                DataType::Decimal => SELExecutionResult {
+                    data_type: DataType::Decimal,
+                    value: tree.get_value_bytes_of(root),
+                },
                 _ => SELExecutionResult {
                     data_type: DataType::Unknown,
                     value: None,
@@ -103,5 +107,34 @@ mod tests {
 
         assert_eq!(result.get_type(), DataType::Integer);
         assert_eq!(result_value, Some(9));
+    }
+
+    #[test]
+    fn executes_decimal_touch() {
+        let mut nodes: Vec<SELTreeNode> = vec![];
+        let mut heap = DataHeap::new();
+
+        let value = heap.insert_from_string(DataType::Decimal, &String::from("3.14"));
+        nodes.push(SELTreeNode::new(
+            Operation::Touch,
+            DataType::Decimal,
+            0,
+            value,
+        ));
+
+        let tree = SELTree::new(0, nodes, heap);
+
+        let result = execute_sel_tree(tree);
+
+        let result_value = match result.get_value() {
+            Some(value) => match Cursor::new(value).read_f64::<LittleEndian>() {
+                Ok(val) => Some(val),
+                Err(_) => None,
+            },
+            None => None,
+        };
+
+        assert_eq!(result.get_type(), DataType::Decimal);
+        assert_eq!(result_value, Some(3.14));
     }
 }
