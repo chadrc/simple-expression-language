@@ -91,6 +91,10 @@ impl SELTree {
         return &self.nodes.get(self.root).unwrap();
     }
 
+    pub fn get_value_bytes_of(&self, node: &SELTreeNode) -> Option<Vec<u8>> {
+        return self.data.get_bytes(node.get_own_index());
+    }
+
     pub fn get_integer_value_of(&self, node: &SELTreeNode) -> Option<i64> {
         return self.data.get_integer(node.get_own_index());
     }

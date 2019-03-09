@@ -23,12 +23,20 @@ pub fn execute_sel_tree(tree: SELTree) -> SELExecutionResult {
         let root = tree.get_root();
 
         if root.get_operation() == Operation::Touch {
-            if root.get_data_type() == DataType::Unit {
-                return SELExecutionResult {
+            return match root.get_data_type() {
+                DataType::Unit => SELExecutionResult {
                     data_type: DataType::Unit,
                     value: None,
-                };
-            }
+                },
+                DataType::Integer => SELExecutionResult {
+                    data_type: DataType::Integer,
+                    value: tree.get_value_bytes_of(root),
+                },
+                _ => SELExecutionResult {
+                    data_type: DataType::Unknown,
+                    value: None,
+                },
+            };
         }
     }
 
@@ -74,7 +82,12 @@ mod tests {
         let mut heap = DataHeap::new();
 
         let value = heap.insert_from_string(DataType::Integer, &String::from("9"));
-        nodes.push(SELTreeNode::new(Operation::Touch, DataType::Unit, 0, value));
+        nodes.push(SELTreeNode::new(
+            Operation::Touch,
+            DataType::Integer,
+            0,
+            value,
+        ));
 
         let tree = SELTree::new(0, nodes, heap);
 

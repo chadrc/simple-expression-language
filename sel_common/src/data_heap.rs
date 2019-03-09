@@ -57,6 +57,13 @@ impl DataHeap {
         };
     }
 
+    pub fn get_bytes(&self, index: usize) -> Option<Vec<u8>> {
+        return match self.data.get(index) {
+            Some(datum) => Some(datum.clone()),
+            None => None,
+        };
+    }
+
     pub fn get_integer(&self, index: usize) -> Option<i64> {
         return match self.data.get(index) {
             Some(datum) => match Cursor::new(datum).read_i64::<LittleEndian>() {
