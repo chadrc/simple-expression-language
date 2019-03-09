@@ -3,6 +3,7 @@ use super::utils::{get_data_type_for_token, get_operation_type_for_token, loop_m
 use byteorder::{LittleEndian, WriteBytesExt};
 use sel_common::{DataType, NodeSide, Operation, SELTree, SELTreeNode};
 use sel_tokenizer::Tokenizer;
+use std::str::FromStr;
 
 #[derive(PartialEq, Debug, Clone, Copy)]
 struct Change {
@@ -83,6 +84,21 @@ impl SELTreeBuilder {
                 DataType::String => {
                     data.push(token.get_token_str().into_bytes());
 
+                    value = Some(data.len() - 1);
+                }
+                DataType::Boolean => {
+                    let b: bool = match FromStr::from_str(&token.get_token_str()) {
+                        Ok(val) => val,
+                        Err(_) => false, // probably panic?
+                    };
+
+                    let mut datum: Vec<u8> = vec![];
+                    match b {
+                        true => datum.push(1),
+                        false => datum.push(0),
+                    }
+
+                    data.push(datum);
                     value = Some(data.len() - 1);
                 }
                 _ => (),

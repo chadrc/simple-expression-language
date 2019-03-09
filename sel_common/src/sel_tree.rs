@@ -130,6 +130,23 @@ impl SELTree {
             None => None,
         };
     }
+
+    pub fn get_boolean_value_of(&self, node: &SELTreeNode) -> Option<bool> {
+        return match node.value {
+            Some(value_index) => match self.data.get(value_index) {
+                Some(datum) => match datum.get(0) {
+                    Some(num) => match num {
+                        0 => Some(false),
+                        1 => Some(true),
+                        _ => None,
+                    },
+                    None => None,
+                },
+                None => None,
+            },
+            None => None,
+        };
+    }
 }
 
 #[derive(PartialEq, Debug, Clone, Copy)]
