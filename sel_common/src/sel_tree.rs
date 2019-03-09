@@ -117,6 +117,19 @@ impl SELTree {
             None => None,
         };
     }
+
+    pub fn get_string_value_of(&self, node: &SELTreeNode) -> Option<String> {
+        return match node.value {
+            Some(value_index) => match self.data.get(value_index) {
+                Some(datum) => {
+                    let cow = String::from_utf8_lossy(datum);
+                    Some(cow.to_owned().to_string())
+                }
+                None => None,
+            },
+            None => None,
+        };
+    }
 }
 
 #[derive(PartialEq, Debug, Clone, Copy)]

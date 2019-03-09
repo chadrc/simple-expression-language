@@ -80,6 +80,11 @@ impl SELTreeBuilder {
 
                     value = Some(data.len() - 1);
                 }
+                DataType::String => {
+                    data.push(token.get_token_str().into_bytes());
+
+                    value = Some(data.len() - 1);
+                }
                 _ => (),
             };
 
