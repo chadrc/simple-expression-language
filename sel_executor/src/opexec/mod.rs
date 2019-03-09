@@ -1,5 +1,6 @@
 mod addition;
 mod execution_result;
+mod multiplication;
 mod subtraction;
 mod touch;
 mod utils;
@@ -13,6 +14,7 @@ pub fn get_node_result(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult
         Operation::Touch => touch::touch_operation(tree, node),
         Operation::Addition => addition::addition_operation(tree, node),
         Operation::Subtraction => subtraction::subtraction_operation(tree, node),
+        Operation::Multiplication => multiplication::multiplication_operation(tree, node),
         _ => SELExecutionResult::new(DataType::Unknown, None),
     };
 }
