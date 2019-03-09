@@ -61,6 +61,14 @@ pub fn addition_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionRes
 
             (Some(to_byte_vec(result)), DataType::Decimal)
         }
+        (DataType::String, DataType::Integer) => {
+            let (left_val, right_val) =
+                get_values_from_results::<String, i32>(&left_result, &right_result);
+
+            let result = left_val + &right_val.to_string();
+
+            (Some(to_byte_vec(&result)), DataType::String)
+        }
         _ => (Some(vec![]), DataType::Unknown),
     };
 
@@ -246,5 +254,49 @@ mod tests {
 
         assert_eq!(result.get_type(), DataType::Decimal);
         assert_eq!(result_value, Some(9.59));
+    }
+
+    #[test]
+    fn executes_string_integer_addition() {
+        let mut nodes: Vec<SELTreeNode> = vec![];
+        let mut heap = DataHeap::new();
+
+        let mut left = SELTreeNode::new(
+            Operation::Touch,
+            DataType::String,
+            0,
+            heap.insert_from_string(DataType::String, &String::from("Number: ")),
+        );
+
+        let mut right = SELTreeNode::new(
+            Operation::Touch,
+            DataType::Integer,
+            1,
+            heap.insert_from_string(DataType::Integer, &String::from("6")),
+        );
+
+        let mut root = SELTreeNode::new(Operation::Addition, DataType::Unknown, 2, None);
+
+        left.set_parent(Some(2));
+        right.set_parent(Some(2));
+
+        root.set_left(Some(0));
+        root.set_right(Some(1));
+
+        nodes.push(left);
+        nodes.push(right);
+        nodes.push(root);
+
+        let tree = SELTree::new(2, nodes, heap);
+
+        let result = get_node_result(&tree, tree.get_root());
+
+        let result_value = match result.get_value() {
+            Some(value) => Some(from_byte_vec(value)),
+            None => None,
+        };
+
+        assert_eq!(result.get_type(), DataType::String);
+        assert_eq!(result_value, Some(String::from("Number: 6")));
     }
 }
