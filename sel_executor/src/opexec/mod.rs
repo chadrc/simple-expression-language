@@ -20,7 +20,7 @@ pub fn get_node_result(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult
 #[cfg(test)]
 pub mod test_utils {
     use super::*;
-    use sel_common::{from_byte_vec, DataHeap, DataType, Operation, SELTree, SELTreeNode};
+    use sel_common::{DataHeap, DataType, Operation, SELTree, SELTreeNode};
 
     pub fn result_of_binary_op(
         op: Operation,
