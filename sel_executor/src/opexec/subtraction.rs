@@ -43,6 +43,7 @@ pub fn subtraction_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecution
 
             SELExecutionResult::new(DataType::Decimal, Some(to_byte_vec(result)))
         }
+        (_, DataType::Unit) | (DataType::Unit, _) => SELExecutionResult::new(DataType::Unit, None),
         _ => SELExecutionResult::new(DataType::Unknown, Some(vec![])),
     };
 }
@@ -126,5 +127,33 @@ mod tests {
 
         assert_eq!(result.get_type(), DataType::Decimal);
         assert_eq!(result_value, Some(3.14 - 6.45));
+    }
+
+    #[test]
+    fn executes_integer_unit_subtraction() {
+        let result = result_of_binary_op(
+            Operation::Subtraction,
+            DataType::Integer,
+            "9",
+            DataType::Unit,
+            "()",
+        );
+
+        assert_eq!(result.get_type(), DataType::Unit);
+        assert_eq!(result.get_value(), None);
+    }
+
+    #[test]
+    fn executes_unit_integer_subtraction() {
+        let result = result_of_binary_op(
+            Operation::Subtraction,
+            DataType::Unit,
+            "()",
+            DataType::Integer,
+            "9",
+        );
+
+        assert_eq!(result.get_type(), DataType::Unit);
+        assert_eq!(result.get_value(), None);
     }
 }
