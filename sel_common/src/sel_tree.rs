@@ -104,6 +104,19 @@ impl SELTree {
             None => None,
         };
     }
+
+    pub fn get_decimal_value_of(&self, node: &SELTreeNode) -> Option<f64> {
+        return match node.value {
+            Some(value_index) => match self.data.get(value_index) {
+                Some(datum) => match Cursor::new(datum).read_f64::<LittleEndian>() {
+                    Ok(val) => Some(val),
+                    Err(_) => None,
+                },
+                None => None,
+            },
+            None => None,
+        };
+    }
 }
 
 #[derive(PartialEq, Debug, Clone, Copy)]

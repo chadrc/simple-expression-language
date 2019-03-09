@@ -71,6 +71,15 @@ impl SELTreeBuilder {
 
                     value = Some(data.len() - 1);
                 }
+                DataType::Decimal => {
+                    let mut datum: Vec<u8> = vec![];
+                    let num = token.get_token_str().parse::<f64>().unwrap();
+                    datum.write_f64::<LittleEndian>(num).unwrap();
+
+                    data.push(datum);
+
+                    value = Some(data.len() - 1);
+                }
                 _ => (),
             };
 
