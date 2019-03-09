@@ -16,13 +16,13 @@ mod tests {
         let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
 
         assert_eq!(root.get_operation(), Operation::Addition);
-        assert_eq!(root.get_value().get_data_type(), DataType::Unknown);
+        assert_eq!(root.get_data_type(), DataType::Unknown);
 
         assert_eq!(left.get_operation(), Operation::Touch);
-        assert_eq!(left.get_value().get_data_type(), DataType::Integer);
+        assert_eq!(left.get_data_type(), DataType::Integer);
 
         assert_eq!(right.get_operation(), Operation::Touch);
-        assert_eq!(right.get_value().get_data_type(), DataType::Integer);
+        assert_eq!(right.get_data_type(), DataType::Integer);
     }
 
     #[test]
@@ -38,13 +38,13 @@ mod tests {
         let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
 
         assert_eq!(root.get_operation(), Operation::Multiplication);
-        assert_eq!(root.get_value().get_data_type(), DataType::Unknown);
+        assert_eq!(root.get_data_type(), DataType::Unknown);
 
         assert_eq!(left.get_operation(), Operation::Touch);
-        assert_eq!(left.get_value().get_data_type(), DataType::Integer);
+        assert_eq!(left.get_data_type(), DataType::Integer);
 
         assert_eq!(right.get_operation(), Operation::Touch);
-        assert_eq!(right.get_value().get_data_type(), DataType::Integer);
+        assert_eq!(right.get_data_type(), DataType::Integer);
     }
 
     #[test]
@@ -60,13 +60,13 @@ mod tests {
         let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
 
         assert_eq!(root.get_operation(), Operation::Subtraction);
-        assert_eq!(root.get_value().get_data_type(), DataType::Unknown);
+        assert_eq!(root.get_data_type(), DataType::Unknown);
 
         assert_eq!(left.get_operation(), Operation::Touch);
-        assert_eq!(left.get_value().get_data_type(), DataType::Integer);
+        assert_eq!(left.get_data_type(), DataType::Integer);
 
         assert_eq!(right.get_operation(), Operation::Touch);
-        assert_eq!(right.get_value().get_data_type(), DataType::Integer);
+        assert_eq!(right.get_data_type(), DataType::Integer);
     }
 
     #[test]
@@ -82,13 +82,13 @@ mod tests {
         let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
 
         assert_eq!(root.get_operation(), Operation::Division);
-        assert_eq!(root.get_value().get_data_type(), DataType::Unknown);
+        assert_eq!(root.get_data_type(), DataType::Unknown);
 
         assert_eq!(left.get_operation(), Operation::Touch);
-        assert_eq!(left.get_value().get_data_type(), DataType::Integer);
+        assert_eq!(left.get_data_type(), DataType::Integer);
 
         assert_eq!(right.get_operation(), Operation::Touch);
-        assert_eq!(right.get_value().get_data_type(), DataType::Integer);
+        assert_eq!(right.get_data_type(), DataType::Integer);
     }
 
     #[test]
@@ -104,13 +104,13 @@ mod tests {
         let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
 
         assert_eq!(root.get_operation(), Operation::Modulo);
-        assert_eq!(root.get_value().get_data_type(), DataType::Unknown);
+        assert_eq!(root.get_data_type(), DataType::Unknown);
 
         assert_eq!(left.get_operation(), Operation::Touch);
-        assert_eq!(left.get_value().get_data_type(), DataType::Integer);
+        assert_eq!(left.get_data_type(), DataType::Integer);
 
         assert_eq!(right.get_operation(), Operation::Touch);
-        assert_eq!(right.get_value().get_data_type(), DataType::Integer);
+        assert_eq!(right.get_data_type(), DataType::Integer);
     }
 
     #[test]
@@ -126,13 +126,13 @@ mod tests {
         let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
 
         assert_eq!(root.get_operation(), Operation::Exponential);
-        assert_eq!(root.get_value().get_data_type(), DataType::Unknown);
+        assert_eq!(root.get_data_type(), DataType::Unknown);
 
         assert_eq!(left.get_operation(), Operation::Touch);
-        assert_eq!(left.get_value().get_data_type(), DataType::Integer);
+        assert_eq!(left.get_data_type(), DataType::Integer);
 
         assert_eq!(right.get_operation(), Operation::Touch);
-        assert_eq!(right.get_value().get_data_type(), DataType::Integer);
+        assert_eq!(right.get_data_type(), DataType::Integer);
     }
 
     #[test]
@@ -148,13 +148,13 @@ mod tests {
         let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
 
         assert_eq!(root.get_operation(), Operation::ExclusiveRange);
-        assert_eq!(root.get_value().get_data_type(), DataType::Unknown);
+        assert_eq!(root.get_data_type(), DataType::Unknown);
 
         assert_eq!(left.get_operation(), Operation::Touch);
-        assert_eq!(left.get_value().get_data_type(), DataType::Integer);
+        assert_eq!(left.get_data_type(), DataType::Integer);
 
         assert_eq!(right.get_operation(), Operation::Touch);
-        assert_eq!(right.get_value().get_data_type(), DataType::Integer);
+        assert_eq!(right.get_data_type(), DataType::Integer);
     }
 
     #[test]
@@ -170,13 +170,13 @@ mod tests {
         let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
 
         assert_eq!(root.get_operation(), Operation::InclusiveRange);
-        assert_eq!(root.get_value().get_data_type(), DataType::Unknown);
+        assert_eq!(root.get_data_type(), DataType::Unknown);
 
         assert_eq!(left.get_operation(), Operation::Touch);
-        assert_eq!(left.get_value().get_data_type(), DataType::Integer);
+        assert_eq!(left.get_data_type(), DataType::Integer);
 
         assert_eq!(right.get_operation(), Operation::Touch);
-        assert_eq!(right.get_value().get_data_type(), DataType::Integer);
+        assert_eq!(right.get_data_type(), DataType::Integer);
     }
 
     #[test]
@@ -192,13 +192,13 @@ mod tests {
         let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
 
         assert_eq!(root.get_operation(), Operation::GreaterThan);
-        assert_eq!(root.get_value().get_data_type(), DataType::Unknown);
+        assert_eq!(root.get_data_type(), DataType::Unknown);
 
         assert_eq!(left.get_operation(), Operation::Touch);
-        assert_eq!(left.get_value().get_data_type(), DataType::Integer);
+        assert_eq!(left.get_data_type(), DataType::Integer);
 
         assert_eq!(right.get_operation(), Operation::Touch);
-        assert_eq!(right.get_value().get_data_type(), DataType::Integer);
+        assert_eq!(right.get_data_type(), DataType::Integer);
     }
 
     #[test]
@@ -214,13 +214,13 @@ mod tests {
         let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
 
         assert_eq!(root.get_operation(), Operation::GreaterThanOrEqual);
-        assert_eq!(root.get_value().get_data_type(), DataType::Unknown);
+        assert_eq!(root.get_data_type(), DataType::Unknown);
 
         assert_eq!(left.get_operation(), Operation::Touch);
-        assert_eq!(left.get_value().get_data_type(), DataType::Integer);
+        assert_eq!(left.get_data_type(), DataType::Integer);
 
         assert_eq!(right.get_operation(), Operation::Touch);
-        assert_eq!(right.get_value().get_data_type(), DataType::Integer);
+        assert_eq!(right.get_data_type(), DataType::Integer);
     }
 
     #[test]
@@ -236,13 +236,13 @@ mod tests {
         let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
 
         assert_eq!(root.get_operation(), Operation::LessThan);
-        assert_eq!(root.get_value().get_data_type(), DataType::Unknown);
+        assert_eq!(root.get_data_type(), DataType::Unknown);
 
         assert_eq!(left.get_operation(), Operation::Touch);
-        assert_eq!(left.get_value().get_data_type(), DataType::Integer);
+        assert_eq!(left.get_data_type(), DataType::Integer);
 
         assert_eq!(right.get_operation(), Operation::Touch);
-        assert_eq!(right.get_value().get_data_type(), DataType::Integer);
+        assert_eq!(right.get_data_type(), DataType::Integer);
     }
 
     #[test]
@@ -258,13 +258,13 @@ mod tests {
         let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
 
         assert_eq!(root.get_operation(), Operation::LessThanOrEqual);
-        assert_eq!(root.get_value().get_data_type(), DataType::Unknown);
+        assert_eq!(root.get_data_type(), DataType::Unknown);
 
         assert_eq!(left.get_operation(), Operation::Touch);
-        assert_eq!(left.get_value().get_data_type(), DataType::Integer);
+        assert_eq!(left.get_data_type(), DataType::Integer);
 
         assert_eq!(right.get_operation(), Operation::Touch);
-        assert_eq!(right.get_value().get_data_type(), DataType::Integer);
+        assert_eq!(right.get_data_type(), DataType::Integer);
     }
 
     #[test]
@@ -280,13 +280,13 @@ mod tests {
         let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
 
         assert_eq!(root.get_operation(), Operation::Equality);
-        assert_eq!(root.get_value().get_data_type(), DataType::Unknown);
+        assert_eq!(root.get_data_type(), DataType::Unknown);
 
         assert_eq!(left.get_operation(), Operation::Touch);
-        assert_eq!(left.get_value().get_data_type(), DataType::Integer);
+        assert_eq!(left.get_data_type(), DataType::Integer);
 
         assert_eq!(right.get_operation(), Operation::Touch);
-        assert_eq!(right.get_value().get_data_type(), DataType::Integer);
+        assert_eq!(right.get_data_type(), DataType::Integer);
     }
 
     #[test]
@@ -302,13 +302,13 @@ mod tests {
         let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
 
         assert_eq!(root.get_operation(), Operation::Inequality);
-        assert_eq!(root.get_value().get_data_type(), DataType::Unknown);
+        assert_eq!(root.get_data_type(), DataType::Unknown);
 
         assert_eq!(left.get_operation(), Operation::Touch);
-        assert_eq!(left.get_value().get_data_type(), DataType::Integer);
+        assert_eq!(left.get_data_type(), DataType::Integer);
 
         assert_eq!(right.get_operation(), Operation::Touch);
-        assert_eq!(right.get_value().get_data_type(), DataType::Integer);
+        assert_eq!(right.get_data_type(), DataType::Integer);
     }
 
     #[test]
@@ -324,13 +324,13 @@ mod tests {
         let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
 
         assert_eq!(root.get_operation(), Operation::LogicalAnd);
-        assert_eq!(root.get_value().get_data_type(), DataType::Unknown);
+        assert_eq!(root.get_data_type(), DataType::Unknown);
 
         assert_eq!(left.get_operation(), Operation::Touch);
-        assert_eq!(left.get_value().get_data_type(), DataType::Integer);
+        assert_eq!(left.get_data_type(), DataType::Integer);
 
         assert_eq!(right.get_operation(), Operation::Touch);
-        assert_eq!(right.get_value().get_data_type(), DataType::Integer);
+        assert_eq!(right.get_data_type(), DataType::Integer);
     }
 
     #[test]
@@ -346,13 +346,13 @@ mod tests {
         let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
 
         assert_eq!(root.get_operation(), Operation::LogicalOr);
-        assert_eq!(root.get_value().get_data_type(), DataType::Unknown);
+        assert_eq!(root.get_data_type(), DataType::Unknown);
 
         assert_eq!(left.get_operation(), Operation::Touch);
-        assert_eq!(left.get_value().get_data_type(), DataType::Integer);
+        assert_eq!(left.get_data_type(), DataType::Integer);
 
         assert_eq!(right.get_operation(), Operation::Touch);
-        assert_eq!(right.get_value().get_data_type(), DataType::Integer);
+        assert_eq!(right.get_data_type(), DataType::Integer);
     }
 
     #[test]
@@ -367,10 +367,10 @@ mod tests {
         let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
 
         assert_eq!(root.get_operation(), Operation::LogicalNot);
-        assert_eq!(root.get_value().get_data_type(), DataType::Unknown);
+        assert_eq!(root.get_data_type(), DataType::Unknown);
 
         assert_eq!(right.get_operation(), Operation::Touch);
-        assert_eq!(right.get_value().get_data_type(), DataType::Boolean);
+        assert_eq!(right.get_data_type(), DataType::Boolean);
     }
 
     #[test]
@@ -385,9 +385,9 @@ mod tests {
         let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
 
         assert_eq!(root.get_operation(), Operation::Negation);
-        assert_eq!(root.get_value().get_data_type(), DataType::Unknown);
+        assert_eq!(root.get_data_type(), DataType::Unknown);
 
         assert_eq!(right.get_operation(), Operation::Touch);
-        assert_eq!(right.get_value().get_data_type(), DataType::Integer);
+        assert_eq!(right.get_data_type(), DataType::Integer);
     }
 }

@@ -13,7 +13,8 @@ mod tests {
         let root = tree.get_root();
 
         assert_eq!(root.get_operation(), Operation::None);
-        assert_eq!(root.get_value().get_data_type(), DataType::Unit);
+        assert_eq!(root.get_value(), None);
+        assert_eq!(root.get_data_type(), DataType::Unit);
     }
 
     #[test]
@@ -26,7 +27,8 @@ mod tests {
         let root = tree.get_root();
 
         assert_eq!(root.get_operation(), Operation::Touch);
-        assert_eq!(root.get_value().get_data_type(), DataType::Unit);
+        assert_eq!(root.get_value(), None);
+        assert_eq!(root.get_data_type(), DataType::Unit);
     }
 
     #[test]
@@ -39,7 +41,8 @@ mod tests {
         let root = tree.get_root();
 
         assert_eq!(root.get_operation(), Operation::Touch);
-        assert_eq!(root.get_value().get_data_type(), DataType::Input);
+        assert_eq!(root.get_value(), None);
+        assert_eq!(root.get_data_type(), DataType::Input);
     }
 
     #[test]
@@ -52,7 +55,8 @@ mod tests {
         let root = tree.get_root();
 
         assert_eq!(root.get_operation(), Operation::Touch);
-        assert_eq!(root.get_value().get_data_type(), DataType::CurrentResult);
+        assert_eq!(root.get_value(), None);
+        assert_eq!(root.get_data_type(), DataType::CurrentResult);
     }
 
     #[test]
@@ -65,7 +69,7 @@ mod tests {
         let root = tree.get_root();
 
         assert_eq!(root.get_operation(), Operation::Touch);
-        assert_eq!(root.get_value().get_data_type(), DataType::Integer);
+        assert_eq!(root.get_data_type(), DataType::Integer);
     }
 
     #[test]
@@ -78,7 +82,7 @@ mod tests {
         let root = tree.get_root();
 
         assert_eq!(root.get_operation(), Operation::Touch);
-        assert_eq!(root.get_value().get_data_type(), DataType::Decimal);
+        assert_eq!(root.get_data_type(), DataType::Decimal);
     }
 
     #[test]
@@ -91,7 +95,7 @@ mod tests {
         let root = tree.get_root();
 
         assert_eq!(root.get_operation(), Operation::Touch);
-        assert_eq!(root.get_value().get_data_type(), DataType::String);
+        assert_eq!(root.get_data_type(), DataType::String);
     }
 
     #[test]
@@ -104,7 +108,7 @@ mod tests {
         let root = tree.get_root();
 
         assert_eq!(root.get_operation(), Operation::Touch);
-        assert_eq!(root.get_value().get_data_type(), DataType::String);
+        assert_eq!(root.get_data_type(), DataType::String);
     }
 
     #[test]
@@ -117,7 +121,7 @@ mod tests {
         let root = tree.get_root();
 
         assert_eq!(root.get_operation(), Operation::Touch);
-        assert_eq!(root.get_value().get_data_type(), DataType::String);
+        assert_eq!(root.get_data_type(), DataType::String);
     }
 
     #[test]
@@ -130,6 +134,6 @@ mod tests {
         let root = tree.get_root();
 
         assert_eq!(root.get_operation(), Operation::Touch);
-        assert_eq!(root.get_value().get_data_type(), DataType::Boolean);
+        assert_eq!(root.get_data_type(), DataType::Boolean);
     }
 }

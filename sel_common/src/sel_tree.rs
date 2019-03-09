@@ -2,20 +2,10 @@ use super::data_type::DataType;
 use super::operation::Operation;
 
 #[derive(PartialEq, Debug, Clone, Copy)]
-pub struct Value {
-    data_type: DataType,
-}
-
-impl Value {
-    pub fn get_data_type(&self) -> DataType {
-        return self.data_type;
-    }
-}
-
-#[derive(PartialEq, Debug, Clone, Copy)]
 pub struct SELTreeNode {
     operation: Operation,
-    value: Value,
+    value: Option<usize>,
+    data_type: DataType,
     own_index: usize,
     parent: Option<usize>,
     left: Option<usize>,
@@ -26,15 +16,17 @@ impl SELTreeNode {
     pub fn new(op: Operation, data_type: DataType, own_index: usize) -> Self {
         return SELTreeNode {
             operation: op,
-            value: Value {
-                data_type: data_type,
-            },
-            // largest operation has two operands
+            value: None,
             left: None,
             right: None,
             parent: None,
+            data_type: data_type,
             own_index: own_index,
         };
+    }
+
+    pub fn get_data_type(&self) -> DataType {
+        return self.data_type;
     }
 
     pub fn get_own_index(&self) -> usize {
@@ -45,7 +37,7 @@ impl SELTreeNode {
         return self.operation;
     }
 
-    pub fn get_value(&self) -> Value {
+    pub fn get_value(&self) -> Option<usize> {
         return self.value;
     }
 
