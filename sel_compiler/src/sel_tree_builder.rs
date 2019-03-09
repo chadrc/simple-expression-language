@@ -59,13 +59,28 @@ impl SELTreeBuilder {
             let mut op = get_operation_type_for_token(&token);
             let data_type = get_data_type_for_token(&token);
 
+            let mut value: Option<usize> = None;
+
+            match data_type {
+                DataType::Integer => {
+                    let mut datum: Vec<u8> = vec![];
+                    let num = token.get_token_str().parse::<i64>().unwrap();
+                    datum.write_i64::<LittleEndian>(num).unwrap();
+
+                    data.push(datum);
+
+                    value = Some(data.len() - 1);
+                }
+                _ => (),
+            };
+
             if op == Operation::Subtraction && last_data_type == DataType::Unknown {
                 // if previous node is not a value
                 // this op is actually a Negation operation
                 op = Operation::Negation;
             }
 
-            let mut node = SELTreeNode::new(op, data_type, inserted_index);
+            let mut node = SELTreeNode::new(op, data_type, inserted_index, value);
 
             // because of starter node, there is always a previous node
             if inserted_index > 0 {
@@ -90,7 +105,7 @@ impl SELTreeBuilder {
         // no tokens
         // insert unit node as default
         if nodes.len() == 0 {
-            nodes.push(SELTreeNode::new(Operation::None, DataType::Unit, 0));
+            nodes.push(SELTreeNode::new(Operation::None, DataType::Unit, 0, None));
         }
 
         return (nodes, data);

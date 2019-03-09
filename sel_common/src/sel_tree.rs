@@ -1,5 +1,7 @@
 use super::data_type::DataType;
 use super::operation::Operation;
+use byteorder::{LittleEndian, ReadBytesExt};
+use std::io::Cursor;
 
 #[derive(PartialEq, Debug, Clone, Copy)]
 pub struct SELTreeNode {
@@ -13,10 +15,10 @@ pub struct SELTreeNode {
 }
 
 impl SELTreeNode {
-    pub fn new(op: Operation, data_type: DataType, own_index: usize) -> Self {
+    pub fn new(op: Operation, data_type: DataType, own_index: usize, value: Option<usize>) -> Self {
         return SELTreeNode {
             operation: op,
-            value: None,
+            value: value,
             left: None,
             right: None,
             parent: None,
@@ -88,6 +90,19 @@ impl SELTree {
 
     pub fn get_root(&self) -> &SELTreeNode {
         return &self.nodes.get(self.root).unwrap();
+    }
+
+    pub fn get_integer_value_of(&self, node: &SELTreeNode) -> Option<i64> {
+        return match node.value {
+            Some(value_index) => match self.data.get(value_index) {
+                Some(datum) => match Cursor::new(datum).read_i64::<LittleEndian>() {
+                    Ok(val) => Some(val),
+                    Err(_) => None,
+                },
+                None => None,
+            },
+            None => None,
+        };
     }
 }
 
