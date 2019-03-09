@@ -19,6 +19,17 @@ fn get_values_from_results<L: FromByteVec, R: FromByteVec>(
     return (left_val.unwrap(), right_val.unwrap());
 }
 
+fn concat_results<L: FromByteVec + ToString, R: FromByteVec + ToString>(
+    left: &SELExecutionResult,
+    right: &SELExecutionResult,
+) -> (Option<Vec<u8>>, DataType) {
+    let (left_val, right_val) = get_values_from_results::<L, R>(left, right);
+
+    let result = left_val.to_string() + &right_val.to_string();
+
+    (Some(to_byte_vec(&result)), DataType::String)
+}
+
 pub fn addition_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult {
     let left = tree.get_nodes().get(node.get_left().unwrap()).unwrap();
     let right = tree.get_nodes().get(node.get_right().unwrap()).unwrap();
@@ -62,44 +73,19 @@ pub fn addition_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionRes
             (Some(to_byte_vec(result)), DataType::Decimal)
         }
         (DataType::String, DataType::String) => {
-            let (left_val, right_val) =
-                get_values_from_results::<String, String>(&left_result, &right_result);
-
-            let result = left_val + &right_val;
-
-            (Some(to_byte_vec(&result)), DataType::String)
+            concat_results::<String, String>(&left_result, &right_result)
         }
         (DataType::String, DataType::Integer) => {
-            let (left_val, right_val) =
-                get_values_from_results::<String, i32>(&left_result, &right_result);
-
-            let result = left_val + &right_val.to_string();
-
-            (Some(to_byte_vec(&result)), DataType::String)
+            concat_results::<String, i32>(&left_result, &right_result)
         }
         (DataType::Integer, DataType::String) => {
-            let (left_val, right_val) =
-                get_values_from_results::<i32, String>(&left_result, &right_result);
-
-            let result = left_val.to_string() + &right_val;
-
-            (Some(to_byte_vec(&result)), DataType::String)
+            concat_results::<i32, String>(&left_result, &right_result)
         }
         (DataType::String, DataType::Decimal) => {
-            let (left_val, right_val) =
-                get_values_from_results::<String, f64>(&left_result, &right_result);
-
-            let result = left_val + &right_val.to_string();
-
-            (Some(to_byte_vec(&result)), DataType::String)
+            concat_results::<String, f64>(&left_result, &right_result)
         }
         (DataType::Decimal, DataType::String) => {
-            let (left_val, right_val) =
-                get_values_from_results::<f64, String>(&left_result, &right_result);
-
-            let result = left_val.to_string() + &right_val;
-
-            (Some(to_byte_vec(&result)), DataType::String)
+            concat_results::<f64, String>(&left_result, &right_result)
         }
         _ => (Some(vec![]), DataType::Unknown),
     };
