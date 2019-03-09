@@ -1,7 +1,6 @@
 use super::data_type::DataType;
 use super::operation::Operation;
-use byteorder::{LittleEndian, ReadBytesExt};
-use std::io::Cursor;
+use super::DataHeap;
 
 #[derive(PartialEq, Debug, Clone, Copy)]
 pub struct SELTreeNode {
@@ -70,13 +69,13 @@ impl SELTreeNode {
 
 #[derive(Debug, Clone)]
 pub struct SELTree {
-    data: Vec<Vec<u8>>,
+    data: DataHeap,
     root: usize,
     nodes: Vec<SELTreeNode>,
 }
 
 impl SELTree {
-    pub fn new(root: usize, nodes: Vec<SELTreeNode>, data: Vec<Vec<u8>>) -> SELTree {
+    pub fn new(root: usize, nodes: Vec<SELTreeNode>, data: DataHeap) -> SELTree {
         return SELTree {
             root: root,
             nodes: nodes,
@@ -93,59 +92,19 @@ impl SELTree {
     }
 
     pub fn get_integer_value_of(&self, node: &SELTreeNode) -> Option<i64> {
-        return match node.value {
-            Some(value_index) => match self.data.get(value_index) {
-                Some(datum) => match Cursor::new(datum).read_i64::<LittleEndian>() {
-                    Ok(val) => Some(val),
-                    Err(_) => None,
-                },
-                None => None,
-            },
-            None => None,
-        };
+        return self.data.get_integer(node.get_own_index());
     }
 
     pub fn get_decimal_value_of(&self, node: &SELTreeNode) -> Option<f64> {
-        return match node.value {
-            Some(value_index) => match self.data.get(value_index) {
-                Some(datum) => match Cursor::new(datum).read_f64::<LittleEndian>() {
-                    Ok(val) => Some(val),
-                    Err(_) => None,
-                },
-                None => None,
-            },
-            None => None,
-        };
+        return self.data.get_decimal(node.get_own_index());
     }
 
     pub fn get_string_value_of(&self, node: &SELTreeNode) -> Option<String> {
-        return match node.value {
-            Some(value_index) => match self.data.get(value_index) {
-                Some(datum) => {
-                    let cow = String::from_utf8_lossy(datum);
-                    Some(cow.to_owned().to_string())
-                }
-                None => None,
-            },
-            None => None,
-        };
+        return self.data.get_string(node.get_own_index());
     }
 
     pub fn get_boolean_value_of(&self, node: &SELTreeNode) -> Option<bool> {
-        return match node.value {
-            Some(value_index) => match self.data.get(value_index) {
-                Some(datum) => match datum.get(0) {
-                    Some(num) => match num {
-                        0 => Some(false),
-                        1 => Some(true),
-                        _ => None,
-                    },
-                    None => None,
-                },
-                None => None,
-            },
-            None => None,
-        };
+        return self.data.get_boolean(node.get_own_index());
     }
 }
 

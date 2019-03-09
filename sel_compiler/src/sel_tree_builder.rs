@@ -1,9 +1,7 @@
 use super::precedence_manager::PrecedenceManager;
 use super::utils::{get_data_type_for_token, get_operation_type_for_token, loop_max};
-use byteorder::{LittleEndian, WriteBytesExt};
-use sel_common::{DataType, NodeSide, Operation, SELTree, SELTreeNode};
+use sel_common::{DataHeap, DataType, NodeSide, Operation, SELTree, SELTreeNode};
 use sel_tokenizer::Tokenizer;
-use std::str::FromStr;
 
 #[derive(PartialEq, Debug, Clone, Copy)]
 struct Change {
@@ -44,9 +42,9 @@ impl SELTreeBuilder {
     fn make_nodes_from_tokenizer(
         &mut self,
         tokenizer: &mut Tokenizer,
-    ) -> (Vec<SELTreeNode>, Vec<Vec<u8>>) {
+    ) -> (Vec<SELTreeNode>, DataHeap) {
         let mut nodes: Vec<SELTreeNode> = vec![];
-        let mut data: Vec<Vec<u8>> = vec![];
+        let mut data: DataHeap = DataHeap::new();
 
         // loop trough all tokens
         // convert them to tree nodes
@@ -60,49 +58,7 @@ impl SELTreeBuilder {
             let mut op = get_operation_type_for_token(&token);
             let data_type = get_data_type_for_token(&token);
 
-            let mut value: Option<usize> = None;
-
-            match data_type {
-                DataType::Integer => {
-                    let mut datum: Vec<u8> = vec![];
-                    let num = token.get_token_str().parse::<i64>().unwrap();
-                    datum.write_i64::<LittleEndian>(num).unwrap();
-
-                    data.push(datum);
-
-                    value = Some(data.len() - 1);
-                }
-                DataType::Decimal => {
-                    let mut datum: Vec<u8> = vec![];
-                    let num = token.get_token_str().parse::<f64>().unwrap();
-                    datum.write_f64::<LittleEndian>(num).unwrap();
-
-                    data.push(datum);
-
-                    value = Some(data.len() - 1);
-                }
-                DataType::String => {
-                    data.push(token.get_token_str().into_bytes());
-
-                    value = Some(data.len() - 1);
-                }
-                DataType::Boolean => {
-                    let b: bool = match FromStr::from_str(&token.get_token_str()) {
-                        Ok(val) => val,
-                        Err(_) => false, // probably panic?
-                    };
-
-                    let mut datum: Vec<u8> = vec![];
-                    match b {
-                        true => datum.push(1),
-                        false => datum.push(0),
-                    }
-
-                    data.push(datum);
-                    value = Some(data.len() - 1);
-                }
-                _ => (),
-            };
+            let value = data.insert_from_string(data_type, &token.get_token_str());
 
             if op == Operation::Subtraction && last_data_type == DataType::Unknown {
                 // if previous node is not a value
