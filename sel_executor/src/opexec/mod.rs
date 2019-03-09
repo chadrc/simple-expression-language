@@ -1,4 +1,5 @@
 mod addition;
+mod division;
 mod execution_result;
 mod multiplication;
 mod subtraction;
@@ -15,6 +16,7 @@ pub fn get_node_result(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult
         Operation::Addition => addition::addition_operation(tree, node),
         Operation::Subtraction => subtraction::subtraction_operation(tree, node),
         Operation::Multiplication => multiplication::multiplication_operation(tree, node),
+        Operation::Division => division::division_operation(tree, node),
         _ => SELExecutionResult::new(DataType::Unknown, None),
     };
 }
