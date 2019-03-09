@@ -36,6 +36,14 @@ pub fn execute_sel_tree(tree: SELTree) -> SELExecutionResult {
                     data_type: DataType::Decimal,
                     value: tree.get_value_bytes_of(root),
                 },
+                DataType::String => SELExecutionResult {
+                    data_type: DataType::String,
+                    value: tree.get_value_bytes_of(root),
+                },
+                DataType::Boolean => SELExecutionResult {
+                    data_type: DataType::Boolean,
+                    value: tree.get_value_bytes_of(root),
+                },
                 _ => SELExecutionResult {
                     data_type: DataType::Unknown,
                     value: None,
@@ -136,5 +144,67 @@ mod tests {
 
         assert_eq!(result.get_type(), DataType::Decimal);
         assert_eq!(result_value, Some(3.14));
+    }
+
+    #[test]
+    fn executes_string_touch() {
+        let mut nodes: Vec<SELTreeNode> = vec![];
+        let mut heap = DataHeap::new();
+
+        let value = heap.insert_from_string(DataType::String, &String::from("Hello World"));
+        nodes.push(SELTreeNode::new(
+            Operation::Touch,
+            DataType::String,
+            0,
+            value,
+        ));
+
+        let tree = SELTree::new(0, nodes, heap);
+
+        let result = execute_sel_tree(tree);
+
+        let result_value = match result.get_value() {
+            Some(value) => {
+                let cow = String::from_utf8_lossy(value);
+                Some(cow.to_owned().to_string())
+            }
+            None => None,
+        };
+
+        assert_eq!(result.get_type(), DataType::String);
+        assert_eq!(result_value, Some(String::from("Hello World")));
+    }
+
+    #[test]
+    fn executes_boolean_touch() {
+        let mut nodes: Vec<SELTreeNode> = vec![];
+        let mut heap = DataHeap::new();
+
+        let value = heap.insert_from_string(DataType::Boolean, &String::from("true"));
+        nodes.push(SELTreeNode::new(
+            Operation::Touch,
+            DataType::Boolean,
+            0,
+            value,
+        ));
+
+        let tree = SELTree::new(0, nodes, heap);
+
+        let result = execute_sel_tree(tree);
+
+        let result_value = match result.get_value() {
+            Some(value) => match value.get(0) {
+                Some(num) => match num {
+                    0 => Some(false),
+                    1 => Some(true),
+                    _ => None,
+                },
+                None => None,
+            },
+            None => None,
+        };
+
+        assert_eq!(result.get_type(), DataType::Boolean);
+        assert_eq!(result_value, Some(true));
     }
 }
