@@ -37,9 +37,7 @@ pub fn addition_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionRes
     let left_result = get_node_result(tree, &left);
     let right_result = get_node_result(tree, &right);
 
-    let operand_types = (left_result.get_type(), right_result.get_type());
-
-    return match operand_types {
+    return match (left_result.get_type(), right_result.get_type()) {
         (DataType::Integer, DataType::Integer) => {
             let (left_val, right_val) =
                 get_values_from_results::<i32, i32>(&left_result, &right_result);
