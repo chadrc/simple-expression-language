@@ -1,6 +1,6 @@
 use super::execution_result::SELExecutionResult;
 use super::utils::{
-    get_left_right_results, get_values_from_results, match_math_ops, MathOps, OptionOr,
+    get_values_from_results, match_math_ops, MathOps, OptionOr,
 };
 use sel_common::{to_byte_vec, DataType, FromByteVec, SELTree, SELTreeNode};
 
