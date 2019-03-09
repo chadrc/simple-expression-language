@@ -87,6 +87,7 @@ pub fn addition_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionRes
         (DataType::Decimal, DataType::String) => {
             concat_results::<f64, String>(&left_result, &right_result)
         }
+        (_, DataType::Unit) => (None, DataType::Unit),
         _ => (Some(vec![]), DataType::Unknown),
     };
 
@@ -268,6 +269,20 @@ mod tests {
 
         assert_eq!(result.get_type(), DataType::String);
         assert_eq!(result_value, Some(String::from("3.14Number: ")));
+    }
+
+    #[test]
+    fn executes_integer_unit_addition() {
+        let result = result_of_binary_op(
+            Operation::Addition,
+            DataType::Integer,
+            "9",
+            DataType::Unit,
+            "()",
+        );
+
+        assert_eq!(result.get_type(), DataType::Unit);
+        assert_eq!(result.get_value(), None);
     }
 
     fn result_of_binary_op(
