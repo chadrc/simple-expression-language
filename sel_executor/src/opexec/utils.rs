@@ -37,11 +37,16 @@ where
     pub perform_float: F,
 }
 
+pub enum OptionOr<T, V> {
+    Some(T),
+    Or(V),
+}
+
 pub fn match_math_ops<I, F>(
     tree: &SELTree,
     node: &SELTreeNode,
     ops: MathOps<I, F>,
-) -> Option<SELExecutionResult>
+) -> OptionOr<SELExecutionResult, (SELExecutionResult, SELExecutionResult)>
 where
     I: Fn(i32, i32) -> i32,
     F: Fn(f64, f64) -> f64,
@@ -55,7 +60,7 @@ where
 
             let result = (ops.perform_integer)(left_val, right_val);
 
-            Some(SELExecutionResult::new(
+            OptionOr::Some(SELExecutionResult::new(
                 DataType::Integer,
                 Some(to_byte_vec(result)),
             ))
@@ -66,7 +71,7 @@ where
 
             let result = (ops.perform_float)(f64::from(left_val), right_val);
 
-            Some(SELExecutionResult::new(
+            OptionOr::Some(SELExecutionResult::new(
                 DataType::Decimal,
                 Some(to_byte_vec(result)),
             ))
@@ -77,7 +82,7 @@ where
 
             let result = (ops.perform_float)(left_val, f64::from(right_val));
 
-            Some(SELExecutionResult::new(
+            OptionOr::Some(SELExecutionResult::new(
                 DataType::Decimal,
                 Some(to_byte_vec(result)),
             ))
@@ -88,14 +93,14 @@ where
 
             let result = (ops.perform_float)(left_val, right_val);
 
-            Some(SELExecutionResult::new(
+            OptionOr::Some(SELExecutionResult::new(
                 DataType::Decimal,
                 Some(to_byte_vec(result)),
             ))
         }
         (_, DataType::Unit) | (DataType::Unit, _) => {
-            Some(SELExecutionResult::new(DataType::Unit, None))
+            OptionOr::Some(SELExecutionResult::new(DataType::Unit, None))
         }
-        _ => None,
+        _ => OptionOr::Or((left_result, right_result)),
     };
 }

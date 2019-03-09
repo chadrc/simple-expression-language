@@ -1,4 +1,4 @@
-use super::utils::{match_math_ops, MathOps};
+use super::utils::{match_math_ops, MathOps, OptionOr};
 use super::SELExecutionResult;
 use sel_common::{DataType, SELTree, SELTreeNode};
 
@@ -11,8 +11,8 @@ pub fn division_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionRes
             perform_float: |left, right| left / right,
         },
     ) {
-        Some(result) => result,
-        None => SELExecutionResult::new(DataType::Unknown, Some(vec![])),
+        OptionOr::Some(result) => result,
+        OptionOr::Or(_) => SELExecutionResult::new(DataType::Unknown, Some(vec![])),
     };
 }
 

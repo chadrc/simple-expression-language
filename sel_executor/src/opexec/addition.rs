@@ -1,5 +1,7 @@
 use super::execution_result::SELExecutionResult;
-use super::utils::{get_left_right_results, get_values_from_results, match_math_ops, MathOps};
+use super::utils::{
+    get_left_right_results, get_values_from_results, match_math_ops, MathOps, OptionOr,
+};
 use sel_common::{to_byte_vec, DataType, FromByteVec, SELTree, SELTreeNode};
 
 fn concat_results<L: FromByteVec + ToString, R: FromByteVec + ToString>(
@@ -14,8 +16,6 @@ fn concat_results<L: FromByteVec + ToString, R: FromByteVec + ToString>(
 }
 
 pub fn addition_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult {
-    let (left_result, right_result) = get_left_right_results(tree, node);
-
     return match match_math_ops(
         tree,
         node,
@@ -24,31 +24,33 @@ pub fn addition_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionRes
             perform_float: |left, right| left + right,
         },
     ) {
-        Some(result) => result,
-        None => match (left_result.get_type(), right_result.get_type()) {
-            (DataType::String, DataType::String) => {
-                concat_results::<String, String>(&left_result, &right_result)
+        OptionOr::Some(result) => result,
+        OptionOr::Or((left_result, right_result)) => {
+            match (left_result.get_type(), right_result.get_type()) {
+                (DataType::String, DataType::String) => {
+                    concat_results::<String, String>(&left_result, &right_result)
+                }
+                (DataType::String, DataType::Integer) => {
+                    concat_results::<String, i32>(&left_result, &right_result)
+                }
+                (DataType::Integer, DataType::String) => {
+                    concat_results::<i32, String>(&left_result, &right_result)
+                }
+                (DataType::String, DataType::Decimal) => {
+                    concat_results::<String, f64>(&left_result, &right_result)
+                }
+                (DataType::Decimal, DataType::String) => {
+                    concat_results::<f64, String>(&left_result, &right_result)
+                }
+                (DataType::String, DataType::Boolean) => {
+                    concat_results::<String, bool>(&left_result, &right_result)
+                }
+                (DataType::Boolean, DataType::String) => {
+                    concat_results::<bool, String>(&left_result, &right_result)
+                }
+                _ => SELExecutionResult::new(DataType::Unknown, Some(vec![])),
             }
-            (DataType::String, DataType::Integer) => {
-                concat_results::<String, i32>(&left_result, &right_result)
-            }
-            (DataType::Integer, DataType::String) => {
-                concat_results::<i32, String>(&left_result, &right_result)
-            }
-            (DataType::String, DataType::Decimal) => {
-                concat_results::<String, f64>(&left_result, &right_result)
-            }
-            (DataType::Decimal, DataType::String) => {
-                concat_results::<f64, String>(&left_result, &right_result)
-            }
-            (DataType::String, DataType::Boolean) => {
-                concat_results::<String, bool>(&left_result, &right_result)
-            }
-            (DataType::Boolean, DataType::String) => {
-                concat_results::<bool, String>(&left_result, &right_result)
-            }
-            _ => SELExecutionResult::new(DataType::Unknown, Some(vec![])),
-        },
+        }
     };
 }
 
