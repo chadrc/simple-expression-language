@@ -33,6 +33,7 @@ impl std::fmt::Display for SELExecutionResult {
             Some(val) => match self.data_type {
                 DataType::String => format!("\"{}\"", from_byte_vec::<String>(val)),
                 DataType::Integer => format!("{}", from_byte_vec::<i32>(val)),
+                DataType::Decimal => format!("{}", from_byte_vec::<f64>(val)),
                 _ => none_str,
             },
             _ => none_str,
@@ -66,5 +67,14 @@ mod tests {
         let formatted = format!("{}", result);
 
         assert_eq!(formatted, "Integer - 10");
+    }
+
+    #[test]
+    fn display_decimal() {
+        let result = SELExecutionResult::new(DataType::Decimal, Some(to_byte_vec(3.14)));
+
+        let formatted = format!("{}", result);
+
+        assert_eq!(formatted, "Decimal - 3.14");
     }
 }
