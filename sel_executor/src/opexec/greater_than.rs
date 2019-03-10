@@ -1,6 +1,6 @@
-use super::utils::{match_comparison_ops, OptionOr};
+use super::utils::{get_values_from_results, match_comparison_ops, OptionOr};
 use super::SELExecutionResult;
-use sel_common::{DataType, SELTree, SELTreeNode};
+use sel_common::{to_byte_vec, DataType, SELTree, SELTreeNode};
 
 pub fn greater_than_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult {
     return match match_comparison_ops(
@@ -10,7 +10,17 @@ pub fn greater_than_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutio
         |left, right| left > right,
     ) {
         OptionOr::Some(result) => result,
-        OptionOr::Or(_) => SELExecutionResult::new(DataType::Unknown, Some(vec![])),
+        OptionOr::Or((left, right)) => match (left.get_type(), right.get_type()) {
+            (DataType::String, DataType::String) => {
+                let (left_val, right_val) =
+                    get_values_from_results::<String, String>(&left, &right);
+
+                let result = left_val > right_val;
+
+                SELExecutionResult::new(DataType::Boolean, Some(to_byte_vec(result)))
+            }
+            _ => SELExecutionResult::new(DataType::Unknown, Some(vec![])),
+        },
     };
 }
 
@@ -93,6 +103,25 @@ mod tests {
 
         assert_eq!(result.get_type(), DataType::Boolean);
         assert_eq!(result_value, Some(3.14 > 6.45));
+    }
+
+    #[test]
+    fn executes_string() {
+        let result = result_of_binary_op(
+            Operation::GreaterThan,
+            DataType::String,
+            "Hello",
+            DataType::String,
+            "World",
+        );
+
+        let result_value = match result.get_value() {
+            Some(value) => Some(from_byte_vec(value)),
+            None => None,
+        };
+
+        assert_eq!(result.get_type(), DataType::Boolean);
+        assert_eq!(result_value, Some("Hello" > "World"));
     }
 
     #[test]
