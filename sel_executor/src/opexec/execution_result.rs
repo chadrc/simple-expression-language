@@ -34,6 +34,7 @@ impl std::fmt::Display for SELExecutionResult {
                 DataType::String => format!("\"{}\"", from_byte_vec::<String>(val)),
                 DataType::Integer => format!("{}", from_byte_vec::<i32>(val)),
                 DataType::Decimal => format!("{}", from_byte_vec::<f64>(val)),
+                DataType::Boolean => format!("{}", from_byte_vec::<bool>(val)),
                 _ => none_str,
             },
             _ => none_str,
@@ -76,5 +77,14 @@ mod tests {
         let formatted = format!("{}", result);
 
         assert_eq!(formatted, "Decimal - 3.14");
+    }
+
+    #[test]
+    fn display_bool() {
+        let result = SELExecutionResult::new(DataType::Boolean, Some(to_byte_vec(false)));
+
+        let formatted = format!("{}", result);
+
+        assert_eq!(formatted, "Boolean - false");
     }
 }
