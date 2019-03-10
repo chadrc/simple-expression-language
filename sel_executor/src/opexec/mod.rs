@@ -9,6 +9,7 @@ mod inequality;
 mod less_than;
 mod less_than_equal;
 mod logical;
+mod logical_not;
 mod modulo;
 mod multiplication;
 mod negation;
@@ -31,6 +32,7 @@ pub fn get_node_result(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult
         Operation::Negation => negation::operation(tree, node),
         Operation::LogicalOr => logical::or_operation(tree, node),
         Operation::LogicalAnd => logical::and_operation(tree, node),
+        Operation::LogicalNot => logical_not::operation(tree, node),
         Operation::GreaterThan => greater_than::operation(tree, node),
         Operation::GreaterThanOrEqual => greater_than_equal::operation(tree, node),
         Operation::LessThan => less_than::operation(tree, node),
