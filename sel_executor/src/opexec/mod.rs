@@ -5,6 +5,7 @@ mod exponential;
 mod greater_than;
 mod greater_than_equal;
 mod less_than;
+mod less_than_equal;
 mod logical;
 mod modulo;
 mod multiplication;
@@ -34,6 +35,7 @@ pub fn get_node_result(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult
             greater_than_equal::greater_than_equal_operation(tree, node)
         }
         Operation::LessThan => less_than::operation(tree, node),
+        Operation::LessThanOrEqual => less_than_equal::operation(tree, node),
         _ => SELExecutionResult::new(DataType::Unknown, None),
     };
 }
