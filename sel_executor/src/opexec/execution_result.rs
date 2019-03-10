@@ -29,14 +29,11 @@ impl std::fmt::Display for SELExecutionResult {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let none_str = String::from("None");
 
-        let val_str = match self.data_type {
-            DataType::String => match self.get_value() {
-                Some(val) => format!("\"{}\"", from_byte_vec::<String>(val)),
-                None => none_str,
-            },
-            DataType::Integer => match self.get_value() {
-                Some(val) => format!("{}", from_byte_vec::<i32>(val)),
-                None => none_str,
+        let val_str = match self.get_value() {
+            Some(val) => match self.data_type {
+                DataType::String => format!("\"{}\"", from_byte_vec::<String>(val)),
+                DataType::Integer => format!("{}", from_byte_vec::<i32>(val)),
+                _ => none_str,
             },
             _ => none_str,
         };
