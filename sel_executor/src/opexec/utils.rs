@@ -126,24 +126,37 @@ where
     );
 }
 
-pub fn match_comparison_ops<FI, FF, RI, RF>(
+pub fn match_comparison_ops<FI, FF, FS>(
     tree: &SELTree,
     node: &SELTreeNode,
     integer_func: FI,
     float_func: FF,
-) -> OptionOr<SELExecutionResult, (SELExecutionResult, SELExecutionResult)>
+    string_func: FS,
+) -> SELExecutionResult
 where
-    FI: Fn(i32, i32) -> RI,
-    FF: Fn(f64, f64) -> RF,
-    RI: ToByteVec,
-    RF: ToByteVec,
+    FI: Fn(i32, i32) -> bool,
+    FF: Fn(f64, f64) -> bool,
+    FS: Fn(&String, &String) -> bool,
 {
-    return match_int_dec_ops(
+    return match match_int_dec_ops(
         tree,
         node,
         integer_func,
         float_func,
         DataType::Boolean,
         DataType::Boolean,
-    );
+    ) {
+        OptionOr::Some(result) => result,
+        OptionOr::Or((left, right)) => match (left.get_type(), right.get_type()) {
+            (DataType::String, DataType::String) => {
+                let (left_val, right_val) =
+                    get_values_from_results::<String, String>(&left, &right);
+
+                let result = string_func(&left_val, &right_val);
+
+                SELExecutionResult::new(DataType::Boolean, Some(to_byte_vec(result)))
+            }
+            _ => SELExecutionResult::new(DataType::Unknown, Some(vec![])),
+        },
+    };
 }

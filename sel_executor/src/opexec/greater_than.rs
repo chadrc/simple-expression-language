@@ -1,27 +1,15 @@
-use super::utils::{get_values_from_results, match_comparison_ops, OptionOr};
+use super::utils::match_comparison_ops;
 use super::SELExecutionResult;
-use sel_common::{to_byte_vec, DataType, SELTree, SELTreeNode};
+use sel_common::{SELTree, SELTreeNode};
 
 pub fn greater_than_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult {
-    return match match_comparison_ops(
+    return match_comparison_ops(
         tree,
         node,
         |left, right| left > right,
         |left, right| left > right,
-    ) {
-        OptionOr::Some(result) => result,
-        OptionOr::Or((left, right)) => match (left.get_type(), right.get_type()) {
-            (DataType::String, DataType::String) => {
-                let (left_val, right_val) =
-                    get_values_from_results::<String, String>(&left, &right);
-
-                let result = left_val > right_val;
-
-                SELExecutionResult::new(DataType::Boolean, Some(to_byte_vec(result)))
-            }
-            _ => SELExecutionResult::new(DataType::Unknown, Some(vec![])),
-        },
-    };
+        |left, right| left > right,
+    );
 }
 
 #[cfg(test)]
