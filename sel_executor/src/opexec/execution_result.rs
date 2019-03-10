@@ -31,7 +31,11 @@ impl std::fmt::Display for SELExecutionResult {
 
         let val_str = match self.data_type {
             DataType::String => match self.get_value() {
-                Some(val) => format!("\"{}\"", sel_common::from_byte_vec::<String>(val)),
+                Some(val) => format!("\"{}\"", from_byte_vec::<String>(val)),
+                None => none_str,
+            },
+            DataType::Integer => match self.get_value() {
+                Some(val) => format!("{}", from_byte_vec::<i32>(val)),
                 None => none_str,
             },
             _ => none_str,
@@ -56,5 +60,14 @@ mod tests {
         let formatted = format!("{}", result);
 
         assert_eq!(formatted, "String - \"Hello World\"");
+    }
+
+    #[test]
+    fn display_int() {
+        let result = SELExecutionResult::new(DataType::Integer, Some(to_byte_vec(10)));
+
+        let formatted = format!("{}", result);
+
+        assert_eq!(formatted, "Integer - 10");
     }
 }
