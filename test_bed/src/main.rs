@@ -6,8 +6,9 @@ fn main() {
     let inputs = [
         "5 + 400 * 8 - 3",
         "3 > 5 || 89 != 43",
-        "2 * 3.14",
+        "2 * 3.14^2",
         "'Hello ' + 'World'",
+        "5 + 9 * 3 + ()",
     ];
     // let tokenizer = sel_tokenizer::Tokenizer::new(&input);
     // for token in tokenizer {
