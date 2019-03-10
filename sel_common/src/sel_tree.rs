@@ -99,19 +99,31 @@ impl SELTree {
     }
 
     pub fn get_integer_value_of(&self, node: &SELTreeNode) -> Option<i32> {
-        return self.data.get_integer(node.get_own_index());
+        return match node.get_value() {
+            Some(value_index) => self.data.get_integer(value_index),
+            None => None,
+        };
     }
 
     pub fn get_decimal_value_of(&self, node: &SELTreeNode) -> Option<f64> {
-        return self.data.get_decimal(node.get_own_index());
+        return match node.get_value() {
+            Some(value_index) => self.data.get_decimal(value_index),
+            None => None,
+        };
     }
 
     pub fn get_string_value_of(&self, node: &SELTreeNode) -> Option<String> {
-        return self.data.get_string(node.get_own_index());
+        return match node.get_value() {
+            Some(value_index) => self.data.get_string(value_index),
+            None => None,
+        };
     }
 
     pub fn get_boolean_value_of(&self, node: &SELTreeNode) -> Option<bool> {
-        return self.data.get_boolean(node.get_own_index());
+        return match node.get_value() {
+            Some(value_index) => self.data.get_boolean(value_index),
+            None => None,
+        };
     }
 }
 
