@@ -1,4 +1,5 @@
-use sel_common::DataType;
+use sel_common::{from_byte_vec, DataType};
+use std::fmt;
 
 pub struct SELExecutionResult {
     data_type: DataType,
@@ -21,5 +22,39 @@ impl SELExecutionResult {
             Some(v) => Some(&v),
             None => None,
         };
+    }
+}
+
+impl std::fmt::Display for SELExecutionResult {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let none_str = String::from("None");
+
+        let val_str = match self.data_type {
+            DataType::String => match self.get_value() {
+                Some(val) => format!("\"{}\"", sel_common::from_byte_vec::<String>(val)),
+                None => none_str,
+            },
+            _ => none_str,
+        };
+
+        write!(f, "{} - {}", self.data_type, val_str)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use sel_common::to_byte_vec;
+
+    #[test]
+    fn display_str() {
+        let result = SELExecutionResult::new(
+            DataType::String,
+            Some(to_byte_vec(&String::from("Hello World"))),
+        );
+
+        let formatted = format!("{}", result);
+
+        assert_eq!(formatted, "String - \"Hello World\"");
     }
 }
