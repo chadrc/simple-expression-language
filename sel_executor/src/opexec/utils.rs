@@ -5,17 +5,18 @@ pub fn get_values_from_results<L: FromByteVec, R: FromByteVec>(
     left: &SELExecutionResult,
     right: &SELExecutionResult,
 ) -> (L, R) {
-    let left_val: Option<L> = match left.get_value() {
+    let left_val: L = get_value_from_result(left);
+    let right_val: R = get_value_from_result(right);
+    return (left_val, right_val);
+}
+
+pub fn get_value_from_result<T: FromByteVec>(result: &SELExecutionResult) -> T {
+    let val: Option<T> = match result.get_value() {
         Some(value) => Some(from_byte_vec(value)),
         None => None,
     };
 
-    let right_val: Option<R> = match right.get_value() {
-        Some(value) => Some(from_byte_vec(value)),
-        None => None,
-    };
-
-    return (left_val.unwrap(), right_val.unwrap());
+    return val.unwrap();
 }
 
 pub fn get_left_right_results(

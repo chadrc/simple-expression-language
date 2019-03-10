@@ -92,7 +92,10 @@ impl SELTree {
     }
 
     pub fn get_value_bytes_of(&self, node: &SELTreeNode) -> Option<Vec<u8>> {
-        return self.data.get_bytes(node.get_own_index());
+        return match node.get_value() {
+            Some(value_index) => self.data.get_bytes(value_index),
+            None => None,
+        };
     }
 
     pub fn get_integer_value_of(&self, node: &SELTreeNode) -> Option<i32> {

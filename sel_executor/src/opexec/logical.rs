@@ -1,4 +1,4 @@
-use super::utils::{get_left_right_results, get_values_from_results};
+use super::utils::{get_left_right_results, get_value_from_result, get_values_from_results};
 use super::SELExecutionResult;
 use sel_common::{to_byte_vec, DataType, SELTree, SELTreeNode};
 
@@ -17,7 +17,20 @@ where
 
             SELExecutionResult::new(DataType::Boolean, Some(to_byte_vec(result)))
         }
-        (_, DataType::Unit) | (DataType::Unit, _) => SELExecutionResult::new(DataType::Unit, None),
+        (DataType::Unit, DataType::Boolean) => {
+            let right_val: bool = get_value_from_result(&right_result);
+
+            let result = f(false, right_val);
+
+            SELExecutionResult::new(DataType::Boolean, Some(to_byte_vec(result)))
+        }
+        (DataType::Boolean, DataType::Unit) => {
+            let left_val: bool = get_value_from_result(&left_result);
+
+            let result = f(left_val, false);
+
+            SELExecutionResult::new(DataType::Boolean, Some(to_byte_vec(result)))
+        }
         _ => SELExecutionResult::new(DataType::Unknown, Some(vec![])),
     };
 }
@@ -62,6 +75,82 @@ mod tests {
             "false",
             DataType::Boolean,
             "true",
+        );
+
+        let result_value = match result.get_value() {
+            Some(value) => Some(from_byte_vec(value)),
+            None => None,
+        };
+
+        assert_eq!(result.get_type(), DataType::Boolean);
+        assert_eq!(result_value, Some(false));
+    }
+
+    #[test]
+    fn executes_logical_or_unit_bool() {
+        let result = result_of_binary_op(
+            Operation::LogicalOr,
+            DataType::Unit,
+            "()",
+            DataType::Boolean,
+            "true",
+        );
+
+        let result_value = match result.get_value() {
+            Some(value) => Some(from_byte_vec(value)),
+            None => None,
+        };
+
+        assert_eq!(result.get_type(), DataType::Boolean);
+        assert_eq!(result_value, Some(true));
+    }
+
+    #[test]
+    fn executes_logical_or_bool_unit() {
+        let result = result_of_binary_op(
+            Operation::LogicalOr,
+            DataType::Boolean,
+            "true",
+            DataType::Unit,
+            "()",
+        );
+
+        let result_value = match result.get_value() {
+            Some(value) => Some(from_byte_vec(value)),
+            None => None,
+        };
+
+        assert_eq!(result.get_type(), DataType::Boolean);
+        assert_eq!(result_value, Some(true));
+    }
+
+    #[test]
+    fn executes_logical_and_unit_bool() {
+        let result = result_of_binary_op(
+            Operation::LogicalAnd,
+            DataType::Unit,
+            "()",
+            DataType::Boolean,
+            "true",
+        );
+
+        let result_value = match result.get_value() {
+            Some(value) => Some(from_byte_vec(value)),
+            None => None,
+        };
+
+        assert_eq!(result.get_type(), DataType::Boolean);
+        assert_eq!(result_value, Some(false));
+    }
+
+    #[test]
+    fn executes_logical_and_bool_unit() {
+        let result = result_of_binary_op(
+            Operation::LogicalAnd,
+            DataType::Boolean,
+            "true",
+            DataType::Unit,
+            "()",
         );
 
         let result_value = match result.get_value() {
