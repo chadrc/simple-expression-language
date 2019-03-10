@@ -2,7 +2,10 @@ use super::utils::{get_left_right_results, get_values_from_results};
 use super::SELExecutionResult;
 use sel_common::{to_byte_vec, DataType, SELTree, SELTreeNode};
 
-pub fn logical_or_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult {
+fn match_logical<F>(tree: &SELTree, node: &SELTreeNode, f: F) -> SELExecutionResult
+where
+    F: Fn(bool, bool) -> bool,
+{
     let (left_result, right_result) = get_left_right_results(tree, node);
 
     return match (left_result.get_type(), right_result.get_type()) {
@@ -10,7 +13,7 @@ pub fn logical_or_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionR
             let (left_val, right_val) =
                 get_values_from_results::<bool, bool>(&left_result, &right_result);
 
-            let result = left_val || right_val;
+            let result = f(left_val, right_val);
 
             SELExecutionResult::new(DataType::Boolean, Some(to_byte_vec(result)))
         }
@@ -19,21 +22,12 @@ pub fn logical_or_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionR
     };
 }
 
+pub fn logical_or_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult {
+    return match_logical(tree, node, |left, right| left || right);
+}
+
 pub fn logical_and_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult {
-    let (left_result, right_result) = get_left_right_results(tree, node);
-
-    return match (left_result.get_type(), right_result.get_type()) {
-        (DataType::Boolean, DataType::Boolean) => {
-            let (left_val, right_val) =
-                get_values_from_results::<bool, bool>(&left_result, &right_result);
-
-            let result = left_val && right_val;
-
-            SELExecutionResult::new(DataType::Boolean, Some(to_byte_vec(result)))
-        }
-        (_, DataType::Unit) | (DataType::Unit, _) => SELExecutionResult::new(DataType::Unit, None),
-        _ => SELExecutionResult::new(DataType::Unknown, Some(vec![])),
-    };
+    return match_logical(tree, node, |left, right| left && right);
 }
 
 #[cfg(test)]
