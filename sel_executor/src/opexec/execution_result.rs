@@ -29,16 +29,21 @@ impl std::fmt::Display for SELExecutionResult {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let none_str = String::from("None");
 
-        let val_str = match self.get_value() {
+        let mut val_str = match self.get_value() {
             Some(val) => match self.data_type {
                 DataType::String => format!("\"{}\"", from_byte_vec::<String>(val)),
                 DataType::Integer => format!("{}", from_byte_vec::<i32>(val)),
                 DataType::Decimal => format!("{}", from_byte_vec::<f64>(val)),
                 DataType::Boolean => format!("{}", from_byte_vec::<bool>(val)),
+                DataType::Unit => String::from("()"),
                 _ => none_str,
             },
             _ => none_str,
         };
+
+        if self.data_type == DataType::Unit {
+            val_str = String::from("()");
+        }
 
         write!(f, "{} - {}", self.data_type, val_str)
     }
@@ -86,5 +91,14 @@ mod tests {
         let formatted = format!("{}", result);
 
         assert_eq!(formatted, "Boolean - false");
+    }
+
+    #[test]
+    fn display_unit() {
+        let result = SELExecutionResult::new(DataType::Unit, None);
+
+        let formatted = format!("{}", result);
+
+        assert_eq!(formatted, "Unit - ()");
     }
 }
