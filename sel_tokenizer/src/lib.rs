@@ -4,8 +4,8 @@ mod token;
 mod token_type;
 mod tokenizer;
 
-pub use token_type::TokenType;
 pub use token::Token;
+pub use token_type::TokenType;
 pub use tokenizer::Tokenizer;
 
 #[cfg(test)]
@@ -46,7 +46,7 @@ mod tests {
         assert_token(
             tokens.get(0).unwrap(),
             TokenType::SingleQuotedString,
-            "'Hello World'",
+            "Hello World",
         );
     }
 
@@ -58,7 +58,7 @@ mod tests {
         assert_token(
             tokens.get(0).unwrap(),
             TokenType::SingleQuotedString,
-            "'Hello' World'",
+            "Hello' World",
         );
     }
 
@@ -70,7 +70,7 @@ mod tests {
         assert_token(
             tokens.get(0).unwrap(),
             TokenType::DoubleQuotedString,
-            "\"Hello World\"",
+            "Hello World",
         );
     }
 
@@ -82,7 +82,7 @@ mod tests {
         assert_token(
             tokens.get(0).unwrap(),
             TokenType::DoubleQuotedString,
-            "\"Hello\" World\"",
+            "Hello\" World",
         );
     }
 
@@ -94,7 +94,7 @@ mod tests {
         assert_token(
             tokens.get(0).unwrap(),
             TokenType::FormattedString,
-            "`Hello World`",
+            "Hello World",
         );
     }
 
@@ -106,7 +106,7 @@ mod tests {
         assert_token(
             tokens.get(0).unwrap(),
             TokenType::FormattedString,
-            "`Hello` World`",
+            "Hello` World",
         );
     }
 

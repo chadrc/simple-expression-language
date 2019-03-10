@@ -103,7 +103,7 @@ mod tests {
 
         assert_eq!(root.get_operation(), Operation::Touch);
         assert_eq!(root.get_data_type(), DataType::String);
-        assert_eq!(root_value, "'hello world'");
+        assert_eq!(root_value, "hello world");
     }
 
     #[test]
@@ -119,7 +119,7 @@ mod tests {
 
         assert_eq!(root.get_operation(), Operation::Touch);
         assert_eq!(root.get_data_type(), DataType::String);
-        assert_eq!(root_value, "\"hello world\"");
+        assert_eq!(root_value, "hello world");
     }
 
     #[test]
@@ -135,7 +135,7 @@ mod tests {
 
         assert_eq!(root.get_operation(), Operation::Touch);
         assert_eq!(root.get_data_type(), DataType::String);
-        assert_eq!(root_value, "`hello world`");
+        assert_eq!(root_value, "hello world");
     }
 
     #[test]

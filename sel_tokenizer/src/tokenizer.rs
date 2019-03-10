@@ -52,8 +52,6 @@ impl<'a> Tokenizer<'a> {
             return;
         }
 
-        self.current_token.push(c);
-
         match c {
             '\'' => {
                 self.current_token_type = TokenType::SingleQuotedString;
@@ -68,10 +66,12 @@ impl<'a> Tokenizer<'a> {
                 self.parse_state = ParseState::ParsingFormattedString;
             }
             '.' => {
+                self.current_token.push(c);
                 self.current_token_type = TokenType::ExclusiveRange;
                 self.parse_state = ParseState::ParsingExclusiveRange;
             }
             _ => {
+                self.current_token.push(c);
                 if c.is_numeric() {
                     self.parse_state = ParseState::ParsingInteger;
                     self.current_token_type = TokenType::Integer;
@@ -96,13 +96,14 @@ impl<'a> Tokenizer<'a> {
             self.deferred_parse_state = self.parse_state;
             self.parse_state = ParseState::EscapeCharacter;
         } else {
-            self.current_token.push(current_character);
-
             // character not escaped,
             // means its end of token
             if current_character == end_character {
                 // mark state to output token in next iteration
                 self.parse_state = ParseState::EndOfToken;
+            } else {
+                // don't add ending quote to token
+                self.current_token.push(current_character);
             }
         }
     }
