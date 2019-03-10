@@ -1,7 +1,7 @@
 use super::{get_node_result, SELExecutionResult};
 use sel_common::{from_byte_vec, to_byte_vec, DataType, SELTree, SELTreeNode};
 
-pub fn negation_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult {
+pub fn operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult {
     let right = tree.get_nodes().get(node.get_right().unwrap()).unwrap();
     let result = get_node_result(tree, &right);
 

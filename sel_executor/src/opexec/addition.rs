@@ -13,7 +13,7 @@ fn concat_results<L: FromByteVec + ToString, R: FromByteVec + ToString>(
     SELExecutionResult::new(DataType::String, Some(to_byte_vec(&result)))
 }
 
-pub fn addition_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult {
+pub fn operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult {
     return match match_math_ops(
         tree,
         node,

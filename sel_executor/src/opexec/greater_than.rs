@@ -2,7 +2,7 @@ use super::utils::match_comparison_ops;
 use super::SELExecutionResult;
 use sel_common::{SELTree, SELTreeNode};
 
-pub fn greater_than_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult {
+pub fn operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult {
     return match_comparison_ops(
         tree,
         node,

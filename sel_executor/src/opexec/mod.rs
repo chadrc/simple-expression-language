@@ -18,24 +18,21 @@ mod utils;
 
 pub use execution_result::SELExecutionResult;
 use sel_common::{DataType, Operation, SELTree, SELTreeNode};
-pub use touch::touch_operation;
 
 pub fn get_node_result(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult {
     return match node.get_operation() {
-        Operation::Touch => touch::touch_operation(tree, node),
-        Operation::Addition => addition::addition_operation(tree, node),
-        Operation::Subtraction => subtraction::subtraction_operation(tree, node),
-        Operation::Multiplication => multiplication::multiplication_operation(tree, node),
-        Operation::Division => division::division_operation(tree, node),
-        Operation::Modulo => modulo::modulo_operation(tree, node),
-        Operation::Exponential => exponential::exponential_operation(tree, node),
-        Operation::Negation => negation::negation_operation(tree, node),
-        Operation::LogicalOr => logical::logical_or_operation(tree, node),
-        Operation::LogicalAnd => logical::logical_and_operation(tree, node),
-        Operation::GreaterThan => greater_than::greater_than_operation(tree, node),
-        Operation::GreaterThanOrEqual => {
-            greater_than_equal::greater_than_equal_operation(tree, node)
-        }
+        Operation::Touch => touch::operation(tree, node),
+        Operation::Addition => addition::operation(tree, node),
+        Operation::Subtraction => subtraction::operation(tree, node),
+        Operation::Multiplication => multiplication::operation(tree, node),
+        Operation::Division => division::operation(tree, node),
+        Operation::Modulo => modulo::operation(tree, node),
+        Operation::Exponential => exponential::operation(tree, node),
+        Operation::Negation => negation::operation(tree, node),
+        Operation::LogicalOr => logical::or_operation(tree, node),
+        Operation::LogicalAnd => logical::and_operation(tree, node),
+        Operation::GreaterThan => greater_than::operation(tree, node),
+        Operation::GreaterThanOrEqual => greater_than_equal::operation(tree, node),
         Operation::LessThan => less_than::operation(tree, node),
         Operation::LessThanOrEqual => less_than_equal::operation(tree, node),
         Operation::Equality => equality::operation(tree, node),

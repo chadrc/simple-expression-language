@@ -35,11 +35,11 @@ where
     };
 }
 
-pub fn logical_or_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult {
+pub fn or_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult {
     return match_logical(tree, node, |left, right| left || right);
 }
 
-pub fn logical_and_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult {
+pub fn and_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult {
     return match_logical(tree, node, |left, right| left && right);
 }
 

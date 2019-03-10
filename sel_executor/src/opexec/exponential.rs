@@ -2,7 +2,7 @@ use super::execution_result::SELExecutionResult;
 use super::utils::{match_math_ops, OptionOr};
 use sel_common::{DataType, SELTree, SELTreeNode};
 
-pub fn exponential_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult {
+pub fn operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult {
     return match match_math_ops(
         tree,
         node,
