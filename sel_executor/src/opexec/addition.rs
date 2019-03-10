@@ -1,7 +1,5 @@
 use super::execution_result::SELExecutionResult;
-use super::utils::{
-    get_values_from_results, match_math_ops, MathOps, OptionOr,
-};
+use super::utils::{get_values_from_results, match_math_ops, OptionOr};
 use sel_common::{to_byte_vec, DataType, FromByteVec, SELTree, SELTreeNode};
 
 fn concat_results<L: FromByteVec + ToString, R: FromByteVec + ToString>(
@@ -19,10 +17,8 @@ pub fn addition_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionRes
     return match match_math_ops(
         tree,
         node,
-        MathOps {
-            perform_integer: |left, right| left + right,
-            perform_float: |left, right| left + right,
-        },
+        |left, right| left + right,
+        |left, right| left + right,
     ) {
         OptionOr::Some(result) => result,
         OptionOr::Or((left_result, right_result)) => {

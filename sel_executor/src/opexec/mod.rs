@@ -2,6 +2,7 @@ mod addition;
 mod division;
 mod execution_result;
 mod exponential;
+mod greater_than;
 mod logical;
 mod modulo;
 mod multiplication;
@@ -26,6 +27,7 @@ pub fn get_node_result(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult
         Operation::Negation => negation::negation_operation(tree, node),
         Operation::LogicalOr => logical::logical_or_operation(tree, node),
         Operation::LogicalAnd => logical::logical_and_operation(tree, node),
+        Operation::GreaterThan => greater_than::greater_than_operation(tree, node),
         _ => SELExecutionResult::new(DataType::Unknown, None),
     };
 }

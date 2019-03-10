@@ -1,13 +1,13 @@
-use super::utils::{match_math_ops, OptionOr};
+use super::utils::{match_comparison_ops, OptionOr};
 use super::SELExecutionResult;
 use sel_common::{DataType, SELTree, SELTreeNode};
 
-pub fn subtraction_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult {
-    return match match_math_ops(
+pub fn greater_than_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult {
+    return match match_comparison_ops(
         tree,
         node,
-        |left, right| left - right,
-        |left, right| left - right,
+        |left, right| left > right,
+        |left, right| left > right,
     ) {
         OptionOr::Some(result) => result,
         OptionOr::Or(_) => SELExecutionResult::new(DataType::Unknown, Some(vec![])),
@@ -20,11 +20,11 @@ mod tests {
     use sel_common::{from_byte_vec, DataType, Operation};
 
     #[test]
-    fn executes_integer_subtraction() {
+    fn executes_integer() {
         let result = result_of_binary_op(
-            Operation::Subtraction,
+            Operation::GreaterThan,
             DataType::Integer,
-            "9",
+            "10",
             DataType::Integer,
             "5",
         );
@@ -34,14 +34,14 @@ mod tests {
             None => None,
         };
 
-        assert_eq!(result.get_type(), DataType::Integer);
-        assert_eq!(result_value, Some(4));
+        assert_eq!(result.get_type(), DataType::Boolean);
+        assert_eq!(result_value, Some(10 > 5));
     }
 
     #[test]
-    fn executes_integer_decimal_subtraction() {
+    fn executes_integer_decimal() {
         let result = result_of_binary_op(
-            Operation::Subtraction,
+            Operation::GreaterThan,
             DataType::Integer,
             "9",
             DataType::Decimal,
@@ -53,14 +53,14 @@ mod tests {
             None => None,
         };
 
-        assert_eq!(result.get_type(), DataType::Decimal);
-        assert_eq!(result_value, Some(9.0 - 3.14));
+        assert_eq!(result.get_type(), DataType::Boolean);
+        assert_eq!(result_value, Some(9.0 > 3.14));
     }
 
     #[test]
-    fn executes_decimal_integer_subtraction() {
+    fn executes_decimal_integer() {
         let result = result_of_binary_op(
-            Operation::Subtraction,
+            Operation::GreaterThan,
             DataType::Decimal,
             "3.14",
             DataType::Integer,
@@ -72,14 +72,14 @@ mod tests {
             None => None,
         };
 
-        assert_eq!(result.get_type(), DataType::Decimal);
-        assert_eq!(result_value, Some(3.14 - 9.0));
+        assert_eq!(result.get_type(), DataType::Boolean);
+        assert_eq!(result_value, Some(3.14 > 9.0));
     }
 
     #[test]
-    fn executes_decimal_subtraction() {
+    fn executes_decimal() {
         let result = result_of_binary_op(
-            Operation::Subtraction,
+            Operation::GreaterThan,
             DataType::Decimal,
             "3.14",
             DataType::Decimal,
@@ -91,14 +91,14 @@ mod tests {
             None => None,
         };
 
-        assert_eq!(result.get_type(), DataType::Decimal);
-        assert_eq!(result_value, Some(3.14 - 6.45));
+        assert_eq!(result.get_type(), DataType::Boolean);
+        assert_eq!(result_value, Some(3.14 > 6.45));
     }
 
     #[test]
-    fn executes_integer_unit_subtraction() {
+    fn executes_integer_unit() {
         let result = result_of_binary_op(
-            Operation::Subtraction,
+            Operation::GreaterThan,
             DataType::Integer,
             "9",
             DataType::Unit,
@@ -110,9 +110,9 @@ mod tests {
     }
 
     #[test]
-    fn executes_unit_integer_subtraction() {
+    fn executes_unit_integer() {
         let result = result_of_binary_op(
-            Operation::Subtraction,
+            Operation::GreaterThan,
             DataType::Unit,
             "()",
             DataType::Integer,

@@ -1,4 +1,4 @@
-use super::utils::{match_math_ops, MathOps, OptionOr};
+use super::utils::{match_math_ops, OptionOr};
 use super::SELExecutionResult;
 use sel_common::{DataType, SELTree, SELTreeNode};
 
@@ -6,10 +6,8 @@ pub fn multiplication_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecut
     return match match_math_ops(
         tree,
         node,
-        MathOps {
-            perform_integer: |left, right| left * right,
-            perform_float: |left, right| left * right,
-        },
+        |left, right| left * right,
+        |left, right| left * right,
     ) {
         OptionOr::Some(result) => result,
         OptionOr::Or(_) => SELExecutionResult::new(DataType::Unknown, Some(vec![])),

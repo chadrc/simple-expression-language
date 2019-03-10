@@ -1,5 +1,7 @@
 use super::{get_node_result, SELExecutionResult};
-use sel_common::{from_byte_vec, to_byte_vec, DataType, FromByteVec, SELTree, SELTreeNode};
+use sel_common::{
+    from_byte_vec, to_byte_vec, DataType, FromByteVec, SELTree, SELTreeNode, ToByteVec,
+};
 
 pub fn get_values_from_results<L: FromByteVec, R: FromByteVec>(
     left: &SELExecutionResult,
@@ -29,28 +31,24 @@ pub fn get_left_right_results(
     return (get_node_result(tree, &left), get_node_result(tree, &right));
 }
 
-pub struct MathOps<I, F>
-where
-    I: Fn(i32, i32) -> i32,
-    F: Fn(f64, f64) -> f64,
-{
-    pub perform_integer: I,
-    pub perform_float: F,
-}
-
 pub enum OptionOr<T, V> {
     Some(T),
     Or(V),
 }
 
-pub fn match_math_ops<I, F>(
+fn match_int_dec_ops<FI, FF, RI, RF>(
     tree: &SELTree,
     node: &SELTreeNode,
-    ops: MathOps<I, F>,
+    integer_func: FI,
+    float_func: FF,
+    integer_type: DataType,
+    float_type: DataType,
 ) -> OptionOr<SELExecutionResult, (SELExecutionResult, SELExecutionResult)>
 where
-    I: Fn(i32, i32) -> i32,
-    F: Fn(f64, f64) -> f64,
+    FI: Fn(i32, i32) -> RI,
+    FF: Fn(f64, f64) -> RF,
+    RI: ToByteVec,
+    RF: ToByteVec,
 {
     let (left_result, right_result) = get_left_right_results(tree, node);
 
@@ -59,10 +57,10 @@ where
             let (left_val, right_val) =
                 get_values_from_results::<i32, i32>(&left_result, &right_result);
 
-            let result = (ops.perform_integer)(left_val, right_val);
+            let result = integer_func(left_val, right_val);
 
             OptionOr::Some(SELExecutionResult::new(
-                DataType::Integer,
+                integer_type,
                 Some(to_byte_vec(result)),
             ))
         }
@@ -70,10 +68,10 @@ where
             let (left_val, right_val) =
                 get_values_from_results::<i32, f64>(&left_result, &right_result);
 
-            let result = (ops.perform_float)(f64::from(left_val), right_val);
+            let result = float_func(f64::from(left_val), right_val);
 
             OptionOr::Some(SELExecutionResult::new(
-                DataType::Decimal,
+                float_type,
                 Some(to_byte_vec(result)),
             ))
         }
@@ -81,10 +79,10 @@ where
             let (left_val, right_val) =
                 get_values_from_results::<f64, i32>(&left_result, &right_result);
 
-            let result = (ops.perform_float)(left_val, f64::from(right_val));
+            let result = float_func(left_val, f64::from(right_val));
 
             OptionOr::Some(SELExecutionResult::new(
-                DataType::Decimal,
+                float_type,
                 Some(to_byte_vec(result)),
             ))
         }
@@ -92,10 +90,10 @@ where
             let (left_val, right_val) =
                 get_values_from_results::<f64, f64>(&left_result, &right_result);
 
-            let result = (ops.perform_float)(left_val, right_val);
+            let result = float_func(left_val, right_val);
 
             OptionOr::Some(SELExecutionResult::new(
-                DataType::Decimal,
+                float_type,
                 Some(to_byte_vec(result)),
             ))
         }
@@ -104,4 +102,48 @@ where
         }
         _ => OptionOr::Or((left_result, right_result)),
     };
+}
+
+pub fn match_math_ops<FI, FF, RI, RF>(
+    tree: &SELTree,
+    node: &SELTreeNode,
+    integer_func: FI,
+    float_func: FF,
+) -> OptionOr<SELExecutionResult, (SELExecutionResult, SELExecutionResult)>
+where
+    FI: Fn(i32, i32) -> RI,
+    FF: Fn(f64, f64) -> RF,
+    RI: ToByteVec,
+    RF: ToByteVec,
+{
+    return match_int_dec_ops(
+        tree,
+        node,
+        integer_func,
+        float_func,
+        DataType::Integer,
+        DataType::Decimal,
+    );
+}
+
+pub fn match_comparison_ops<FI, FF, RI, RF>(
+    tree: &SELTree,
+    node: &SELTreeNode,
+    integer_func: FI,
+    float_func: FF,
+) -> OptionOr<SELExecutionResult, (SELExecutionResult, SELExecutionResult)>
+where
+    FI: Fn(i32, i32) -> RI,
+    FF: Fn(f64, f64) -> RF,
+    RI: ToByteVec,
+    RF: ToByteVec,
+{
+    return match_int_dec_ops(
+        tree,
+        node,
+        integer_func,
+        float_func,
+        DataType::Boolean,
+        DataType::Boolean,
+    );
 }

@@ -1,15 +1,13 @@
 use super::execution_result::SELExecutionResult;
-use super::utils::{match_math_ops, MathOps, OptionOr};
+use super::utils::{match_math_ops, OptionOr};
 use sel_common::{DataType, SELTree, SELTreeNode};
 
 pub fn exponential_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult {
     return match match_math_ops(
         tree,
         node,
-        MathOps {
-            perform_integer: |left, right| left.pow(right as u32),
-            perform_float: |left, right| left.powf(right),
-        },
+        |left, right| left.pow(right as u32),
+        |left, right| left.powf(right),
     ) {
         OptionOr::Some(result) => result,
         OptionOr::Or(_) => SELExecutionResult::new(DataType::Unknown, Some(vec![])),
