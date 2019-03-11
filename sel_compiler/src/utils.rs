@@ -38,6 +38,7 @@ pub fn get_operation_type_for_token(token: &Token) -> Operation {
         TokenType::LogicalAnd => Operation::LogicalAnd,
         TokenType::LogicalOr => Operation::LogicalOr,
         TokenType::LogicalNot => Operation::LogicalNot,
+        TokenType::Input => Operation::Input,
         TokenType::Boolean
         | TokenType::Integer
         | TokenType::Decimal
@@ -45,7 +46,6 @@ pub fn get_operation_type_for_token(token: &Token) -> Operation {
         | TokenType::DoubleQuotedString
         | TokenType::FormattedString
         | TokenType::Unit
-        | TokenType::Input
         | TokenType::CurrentResult => Operation::Touch,
         _ => Operation::None,
     };
@@ -60,7 +60,6 @@ pub fn get_data_type_for_token(token: &Token) -> DataType {
         | TokenType::FormattedString => DataType::String,
         TokenType::Boolean => DataType::Boolean,
         TokenType::Unit => DataType::Unit,
-        TokenType::Input => DataType::Input,
         TokenType::CurrentResult => DataType::CurrentResult,
         _ => DataType::Unknown,
     };

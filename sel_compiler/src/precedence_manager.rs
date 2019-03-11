@@ -23,6 +23,7 @@ impl PrecedenceManager {
         let mut operation_priorities = HashMap::new();
 
         operation_priorities.insert(Operation::Touch, VALUE_PRECEDENCE);
+        operation_priorities.insert(Operation::Input, VALUE_PRECEDENCE);
 
         operation_priorities.insert(Operation::LogicalNot, UNARY_PRECEDENCE);
         operation_priorities.insert(Operation::Negation, UNARY_PRECEDENCE);

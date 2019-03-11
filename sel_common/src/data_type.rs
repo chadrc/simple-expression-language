@@ -8,7 +8,6 @@ pub enum DataType {
     Decimal,
     String,
     Boolean,
-    Input,
     CurrentResult,
 }
 

@@ -1,6 +1,7 @@
 #[derive(Hash, Eq, PartialEq, Debug, Clone, Copy)]
 pub enum Operation {
     Touch,
+    Input,
     Addition,
     Subtraction,
     Multiplication,

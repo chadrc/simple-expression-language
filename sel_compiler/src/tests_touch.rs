@@ -40,9 +40,9 @@ mod tests {
 
         let root = tree.get_root();
 
-        assert_eq!(root.get_operation(), Operation::Touch);
+        assert_eq!(root.get_operation(), Operation::Input);
         assert_eq!(root.get_value(), None);
-        assert_eq!(root.get_data_type(), DataType::Input);
+        assert_eq!(root.get_data_type(), DataType::Unknown);
     }
 
     #[test]
