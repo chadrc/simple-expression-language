@@ -1,11 +1,13 @@
+use super::super::context::SELContext;
 use super::execution_result::SELExecutionResult;
 use super::utils::{match_math_ops, OptionOr};
 use sel_common::{DataType, SELTree, SELTreeNode};
 
-pub fn operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult {
+pub fn operation(tree: &SELTree, node: &SELTreeNode, context: &SELContext) -> SELExecutionResult {
     return match match_math_ops(
         tree,
         node,
+        context,
         |left, right| left.pow(right as u32),
         |left, right| left.powf(right),
     ) {

@@ -1,7 +1,8 @@
+use super::super::context::SELContext;
 use super::execution_result::SELExecutionResult;
 use sel_common::{DataType, SELTree, SELTreeNode};
 
-pub fn operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult {
+pub fn operation(tree: &SELTree, node: &SELTreeNode, _context: &SELContext) -> SELExecutionResult {
     return match node.get_data_type() {
         DataType::Unit => SELExecutionResult::new(DataType::Unit, None),
         DataType::Integer | DataType::Decimal | DataType::String | DataType::Boolean => {
@@ -14,6 +15,7 @@ pub fn operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult {
 #[cfg(test)]
 mod tests {
     use super::super::get_node_result;
+    use super::*;
     use sel_common::{from_byte_vec, DataHeap, DataType, Operation, SELTree, SELTreeNode};
 
     #[test]
@@ -23,7 +25,9 @@ mod tests {
 
         let tree = SELTree::new(0, nodes, DataHeap::new());
 
-        let result = get_node_result(&tree, tree.get_root());
+        let context = SELContext::new();
+
+        let result = get_node_result(&tree, tree.get_root(), &context);
 
         assert_eq!(result.get_type(), DataType::Unit);
         assert_eq!(result.get_value(), None);
@@ -44,7 +48,9 @@ mod tests {
 
         let tree = SELTree::new(0, nodes, heap);
 
-        let result = get_node_result(&tree, tree.get_root());
+        let context = SELContext::new();
+
+        let result = get_node_result(&tree, tree.get_root(), &context);
 
         let result_value = match result.get_value() {
             Some(value) => Some(from_byte_vec(value)),
@@ -70,7 +76,9 @@ mod tests {
 
         let tree = SELTree::new(0, nodes, heap);
 
-        let result = get_node_result(&tree, tree.get_root());
+        let context = SELContext::new();
+
+        let result = get_node_result(&tree, tree.get_root(), &context);
 
         let result_value = match result.get_value() {
             Some(value) => Some(from_byte_vec(value)),
@@ -96,7 +104,9 @@ mod tests {
 
         let tree = SELTree::new(0, nodes, heap);
 
-        let result = get_node_result(&tree, tree.get_root());
+        let context = SELContext::new();
+
+        let result = get_node_result(&tree, tree.get_root(), &context);
 
         let result_value = match result.get_value() {
             Some(value) => Some(from_byte_vec(value)),
@@ -122,7 +132,9 @@ mod tests {
 
         let tree = SELTree::new(0, nodes, heap);
 
-        let result = get_node_result(&tree, tree.get_root());
+        let context = SELContext::new();
+
+        let result = get_node_result(&tree, tree.get_root(), &context);
 
         let result_value = match result.get_value() {
             Some(value) => Some(from_byte_vec(value)),

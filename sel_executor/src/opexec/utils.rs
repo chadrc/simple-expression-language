@@ -1,4 +1,4 @@
-use super::{get_node_result, SELExecutionResult};
+use super::{get_node_result, SELContext, SELExecutionResult};
 use sel_common::{
     from_byte_vec, to_byte_vec, DataType, FromByteVec, SELTree, SELTreeNode, ToByteVec,
 };
@@ -24,11 +24,15 @@ pub fn get_value_from_result<T: FromByteVec>(result: &SELExecutionResult) -> T {
 pub fn get_left_right_results(
     tree: &SELTree,
     node: &SELTreeNode,
+    context: &SELContext,
 ) -> (SELExecutionResult, SELExecutionResult) {
     let left = tree.get_nodes().get(node.get_left().unwrap()).unwrap();
     let right = tree.get_nodes().get(node.get_right().unwrap()).unwrap();
 
-    return (get_node_result(tree, &left), get_node_result(tree, &right));
+    return (
+        get_node_result(tree, &left, context),
+        get_node_result(tree, &right, context),
+    );
 }
 
 pub enum OptionOr<T, V> {
@@ -39,6 +43,7 @@ pub enum OptionOr<T, V> {
 fn match_int_dec_ops<FI, FF, RI, RF>(
     tree: &SELTree,
     node: &SELTreeNode,
+    context: &SELContext,
     integer_func: FI,
     float_func: FF,
     integer_type: DataType,
@@ -50,7 +55,7 @@ where
     RI: ToByteVec,
     RF: ToByteVec,
 {
-    let (left_result, right_result) = get_left_right_results(tree, node);
+    let (left_result, right_result) = get_left_right_results(tree, node, context);
 
     return match (left_result.get_type(), right_result.get_type()) {
         (DataType::Integer, DataType::Integer) => {
@@ -107,6 +112,7 @@ where
 pub fn match_math_ops<FI, FF, RI, RF>(
     tree: &SELTree,
     node: &SELTreeNode,
+    context: &SELContext,
     integer_func: FI,
     float_func: FF,
 ) -> OptionOr<SELExecutionResult, (SELExecutionResult, SELExecutionResult)>
@@ -119,6 +125,7 @@ where
     return match_int_dec_ops(
         tree,
         node,
+        context,
         integer_func,
         float_func,
         DataType::Integer,
@@ -129,6 +136,7 @@ where
 pub fn match_comparison_ops<FI, FF, FS>(
     tree: &SELTree,
     node: &SELTreeNode,
+    context: &SELContext,
     integer_func: FI,
     float_func: FF,
     string_func: FS,
@@ -141,6 +149,7 @@ where
     return match match_int_dec_ops(
         tree,
         node,
+        context,
         integer_func,
         float_func,
         DataType::Boolean,

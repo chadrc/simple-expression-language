@@ -1,3 +1,4 @@
+mod context;
 mod opexec;
 
 pub use opexec::SELExecutionResult;
@@ -7,7 +8,9 @@ pub fn execute_sel_tree(tree: SELTree) -> SELExecutionResult {
     if tree.get_nodes().len() > 0 {
         let root = tree.get_root();
 
-        return opexec::get_node_result(&tree, &root);
+        let context = context::SELContext::new();
+
+        return opexec::get_node_result(&tree, &root, &context);
     }
 
     return SELExecutionResult::new(DataType::Unknown, None);

@@ -1,10 +1,11 @@
+use super::super::context::SELContext;
 use super::utils::get_value_from_result;
 use super::{get_node_result, SELExecutionResult};
 use sel_common::{to_byte_vec, DataType, SELTree, SELTreeNode};
 
-pub fn operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult {
+pub fn operation(tree: &SELTree, node: &SELTreeNode, context: &SELContext) -> SELExecutionResult {
     let right = tree.get_nodes().get(node.get_right().unwrap()).unwrap();
-    let result = get_node_result(tree, &right);
+    let result = get_node_result(tree, &right, context);
 
     return match result.get_type() {
         DataType::Boolean => {
@@ -23,6 +24,7 @@ pub fn operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult {
 
 #[cfg(test)]
 mod tests {
+    use super::super::super::context;
     use super::super::get_node_result;
     use super::super::test_utils::result_of_binary_op;
     use sel_common::{from_byte_vec, DataHeap, DataType, Operation, SELTree, SELTreeNode};
@@ -51,7 +53,9 @@ mod tests {
 
         let tree = SELTree::new(1, nodes, heap);
 
-        let result = get_node_result(&tree, tree.get_root());
+        let context = context::SELContext::new();
+
+        let result = get_node_result(&tree, tree.get_root(), &context);
 
         let result_value = match result.get_value() {
             Some(value) => Some(from_byte_vec(value)),

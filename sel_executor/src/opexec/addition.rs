@@ -1,3 +1,4 @@
+use super::super::context::SELContext;
 use super::execution_result::SELExecutionResult;
 use super::utils::{get_values_from_results, match_math_ops, OptionOr};
 use sel_common::{to_byte_vec, DataType, FromByteVec, SELTree, SELTreeNode};
@@ -13,10 +14,11 @@ fn concat_results<L: FromByteVec + ToString, R: FromByteVec + ToString>(
     SELExecutionResult::new(DataType::String, Some(to_byte_vec(&result)))
 }
 
-pub fn operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult {
+pub fn operation(tree: &SELTree, node: &SELTreeNode, context: &SELContext) -> SELExecutionResult {
     return match match_math_ops(
         tree,
         node,
+        context,
         |left, right| left + right,
         |left, right| left + right,
     ) {

@@ -1,12 +1,18 @@
+use super::super::context::SELContext;
 use super::utils::{get_left_right_results, get_value_from_result, get_values_from_results};
 use super::SELExecutionResult;
 use sel_common::{to_byte_vec, DataType, SELTree, SELTreeNode};
 
-fn match_logical<F>(tree: &SELTree, node: &SELTreeNode, f: F) -> SELExecutionResult
+fn match_logical<F>(
+    tree: &SELTree,
+    node: &SELTreeNode,
+    context: &SELContext,
+    f: F,
+) -> SELExecutionResult
 where
     F: Fn(bool, bool) -> bool,
 {
-    let (left_result, right_result) = get_left_right_results(tree, node);
+    let (left_result, right_result) = get_left_right_results(tree, node, context);
 
     return match (left_result.get_type(), right_result.get_type()) {
         (DataType::Boolean, DataType::Boolean) => {
@@ -35,12 +41,20 @@ where
     };
 }
 
-pub fn or_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult {
-    return match_logical(tree, node, |left, right| left || right);
+pub fn or_operation(
+    tree: &SELTree,
+    node: &SELTreeNode,
+    context: &SELContext,
+) -> SELExecutionResult {
+    return match_logical(tree, node, context, |left, right| left || right);
 }
 
-pub fn and_operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult {
-    return match_logical(tree, node, |left, right| left && right);
+pub fn and_operation(
+    tree: &SELTree,
+    node: &SELTreeNode,
+    context: &SELContext,
+) -> SELExecutionResult {
+    return match_logical(tree, node, context, |left, right| left && right);
 }
 
 #[cfg(test)]

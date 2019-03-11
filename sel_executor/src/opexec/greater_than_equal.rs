@@ -1,11 +1,13 @@
+use super::super::context::SELContext;
 use super::utils::match_comparison_ops;
 use super::SELExecutionResult;
 use sel_common::{SELTree, SELTreeNode};
 
-pub fn operation(tree: &SELTree, node: &SELTreeNode) -> SELExecutionResult {
+pub fn operation(tree: &SELTree, node: &SELTreeNode, context: &SELContext) -> SELExecutionResult {
     return match_comparison_ops(
         tree,
         node,
+        context,
         |left, right| left >= right,
         |left, right| left >= right,
         |left, right| left >= right,
