@@ -6,6 +6,7 @@ mod utils;
 mod tests_multi_op;
 mod tests_single_op;
 mod tests_touch;
+mod tests_multi_expr;
 
 pub use compiler::Compiler;
 

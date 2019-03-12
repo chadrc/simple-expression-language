@@ -1,7 +1,7 @@
 use super::precedence_manager::PrecedenceManager;
 use super::utils::{get_data_type_for_token, get_operation_type_for_token, loop_max};
 use sel_common::{DataHeap, DataType, NodeSide, Operation, SELTree, SELTreeNode};
-use sel_tokenizer::Tokenizer;
+use sel_tokenizer::{TokenType, Tokenizer};
 
 #[derive(PartialEq, Debug, Clone, Copy)]
 struct Change {
@@ -42,18 +42,27 @@ impl SELTreeBuilder {
     fn make_nodes_from_tokenizer(
         &mut self,
         tokenizer: &mut Tokenizer,
-    ) -> (Vec<SELTreeNode>, DataHeap) {
+    ) -> (Vec<SELTreeNode>, DataHeap, Vec<usize>) {
         let mut nodes: Vec<SELTreeNode> = vec![];
         let mut data: DataHeap = DataHeap::new();
+        let mut firsts_of_group: Vec<usize> = vec![];
 
         // loop trough all tokens
         // convert them to tree nodes
         // and link them together
 
         let mut last_data_type = DataType::Unknown;
+        let mut link_next = true;
 
         for token in tokenizer {
             let inserted_index = nodes.len();
+
+            if token.get_token_type() == TokenType::LineEnd {
+                // set next token to not be linked to previous
+                // skip this token, no need to convert LineEnd to a node
+                link_next = false;
+                continue;
+            }
 
             let mut op = get_operation_type_for_token(&token);
             let data_type = get_data_type_for_token(&token);
@@ -69,7 +78,7 @@ impl SELTreeBuilder {
             let mut node = SELTreeNode::new(op, data_type, inserted_index, value);
 
             // because of starter node, there is always a previous node
-            if inserted_index > 0 {
+            if inserted_index > 0 && link_next {
                 let previous_index = inserted_index - 1;
                 match nodes.get_mut(previous_index) {
                     None => (),
@@ -78,6 +87,12 @@ impl SELTreeBuilder {
                         previous_node.set_right(Some(inserted_index));
                     }
                 }
+            }
+
+            // flip back for next node
+            if !link_next {
+                firsts_of_group.push(inserted_index);
+                link_next = true;
             }
 
             nodes.push(node);
@@ -94,12 +109,12 @@ impl SELTreeBuilder {
             nodes.push(SELTreeNode::new(Operation::None, DataType::Unit, 0, None));
         }
 
-        return (nodes, data);
+        return (nodes, data, firsts_of_group);
     }
 
-    fn find_root_index(nodes: &Vec<SELTreeNode>) -> usize {
+    fn find_root_index(nodes: &Vec<SELTreeNode>, start_index: usize) -> usize {
         // will always have at least one node
-        let mut node = nodes.get(0).unwrap();
+        let mut node = nodes.get(start_index).unwrap();
 
         loop_max(nodes.len(), || match node.get_parent() {
             None => {
@@ -221,7 +236,7 @@ impl SELTreeBuilder {
 
     fn build(&mut self, s: &String) -> SELTree {
         let mut tokenizer = Tokenizer::new(s);
-        let (mut nodes, data) = self.make_nodes_from_tokenizer(&mut tokenizer);
+        let (mut nodes, data, firsts_of_group) = self.make_nodes_from_tokenizer(&mut tokenizer);
 
         // skip VALUE_PRECEDENCE
         for bucket in self.precedence_manager.get_buckets().iter().skip(1) {
@@ -230,9 +245,19 @@ impl SELTreeBuilder {
             }
         }
 
-        let root = SELTreeBuilder::find_root_index(&nodes);
+        // firsts of group doesn't contain very first
+        // we find this one by starting at 0
+        let root = SELTreeBuilder::find_root_index(&nodes, 0);
 
-        return SELTree::new(root, nodes, data);
+        println!("roots {:?}", firsts_of_group);
+
+        // collect remaining roots by transforming firsts of group
+        let sub_roots: Vec<usize> = firsts_of_group
+            .iter()
+            .map(|first| SELTreeBuilder::find_root_index(&nodes, *first))
+            .collect();
+
+        return SELTree::new(root, sub_roots, nodes, data);
     }
 }
 

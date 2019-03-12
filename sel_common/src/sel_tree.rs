@@ -71,13 +71,20 @@ impl SELTreeNode {
 pub struct SELTree {
     data: DataHeap,
     root: usize,
+    sub_roots: Vec<usize>,
     nodes: Vec<SELTreeNode>,
 }
 
 impl SELTree {
-    pub fn new(root: usize, nodes: Vec<SELTreeNode>, data: DataHeap) -> SELTree {
+    pub fn new(
+        root: usize,
+        sub_roots: Vec<usize>,
+        nodes: Vec<SELTreeNode>,
+        data: DataHeap,
+    ) -> SELTree {
         return SELTree {
             root: root,
+            sub_roots: sub_roots,
             nodes: nodes,
             data: data,
         };
@@ -87,8 +94,19 @@ impl SELTree {
         return &self.nodes;
     }
 
+    pub fn get_sub_roots(&self) -> &Vec<usize> {
+        return &self.sub_roots;
+    }
+
     pub fn get_root(&self) -> &SELTreeNode {
         return &self.nodes.get(self.root).unwrap();
+    }
+
+    pub fn get_sub_root(&self, index: usize) -> Option<&SELTreeNode> {
+        return match self.sub_roots.get(index) {
+            Some(sub_root) => self.nodes.get(*sub_root),
+            None => None,
+        };
     }
 
     pub fn get_value_bytes_of(&self, node: &SELTreeNode) -> Option<Vec<u8>> {
