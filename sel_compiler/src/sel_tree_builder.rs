@@ -79,13 +79,13 @@ impl SELTreeBuilder {
             let mut node = SELTreeNode::new(op, data_type, inserted_index, value);
 
             if !link_next {
-                // check to see if previous node is a terminable node
+                // check to see if previous node and current node are terminable
                 // i.e. a node that can end an expression
                 // if not we need to link it
 
                 // right now only value operations can terminate an expression
                 // if last op wasn't one of those
-                if last_op != Operation::Touch {
+                if last_op != Operation::Touch || op != Operation::Touch {
                     // flip link next so we link previous node with this one
                     link_next = true;
                 }

@@ -24,8 +24,13 @@ mod tests {
     }
 
     #[test]
-    fn two_expressions_separated_by_lines() {
+    fn two_expressions_with_terminable_nodes() {
         assert_two_expressions("5 +\n 10\n15 +\n 20");
+    }
+
+    #[test]
+    fn two_expressions_with_non_terminable_nodes() {
+        assert_two_expressions("5\n+ 10\n15\n+ 20");
     }
 
     fn assert_two_expressions(s: &str) {
