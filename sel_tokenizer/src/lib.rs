@@ -270,6 +270,14 @@ mod tests {
         assert_token(tokens.get(0).unwrap(), TokenType::LineEnd, "\n");
     }
 
+    #[test]
+    fn all_token_count() {
+        let tokens = tokens_from_str(
+            "100 3.13 true 'string' \"string\" `string`\n1..10 1...10 + - * / % ^ == != < <= > >= && || !false () $ ?",
+        );
+        assert_eq!(tokens.len(), 32);
+    }
+
     // Test utils
     fn tokens_from_str(s: &str) -> Vec<Token> {
         let input = String::from(s);
