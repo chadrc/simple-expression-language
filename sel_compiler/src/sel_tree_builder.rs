@@ -249,8 +249,6 @@ impl SELTreeBuilder {
         // we find this one by starting at 0
         let root = SELTreeBuilder::find_root_index(&nodes, 0);
 
-        println!("roots {:?}", firsts_of_group);
-
         // collect remaining roots by transforming firsts of group
         let sub_roots: Vec<usize> = firsts_of_group
             .iter()

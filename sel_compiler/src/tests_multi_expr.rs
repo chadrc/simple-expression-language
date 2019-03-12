@@ -10,9 +10,6 @@ mod tests {
 
         let tree = compiler.compile(&input);
 
-        println!("nodes {:?}", tree.get_nodes());
-        println!("roots {:?}", tree.get_sub_roots());
-
         let root = tree.get_root();
 
         let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
