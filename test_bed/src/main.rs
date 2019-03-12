@@ -4,9 +4,9 @@ use sel_executor;
 
 fn main() {
     let inputs = [
-        "5 + 400 * 8 - 3",
+        "5 + $ * 8 - 3",
         "3 > 5 || 89 != 43",
-        "2 * 3.14^2",
+        "$ * 3.14^2",
         "'Hello ' + 'World'",
         "5 + 9 * 3 + ()",
     ];
@@ -17,10 +17,14 @@ fn main() {
 
     let compiler = sel_compiler::Compiler::new();
 
+    let mut context = sel_executor::SELContext::new();
+
+    context.set_input(sel_executor::SELValue::new_from_int(12345));
+
     for input in inputs.iter() {
         let tree = compiler.compile(&String::from(*input));
 
-        let result = sel_executor::execute_sel_tree(tree);
+        let result = sel_executor::execute_sel_tree(&tree, &context);
         println!("{}", result);
     }
 }
