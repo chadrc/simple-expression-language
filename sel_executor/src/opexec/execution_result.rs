@@ -1,24 +1,23 @@
-use sel_common::{from_byte_vec, DataType};
+use super::super::context::SELValue;
+use sel_common::DataType;
 use std::fmt;
 
 pub struct SELExecutionResult {
-    data_type: DataType,
-    value: Option<Vec<u8>>,
+    value: SELValue,
 }
 
 impl SELExecutionResult {
     pub fn new(data_type: DataType, value: Option<Vec<u8>>) -> Self {
         return SELExecutionResult {
-            data_type: data_type,
-            value: value,
+            value: SELValue::new_from_raw(data_type, value),
         };
     }
     pub fn get_type(&self) -> DataType {
-        return self.data_type;
+        return self.value.get_type();
     }
 
     pub fn get_value(&self) -> Option<&Vec<u8>> {
-        return match &self.value {
+        return match &self.value.get_value() {
             Some(v) => Some(&v),
             None => None,
         };
@@ -27,26 +26,13 @@ impl SELExecutionResult {
 
 impl std::fmt::Debug for SELExecutionResult {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{:?} - {}", self.data_type, self)
+        write!(f, "{:?} - {}", self.get_type(), self)
     }
 }
 
 impl std::fmt::Display for SELExecutionResult {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let none_str = String::from("None");
-
-        let val = self.get_value();
-
-        let val_str = match self.data_type {
-            DataType::String => format!("\"{}\"", from_byte_vec::<String>(val.unwrap())),
-            DataType::Integer => format!("{}", from_byte_vec::<i32>(val.unwrap())),
-            DataType::Decimal => format!("{}", from_byte_vec::<f64>(val.unwrap())),
-            DataType::Boolean => format!("{}", from_byte_vec::<bool>(val.unwrap())),
-            DataType::Unit => String::from("()"),
-            _ => none_str,
-        };
-
-        write!(f, "{}", val_str)
+        write!(f, "{}", self.value)
     }
 }
 

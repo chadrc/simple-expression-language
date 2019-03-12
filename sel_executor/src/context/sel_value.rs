@@ -14,6 +14,13 @@ impl SELValue {
         };
     }
 
+    pub fn new_from_raw(data_type: DataType, v: Option<Vec<u8>>) -> Self {
+        return SELValue {
+            data_type: data_type,
+            value: v,
+        };
+    }
+
     pub fn new_from_int(num: i32) -> Self {
         return SELValue {
             data_type: DataType::Integer,
