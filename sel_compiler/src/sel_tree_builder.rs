@@ -52,6 +52,7 @@ impl SELTreeBuilder {
         // and link them together
 
         let mut last_data_type = DataType::Unknown;
+        let mut last_op = Operation::None;
         let mut link_next = true;
 
         for token in tokenizer {
@@ -77,6 +78,19 @@ impl SELTreeBuilder {
 
             let mut node = SELTreeNode::new(op, data_type, inserted_index, value);
 
+            if !link_next {
+                // check to see if previous node is a terminable node
+                // i.e. a node that can end an expression
+                // if not we need to link it
+
+                // right now only value operations can terminate an expression
+                // if last op wasn't one of those
+                if last_op != Operation::Touch {
+                    // flip link next so we link previous node with this one
+                    link_next = true;
+                }
+            }
+
             // because of starter node, there is always a previous node
             if inserted_index > 0 && link_next {
                 let previous_index = inserted_index - 1;
@@ -101,6 +115,7 @@ impl SELTreeBuilder {
                 .add_index_with_operation(node.get_operation(), node.get_own_index());
 
             last_data_type = data_type;
+            last_op = op;
         }
 
         // no tokens

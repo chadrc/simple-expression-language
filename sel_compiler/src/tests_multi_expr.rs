@@ -23,11 +23,18 @@ mod tests {
         assert_two_expressions("5 + 10\n\n\n\n15 + 20");
     }
 
+    #[test]
+    fn two_expressions_separated_by_lines() {
+        assert_two_expressions("5 +\n 10\n15 +\n 20");
+    }
+
     fn assert_two_expressions(s: &str) {
         let input = String::from(s);
         let compiler = Compiler::new();
 
         let tree = compiler.compile(&input);
+
+        println!("roots {:?}", tree.get_sub_roots());
 
         let root = tree.get_root();
 
