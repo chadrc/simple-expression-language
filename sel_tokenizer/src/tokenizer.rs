@@ -47,7 +47,13 @@ impl<'a> Tokenizer<'a> {
     }
 
     fn start_new_token(&mut self, c: char) {
-        if c.is_whitespace() {
+        if c == '\n' {
+            // special check here to catch before whitespace check
+            self.current_token.push(c);
+            self.current_token_type = TokenType::LineEnd;
+            self.parse_state = ParseState::EndOfToken;
+            return;
+        } else if c.is_whitespace() {
             // no tokens start with a white space
             return;
         }

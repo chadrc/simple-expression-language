@@ -264,6 +264,12 @@ mod tests {
         assert_token(tokens.get(0).unwrap(), TokenType::CurrentResult, "?");
     }
 
+    #[test]
+    fn tokenize_new_line() {
+        let tokens = tokens_from_str("\n");
+        assert_token(tokens.get(0).unwrap(), TokenType::LineEnd, "\n");
+    }
+
     // Test utils
     fn tokens_from_str(s: &str) -> Vec<Token> {
         let input = String::from(s);
