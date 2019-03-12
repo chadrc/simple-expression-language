@@ -5,7 +5,26 @@ mod tests {
 
     #[test]
     fn two_expressions() {
-        let input = String::from("5 + 10\n15 + 20");
+        assert_two_expressions("5 + 10\n15 + 20");
+    }
+
+    #[test]
+    fn leading_newlines_are_dropped() {
+        assert_two_expressions("\n\n\n\n5 + 10\n15 + 20");
+    }
+
+    #[test]
+    fn tailing_newlines_are_dropped() {
+        assert_two_expressions("5 + 10\n15 + 20\n\n\n\n\n");
+    }
+
+    #[test]
+    fn extra_newlines_are_dropped() {
+        assert_two_expressions("5 + 10\n\n\n\n15 + 20");
+    }
+
+    fn assert_two_expressions(s: &str) {
+        let input = String::from(s);
         let compiler = Compiler::new();
 
         let tree = compiler.compile(&input);
