@@ -29,7 +29,7 @@ mod tests {
 
         nodes.push(root);
 
-        let tree = SELTree::new(0, nodes, heap);
+        let tree = SELTree::new(0, vec![], nodes, heap);
 
         let mut context = SELContext::new();
 
@@ -57,7 +57,7 @@ mod tests {
 
         nodes.push(root);
 
-        let tree = SELTree::new(0, nodes, heap);
+        let tree = SELTree::new(0, vec![], nodes, heap);
 
         let context = SELContext::new();
 

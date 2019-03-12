@@ -21,7 +21,7 @@ mod tests {
 
     #[test]
     fn executes_empty() {
-        let tree = SELTree::new(0, vec![], DataHeap::new());
+        let tree = SELTree::new(0, vec![], vec![], DataHeap::new());
 
         let context = context::SELContext::new();
 

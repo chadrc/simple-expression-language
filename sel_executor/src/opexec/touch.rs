@@ -23,7 +23,7 @@ mod tests {
         let mut nodes: Vec<SELTreeNode> = vec![];
         nodes.push(SELTreeNode::new(Operation::Touch, DataType::Unit, 0, None));
 
-        let tree = SELTree::new(0, nodes, DataHeap::new());
+        let tree = SELTree::new(0, vec![], nodes, DataHeap::new());
 
         let context = SELContext::new();
 
@@ -46,7 +46,7 @@ mod tests {
             value,
         ));
 
-        let tree = SELTree::new(0, nodes, heap);
+        let tree = SELTree::new(0, vec![], nodes, heap);
 
         let context = SELContext::new();
 
@@ -74,7 +74,7 @@ mod tests {
             value,
         ));
 
-        let tree = SELTree::new(0, nodes, heap);
+        let tree = SELTree::new(0, vec![], nodes, heap);
 
         let context = SELContext::new();
 
@@ -102,7 +102,7 @@ mod tests {
             value,
         ));
 
-        let tree = SELTree::new(0, nodes, heap);
+        let tree = SELTree::new(0, vec![], nodes, heap);
 
         let context = SELContext::new();
 
@@ -130,7 +130,7 @@ mod tests {
             value,
         ));
 
-        let tree = SELTree::new(0, nodes, heap);
+        let tree = SELTree::new(0, vec![], nodes, heap);
 
         let context = SELContext::new();
 

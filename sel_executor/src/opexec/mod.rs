@@ -92,7 +92,7 @@ pub mod test_utils {
         nodes.push(right);
         nodes.push(root);
 
-        let tree = SELTree::new(2, nodes, heap);
+        let tree = SELTree::new(2, vec![], nodes, heap);
 
         let context = context::SELContext::new();
 
