@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests {
     use super::super::compiler::Compiler;
-    use sel_common::{DataType, Operation};
+    use sel_common::Operation;
 
     #[test]
     fn two_expressions() {
