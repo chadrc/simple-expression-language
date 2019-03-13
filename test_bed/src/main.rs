@@ -9,6 +9,12 @@ fn main() {
         "$ * 3.14^2",
         "'Hello ' + 'World'",
         "5 + 9 * 3 + ()",
+        "
+        5 + $ * 3 / 7
+
+        'Result is: ' + ?
+        'Input is: ' + $
+        ",
     ];
     // let tokenizer = sel_tokenizer::Tokenizer::new(&input);
     // for token in tokenizer {
@@ -21,10 +27,13 @@ fn main() {
 
     context.set_input(sel_executor::SELValue::new_from_int(12345));
 
-    for input in inputs.iter() {
+    for (index, input) in inputs.iter().enumerate() {
         let tree = compiler.compile(&String::from(*input));
 
-        let result = sel_executor::execute_sel_tree(&tree, &context);
-        println!("{}", result);
+        let results = sel_executor::execute_sel_tree(&tree, &context);
+
+        for (result_index, result) in results.iter().enumerate() {
+            println!("({}:{}) {}", index, result_index, result);
+        }
     }
 }
