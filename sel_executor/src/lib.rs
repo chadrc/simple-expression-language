@@ -1,5 +1,6 @@
 mod context;
 mod opexec;
+mod tests;
 
 pub use context::SELContext;
 pub use context::SELValue;
@@ -12,22 +13,4 @@ pub fn execute_sel_tree(tree: &SELTree, context: &SELContext) -> SELExecutionRes
     }
 
     return SELExecutionResult::new(DataType::Unknown, None);
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use sel_common::{DataHeap, DataType, SELTree};
-
-    #[test]
-    fn executes_empty() {
-        let tree = SELTree::new(0, vec![], vec![], DataHeap::new());
-
-        let context = context::SELContext::new();
-
-        let result = execute_sel_tree(&tree, &context);
-
-        assert_eq!(result.get_type(), DataType::Unknown);
-        assert_eq!(result.get_value(), None);
-    }
 }
