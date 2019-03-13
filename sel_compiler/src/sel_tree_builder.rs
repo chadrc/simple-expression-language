@@ -95,7 +95,6 @@ impl SELTreeBuilder {
                 }
             }
 
-            // because of starter node, there is always a previous node
             if inserted_index > 0 && link_next {
                 let previous_index = inserted_index - 1;
                 match nodes.get_mut(previous_index) {
