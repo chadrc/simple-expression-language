@@ -66,23 +66,4 @@ mod tests {
         assert_eq!(result.get_type(), DataType::Unit);
         assert_eq!(result.get_value(), None);
     }
-
-    // #[test]
-    // fn executes_addition_op_with_input() {
-    //     let result = result_of_binary_op(
-    //         Operation::Addition,
-    //         DataType::Integer,
-    //         "9",
-    //         DataType::Integer,
-    //         "5",
-    //     );
-
-    //     let result_value = match result.get_value() {
-    //         Some(value) => Some(from_byte_vec(value)),
-    //         None => None,
-    //     };
-
-    //     assert_eq!(result.get_type(), DataType::Integer);
-    //     assert_eq!(result_value, Some(14));
-    // }
 }
