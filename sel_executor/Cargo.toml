@@ -6,3 +6,6 @@ edition = "2018"
 
 [dependencies]
 sel_common = { path = "../sel_common" }
+
+[dev-dependencies]
+sel_compiler = { path = "../sel_compiler" }

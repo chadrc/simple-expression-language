@@ -8,7 +8,6 @@ pub enum DataType {
     Decimal,
     String,
     Boolean,
-    CurrentResult,
 }
 
 impl std::fmt::Display for DataType {

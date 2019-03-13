@@ -2,6 +2,7 @@
 pub enum Operation {
     Touch,
     Input,
+    CurrentResult,
     Addition,
     Subtraction,
     Multiplication,

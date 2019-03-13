@@ -14,6 +14,7 @@ mod logical_not;
 mod modulo;
 mod multiplication;
 mod negation;
+mod result;
 mod subtraction;
 mod touch;
 mod utils;
@@ -30,6 +31,7 @@ pub fn get_node_result(
     return match node.get_operation() {
         Operation::Touch => touch::operation(tree, node, context),
         Operation::Input => input::operation(tree, node, context),
+        Operation::CurrentResult => result::operation(tree, node, context),
         Operation::Addition => addition::operation(tree, node, context),
         Operation::Subtraction => subtraction::operation(tree, node, context),
         Operation::Multiplication => multiplication::operation(tree, node, context),

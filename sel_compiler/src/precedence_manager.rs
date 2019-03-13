@@ -24,6 +24,7 @@ impl PrecedenceManager {
 
         operation_priorities.insert(Operation::Touch, VALUE_PRECEDENCE);
         operation_priorities.insert(Operation::Input, VALUE_PRECEDENCE);
+        operation_priorities.insert(Operation::CurrentResult, VALUE_PRECEDENCE);
 
         operation_priorities.insert(Operation::LogicalNot, UNARY_PRECEDENCE);
         operation_priorities.insert(Operation::Negation, UNARY_PRECEDENCE);
