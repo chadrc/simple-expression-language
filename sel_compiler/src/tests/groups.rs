@@ -103,3 +103,49 @@ fn single_group_begin() {
     assert_eq!(l2_right.get_operation(), Operation::Touch);
     assert_eq!(l2_right.get_data_type(), DataType::Integer);
 }
+
+#[test]
+fn single_group_begin_end() {
+    let input = String::from("5 * (5 + 10) * 15");
+    let compiler = Compiler::new();
+
+    let tree = compiler.compile(&input);
+
+    // tree should look like
+    //            *
+    //           / \
+    //          *  15
+    //         / \
+    //        5   +
+    //           / \
+    //          5  10
+
+    let root = tree.get_root();
+
+    let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
+    let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
+
+    let l_left = tree.get_nodes().get(left.get_left().unwrap()).unwrap();
+    let l_right = tree.get_nodes().get(left.get_right().unwrap()).unwrap();
+
+    let lr_left = tree.get_nodes().get(l_right.get_left().unwrap()).unwrap();
+    let lr_right = tree.get_nodes().get(l_right.get_right().unwrap()).unwrap();
+
+    assert_eq!(root.get_operation(), Operation::Multiplication);
+
+    assert_eq!(left.get_operation(), Operation::Multiplication);
+
+    assert_eq!(right.get_operation(), Operation::Touch);
+    assert_eq!(right.get_data_type(), DataType::Integer);
+
+    assert_eq!(l_left.get_operation(), Operation::Touch);
+    assert_eq!(l_left.get_data_type(), DataType::Integer);
+
+    assert_eq!(l_right.get_operation(), Operation::Addition);
+
+    assert_eq!(lr_left.get_operation(), Operation::Touch);
+    assert_eq!(lr_left.get_data_type(), DataType::Integer);
+
+    assert_eq!(lr_right.get_operation(), Operation::Touch);
+    assert_eq!(lr_right.get_data_type(), DataType::Integer);
+}
