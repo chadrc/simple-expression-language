@@ -1,5 +1,7 @@
 mod context;
 mod opexec;
+
+#[cfg(test)]
 mod tests;
 
 pub use context::SELContext;

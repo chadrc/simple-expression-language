@@ -1,4 +1,3 @@
-#[cfg(test)]
 mod tree_execution {
     use super::super::execute_sel_tree;
     use super::super::SELContext;
