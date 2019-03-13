@@ -3,7 +3,9 @@ use std::collections::HashMap;
 
 // lower number means higher priority
 const VALUE_PRECEDENCE: usize = 0;
-const UNARY_PRECEDENCE: usize = VALUE_PRECEDENCE + 1;
+const START_GROUP_PRECEDENCE: usize = VALUE_PRECEDENCE + 1;
+const END_GROUP_PRECEDENCE: usize = START_GROUP_PRECEDENCE + 1;
+const UNARY_PRECEDENCE: usize = END_GROUP_PRECEDENCE + 1;
 const RANGE_PRECEDENCE: usize = UNARY_PRECEDENCE + 1;
 const EXPONENTIAL_PRECEDENCE: usize = RANGE_PRECEDENCE + 1;
 const MULTIPLICATION_PRECEDENCE: usize = EXPONENTIAL_PRECEDENCE + 1;
@@ -25,6 +27,9 @@ impl PrecedenceManager {
         operation_priorities.insert(Operation::Touch, VALUE_PRECEDENCE);
         operation_priorities.insert(Operation::Input, VALUE_PRECEDENCE);
         operation_priorities.insert(Operation::CurrentResult, VALUE_PRECEDENCE);
+
+        operation_priorities.insert(Operation::StartGroup, START_GROUP_PRECEDENCE);
+        operation_priorities.insert(Operation::EndGroup, END_GROUP_PRECEDENCE);
 
         operation_priorities.insert(Operation::LogicalNot, UNARY_PRECEDENCE);
         operation_priorities.insert(Operation::Negation, UNARY_PRECEDENCE);
@@ -56,6 +61,8 @@ impl PrecedenceManager {
         let mut precedence_buckets: Vec<Vec<usize>> = vec![];
 
         precedence_buckets.push(vec![]); // VALUE_PRECEDENCE
+        precedence_buckets.push(vec![]); // START_GROUP_PRECEDENCE
+        precedence_buckets.push(vec![]); // END_GROUP_PRECEDENCE
         precedence_buckets.push(vec![]); // UNARY_PRECEDENCE
         precedence_buckets.push(vec![]); // RANGE_PRECEDENCE
         precedence_buckets.push(vec![]); // EXPONENTIAL_PRECEDENCE
@@ -74,6 +81,10 @@ impl PrecedenceManager {
 
     pub fn get_buckets(&self) -> &Vec<Vec<usize>> {
         return &self.precedence_buckets;
+    }
+
+    pub fn get_start_group_bucket(&self) -> &Vec<usize> {
+        return self.precedence_buckets.get(START_GROUP_PRECEDENCE).unwrap();
     }
 
     pub fn is_op_value_precedence(&self, op: Operation) -> bool {

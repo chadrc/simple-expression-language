@@ -40,6 +40,8 @@ pub fn get_operation_type_for_token(token: &Token) -> Operation {
         TokenType::LogicalNot => Operation::LogicalNot,
         TokenType::Input => Operation::Input,
         TokenType::CurrentResult => Operation::CurrentResult,
+        TokenType::StartGroup => Operation::StartGroup,
+        TokenType::EndGroup => Operation::EndGroup,
         TokenType::Boolean
         | TokenType::Integer
         | TokenType::Decimal

@@ -252,16 +252,88 @@ impl SELTreeBuilder {
         return nodes;
     }
 
+    fn resolve_start_group(&self, mut nodes: Vec<SELTreeNode>) -> Vec<SELTreeNode> {
+        let start_group = self.precedence_manager.get_start_group_bucket();
+
+        for node_index in start_group {
+            let mut changes: Vec<Change> = vec![];
+            {
+                let node = nodes.get(*node_index).unwrap();
+
+                changes.append(&mut none_left_right(node.get_own_index()));
+
+                let parent_index = node.get_parent();
+
+                match node.get_right() {
+                    Some(right_index) => match nodes.get(right_index) {
+                        Some(mut right_node) => {
+                            loop_max(nodes.len(), || match right_node.get_parent() {
+                                None => {
+                                    return;
+                                }
+                                Some(parent_index) => {
+                                    if parent_index == right_node.get_own_index() {
+                                        return;
+                                    }
+
+                                    right_node = nodes.get(parent_index).unwrap();
+                                }
+                            });
+
+                            match parent_index {
+                                Some(i) => {
+                                    changes.push(Change {
+                                        index_to_change: i,
+                                        new_index: Some(right_node.get_own_index()),
+                                        side_to_set: NodeSide::Right,
+                                    });
+                                }
+                                None => (),
+                            }
+
+                            changes.push(Change {
+                                index_to_change: right_node.get_own_index(),
+                                new_index: parent_index,
+                                side_to_set: NodeSide::Parent,
+                            });
+                        }
+                        None => (),
+                    },
+                    None => (),
+                }
+            }
+
+            {
+                let nodes = &mut nodes;
+
+                for change in changes {
+                    let node = nodes.get_mut(change.index_to_change).unwrap();
+
+                    match change.side_to_set {
+                        NodeSide::Left => node.set_left(change.new_index),
+                        NodeSide::Right => node.set_right(change.new_index),
+                        NodeSide::Parent => node.set_parent(change.new_index),
+                    }
+                }
+            }
+        }
+
+        return nodes;
+    }
+
     fn build(&mut self, s: &String) -> SELTree {
         let mut tokenizer = Tokenizer::new(s);
         let (mut nodes, data, firsts_of_group) = self.make_nodes_from_tokenizer(&mut tokenizer);
 
-        // skip VALUE_PRECEDENCE
-        for bucket in self.precedence_manager.get_buckets().iter().skip(1) {
+        // skip value and group precedences
+        for bucket in self.precedence_manager.get_buckets().iter().skip(3) {
             if bucket.len() > 0 {
                 nodes = self.resolve_tree(nodes, &bucket);
             }
         }
+
+        // special logic to resolve groups
+        nodes = self.resolve_start_group(nodes);
 
         // firsts of group doesn't contain very first
         // we find this one by starting at 0

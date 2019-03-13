@@ -21,5 +21,7 @@ pub enum Operation {
     LogicalAnd,
     LogicalOr,
     LogicalNot,
+    StartGroup,
+    EndGroup,
     None,
 }
