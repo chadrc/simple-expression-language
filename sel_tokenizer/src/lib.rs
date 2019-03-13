@@ -271,6 +271,18 @@ mod tests {
     }
 
     #[test]
+    fn tokenize_start_group() {
+        let tokens = tokens_from_str("(");
+        assert_token(tokens.get(0).unwrap(), TokenType::StartGroup, "(");
+    }
+
+    #[test]
+    fn tokenize_end_group() {
+        let tokens = tokens_from_str(")");
+        assert_token(tokens.get(0).unwrap(), TokenType::EndGroup, ")");
+    }
+
+    #[test]
     fn all_token_count() {
         let tokens = tokens_from_str(
             "100 3.13 true 'string' \"string\" `string`\n1..10 1...10 + - * / % ^ == != < <= > >= && || !false () $ ?",

@@ -35,6 +35,8 @@ impl<'a> Tokenizer<'a> {
         symbol_tree.attach("!", TokenType::LogicalNot);
         symbol_tree.attach("$", TokenType::Input);
         symbol_tree.attach("?", TokenType::CurrentResult);
+        symbol_tree.attach("(", TokenType::StartGroup);
+        symbol_tree.attach(")", TokenType::EndGroup);
 
         return Tokenizer {
             current_token: String::new(),
