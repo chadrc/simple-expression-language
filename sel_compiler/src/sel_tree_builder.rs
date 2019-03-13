@@ -28,6 +28,10 @@ fn none_left_right(index: usize) -> Vec<Change> {
     return changes;
 }
 
+fn op_is_terminable(op: Operation) -> bool {
+    return op == Operation::Touch || op == Operation::Input;
+}
+
 struct SELTreeBuilder {
     precedence_manager: PrecedenceManager,
 }
@@ -85,7 +89,7 @@ impl SELTreeBuilder {
 
                 // right now only value operations can terminate an expression
                 // if last op wasn't one of those
-                if last_op != Operation::Touch || op != Operation::Touch {
+                if !op_is_terminable(last_op) || !op_is_terminable(op) {
                     // flip link next so we link previous node with this one
                     link_next = true;
                 }
