@@ -2,6 +2,7 @@ use super::super::context::SELValue;
 use sel_common::DataType;
 use std::fmt;
 
+#[derive(Clone)]
 pub struct SELExecutionResult {
     value: SELValue,
 }

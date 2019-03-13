@@ -1,6 +1,7 @@
 use sel_common::{from_byte_vec, to_byte_vec, DataType};
 use std::fmt;
 
+#[derive(Clone)]
 pub struct SELValue {
     data_type: DataType,
     value: Option<Vec<u8>>,

@@ -2,15 +2,23 @@ use super::{SELContext, SELExecutionResult};
 use sel_common::{DataType, SELTree, SELTreeNode};
 
 pub fn operation(_tree: &SELTree, _node: &SELTreeNode, context: &SELContext) -> SELExecutionResult {
-    return match context.get_input() {
-        Some(input) => SELExecutionResult::new(
-            input.get_type(),
-            match input.get_value() {
-                Some(value) => Some(std::vec::Vec::from(value.as_slice())),
-                None => None,
-            },
-        ),
-        None => SELExecutionResult::new(DataType::Unit, None),
+    return if context.get_results().len() > 0 {
+        // if there is are results in context
+        // clone the latest one and use it as the result
+        let last = context.get_results().len() - 1;
+        context.get_results().get(last).unwrap().clone()
+    } else {
+        // else use input as the result
+        match context.get_input() {
+            Some(input) => SELExecutionResult::new(
+                input.get_type(),
+                match input.get_value() {
+                    Some(value) => Some(std::vec::Vec::from(value.as_slice())),
+                    None => None,
+                },
+            ),
+            None => SELExecutionResult::new(DataType::Unit, None),
+        }
     };
 }
 

@@ -46,4 +46,32 @@ mod tree_execution {
         assert_eq!(second_result.get_type(), DataType::Integer);
         assert_eq!(second_result_value, Some(35));
     }
+
+    #[test]
+    fn current_result_usage() {
+        let compiler = Compiler::new();
+        let tree = compiler.compile(&String::from("5 + 10\n? + 20"));
+
+        let context = SELContext::new();
+
+        let results = execute_sel_tree(&tree, &context);
+
+        let first_result = results.get(0).unwrap();
+        let first_result_value = match first_result.get_value() {
+            Some(value) => Some(from_byte_vec(value)),
+            None => None,
+        };
+
+        assert_eq!(first_result.get_type(), DataType::Integer);
+        assert_eq!(first_result_value, Some(15));
+
+        let second_result = results.get(1).unwrap();
+        let second_result_value = match second_result.get_value() {
+            Some(value) => Some(from_byte_vec(value)),
+            None => None,
+        };
+
+        assert_eq!(second_result.get_type(), DataType::Integer);
+        assert_eq!(second_result_value, Some(35));
+    }
 }
