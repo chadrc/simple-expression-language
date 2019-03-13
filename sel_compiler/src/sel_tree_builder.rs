@@ -130,9 +130,26 @@ impl SELTreeBuilder {
         return (nodes, data, firsts_of_group);
     }
 
-    fn find_root_index(nodes: &Vec<SELTreeNode>, start_index: usize) -> usize {
-        // will always have at least one node
-        let mut node = nodes.get(start_index).unwrap();
+    fn find_root_index(nodes: &Vec<SELTreeNode>, start_index: Option<usize>) -> usize {
+        let mut node = match start_index {
+            Some(index) => nodes.get(index).unwrap(),
+            None => {
+                // find first node in tree
+                let start_index = 0;
+
+                let mut node = nodes.get(start_index).unwrap();
+
+                // find first node in tree
+                // need this until we clean up orphan nodes
+                while node.get_operation() == Operation::StartGroup
+                    || node.get_operation() == Operation::EndGroup
+                {
+                    node = nodes.get(node.get_own_index() + 1).unwrap();
+                }
+
+                node
+            }
+        };
 
         loop_max(nodes.len(), || match node.get_parent() {
             None => {
@@ -321,6 +338,81 @@ impl SELTreeBuilder {
         return nodes;
     }
 
+    fn resolve_end_group(&self, mut nodes: Vec<SELTreeNode>) -> Vec<SELTreeNode> {
+        let end_group = self.precedence_manager.get_end_group_bucket();
+
+        for node_index in end_group {
+            let mut changes: Vec<Change> = vec![];
+            {
+                let node = nodes.get(*node_index).unwrap();
+
+                changes.append(&mut none_left_right(node.get_own_index()));
+
+                changes.push(Change {
+                    index_to_change: node.get_own_index(),
+                    new_index: None,
+                    side_to_set: NodeSide::Parent,
+                });
+
+                let node_parent_index = node.get_parent();
+
+                match node.get_left() {
+                    Some(left_index) => match nodes.get(left_index) {
+                        Some(mut left_node) => {
+                            loop_max(nodes.len(), || match left_node.get_parent() {
+                                None => {
+                                    return;
+                                }
+                                Some(parent_index) => {
+                                    if parent_index == left_node.get_own_index() {
+                                        return;
+                                    }
+
+                                    left_node = nodes.get(parent_index).unwrap();
+                                }
+                            });
+
+                            match node_parent_index {
+                                Some(i) => {
+                                    changes.push(Change {
+                                        index_to_change: i,
+                                        new_index: Some(left_node.get_own_index()),
+                                        side_to_set: NodeSide::Left,
+                                    });
+                                }
+                                None => (),
+                            }
+
+                            changes.push(Change {
+                                index_to_change: left_node.get_own_index(),
+                                new_index: node_parent_index,
+                                side_to_set: NodeSide::Parent,
+                            });
+                        }
+                        None => (),
+                    },
+                    None => (),
+                }
+            }
+
+            {
+                let nodes = &mut nodes;
+
+                for change in changes {
+                    let node = nodes.get_mut(change.index_to_change).unwrap();
+
+                    match change.side_to_set {
+                        NodeSide::Left => node.set_left(change.new_index),
+                        NodeSide::Right => node.set_right(change.new_index),
+                        NodeSide::Parent => node.set_parent(change.new_index),
+                    }
+                }
+            }
+        }
+
+        return nodes;
+    }
+
     fn build(&mut self, s: &String) -> SELTree {
         let mut tokenizer = Tokenizer::new(s);
         let (mut nodes, data, firsts_of_group) = self.make_nodes_from_tokenizer(&mut tokenizer);
@@ -334,15 +426,16 @@ impl SELTreeBuilder {
 
         // special logic to resolve groups
         nodes = self.resolve_start_group(nodes);
+        nodes = self.resolve_end_group(nodes);
 
         // firsts of group doesn't contain very first
         // we find this one by starting at 0
-        let root = SELTreeBuilder::find_root_index(&nodes, 0);
+        let root = SELTreeBuilder::find_root_index(&nodes, None);
 
         // collect remaining roots by transforming firsts of group
         let sub_roots: Vec<usize> = firsts_of_group
             .iter()
-            .map(|first| SELTreeBuilder::find_root_index(&nodes, *first))
+            .map(|first| SELTreeBuilder::find_root_index(&nodes, Some(*first)))
             .collect();
 
         return SELTree::new(root, sub_roots, nodes, data);

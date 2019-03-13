@@ -87,6 +87,10 @@ impl PrecedenceManager {
         return self.precedence_buckets.get(START_GROUP_PRECEDENCE).unwrap();
     }
 
+    pub fn get_end_group_bucket(&self) -> &Vec<usize> {
+        return self.precedence_buckets.get(END_GROUP_PRECEDENCE).unwrap();
+    }
+
     pub fn is_op_value_precedence(&self, op: Operation) -> bool {
         return match self.operation_priorities.get(&op) {
             None => false,
