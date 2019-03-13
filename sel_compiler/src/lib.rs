@@ -3,15 +3,13 @@ mod precedence_manager;
 mod sel_tree_builder;
 mod utils;
 
-mod tests_multi_op;
-mod tests_single_op;
-mod tests_touch;
-mod tests_multi_expr;
+#[cfg(test)]
+mod tests;
 
 pub use compiler::Compiler;
 
 #[cfg(test)]
-mod tests {
+mod compiler_tests {
     use super::compiler::Compiler;
 
     #[test]
