@@ -43,16 +43,15 @@ mod tests {
         assert_two_expressions("5\n+ 10\n$\n+ 20");
     }
 
-    // TODO: finish when result is converted to an operation
-    // #[test]
-    // fn two_expressions_with_terminable_nodes_with_result() {
-    //     assert_two_expressions("5 +\n 10\n? +\n 20");
-    // }
+    #[test]
+    fn two_expressions_with_terminable_nodes_with_result() {
+        assert_two_expressions("5 +\n 10\n? +\n 20");
+    }
 
-    // #[test]
-    // fn two_expressions_with_non_terminable_nodes_with_result() {
-    //     assert_two_expressions("5\n+ 10\n$\n+ 20");
-    // }
+    #[test]
+    fn two_expressions_with_non_terminable_nodes_with_result() {
+        assert_two_expressions("5\n+ 10\n?\n+ 20");
+    }
 
     fn assert_two_expressions(s: &str) {
         let input = String::from(s);

@@ -29,7 +29,7 @@ fn none_left_right(index: usize) -> Vec<Change> {
 }
 
 fn op_is_terminable(op: Operation) -> bool {
-    return op == Operation::Touch || op == Operation::Input;
+    return op == Operation::Touch || op == Operation::Input || op == Operation::CurrentResult;
 }
 
 struct SELTreeBuilder {
