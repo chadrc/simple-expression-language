@@ -158,6 +158,10 @@ impl PrecedenceManager {
             .unwrap();
     }
 
+    pub fn get_current_tier(&self) -> usize {
+        return self.current_tier;
+    }
+
     // TODO: make static along with op priorities struct
     pub fn is_op_value_precedence(&self, op: Operation) -> bool {
         return match self.operation_priorities.get(&op) {
@@ -394,5 +398,59 @@ mod tests {
         assert_eq!(first_group.parent, 0);
         assert_eq!(second_group.parent, 2);
         assert_eq!(third_group.parent, 4);
+    }
+
+    #[test]
+    fn complete_groups() {
+        let mut manager = PrecedenceManager::new();
+        manager.add_index_with_operation(Operation::Touch, 0);
+
+        manager.start_group();
+
+        manager.add_index_with_operation(Operation::Touch, 1);
+        manager.add_index_with_operation(Operation::Touch, 2);
+
+        manager.start_group();
+
+        manager.add_index_with_operation(Operation::Touch, 3);
+        manager.add_index_with_operation(Operation::Touch, 4);
+
+        manager.start_group();
+
+        manager.add_index_with_operation(Operation::Touch, 5);
+        manager.add_index_with_operation(Operation::Touch, 6);
+
+        manager.end_group();
+        manager.end_group();
+        manager.end_group();
+
+        // all groups have been closed if current tier is 0
+        assert_eq!(manager.get_current_tier(), 0);;
+    }
+
+    #[test]
+    fn incomplete_groups() {
+        let mut manager = PrecedenceManager::new();
+        manager.add_index_with_operation(Operation::Touch, 0);
+
+        manager.start_group();
+
+        manager.add_index_with_operation(Operation::Touch, 1);
+        manager.add_index_with_operation(Operation::Touch, 2);
+
+        manager.start_group();
+
+        manager.add_index_with_operation(Operation::Touch, 3);
+        manager.add_index_with_operation(Operation::Touch, 4);
+
+        manager.start_group();
+
+        manager.add_index_with_operation(Operation::Touch, 5);
+        manager.add_index_with_operation(Operation::Touch, 6);
+
+        manager.end_group();
+
+        // one or more groups are still open
+        assert_eq!(manager.get_current_tier(), 2);
     }
 }
