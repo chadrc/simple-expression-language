@@ -135,27 +135,12 @@ impl PrecedenceManager {
             .unwrap();
     }
 
-    pub fn get_buckets(&self) -> &Vec<Vec<usize>> {
-        return &self.current_group().members;
-    }
-
     pub fn get_group_tiers(&self) -> &Vec<Vec<PrecedenceGroup>> {
         return &self.precedence_groups;
     }
 
     pub fn get_current_tier(&self) -> usize {
         return self.current_tier;
-    }
-
-    // TODO: make static along with op priorities struct
-    pub fn is_op_value_precedence(&self, op: Operation) -> bool {
-        return match self.operation_priorities.get(&op) {
-            None => false,
-            Some(precedence) => match precedence {
-                &VALUE_PRECEDENCE => true,
-                _ => false,
-            },
-        };
     }
 
     pub fn add_index_with_operation(&mut self, op: Operation, index: usize) {
@@ -217,6 +202,17 @@ impl PrecedenceManager {
         // higher precedence's have lower priority
         op_precedence > relative_precedence
     }
+
+    // TODO: make static along with op priorities struct
+    pub fn is_op_value_precedence(&self, op: Operation) -> bool {
+        return match self.operation_priorities.get(&op) {
+            None => false,
+            Some(precedence) => match precedence {
+                &VALUE_PRECEDENCE => true,
+                _ => false,
+            },
+        };
+    }
 }
 
 #[cfg(test)]
@@ -234,7 +230,9 @@ mod tests {
         let mut manager = PrecedenceManager::new();
         manager.add_index_with_operation(Operation::Touch, 0);
 
-        let buckets = manager.get_buckets();
+        let group_tiers = manager.get_group_tiers();
+        let group = group_tiers.get(0).unwrap().get(0).unwrap();
+        let buckets = group.get_members();
         let value_bucket = buckets.get(VALUE_PRECEDENCE).unwrap();
 
         assert_eq!(value_bucket.len(), 1);
