@@ -349,11 +349,19 @@ mod tests {
         assert_eq!(group_tiers.len(), 4);
 
         let first_tier = group_tiers.get(1).unwrap();
-        let second_tier = group_tiers.get(1).unwrap();
-        let third_tier = group_tiers.get(1).unwrap();
+        let second_tier = group_tiers.get(2).unwrap();
+        let third_tier = group_tiers.get(3).unwrap();
 
         assert_eq!(first_tier.len(), 1);
         assert_eq!(second_tier.len(), 1);
         assert_eq!(third_tier.len(), 1);
+
+        let first_group = first_tier.get(0).unwrap();
+        let second_group = second_tier.get(0).unwrap();
+        let third_group = third_tier.get(0).unwrap();
+
+        assert_eq!(first_group.parent, 0);
+        assert_eq!(second_group.parent, 2);
+        assert_eq!(third_group.parent, 4);
     }
 }
