@@ -19,6 +19,7 @@ pub struct PrecedenceGroup {
     parent: usize,
     first: usize,
     last: usize,
+    count: usize,
     members: Vec<Vec<usize>>,
 }
 
@@ -42,6 +43,7 @@ impl PrecedenceGroup {
         return PrecedenceGroup {
             first: 0,
             last: 0,
+            count: 0,
             members,
             parent,
         };
@@ -170,6 +172,9 @@ impl PrecedenceManager {
     pub fn add_index_with_operation(&mut self, op: Operation, index: usize) {
         let precedence = *self.operation_priorities.get(&op).unwrap();
 
+        if self.current_group().count == 0 {
+            self.current_group_mut().first = index;
+        }
         self.current_group_mut().last = index;
         match self.current_group_mut().members.get_mut(precedence) {
             None => (),
@@ -177,6 +182,8 @@ impl PrecedenceManager {
                 bucket.push(index);
             }
         }
+
+        self.current_group_mut().count += 1;
     }
 
     pub fn start_group(&mut self) {
@@ -273,6 +280,30 @@ mod tests {
                 .len(),
             2
         );
+    }
+
+    #[test]
+    fn group_range() {
+        let mut manager = PrecedenceManager::new();
+        manager.add_index_with_operation(Operation::Touch, 0);
+
+        manager.start_group();
+
+        manager.add_index_with_operation(Operation::Touch, 1);
+        manager.add_index_with_operation(Operation::Touch, 2);
+        manager.add_index_with_operation(Operation::Touch, 3);
+        manager.add_index_with_operation(Operation::Touch, 4);
+
+        manager.end_group();
+
+        manager.add_index_with_operation(Operation::Touch, 5);
+        manager.add_index_with_operation(Operation::Touch, 6);
+
+        let group = manager.get_group_tiers().get(1).unwrap().get(0).unwrap();
+
+        assert_eq!(group.parent, 0);
+        assert_eq!(group.first, 1);
+        assert_eq!(group.last, 4);
     }
 
     #[test]
