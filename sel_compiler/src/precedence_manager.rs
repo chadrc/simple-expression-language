@@ -131,10 +131,23 @@ impl PrecedenceManager {
 
 #[cfg(test)]
 mod tests {
-    use crate::precedence_manager::PrecedenceManager;
+    use super::*;
+    use sel_common::Operation;
 
     #[test]
     fn create() {
         PrecedenceManager::new();
+    }
+
+    #[test]
+    fn add_operation() {
+        let mut manager = PrecedenceManager::new();
+        manager.add_index_with_operation(Operation::Touch, 0);
+
+        let buckets = manager.get_buckets();
+        let value_bucket = buckets.get(VALUE_PRECEDENCE).unwrap();
+
+        assert_eq!(value_bucket.len(), 1);
+        assert_eq!(*value_bucket.get(0).unwrap(), 0);
     }
 }
