@@ -54,7 +54,6 @@ impl PrecedenceGroup {
 
 pub struct PrecedenceManager {
     operation_priorities: HashMap<Operation, usize>,
-    //    precedence_buckets: Vec<Vec<usize>>,
     precedence_groups: Vec<Vec<PrecedenceGroup>>,
     current_tier: usize,
     current_group: usize,
@@ -105,7 +104,6 @@ impl PrecedenceManager {
 
         return PrecedenceManager {
             operation_priorities,
-            //            precedence_buckets,
             precedence_groups,
             current_tier: 0,
             current_group: 0,
