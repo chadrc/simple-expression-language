@@ -237,7 +237,7 @@ mod tests {
     }
 
     #[test]
-    fn start_group() {
+    fn single_grouping() {
         let mut manager = PrecedenceManager::new();
         manager.add_index_with_operation(Operation::Touch, 0);
 
