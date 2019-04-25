@@ -278,164 +278,16 @@ impl SELTreeBuilder {
         return nodes;
     }
 
-    fn resolve_start_group(&self, mut nodes: Vec<SELTreeNode>) -> Vec<SELTreeNode> {
-        let start_group = self.precedence_manager.get_start_group_bucket();
-
-        for node_index in start_group {
-            let mut changes: Vec<Change> = vec![];
-            {
-                let node = nodes.get(*node_index).unwrap();
-
-                changes.append(&mut none_left_right(node.get_own_index()));
-
-                let parent_index = node.get_parent();
-
-                match node.get_right() {
-                    Some(right_index) => match nodes.get(right_index) {
-                        Some(mut right_node) => {
-                            loop_max(nodes.len(), || match right_node.get_parent() {
-                                None => {
-                                    return;
-                                }
-                                Some(parent_index) => {
-                                    if parent_index == right_node.get_own_index() {
-                                        return;
-                                    }
-
-                                    right_node = nodes.get(parent_index).unwrap();
-                                }
-                            });
-
-                            match parent_index {
-                                Some(i) => {
-                                    changes.push(Change {
-                                        index_to_change: i,
-                                        new_index: Some(right_node.get_own_index()),
-                                        side_to_set: NodeSide::Right,
-                                    });
-                                }
-                                None => (),
-                            }
-
-                            changes.push(Change {
-                                index_to_change: right_node.get_own_index(),
-                                new_index: parent_index,
-                                side_to_set: NodeSide::Parent,
-                            });
-                        }
-                        None => (),
-                    },
-                    None => (),
-                }
-            }
-
-            {
-                let nodes = &mut nodes;
-
-                for change in changes {
-                    let node = nodes.get_mut(change.index_to_change).unwrap();
-
-                    match change.side_to_set {
-                        NodeSide::Left => node.set_left(change.new_index),
-                        NodeSide::Right => node.set_right(change.new_index),
-                        NodeSide::Parent => node.set_parent(change.new_index),
-                    }
-                }
-            }
-        }
-
-        return nodes;
-    }
-
-    fn resolve_end_group(&self, mut nodes: Vec<SELTreeNode>) -> Vec<SELTreeNode> {
-        let end_group = self.precedence_manager.get_end_group_bucket();
-
-        for node_index in end_group {
-            let mut changes: Vec<Change> = vec![];
-            {
-                let node = nodes.get(*node_index).unwrap();
-
-                changes.append(&mut none_left_right(node.get_own_index()));
-
-                changes.push(Change {
-                    index_to_change: node.get_own_index(),
-                    new_index: None,
-                    side_to_set: NodeSide::Parent,
-                });
-
-                let node_parent_index = node.get_parent();
-
-                match node.get_left() {
-                    Some(left_index) => match nodes.get(left_index) {
-                        Some(mut left_node) => {
-                            loop_max(nodes.len(), || match left_node.get_parent() {
-                                None => {
-                                    return;
-                                }
-                                Some(parent_index) => {
-                                    if parent_index == left_node.get_own_index() {
-                                        return;
-                                    }
-
-                                    left_node = nodes.get(parent_index).unwrap();
-                                }
-                            });
-
-                            match node_parent_index {
-                                Some(i) => {
-                                    changes.push(Change {
-                                        index_to_change: i,
-                                        new_index: Some(left_node.get_own_index()),
-                                        side_to_set: NodeSide::Left,
-                                    });
-                                }
-                                None => (),
-                            }
-
-                            changes.push(Change {
-                                index_to_change: left_node.get_own_index(),
-                                new_index: node_parent_index,
-                                side_to_set: NodeSide::Parent,
-                            });
-                        }
-                        None => (),
-                    },
-                    None => (),
-                }
-            }
-
-            {
-                let nodes = &mut nodes;
-
-                for change in changes {
-                    let node = nodes.get_mut(change.index_to_change).unwrap();
-
-                    match change.side_to_set {
-                        NodeSide::Left => node.set_left(change.new_index),
-                        NodeSide::Right => node.set_right(change.new_index),
-                        NodeSide::Parent => node.set_parent(change.new_index),
-                    }
-                }
-            }
-        }
-
-        return nodes;
-    }
-
     fn build(&mut self, s: &String) -> SELTree {
         let mut tokenizer = Tokenizer::new(s);
         let (mut nodes, data, firsts_of_group) = self.make_nodes_from_tokenizer(&mut tokenizer);
 
         // skip value and group precedences
-        for bucket in self.precedence_manager.get_buckets().iter().skip(3) {
+        for bucket in self.precedence_manager.get_buckets().iter().skip(2) {
             if bucket.len() > 0 {
                 nodes = self.resolve_tree(nodes, &bucket);
             }
         }
-
-        // special logic to resolve groups
-        nodes = self.resolve_start_group(nodes);
-        nodes = self.resolve_end_group(nodes);
 
         // firsts of group doesn't contain very first
         // we find this one by starting at 0

@@ -4,8 +4,7 @@ use std::collections::HashMap;
 // lower number means higher priority
 const VALUE_PRECEDENCE: usize = 0;
 const GROUP_PRECEDENCE: usize = VALUE_PRECEDENCE + 1;
-const END_GROUP_PRECEDENCE: usize = GROUP_PRECEDENCE + 1;
-const UNARY_PRECEDENCE: usize = END_GROUP_PRECEDENCE + 1;
+const UNARY_PRECEDENCE: usize = GROUP_PRECEDENCE + 1;
 const RANGE_PRECEDENCE: usize = UNARY_PRECEDENCE + 1;
 const EXPONENTIAL_PRECEDENCE: usize = RANGE_PRECEDENCE + 1;
 const MULTIPLICATION_PRECEDENCE: usize = EXPONENTIAL_PRECEDENCE + 1;
@@ -28,8 +27,7 @@ impl PrecedenceGroup {
         let mut members: Vec<Vec<usize>> = vec![];
 
         members.push(vec![]); // VALUE_PRECEDENCE
-        members.push(vec![]); // START_GROUP_PRECEDENCE
-        members.push(vec![]); // END_GROUP_PRECEDENCE
+        members.push(vec![]); // GROUP_PRECEDENCE
         members.push(vec![]); // UNARY_PRECEDENCE
         members.push(vec![]); // RANGE_PRECEDENCE
         members.push(vec![]); // EXPONENTIAL_PRECEDENCE
@@ -139,18 +137,6 @@ impl PrecedenceManager {
 
     pub fn get_group_tiers(&self) -> &Vec<Vec<PrecedenceGroup>> {
         return &self.precedence_groups;
-    }
-
-    pub fn get_start_group_bucket(&self) -> &Vec<usize> {
-        return self.current_group().members.get(GROUP_PRECEDENCE).unwrap();
-    }
-
-    pub fn get_end_group_bucket(&self) -> &Vec<usize> {
-        return self
-            .current_group()
-            .members
-            .get(END_GROUP_PRECEDENCE)
-            .unwrap();
     }
 
     pub fn get_current_tier(&self) -> usize {
