@@ -69,6 +69,13 @@ impl SELTreeBuilder {
                 continue;
             }
 
+            if token.get_token_type() == TokenType::EndGroup {
+                // end current group
+                // and drop token
+                self.precedence_manager.end_group();
+                continue;
+            }
+
             let mut op = get_operation_type_for_token(&token);
             let data_type = get_data_type_for_token(&token);
 
@@ -116,6 +123,10 @@ impl SELTreeBuilder {
 
             self.precedence_manager
                 .add_index_with_operation(node.get_operation(), node.get_own_index());
+
+            if node.get_operation() == Operation::Group {
+                self.precedence_manager.start_group();
+            }
 
             last_data_type = data_type;
             last_op = op;
