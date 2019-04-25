@@ -17,11 +17,13 @@ const OR_PRECEDENCE: usize = AND_PRECEDENCE + 1;
 
 pub struct PrecedenceGroup {
     parent: usize,
+    first: usize,
+    last: usize,
     members: Vec<Vec<usize>>,
 }
 
 impl PrecedenceGroup {
-    pub fn new(parent: usize) -> Self {
+    pub fn new(parent: usize, first: usize) -> Self {
         let mut members: Vec<Vec<usize>> = vec![];
 
         members.push(vec![]); // VALUE_PRECEDENCE
@@ -37,7 +39,12 @@ impl PrecedenceGroup {
         members.push(vec![]); // AND_PRECEDENCE
         members.push(vec![]); // OR_PRECEDENCE
 
-        return PrecedenceGroup { members, parent };
+        return PrecedenceGroup {
+            first,
+            last: first,
+            members,
+            parent,
+        };
     }
 }
 
@@ -88,7 +95,7 @@ impl PrecedenceManager {
         operation_priorities.insert(Operation::LogicalOr, OR_PRECEDENCE);
 
         let mut root_group_tier: Vec<PrecedenceGroup> = vec![];
-        root_group_tier.push(PrecedenceGroup::new(0));
+        root_group_tier.push(PrecedenceGroup::new(0, 0));
 
         let mut precedence_groups: Vec<Vec<PrecedenceGroup>> = vec![];
         precedence_groups.push(root_group_tier);
@@ -116,7 +123,7 @@ impl PrecedenceManager {
     }
 
     fn current_group_mut(&mut self) -> &mut PrecedenceGroup {
-        let last_group = { self.last_group_in_current_tier() };
+        let last_group = self.last_group_in_current_tier();
         return self
             .precedence_groups
             .get_mut(self.current_tier)
@@ -161,8 +168,9 @@ impl PrecedenceManager {
     }
 
     pub fn add_index_with_operation(&mut self, op: Operation, index: usize) {
-        let precedence = *{ self.operation_priorities.get(&op).unwrap() };
+        let precedence = *self.operation_priorities.get(&op).unwrap();
 
+        self.current_group_mut().last = index;
         match self.current_group_mut().members.get_mut(precedence) {
             None => (),
             Some(bucket) => {
@@ -174,6 +182,7 @@ impl PrecedenceManager {
     pub fn start_group(&mut self) {
         // parent of new group is always the last group of the current tier
         let parent = self.last_group_in_current_tier();
+        let last_of_parent_group = self.current_group().last;
 
         // update and fetch new current tier
         self.current_tier += 1;
@@ -189,7 +198,7 @@ impl PrecedenceManager {
         };
 
         // add new group
-        tier.push(PrecedenceGroup::new(parent));
+        tier.push(PrecedenceGroup::new(last_of_parent_group, 0));
     }
 
     pub fn end_group(&mut self) {
@@ -300,6 +309,14 @@ mod tests {
         let first_tier = group_tiers.get(1).unwrap();
 
         assert_eq!(first_tier.len(), 3);
+
+        let first_group = first_tier.get(0).unwrap();
+        let second_group = first_tier.get(1).unwrap();
+        let third_group = first_tier.get(2).unwrap();
+
+        assert_eq!(first_group.parent, 0);
+        assert_eq!(second_group.parent, 4);
+        assert_eq!(third_group.parent, 4);
     }
 
     #[test]
