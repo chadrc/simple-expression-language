@@ -49,7 +49,7 @@ impl SELTreeBuilder {
     ) -> (Vec<SELTreeNode>, DataHeap, Vec<usize>) {
         let mut nodes: Vec<SELTreeNode> = vec![];
         let mut data: DataHeap = DataHeap::new();
-        let mut firsts_of_group: Vec<usize> = vec![];
+        let mut firsts_of_expression: Vec<usize> = vec![];
 
         // loop trough all tokens
         // convert them to tree nodes
@@ -115,7 +115,7 @@ impl SELTreeBuilder {
 
             // flip back for next node
             if !link_next {
-                firsts_of_group.push(inserted_index);
+                firsts_of_expression.push(inserted_index);
                 link_next = true;
             }
 
@@ -138,7 +138,7 @@ impl SELTreeBuilder {
             nodes.push(SELTreeNode::new(Operation::None, DataType::Unit, 0, None));
         }
 
-        return (nodes, data, firsts_of_group);
+        return (nodes, data, firsts_of_expression);
     }
 
     fn find_root_index(nodes: &Vec<SELTreeNode>, start_index: Option<usize>) -> usize {
@@ -280,7 +280,8 @@ impl SELTreeBuilder {
 
     fn build(&mut self, s: &String) -> SELTree {
         let mut tokenizer = Tokenizer::new(s);
-        let (mut nodes, data, firsts_of_group) = self.make_nodes_from_tokenizer(&mut tokenizer);
+        let (mut nodes, data, firsts_of_expression) =
+            self.make_nodes_from_tokenizer(&mut tokenizer);
 
         // skip value and group precedences
         for bucket in self.precedence_manager.get_buckets().iter().skip(2) {
@@ -294,7 +295,7 @@ impl SELTreeBuilder {
         let root = SELTreeBuilder::find_root_index(&nodes, None);
 
         // collect remaining roots by transforming firsts of group
-        let sub_roots: Vec<usize> = firsts_of_group
+        let sub_roots: Vec<usize> = firsts_of_expression
             .iter()
             .map(|first| SELTreeBuilder::find_root_index(&nodes, Some(*first)))
             .collect();
