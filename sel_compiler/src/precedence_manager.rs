@@ -265,4 +265,78 @@ mod tests {
             2
         );
     }
+
+    #[test]
+    fn multiple_groups_in_tier() {
+        let mut manager = PrecedenceManager::new();
+        manager.add_index_with_operation(Operation::Touch, 0);
+
+        manager.start_group();
+
+        manager.add_index_with_operation(Operation::Touch, 1);
+        manager.add_index_with_operation(Operation::Touch, 2);
+
+        manager.end_group();
+
+        manager.add_index_with_operation(Operation::Touch, 3);
+        manager.add_index_with_operation(Operation::Touch, 4);
+
+        manager.start_group();
+
+        manager.add_index_with_operation(Operation::Touch, 5);
+        manager.add_index_with_operation(Operation::Touch, 6);
+
+        manager.end_group();
+
+        manager.start_group();
+
+        manager.add_index_with_operation(Operation::Touch, 7);
+        manager.add_index_with_operation(Operation::Touch, 8);
+
+        manager.end_group();
+
+        let group_tiers = manager.get_group_tiers();
+
+        let first_tier = group_tiers.get(1).unwrap();
+
+        assert_eq!(first_tier.len(), 3);
+    }
+
+    #[test]
+    fn multiple_group_tiers() {
+        let mut manager = PrecedenceManager::new();
+        manager.add_index_with_operation(Operation::Touch, 0);
+
+        manager.start_group();
+
+        manager.add_index_with_operation(Operation::Touch, 1);
+        manager.add_index_with_operation(Operation::Touch, 2);
+
+        manager.start_group();
+
+        manager.add_index_with_operation(Operation::Touch, 3);
+        manager.add_index_with_operation(Operation::Touch, 4);
+
+        manager.start_group();
+
+        manager.add_index_with_operation(Operation::Touch, 5);
+        manager.add_index_with_operation(Operation::Touch, 6);
+
+        manager.end_group();
+        manager.end_group();
+        manager.end_group();
+
+        let group_tiers = manager.get_group_tiers();
+
+        // 3 explicit tiers + implicit first tier
+        assert_eq!(group_tiers.len(), 4);
+
+        let first_tier = group_tiers.get(1).unwrap();
+        let second_tier = group_tiers.get(1).unwrap();
+        let third_tier = group_tiers.get(1).unwrap();
+
+        assert_eq!(first_tier.len(), 1);
+        assert_eq!(second_tier.len(), 1);
+        assert_eq!(third_tier.len(), 1);
+    }
 }
