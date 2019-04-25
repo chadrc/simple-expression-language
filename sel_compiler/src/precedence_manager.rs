@@ -74,8 +74,8 @@ impl PrecedenceManager {
         precedence_buckets.push(vec![]); // OR_PRECEDENCE
 
         return PrecedenceManager {
-            operation_priorities: operation_priorities,
-            precedence_buckets: precedence_buckets,
+            operation_priorities,
+            precedence_buckets,
         };
     }
 
