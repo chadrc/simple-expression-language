@@ -23,7 +23,7 @@ pub struct PrecedenceGroup {
 }
 
 impl PrecedenceGroup {
-    pub fn new(parent: usize, first: usize) -> Self {
+    pub fn new(parent: usize) -> Self {
         let mut members: Vec<Vec<usize>> = vec![];
 
         members.push(vec![]); // VALUE_PRECEDENCE
@@ -40,8 +40,8 @@ impl PrecedenceGroup {
         members.push(vec![]); // OR_PRECEDENCE
 
         return PrecedenceGroup {
-            first,
-            last: first,
+            first: 0,
+            last: 0,
             members,
             parent,
         };
@@ -95,7 +95,7 @@ impl PrecedenceManager {
         operation_priorities.insert(Operation::LogicalOr, OR_PRECEDENCE);
 
         let mut root_group_tier: Vec<PrecedenceGroup> = vec![];
-        root_group_tier.push(PrecedenceGroup::new(0, 0));
+        root_group_tier.push(PrecedenceGroup::new(0));
 
         let mut precedence_groups: Vec<Vec<PrecedenceGroup>> = vec![];
         precedence_groups.push(root_group_tier);
@@ -198,7 +198,7 @@ impl PrecedenceManager {
         };
 
         // add new group
-        tier.push(PrecedenceGroup::new(last_of_parent_group, 0));
+        tier.push(PrecedenceGroup::new(last_of_parent_group));
     }
 
     pub fn end_group(&mut self) {
