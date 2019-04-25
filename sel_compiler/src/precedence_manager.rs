@@ -128,3 +128,13 @@ impl PrecedenceManager {
         op_precedence > relative_precedence
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::precedence_manager::PrecedenceManager;
+
+    #[test]
+    fn create() {
+        PrecedenceManager::new();
+    }
+}
