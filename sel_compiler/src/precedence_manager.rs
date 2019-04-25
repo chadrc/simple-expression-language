@@ -46,6 +46,10 @@ impl PrecedenceGroup {
             parent,
         };
     }
+
+    pub fn get_members(&self) -> &Vec<Vec<usize>> {
+        return &self.members;
+    }
 }
 
 pub struct PrecedenceManager {

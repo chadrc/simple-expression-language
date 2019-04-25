@@ -283,10 +283,14 @@ impl SELTreeBuilder {
         let (mut nodes, data, firsts_of_expression) =
             self.make_nodes_from_tokenizer(&mut tokenizer);
 
-        // skip value and group precedences
-        for bucket in self.precedence_manager.get_buckets().iter().skip(2) {
-            if bucket.len() > 0 {
-                nodes = self.resolve_tree(nodes, &bucket);
+        let precedence_groups = self.precedence_manager.get_group_tiers();
+
+        for tier in precedence_groups.iter().rev() {
+            for group in tier.iter().rev() {
+                // skip value and group precedences
+                for bucket in group.get_members().iter().skip(2) {
+                    nodes = self.resolve_tree(nodes, &bucket);
+                }
             }
         }
 
