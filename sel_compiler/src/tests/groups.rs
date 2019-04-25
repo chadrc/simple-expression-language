@@ -9,23 +9,30 @@ fn single_group() {
     let tree = compiler.compile(&input);
 
     // tree should look like
+    //         G
+    //          \
     //          +
     //         / \
     //        5  10
 
     let root = tree.get_root();
 
-    let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
     let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
 
-    assert_eq!(root.get_operation(), Operation::Addition);
+    let r_left = tree.get_nodes().get(right.get_left().unwrap()).unwrap();
+    let r_right = tree.get_nodes().get(right.get_right().unwrap()).unwrap();
+
+    assert_eq!(root.get_operation(), Operation::Group);
     assert_eq!(root.get_data_type(), DataType::Unknown);
 
-    assert_eq!(left.get_operation(), Operation::Touch);
-    assert_eq!(left.get_data_type(), DataType::Integer);
+    assert_eq!(right.get_operation(), Operation::Addition);
+    assert_eq!(right.get_data_type(), DataType::Unknown);
 
-    assert_eq!(right.get_operation(), Operation::Touch);
-    assert_eq!(right.get_data_type(), DataType::Integer);
+    assert_eq!(r_left.get_operation(), Operation::Touch);
+    assert_eq!(r_left.get_data_type(), DataType::Integer);
+
+    assert_eq!(r_right.get_operation(), Operation::Touch);
+    assert_eq!(r_right.get_data_type(), DataType::Integer);
 }
 
 #[test]
@@ -38,17 +45,21 @@ fn single_group_end() {
     // tree should look like
     //          *
     //         / \
-    //        5   +
-    //           / \
-    //         15   10
+    //        5   G
+    //             \
+    //             +
+    //            / \
+    //          15  10
 
     let root = tree.get_root();
 
     let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
     let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
 
-    let r2_left = tree.get_nodes().get(right.get_left().unwrap()).unwrap();
-    let r2_right = tree.get_nodes().get(right.get_right().unwrap()).unwrap();
+    let r_right = tree.get_nodes().get(right.get_right().unwrap()).unwrap();
+
+    let rr_left = tree.get_nodes().get(r_right.get_left().unwrap()).unwrap();
+    let rr_right = tree.get_nodes().get(r_right.get_right().unwrap()).unwrap();
 
     assert_eq!(root.get_operation(), Operation::Multiplication);
     assert_eq!(root.get_data_type(), DataType::Unknown);
@@ -56,14 +67,17 @@ fn single_group_end() {
     assert_eq!(left.get_operation(), Operation::Touch);
     assert_eq!(left.get_data_type(), DataType::Integer);
 
-    assert_eq!(right.get_operation(), Operation::Addition);
+    assert_eq!(right.get_operation(), Operation::Group);
     assert_eq!(right.get_data_type(), DataType::Unknown);
 
-    assert_eq!(r2_left.get_operation(), Operation::Touch);
-    assert_eq!(r2_left.get_data_type(), DataType::Integer);
+    assert_eq!(r_right.get_operation(), Operation::Addition);
+    assert_eq!(r_right.get_data_type(), DataType::Unknown);
 
-    assert_eq!(r2_right.get_operation(), Operation::Touch);
-    assert_eq!(r2_right.get_data_type(), DataType::Integer);
+    assert_eq!(rr_left.get_operation(), Operation::Touch);
+    assert_eq!(rr_left.get_data_type(), DataType::Integer);
+
+    assert_eq!(rr_right.get_operation(), Operation::Touch);
+    assert_eq!(rr_right.get_data_type(), DataType::Integer);
 }
 
 #[test]
@@ -74,34 +88,41 @@ fn single_group_begin() {
     let tree = compiler.compile(&input);
 
     // tree should look like
-    //          *
+    //            *
+    //           / \
+    //          G  15
+    //          \
+    //          +
     //         / \
-    //        +   15
-    //       / \
-    //      5   10
+    //        5  10
 
     let root = tree.get_root();
 
     let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
     let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
 
-    let l2_left = tree.get_nodes().get(left.get_left().unwrap()).unwrap();
-    let l2_right = tree.get_nodes().get(left.get_right().unwrap()).unwrap();
+    let l_right = tree.get_nodes().get(left.get_right().unwrap()).unwrap();
+
+    let ll_left = tree.get_nodes().get(l_right.get_left().unwrap()).unwrap();
+    let ll_right = tree.get_nodes().get(l_right.get_right().unwrap()).unwrap();
 
     assert_eq!(root.get_operation(), Operation::Multiplication);
     assert_eq!(root.get_data_type(), DataType::Unknown);
 
-    assert_eq!(left.get_operation(), Operation::Addition);
+    assert_eq!(left.get_operation(), Operation::Group);
     assert_eq!(left.get_data_type(), DataType::Unknown);
 
     assert_eq!(right.get_operation(), Operation::Touch);
     assert_eq!(right.get_data_type(), DataType::Integer);
 
-    assert_eq!(l2_left.get_operation(), Operation::Touch);
-    assert_eq!(l2_left.get_data_type(), DataType::Integer);
+    assert_eq!(l_right.get_operation(), Operation::Addition);
+    assert_eq!(l_right.get_data_type(), DataType::Unknown);
 
-    assert_eq!(l2_right.get_operation(), Operation::Touch);
-    assert_eq!(l2_right.get_data_type(), DataType::Integer);
+    assert_eq!(ll_left.get_operation(), Operation::Touch);
+    assert_eq!(ll_left.get_data_type(), DataType::Integer);
+
+    assert_eq!(ll_right.get_operation(), Operation::Touch);
+    assert_eq!(ll_right.get_data_type(), DataType::Integer);
 }
 
 #[test]
@@ -116,9 +137,11 @@ fn single_group_begin_end() {
     //           / \
     //          *  15
     //         / \
-    //        5   +
-    //           / \
-    //          5  10
+    //        5   G
+    //             \
+    //             +
+    //            / \
+    //           5  10
 
     let root = tree.get_root();
 
@@ -128,8 +151,10 @@ fn single_group_begin_end() {
     let l_left = tree.get_nodes().get(left.get_left().unwrap()).unwrap();
     let l_right = tree.get_nodes().get(left.get_right().unwrap()).unwrap();
 
-    let lr_left = tree.get_nodes().get(l_right.get_left().unwrap()).unwrap();
     let lr_right = tree.get_nodes().get(l_right.get_right().unwrap()).unwrap();
+
+    let lrr_left = tree.get_nodes().get(lr_right.get_left().unwrap()).unwrap();
+    let lrr_right = tree.get_nodes().get(lr_right.get_right().unwrap()).unwrap();
 
     assert_eq!(root.get_operation(), Operation::Multiplication);
 
@@ -141,13 +166,15 @@ fn single_group_begin_end() {
     assert_eq!(l_left.get_operation(), Operation::Touch);
     assert_eq!(l_left.get_data_type(), DataType::Integer);
 
-    assert_eq!(l_right.get_operation(), Operation::Addition);
+    assert_eq!(l_right.get_operation(), Operation::Group);
 
-    assert_eq!(lr_left.get_operation(), Operation::Touch);
-    assert_eq!(lr_left.get_data_type(), DataType::Integer);
+    assert_eq!(lr_right.get_operation(), Operation::Addition);
 
-    assert_eq!(lr_right.get_operation(), Operation::Touch);
-    assert_eq!(lr_right.get_data_type(), DataType::Integer);
+    assert_eq!(lrr_left.get_operation(), Operation::Touch);
+    assert_eq!(lrr_left.get_data_type(), DataType::Integer);
+
+    assert_eq!(lrr_right.get_operation(), Operation::Touch);
+    assert_eq!(lrr_right.get_data_type(), DataType::Integer);
 }
 
 #[test]
@@ -162,7 +189,9 @@ fn single_group_begin_end_lower_begin() {
     //           / \
     //          5   *
     //             / \
-    //            +  15
+    //            G  15
+    //            \
+    //            +
     //           / \
     //          5  10
 
@@ -174,8 +203,10 @@ fn single_group_begin_end_lower_begin() {
     let r_left = tree.get_nodes().get(right.get_left().unwrap()).unwrap();
     let r_right = tree.get_nodes().get(right.get_right().unwrap()).unwrap();
 
-    let rl_left = tree.get_nodes().get(r_left.get_left().unwrap()).unwrap();
     let rl_right = tree.get_nodes().get(r_left.get_right().unwrap()).unwrap();
+
+    let rlr_left = tree.get_nodes().get(rl_right.get_left().unwrap()).unwrap();
+    let rlr_right = tree.get_nodes().get(rl_right.get_right().unwrap()).unwrap();
 
     assert_eq!(root.get_operation(), Operation::Addition);
 
@@ -184,14 +215,16 @@ fn single_group_begin_end_lower_begin() {
 
     assert_eq!(right.get_operation(), Operation::Multiplication);
 
-    assert_eq!(r_left.get_operation(), Operation::Addition);
+    assert_eq!(r_left.get_operation(), Operation::Group);
+
+    assert_eq!(rl_right.get_operation(), Operation::Group);
 
     assert_eq!(r_right.get_operation(), Operation::Touch);
     assert_eq!(r_right.get_data_type(), DataType::Integer);
 
-    assert_eq!(rl_left.get_operation(), Operation::Touch);
-    assert_eq!(rl_left.get_data_type(), DataType::Integer);
+    assert_eq!(rlr_left.get_operation(), Operation::Touch);
+    assert_eq!(rlr_left.get_data_type(), DataType::Integer);
 
-    assert_eq!(rl_right.get_operation(), Operation::Touch);
-    assert_eq!(rl_right.get_data_type(), DataType::Integer);
+    assert_eq!(rlr_right.get_operation(), Operation::Touch);
+    assert_eq!(rlr_right.get_data_type(), DataType::Integer);
 }
