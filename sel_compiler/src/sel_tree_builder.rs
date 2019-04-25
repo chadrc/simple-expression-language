@@ -141,9 +141,7 @@ impl SELTreeBuilder {
 
                 // find first node in tree
                 // need this until we clean up orphan nodes
-                while node.get_operation() == Operation::StartGroup
-                    || node.get_operation() == Operation::EndGroup
-                {
+                while node.get_operation() == Operation::Group {
                     node = nodes.get(node.get_own_index() + 1).unwrap();
                 }
 

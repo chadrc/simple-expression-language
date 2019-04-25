@@ -3,8 +3,8 @@ use std::collections::HashMap;
 
 // lower number means higher priority
 const VALUE_PRECEDENCE: usize = 0;
-const START_GROUP_PRECEDENCE: usize = VALUE_PRECEDENCE + 1;
-const END_GROUP_PRECEDENCE: usize = START_GROUP_PRECEDENCE + 1;
+const GROUP_PRECEDENCE: usize = VALUE_PRECEDENCE + 1;
+const END_GROUP_PRECEDENCE: usize = GROUP_PRECEDENCE + 1;
 const UNARY_PRECEDENCE: usize = END_GROUP_PRECEDENCE + 1;
 const RANGE_PRECEDENCE: usize = UNARY_PRECEDENCE + 1;
 const EXPONENTIAL_PRECEDENCE: usize = RANGE_PRECEDENCE + 1;
@@ -66,8 +66,7 @@ impl PrecedenceManager {
         operation_priorities.insert(Operation::Input, VALUE_PRECEDENCE);
         operation_priorities.insert(Operation::CurrentResult, VALUE_PRECEDENCE);
 
-        operation_priorities.insert(Operation::StartGroup, START_GROUP_PRECEDENCE);
-        operation_priorities.insert(Operation::EndGroup, END_GROUP_PRECEDENCE);
+        operation_priorities.insert(Operation::Group, GROUP_PRECEDENCE);
 
         operation_priorities.insert(Operation::LogicalNot, UNARY_PRECEDENCE);
         operation_priorities.insert(Operation::Negation, UNARY_PRECEDENCE);
@@ -143,11 +142,7 @@ impl PrecedenceManager {
     }
 
     pub fn get_start_group_bucket(&self) -> &Vec<usize> {
-        return self
-            .current_group()
-            .members
-            .get(START_GROUP_PRECEDENCE)
-            .unwrap();
+        return self.current_group().members.get(GROUP_PRECEDENCE).unwrap();
     }
 
     pub fn get_end_group_bucket(&self) -> &Vec<usize> {
