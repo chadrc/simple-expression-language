@@ -16,6 +16,7 @@ fn main() {
         'Input is: ' + $
         ",
         "5.0 * (8 + 2) / (3 + (9 - 4)) * ((4 + 7) * 3)",
+        "5..100",
     ];
     // let tokenizer = sel_tokenizer::Tokenizer::new(&input);
     // for token in tokenizer {
