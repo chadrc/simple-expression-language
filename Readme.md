@@ -73,6 +73,10 @@ There is no null value but the unit value `()` is provided to represent somethin
 
 // not
 ~5
+
+// shift
+5 << 2
+2 >> 5
 ```
 
 ## String operations
