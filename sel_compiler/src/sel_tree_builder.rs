@@ -296,6 +296,10 @@ impl SELTreeBuilder {
         nodes
             // get last node in group
             .get(precedence_group.get_last())
+            // only update if not a group operation
+            // group operations are evaluated in order
+            // so a group operation's right is the sub tree for that group
+            .filter(|last| last.get_operation() != Operation::Group)
             // check if last node has a right
             .and_then(|last| last.get_right())
             // if it does, update its left to be the groups parent node
