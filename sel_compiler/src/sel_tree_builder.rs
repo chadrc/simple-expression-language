@@ -379,8 +379,6 @@ impl SELTreeBuilder {
                 if index != 0 {
                     nodes = self.update_group(nodes, group);
                 }
-
-                println!("updated {:?}", nodes);
             }
         }
 
