@@ -3,18 +3,15 @@
 ## Literals
 
 ```
-// Comments start with double slash an continue to end of line
+/// Comments start with triple slash an continue to end of line
 
-/// Triple slash comments are special
-/// and can contain **Markdown** formatting
-
-// Numbers
+/// Numbers
 4
 -8
 29
 3.14
 
-// Strings
+/// Strings
 'Basic string'
 "Double quoted"
 
@@ -22,13 +19,13 @@
 more than one line,
 but newlines are stripped'
 
-// Boolean
+/// Boolean
 true
 false
 
-// Ranges
-5..10 // Exclusive, contains 5, 6, 7, 8, and 9
-5...10 // Inclusive, contains 5, 6, 7, 8, 9 and 10
+/// Ranges
+5..10 /// Exclusive, contains 5, 6, 7, 8, and 9
+5...10 /// Inclusive, contains 5, 6, 7, 8, 9 and 10
 ```
 
 ### Non-existence
@@ -38,43 +35,48 @@ There is no null value but the unit value `()` is provided to represent somethin
 ## Math operations
 
 ```
-// Addition
+/// Addition
 10 + 5
 
-// Subtraction
+/// Subtraction
 10 - 5
 
-// Multiplication
+/// Multiplication
 10 * 5
 
-// Division
-10 / 5
+/// Float Division
+3 / 10
+/// 3.333334
 
-// Remainder
+/// Integer Division
+3 // 10
+/// 3
+
+/// Remainder
 10 % 5
 
-// Exponential
-2^^10
+/// Exponential
+2 ** 10
 
-// Negation
+/// Negation
 -5
 ```
 
 ## Bitwise operations
 ```
-// or
+/// or
 4 | 5
 
-// and
+/// and
 4 & 5
 
-// xor
+/// xor
 4 ^ 5
 
-// not
+/// not
 ~5
 
-// shift
+/// shift
 5 << 2
 2 >> 5
 ```
@@ -82,69 +84,69 @@ There is no null value but the unit value `()` is provided to represent somethin
 ## String operations
 
 ```
-// Concatenation
+/// Concatenation
 "Hello, " + "World"
-// "Hello, World"
+/// "Hello, World"
 
-// Numbers and Booleans are cast into Strings when concatenated to a String
+/// Numbers and Booleans are cast into Strings when concatenated to a String
 "High " + 5
-// "High 5"
+/// "High 5"
 
 "Is " + true
-// "Is true"
+/// "Is true"
 
-// Length
+/// Length
 "Hello, World!"`l
-// 13
+/// 13
 ```
 
 ## Range operations
 
 ```
-// Length
+/// Length
 5..10`l
-// 5
+/// 5
 
 5...10`l
-// 6
+/// 6
 ```
 
 ## Logical operations
 
 ```
-// Equality
+/// Equality
 5 == 4
 'Hello' == 'World'
 
-// Inequality
+/// Inequality
 5 != 4
 'Hello' != 'World'
 
-// Less than
+/// Less than
 5 < 4
 'Hello' < 'World'
 
-// Less than or equal
+/// Less than or equal
 5 <= 4
 'Hello' <= 'World'
 
-// Greater than
+/// Greater than
 5 > 4
 'Hello' > 'World'
 
-// Greater than or equal
+/// Greater than or equal
 5 >= 4
 'Hello' >= 'World'
 
-// Logical AND
+/// Logical AND
 5 == 4 && 5 < 10
 'Hello' == 'World' && 'Hello' < 'World'
 
-// Logical OR
+/// Logical OR
 5 == 4 || 5 < 10
 'Hello' == 'World' || 'Hello' < 'World'
 
-// Logical NOT
+/// Logical NOT
 !true
 ```
 
@@ -156,14 +158,14 @@ Ex. exposed variable `name` = "SEL"
 
 ```
 "Hello, " + name
-// result "Hello, SEL"
+/// result "Hello, SEL"
 ```
 
 Ex. exposed function `rand` that takes no parameters
 
 ```
 rand()
-// result is a randomly generated number
+/// result is a randomly generated number
 ```
 
 ### Associative Array
@@ -197,7 +199,7 @@ To use like an array. Provide only the values, no semi-colon.
 ```
 [10, 20, 30, 40, 50]
 
-// Don't have to be the same type
+/// Don't have to be the same type
 ["cat", 45, false, 3..12]
 ```
 
@@ -205,11 +207,11 @@ To use as both. Provide a combination of above items.
 
 ```
 [
-    10, // index 0
-    20, // index 1
+    10, /// index 0
+    20, /// index 1
     first_name: "James",
     last_name: "Smith",
-    30, // index 2
+    30, /// index 2
     age: 36
 ]
 ```
@@ -222,32 +224,32 @@ Prepend
 
 ```
 0 -> [1, 2, 3, 4, 5]
-// [0, 1, 2, 3, 4, 5]
+/// [0, 1, 2, 3, 4, 5]
 
 [1, 2, 3, 4, 5] <- 0
-// [0, 1, 2, 3, 4, 5]
+/// [0, 1, 2, 3, 4, 5]
 
 [-1, 0] -> [1, 2, 3, 4, 5]
-// [-1, 0, 1, 2, 3, 4, 5]
+/// [-1, 0, 1, 2, 3, 4, 5]
 
 [1, 2, 3, 4, 5] <- [-1, 0]
-// [-1, 0, 1, 2, 3, 4, 5]
+/// [-1, 0, 1, 2, 3, 4, 5]
 ```
 
 Append
 
 ```
 6 |> [1, 2, 3, 4, 5]
-// [1, 2, 3, 4, 5, 6]
+/// [1, 2, 3, 4, 5, 6]
 
 [1, 2, 3, 4, 5] <| 6
-// [1, 2, 3, 4, 5, 6]
+/// [1, 2, 3, 4, 5, 6]
 
 [6, 7] |> [1, 2, 3, 4, 5]
-// [1, 2, 3, 4, 5, 6, 7]
+/// [1, 2, 3, 4, 5, 6, 7]
 
 [1, 2, 3, 4, 5] <| [6, 7]
-// [1, 2, 3, 4, 5, 6, 7]
+/// [1, 2, 3, 4, 5, 6, 7]
 ```
 
 _Note: that these operators produce a new associative array. The original arrays are unmodified._
@@ -262,8 +264,8 @@ When using concatenation operations with key-value pairs, 'prepend' and 'append'
 [email: "john@example.com"] |> [first_name: "John", last_name: "Smith"]
 [email: "john@example.com"] <| [first_name: "John", last_name: "Smith"]
 
-// All above have same result
-// [first_name: "John", last_name: "Smith", email: "john@example.com"]
+/// All above have same result
+/// [first_name: "John", last_name: "Smith", email: "john@example.com"]
 ```
 
 #### Comparison
@@ -274,78 +276,78 @@ Values - Checks to see if the two arrays contain the same values
 
 ```
 [1, 2, 3, 4, 5] $= [1, 2, 3, 4, 5]
-// true
+/// true
 
 [1, 2, 3, 4, 5] $= [4, 3, 5, 2, 1]
-// true
+/// true
 
 [1, 2, 3, 4, 5] $= [4, 3, 5, 2, 6]
-// false
+/// false
 
 [1, 2, 3, 4, 5] $= [1, 2, 3, 4]
-// false
+/// false
 
 [first_name: "John", last_name: "Smith"] $= [first_name: "John", last_name: "Smith"]
-// true
+/// true
 
 [first_name: "John", last_name: "Smith"] $= [first_name: "John", last_name: "Anderson"]
-// false
+/// false
 
 [first_name: "John", last_name: "Smith"] $= [first_name: "John", last_name: "Smith", admin: true]
-// false
+/// false
 
 [] $= []
-// true
+/// true
 ```
 
 Key-value Pairs - Check to see if the two arrays contain all the same keys with their matching values.
 
 ```
 [1, 2, 3, 4, 5] == [1, 2, 3, 4, 5]
-// true
+/// true
 
 [1, 2, 3, 4, 5] == [4, 3, 5, 2, 1]
-// false
+/// false
 
 [first_name: "John", last_name: "Smith"] == [first_name: "John", last_name: "Smith"]
-// true
+/// true
 
 [first_name: "John", last_name: "Smith"] == [first_name: "John", last_name: "Anderson"]
-// false
+/// false
 
 [first_name: "John", last_name: "Smith"] == [first_name: "John", last_name: "Smith", admin: true]
-// false
+/// false
 
 [] == []
-// true
+/// true
 ```
 
 Keys - Checks to see if the two arrays contain all the same keys.
 
 ```
 [1, 2, 3, 4, 5] := [1, 2, 3, 4, 5]
-// true
+/// true
 
 [1, 2, 3, 4, 5] := [4, 3, 5, 2, 1]
-// true
+/// true
 
 [1, 2, 3, 4, 5] := [4, 3, 5, 2]
-// false
+/// false
 
 [1, 2, 3, 4, 5] := [4, 3, 5, 2, 6]
-// true
+/// true
 
 [first_name: "John", last_name: "Smith"] := [first_name: "John", last_name: "Smith"]
-// true
+/// true
 
 [first_name: "John", last_name: "Smith"] := [first_name: "John", last_name: "Anderson"]
-// true
+/// true
 
 [first_name: "John", last_name: "Smith"] := [first_name: "John", last_name: "Smith", admin: true]
-// false
+/// false
 
 [] := []
-// true
+/// true
 ```
 
 #### Contains
@@ -356,55 +358,55 @@ Contains Value
 
 ```
 [1, 2, 3, 4, 5] ~ [1]
-// true
+/// true
 
 [1, 2, 3, 4, 5] ~ [6]
-// false
+/// false
 
 [first_name: "John", last_name: "Smith"] ~ ["John"]
-// true
+/// true
 
 [first_name: "John", last_name: "Smith"] ~ ["Anderson"]
-// false
+/// false
 ```
 
 Contains Key-Value pair
 ```
 [1, 2, 3, 4, 5] ~= [0: 1]
-// true
+/// true
 
 [1, 2, 3, 4, 5] ~= [0: 2]
-// false
+/// false
 
 [first_name: "John", last_name: "Smith"] ~= [first_name: "John"]
-// true
+/// true
 
 [first_name: "John", last_name: "Smith"] ~= [last_name: "Anderson"]
-// false
+/// false
 ```
 
 Contains Key
 
 ```
 [1, 2, 3, 4, 5] ~= [1:]
-// true
+/// true
 
 [1, 2, 3, 4, 5] ~= [6:]
-// false
+/// false
 
 [first_name: "John", last_name: "Smith"] ~= [last_name:]
-// true
+/// true
 
 [first_name: "John", last_name: "Smith"] ~= [admin:]
-// false
+/// false
 ```
 
 Can also specify multiple and a mix of the checks
 
 ```
-// Contains the value 2, the pair [2: 3], and the key 4
+/// Contains the value 2, the pair [2: 3], and the key 4
 [1, 2, 3, 4, 5] ~= [2, 2: 3, 4:]
-// true
+/// true
 ```
 
 #### Accessing
@@ -422,17 +424,17 @@ Exposed variables:
 
 ```
 numbers[3]
-// 4
+/// 4
 
 user["first_name"]
-// "James"
+/// "James"
 
 user.last_name
-// "Smith"
+/// "Smith"
 
-// Note that indexing with a number string will not return a value from an array
-numbers["1"] // doesn't exist
-// ()
+/// Note that indexing with a number string will not return a value from an array
+numbers["1"] /// doesn't exist
+/// ()
 ```
 
 #### Length
@@ -441,13 +443,13 @@ Can use the length operator on associative arrays but note that it will return t
 
 ```
 [1, 2, 3, 4, 5]`l
-// 5
+/// 5
 
 [first_name: "James", last_name: "Smith", age: 36]`l
-// 3
+/// 3
 
 [1, 2, 3, 4, 5, first_name: "James", last_name: "Smith", age: 36]`l
-// 8
+/// 8
 ```
 
 ## Input
@@ -460,21 +462,21 @@ Input = "Hello"
 
 ```
 $ + ", SEL!"
-// "Hello, SEL!"
+/// "Hello, SEL!"
 ```
 
 Input = [1, 2, 3, 4, 5]
 
 ```
 $[3]
-// 4
+/// 4
 ```
 
 Input = [first_name: "James", last_name: "Smith", age: 36]
 
 ```
 $["last_name"]
-// "Smith"
+/// "Smith"
 ```
 
 ## Results
@@ -485,34 +487,34 @@ The runtime will have access to each result after execution
 
 ```
 4 + 5
-// 9
+/// 9
 ```
 
 The last result may be referenced with the `?` symbol
 
 ```
 4 + 5
-// 9
+/// 9
 
 ? + 11
-// ? == 9
-// 20
+/// ? == 9
+/// 20
 
 ? * 5
-// ? == 20
-// 100
+/// ? == 20
+/// 100
 
-// may also be used in function calls
+/// may also be used in function calls
 rand_range(0, ?)
-// random number between 0, 100
+/// random number between 0, 100
 ```
 
 The input is set as the first result of an expression
 Input = 10
 
 ```
-? + $ // 10 / 10
-// 1
+? + $ /// 10 / 10
+/// 1
 ```
 
 ## Expression Blocks
@@ -520,15 +522,15 @@ Input = 10
 Group a set of expressions together to output a single value
 
 ```
-// Enclose expressions in a braces, passing in input
+/// Enclose expressions in a braces, passing in input
 $ -> {
     8 * 5
     ? / 4
 }
-// 10
+/// 10
 
 ? * 10
-// 100
+/// 100
 ```
 
 If you don't pass in any value to the block, it does nothing. These blocks are used to pass as parameters to other expressions and functions.
@@ -537,11 +539,11 @@ If you don't pass in any value to the block, it does nothing. These blocks are u
 {
     $ * 3
 }
-// resulting expression
+/// resulting expression
 
-// ? is the above expression
+/// ? is the above expression
 ?(25)
-// 75
+/// 75
 ```
 
 ## Functions
@@ -558,12 +560,12 @@ Ex. exposed functions
 - `clamp(num: int, min: int, max: int)`
 
 ```
-// 1
-rand // no arguments, so no argument list necessary
+/// 1
+rand /// no arguments, so no argument list necessary
 rand_range 10 20
 clamp 10 20 2
 
-// 2
+/// 2
 rand()
 rand_range(10, 20)
 ```
@@ -573,10 +575,10 @@ rand_range(10, 20)
 Can also pass arguments by parameter name for clarity.
 
 ```
-// 1
+/// 1
 rand_range min=10, max=20
 
-// 2
+/// 2
 clamp(num=3, min=10, max=20)
 ```
 
@@ -606,10 +608,10 @@ Pass result of a expression (on left) into the first variable position of the an
 ```
 rand_range(min, max) -> is_even
 
-// equivalent to
+/// equivalent to
 is_even(rand_range(min, max))
 
-// may also split out the arguments to rand_range
+/// may also split out the arguments to rand_range
 min, max -> rand_range -> is_even
 ```
 
@@ -622,13 +624,13 @@ Pass result of a expression (on right) into the first variable position of the a
 ```
 clamp(11, 15) <- rand_range(min, max)
 
-// split out args, right piping resolve before left piping
+/// split out args, right piping resolve before left piping
 clamp(11, 15) <- min, max -> rand_range
 
-// equivalent to
+/// equivalent to
 clamp(rand_range(min, max), 11, 15)
 
-// as well as
+/// as well as
 rand_range(min, max) -> clamp(11, 15)
 ```
 
@@ -641,20 +643,20 @@ Also provided is the ability to pipe into a function starting from the end of th
 ```
 max |> rand_range(min)
 
-// equivalent to
+/// equivalent to
 rand_range(min, max)
 
-// Can also left pipe last
+/// Can also left pipe last
 map(numbers) <| is_even
 
-// equivalent to
+/// equivalent to
 map(numbers, is_even)
 numbers -> map(is_even)
 
-// Piping last passes the arguments in the same order given.
+/// Piping last passes the arguments in the same order given.
 min, max |> clamp(34)
 
-// equivalent to
+/// equivalent to
 34, min, max |> clamp
 max |> clamp(34, min)
 clamp(34, min, max)
@@ -669,12 +671,12 @@ These expressions are not evaluated right away, but instead must be called like 
 To reference a named expression later, use the `#` followed by the identifier.
 
 ```
-// Single line
+/// Single line
 #plus_rand $ + rand()
 
-// Multi line
-// Opening brace can be on same line
-// or next line
+/// Multi line
+/// Opening brace can be on same line
+/// or next line
 
 #is_even {
     $ % 2 == 0
@@ -683,10 +685,10 @@ To reference a named expression later, use the `#` followed by the identifier.
 init_array(10) -> map(#plus_rand)
 init_array(5) -> map(#plus_rand) -> filter(#is_even)
 
-// pass inline expression with a block
-init_array(5) -> map(#plus_rand) -> filter({ $ % 2 == 1 }) // is odd for filter
+/// pass inline expression with a block
+init_array(5) -> map(#plus_rand) -> filter({ $ % 2 == 1 }) /// is odd for filter
 
-// may also be called directly the same way as functions
+/// may also be called directly the same way as functions
 #plus_rand 5
 #plus_rand(5)
 5 -> #plus_rand
@@ -704,7 +706,7 @@ But you may pass multiple values and the `$` will be converted to an array with 
 }
 
 #sum_divisible_by_3(7, 3)
-// false
+/// false
 ```
 
 #### Passing by parameter name
@@ -717,7 +719,7 @@ Just like functions, you can pass parameters by name to a named expression. Howe
 }
 
 #sum_divisible_by_3(num1=7, num2=3)
-// false
+/// false
 ```
 
 The parameters may no longer be accessed from the input with their index position and must you must always pass parameters by name for this named expression.
@@ -767,19 +769,19 @@ Functions:
 
 ```
 #clamp_10 ~> clamp(10)
-// this new expresson now has takes 2 arguments, min and max
+/// this new expresson now has takes 2 arguments, min and max
 
-// can also provide multiple values
+/// can also provide multiple values
 #clamp_10_min_5 ~> clamp(10, 5)
-// takes one argument, max
+/// takes one argument, max
 
-// can skip parameters with the '_' symbol
+/// can skip parameters with the '_' symbol
 #clamp_min_5 ~> clamp(_, 5)
-// takes two arguments, num and max
+/// takes two arguments, num and max
 
-// can curry a curried expression
+/// can curry a curried expression
 #clamp_5_to_15 ~> #clamp_min_5(_, 15)
-// taks one argument, num
+/// taks one argument, num
 ```
 
 ### Currying by name
@@ -803,9 +805,9 @@ Can perform pattern matching on a value.
 On input or last result
 
 ```
-// Input: 5
+/// Input: 5
 
-// last result, implicit match on input
+/// last result, implicit match on input
 1 => "One",
 2 => "Couple",
 3 => "Few",
@@ -814,11 +816,11 @@ On input or last result
 12 => "Dozen",
 _ => "Several"
 
-// "Many"
+/// "Many"
 
-// explicit match on input
+/// explicit match on input
 
-$ // Effectivly making it the last result
+$ /// Effectivly making it the last result
 
 1 => "One",
 2 => "Couple",
@@ -828,9 +830,9 @@ $ // Effectivly making it the last result
 12 => "Dozen",
 _ => "Several"
 
-// "Many"
+/// "Many"
 
-// Match on last result again
+/// Match on last result again
 10 - 8
 
 1 => "One",
@@ -841,7 +843,7 @@ _ => "Several"
 12 => "Dozen",
 _ => "Several"
 
-// "Couple"
+/// "Couple"
 ```
 
 ### Something or Nothing
@@ -860,52 +862,52 @@ Matching on associative arrays allows matching on multiple values and wildcard m
 Match positionally
 
 ```
-// Input: [10, "foo"]
+/// Input: [10, "foo"]
 
 [5, "bar"] => "5 bars",
 [5, "foo"] => "5 foos",
 [10, "bar"] => "10 bars",
 [10, "foo"] => "10 foos"
 _ => "baz"
-// "10 foos"
+/// "10 foos"
 ```
 
 Ignoring positions
 
 ```
-// Input: [10, "foo", true]
+/// Input: [10, "foo", true]
 
-// ignore one position
+/// ignore one position
 [5, _, true] => "5 bars or foos sold",
-// ignore implictly by not specifying
+/// ignore implictly by not specifying
 [10] => "10 bar or foo transaction",
 _ => "baz"
-// "10 bar or foo transaction"
+/// "10 bar or foo transaction"
 ```
 
 Each arm expression receives the value being match as the input.
 
 ```
-// Input: [10, "foo"]
+/// Input: [10, "foo"]
 
 [_, "bar"] => $[0] + " bars",
 [_, "foo"] => $[0] + " foos",
 _ => "baz"
-// "10 foos"
+/// "10 foos"
 ```
 
 Match on keys of an associative array
 
 ```
-// Input: [first_name: "John", last_name: "Smith", email: "johnsmith@example.com"]
+/// Input: [first_name: "John", last_name: "Smith", email: "johnsmith@example.com"]
 
 [last_name: "Anderson"] => "Member of the Anderson family",
-// Check for non-existant/uninitialized key
+/// Check for non-existant/uninitialized key
 [email: ()] => $.first_name + " does not have an email",
-// Check for existing key
+/// Check for existing key
 [email: _] => $.first_name + " has an email",
 _ => ...
-// "John has an email"
+/// "John has an email"
 ```
 
 ### Matching with Functions and Named Expressions
@@ -913,7 +915,7 @@ _ => ...
 Functions and named expressions may be used in the conditional part of a match expression.
 
 ```
-// Input: 11
+/// Input: 11
 
 is_prime => $ + " is a prime number.",
 #is_even => $ + " is even.",
@@ -924,10 +926,10 @@ _ => $ + " is not an integer."
 They may also be used in the right side. Either just by name, which will pass through the input, or explicitly called for custom input.
 
 ```
-// Input: [first_name: "John", last_name: "Smith", email: "johnsmith@example.com"]
+/// Input: [first_name: "John", last_name: "Smith", email: "johnsmith@example.com"]
 
-[email: ()] => #error("no email set", $) // explicit
-[email: _] => send_email // implicit
+[email: ()] => #error("no email set", $) /// explicit
+[email: _] => send_email /// implicit
 _ => ()
 ```
 
@@ -975,27 +977,27 @@ Left side is the collection to map. Right side is an expression that receives in
 Output is the value returned from right side expression
 
 ```
-// Input: [1, 2, 3, 4, 5]
+/// Input: [1, 2, 3, 4, 5]
 
 $ <-> $.value * $.key
-// outputs the following in order
-// 0
-// 2
-// 6
-// 12
-// 20
+/// outputs the following in order
+/// 0
+/// 2
+/// 6
+/// 12
+/// 20
 ```
 
 With keys
 
 ```
-// Input: [first_name: "John", last_name: "Smith", email: "johnsmith@example.com"]
+/// Input: [first_name: "John", last_name: "Smith", email: "johnsmith@example.com"]
 
 $ <=> $.key + ": " + $.value
-// outputs the following in order
-// "first_name: John"
-// "last_name: Smith"
-// "email: johnsmith@example.com"
+/// outputs the following in order
+/// "first_name: John"
+/// "last_name: Smith"
+/// "email: johnsmith@example.com"
 ```
 
 #### Key-pair stream
@@ -1007,28 +1009,28 @@ Output is an associative array with shape:
 Where key is which ever keys was just processed and value is the value returned from right side expression
 
 ```
-// Input: [1, 2, 3, 4, 5]
+/// Input: [1, 2, 3, 4, 5]
 
 $ <-> $.value * $.key
-// outputs the following in order
-// [key: 0, value: 0]
-// [key: 1, value: 2]
-// [key: 2, value: 6]
-// [key: 3, value: 12]
-// [key: 4, value: 20]
+/// outputs the following in order
+/// [key: 0, value: 0]
+/// [key: 1, value: 2]
+/// [key: 2, value: 6]
+/// [key: 3, value: 12]
+/// [key: 4, value: 20]
 ```
 
 With keys
 
 ```
-// Input: [first_name: "John", last_name: "Smith", email: "johnsmith@example.com"]
+/// Input: [first_name: "John", last_name: "Smith", email: "johnsmith@example.com"]
 
-// each value is mapped to the corresponding key
+/// each value is mapped to the corresponding key
 $ <=> $.key + ": " + $.value
-// outputs the following in order
-// [key: first_name, value: "first_name: John"]
-// [key: last_name, value: "last_name: Smith"]
-// [key: email, value: "email: johnsmith@example.com"]
+/// outputs the following in order
+/// [key: first_name, value: "first_name: John"]
+/// [key: last_name, value: "last_name: Smith"]
+/// [key: email, value: "email: johnsmith@example.com"]
 ```
 
 ### Collecting
@@ -1048,28 +1050,28 @@ Result becomes the value returned from the expression
 Sum numbers in an array
 
 ```
-// Input: [1, 2, 3, 4, 5]
+/// Input: [1, 2, 3, 4, 5]
 
 $ <-> $ * 2 <0> $.value + $.result
-// 15
+/// 15
 ```
 
 Map an array
 
 ```
-// Input: [1, 2, 3, 4, 5]
+/// Input: [1, 2, 3, 4, 5]
 
 $ <-> $ * 2 <[]> $.value -> $.result
-// [2, 4, 6, 8, 10]
+/// [2, 4, 6, 8, 10]
 ```
 
 For convenience, if doing a simple assignment to a new associative array like the above, the right side expression may be omitted
 
 ```
-// Input: [1, 2, 3, 4, 5]
+/// Input: [1, 2, 3, 4, 5]
 
 $ <-> $ * 2 <[]>
-// [2, 4, 6, 8, 10]
+/// [2, 4, 6, 8, 10]
 ```
 
 This will take the input stream and insert them into the new array in order received, for value-stream, or into the received key for key-pair stream.
@@ -1077,20 +1079,20 @@ This will take the input stream and insert them into the new array in order rece
 May also opt out of collecting by not specifying a seed value. This will output the input to the stream.
 
 ```
-// Input: [1, 2, 3, 4, 5]
+/// Input: [1, 2, 3, 4, 5]
 
 $ <-> log($) <>
-// [1, 2, 3, 4, 5]
+/// [1, 2, 3, 4, 5]
 ```
 
 Can use the first value in the stream as the input with the `?` symbol as the seed.
 
 ```
-// Input: [1, 2, 3, 4, 5]
+/// Input: [1, 2, 3, 4, 5]
 
-// multiply by 2, then take average
+/// multiply by 2, then take average
 $ <-> $ * 2 <?> ($.result + $.value) / 2
-// 6
+/// 6
 ```
 
 The first execution of the collection expression is performed with [result: 1, value: 2] since it was seeded with the first value of the array.
@@ -1098,15 +1100,15 @@ The first execution of the collection expression is performed with [result: 1, v
 Use collection directly on an associative array, by omitting the stream all together.
 
 ```
-// Input: [1, 2, 3, 4, 5]
+/// Input: [1, 2, 3, 4, 5]
 
-// take average
+/// take average
 $ <?> ($.value + $.result) / 2
-// 3
+/// 3
 
-// shallow clone
+/// shallow clone
 $ <[]>
-// [1, 2, 3, 4, 5]
+/// [1, 2, 3, 4, 5]
 ```
 
 ## Annotations
@@ -1145,13 +1147,13 @@ Used to describe which values and their types that my appear in an associative a
 Any number may be defined
 
 ```
-// Object shape
+/// Object shape
 @Shape(MyShape, [value1: int, value2: string])
 
-// Array shape
+/// Array shape
 @Shape(MyArray, [int...])
 
-// Tuple like
+/// Tuple like
 @Shape(MyTuple, [int, string, bool])
 ```
 
@@ -1162,13 +1164,13 @@ Describes the shape of the input to an expression.
 One per expression
 
 ```
-// Single input, my omit brackets
+/// Single input, my omit brackets
 @Input(int)
 
-// tuple like
+/// tuple like
 @Input([int, string, bool])
 
-// use predefined @Shape
+/// use predefined @Shape
 @Shape(MyArray, [int...])
 @Input(MyArray)
 ```
@@ -1180,13 +1182,13 @@ Describes the shape of the output of an expression.
 One per expression
 
 ```
-// Single ouput, my omit brackets
+/// Single ouput, my omit brackets
 @Result(int)
 
-// tuple like
+/// tuple like
 @Result([int, string, bool])
 
-// use predefined @Shape
+/// use predefined @Shape
 @Shape(MyArray, [int...])
 @Result(MyArray)
 ```
@@ -1200,7 +1202,7 @@ Flags a test expression. Test expressions may be used in two ways.
 ```
 @Input([int...])
 
-// take average
+/// take average
 $ <?> ($.value + $.result) / 2
 
 @Test([1, 2, 3, 4, 5)
