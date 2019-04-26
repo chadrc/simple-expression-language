@@ -15,6 +15,7 @@ mod logical_not;
 mod modulo;
 mod multiplication;
 mod negation;
+mod range;
 mod result;
 mod subtraction;
 mod touch;
@@ -49,6 +50,8 @@ pub fn get_node_result(
         Operation::LessThanOrEqual => less_than_equal::operation(tree, node, context),
         Operation::Equality => equality::operation(tree, node, context),
         Operation::Inequality => inequality::operation(tree, node, context),
+        Operation::InclusiveRange => range::inclusive_range_operation(tree, node, context),
+        Operation::ExclusiveRange => range::exclusive_range_operation(tree, node, context),
         Operation::Group => group::operation(tree, node, context),
         _ => SELExecutionResult::new(DataType::Unknown, None),
     };
