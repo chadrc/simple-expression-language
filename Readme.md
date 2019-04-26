@@ -146,6 +146,10 @@ There is no null value but the unit value `()` is provided to represent somethin
 5 == 4 || 5 < 10
 'Hello' == 'World' || 'Hello' < 'World'
 
+/// Logical XOR
+5 == 4 ^^ 5 < 10
+'Hello' == 'World' ^^ 'Hello' < 'World'
+
 /// Logical NOT
 !true
 ```
