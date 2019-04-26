@@ -5,6 +5,7 @@ mod execution_result;
 mod exponential;
 mod greater_than;
 mod greater_than_equal;
+mod group;
 mod inequality;
 mod input;
 mod less_than;
@@ -48,6 +49,7 @@ pub fn get_node_result(
         Operation::LessThanOrEqual => less_than_equal::operation(tree, node, context),
         Operation::Equality => equality::operation(tree, node, context),
         Operation::Inequality => inequality::operation(tree, node, context),
+        Operation::Group => group::operation(tree, node, context),
         _ => SELExecutionResult::new(DataType::Unknown, None),
     };
 }
