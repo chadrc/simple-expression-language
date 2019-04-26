@@ -286,12 +286,6 @@ impl SELTreeBuilder {
             side_to_set: NodeSide::Left,
         });
 
-        changes.push(Change {
-            index_to_change: precedence_group.get_last(),
-            new_index: None,
-            side_to_set: NodeSide::Right,
-        });
-
         // take last node in group and make its right's left the group node
         nodes
             // get last node in group
@@ -301,7 +295,17 @@ impl SELTreeBuilder {
             // so a group operation's right is the sub tree for that group
             .filter(|last| last.get_operation() != Operation::Group)
             // check if last node has a right
-            .and_then(|last| last.get_right())
+            .and_then(|last| {
+                // set node's right to none
+                // marking it as end of sequence
+                changes.push(Change {
+                    index_to_change: precedence_group.get_last(),
+                    new_index: None,
+                    side_to_set: NodeSide::Right,
+                });
+
+                last.get_right()
+            })
             // if it does, update its left to be the groups parent node
             .and_then(|lasts_right_index| -> Option<usize> {
                 changes.push(Change {
