@@ -60,10 +60,25 @@ There is no null value but the unit value `()` is provided to represent somethin
 10 % 5
 
 // Exponential
-2^10
+2^^10
 
 // Negation
 -5
+```
+
+## Bitwise operations
+```
+// or
+4 | 5
+
+// and
+4 & 5
+
+// xor
+4 ^ 5
+
+// not
+~5
 ```
 
 ## String operations
@@ -81,7 +96,7 @@ There is no null value but the unit value `()` is provided to represent somethin
 // "Is true"
 
 // Length
-|"Hello, World!"|
+"Hello, World!"`l
 // 13
 ```
 
@@ -89,10 +104,10 @@ There is no null value but the unit value `()` is provided to represent somethin
 
 ```
 // Length
-|5..10|
+5..10`l
 // 5
 
-|5...10|
+5...10`l
 // 6
 ```
 
@@ -356,34 +371,33 @@ Contains Value
 ```
 
 Contains Key-Value pair
-
 ```
-[1, 2, 3, 4, 5] ~ [0: 1]
+[1, 2, 3, 4, 5] ~= [0: 1]
 // true
 
-[1, 2, 3, 4, 5] ~ [0: 2]
+[1, 2, 3, 4, 5] ~= [0: 2]
 // false
 
-[first_name: "John", last_name: "Smith"] ~ [first_name: "John"]
+[first_name: "John", last_name: "Smith"] ~= [first_name: "John"]
 // true
 
-[first_name: "John", last_name: "Smith"] ~ [last_name: "Anderson"]
+[first_name: "John", last_name: "Smith"] ~= [last_name: "Anderson"]
 // false
 ```
 
 Contains Key
 
 ```
-[1, 2, 3, 4, 5] ~ [1:]
+[1, 2, 3, 4, 5] ~= [1:]
 // true
 
-[1, 2, 3, 4, 5] ~ [6:]
+[1, 2, 3, 4, 5] ~= [6:]
 // false
 
-[first_name: "John", last_name: "Smith"] ~ [last_name:]
+[first_name: "John", last_name: "Smith"] ~= [last_name:]
 // true
 
-[first_name: "John", last_name: "Smith"] ~ [admin:]
+[first_name: "John", last_name: "Smith"] ~= [admin:]
 // false
 ```
 
@@ -391,7 +405,7 @@ Can also specify multiple and a mix of the checks
 
 ```
 // Contains the value 2, the pair [2: 3], and the key 4
-[1, 2, 3, 4, 5] ~ [2, 2: 3, 4:]
+[1, 2, 3, 4, 5] ~= [2, 2: 3, 4:]
 // true
 ```
 
@@ -428,13 +442,13 @@ numbers["1"] // doesn't exist
 Can use the length operator on associative arrays but note that it will return total number of values even if there is a mix of index keys and string keys.
 
 ```
-|[1, 2, 3, 4, 5]|
+[1, 2, 3, 4, 5]`l
 // 5
 
-|[first_name: "James", last_name: "Smith", age: 36]|
+[first_name: "James", last_name: "Smith", age: 36]`l
 // 3
 
-|[1, 2, 3, 4, 5, first_name: "James", last_name: "Smith", age: 36]|
+[1, 2, 3, 4, 5, first_name: "James", last_name: "Smith", age: 36]`l
 // 8
 ```
 
@@ -754,19 +768,19 @@ Functions:
 - `clamp(num: int, min: int, max: int)`
 
 ```
-#clamp_10 ~ clamp(10)
+#clamp_10 ~> clamp(10)
 // this new expresson now has takes 2 arguments, min and max
 
 // can also provide multiple values
-#clamp_10_min_5 ~ clamp(10, 5)
+#clamp_10_min_5 ~> clamp(10, 5)
 // takes one argument, max
 
 // can skip parameters with the '_' symbol
-#clamp_min_5 ~ clamp(_, 5)
+#clamp_min_5 ~> clamp(_, 5)
 // takes two arguments, num and max
 
 // can curry a curried expression
-#clamp_5_to_15 ~ #clamp_min_5(_, 15)
+#clamp_5_to_15 ~> #clamp_min_5(_, 15)
 // taks one argument, num
 ```
 
@@ -777,11 +791,11 @@ You may also provide a parameter by its name. This lets you avoid the need to ig
 Assuming clamp accesses its inputs by name (see Functions _TODO: add link_ section).
 
 ```
-#clamp_min_5 ~ clamp(min=5)
+#clamp_min_5 ~> clamp(min=5)
 
-#clamp_5_to_15 ~ #clamp_min_5(max=15)
+#clamp_5_to_15 ~> #clamp_min_5(max=15)
 
-#clamp_10_to_20 ~ clamp(min=10, max=20)
+#clamp_10_to_20 ~> clamp(min=10, max=20)
 ```
 
 ## Matching
