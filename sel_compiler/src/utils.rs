@@ -25,6 +25,7 @@ pub fn get_operation_type_for_token(token: &Token) -> Operation {
         TokenType::MinusSign => Operation::Subtraction,
         TokenType::MultiplicationSign => Operation::Multiplication,
         TokenType::DivisionSign => Operation::Division,
+        TokenType::IntegerDivisionSign => Operation::IntegerDivision,
         TokenType::ModulusSign => Operation::Modulo,
         TokenType::ExponentialSign => Operation::Exponential,
         TokenType::ExclusiveRange => Operation::ExclusiveRange,
@@ -37,10 +38,17 @@ pub fn get_operation_type_for_token(token: &Token) -> Operation {
         TokenType::NotEqual => Operation::Inequality,
         TokenType::LogicalAnd => Operation::LogicalAnd,
         TokenType::LogicalOr => Operation::LogicalOr,
+        TokenType::LogicalXOR => Operation::LogicalXOR,
         TokenType::LogicalNot => Operation::LogicalNot,
         TokenType::Input => Operation::Input,
         TokenType::CurrentResult => Operation::CurrentResult,
         TokenType::StartGroup => Operation::Group,
+        TokenType::BitwiseOrSign => Operation::BitwiseOr,
+        TokenType::BitwiseXorSign => Operation::BitwiseXOR,
+        TokenType::BitwiseAndSign => Operation::BitwiseAnd,
+        TokenType::BitwiseLeftShiftSign => Operation::BitwiseLeftShift,
+        TokenType::BitwiseRightShiftSign => Operation::BitwiseRightShift,
+        TokenType::BitwiseNotSign => Operation::BitwiseNot,
         TokenType::Boolean
         | TokenType::Integer
         | TokenType::Decimal

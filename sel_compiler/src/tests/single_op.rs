@@ -90,6 +90,28 @@ fn compiles_division_operation() {
 }
 
 #[test]
+fn compiles_integer_division_operation() {
+    let input = String::from("5 // 10");
+    let compiler = Compiler::new();
+
+    let tree = compiler.compile(&input);
+
+    let root = tree.get_root();
+
+    let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
+    let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
+
+    assert_eq!(root.get_operation(), Operation::IntegerDivision);
+    assert_eq!(root.get_data_type(), DataType::Unknown);
+
+    assert_eq!(left.get_operation(), Operation::Touch);
+    assert_eq!(left.get_data_type(), DataType::Integer);
+
+    assert_eq!(right.get_operation(), Operation::Touch);
+    assert_eq!(right.get_data_type(), DataType::Integer);
+}
+
+#[test]
 fn compiles_modulus_operation() {
     let input = String::from("5 % 10");
     let compiler = Compiler::new();
@@ -354,6 +376,28 @@ fn compiles_logical_or_operation() {
 }
 
 #[test]
+fn compiles_logical_xor_operation() {
+    let input = String::from("5 ^^ 10");
+    let compiler = Compiler::new();
+
+    let tree = compiler.compile(&input);
+
+    let root = tree.get_root();
+
+    let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
+    let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
+
+    assert_eq!(root.get_operation(), Operation::LogicalXOR);
+    assert_eq!(root.get_data_type(), DataType::Unknown);
+
+    assert_eq!(left.get_operation(), Operation::Touch);
+    assert_eq!(left.get_data_type(), DataType::Integer);
+
+    assert_eq!(right.get_operation(), Operation::Touch);
+    assert_eq!(right.get_data_type(), DataType::Integer);
+}
+
+#[test]
 fn compiles_logical_not_operation() {
     let input = String::from("!true");
     let compiler = Compiler::new();
@@ -388,3 +432,153 @@ fn compiles_negation_operation() {
     assert_eq!(right.get_operation(), Operation::Touch);
     assert_eq!(right.get_data_type(), DataType::Integer);
 }
+
+#[test]
+fn compiles_bitwise_or_operation() {
+    let input = String::from("5 | 10");
+    let compiler = Compiler::new();
+
+    let tree = compiler.compile(&input);
+
+    let root = tree.get_root();
+
+    let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
+    let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
+
+    assert_eq!(root.get_operation(), Operation::BitwiseOr);
+    assert_eq!(root.get_data_type(), DataType::Unknown);
+
+    assert_eq!(left.get_operation(), Operation::Touch);
+    assert_eq!(left.get_data_type(), DataType::Integer);
+
+    assert_eq!(right.get_operation(), Operation::Touch);
+    assert_eq!(right.get_data_type(), DataType::Integer);
+}
+
+#[test]
+fn compiles_bitwise_and_operation() {
+    let input = String::from("5 & 10");
+    let compiler = Compiler::new();
+
+    let tree = compiler.compile(&input);
+
+    let root = tree.get_root();
+
+    let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
+    let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
+
+    assert_eq!(root.get_operation(), Operation::BitwiseAnd);
+    assert_eq!(root.get_data_type(), DataType::Unknown);
+
+    assert_eq!(left.get_operation(), Operation::Touch);
+    assert_eq!(left.get_data_type(), DataType::Integer);
+
+    assert_eq!(right.get_operation(), Operation::Touch);
+    assert_eq!(right.get_data_type(), DataType::Integer);
+}
+
+#[test]
+fn compiles_bitwise_xor_operation() {
+    let input = String::from("5 ^ 10");
+    let compiler = Compiler::new();
+
+    let tree = compiler.compile(&input);
+
+    let root = tree.get_root();
+
+    let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
+    let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
+
+    assert_eq!(root.get_operation(), Operation::BitwiseXOR);
+    assert_eq!(root.get_data_type(), DataType::Unknown);
+
+    assert_eq!(left.get_operation(), Operation::Touch);
+    assert_eq!(left.get_data_type(), DataType::Integer);
+
+    assert_eq!(right.get_operation(), Operation::Touch);
+    assert_eq!(right.get_data_type(), DataType::Integer);
+}
+
+#[test]
+fn compiles_bitwise_left_shift_operation() {
+    let input = String::from("5 << 10");
+    let compiler = Compiler::new();
+
+    let tree = compiler.compile(&input);
+
+    let root = tree.get_root();
+
+    let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
+    let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
+
+    assert_eq!(root.get_operation(), Operation::BitwiseLeftShift);
+    assert_eq!(root.get_data_type(), DataType::Unknown);
+
+    assert_eq!(left.get_operation(), Operation::Touch);
+    assert_eq!(left.get_data_type(), DataType::Integer);
+
+    assert_eq!(right.get_operation(), Operation::Touch);
+    assert_eq!(right.get_data_type(), DataType::Integer);
+}
+
+#[test]
+fn compiles_bitwise_right_shift_operation() {
+    let input = String::from("5 >> 10");
+    let compiler = Compiler::new();
+
+    let tree = compiler.compile(&input);
+
+    let root = tree.get_root();
+
+    let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
+    let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
+
+    assert_eq!(root.get_operation(), Operation::BitwiseRightShift);
+    assert_eq!(root.get_data_type(), DataType::Unknown);
+
+    assert_eq!(left.get_operation(), Operation::Touch);
+    assert_eq!(left.get_data_type(), DataType::Integer);
+
+    assert_eq!(right.get_operation(), Operation::Touch);
+    assert_eq!(right.get_data_type(), DataType::Integer);
+}
+
+#[test]
+fn compiles_bitwise_not_operation() {
+    let input = String::from("~4");
+    let compiler = Compiler::new();
+
+    let tree = compiler.compile(&input);
+
+    let root = tree.get_root();
+
+    let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
+
+    assert_eq!(root.get_operation(), Operation::BitwiseNot);
+    assert_eq!(root.get_data_type(), DataType::Unknown);
+
+    assert_eq!(right.get_operation(), Operation::Touch);
+    assert_eq!(right.get_data_type(), DataType::Integer);
+}
+
+//#[test]
+//fn compiles_transformation_operation() {
+//    let input = String::from("5`l");
+//    let compiler = Compiler::new();
+//
+//    let tree = compiler.compile(&input);
+//
+//    let root = tree.get_root();
+//
+//    let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
+//    let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
+//
+//    assert_eq!(root.get_operation(), Operation::BitwiseRightShift);
+//    assert_eq!(root.get_data_type(), DataType::Unknown);
+//
+//    assert_eq!(left.get_operation(), Operation::Touch);
+//    assert_eq!(left.get_data_type(), DataType::Integer);
+//
+//    assert_eq!(right.get_operation(), Operation::Touch);
+//    assert_eq!(right.get_data_type(), DataType::Integer);
+//}

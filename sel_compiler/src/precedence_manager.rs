@@ -9,10 +9,15 @@ const RANGE_PRECEDENCE: usize = UNARY_PRECEDENCE + 1;
 const EXPONENTIAL_PRECEDENCE: usize = RANGE_PRECEDENCE + 1;
 const MULTIPLICATION_PRECEDENCE: usize = EXPONENTIAL_PRECEDENCE + 1;
 const ADDITION_PRECEDENCE: usize = MULTIPLICATION_PRECEDENCE + 1;
-const RELATIONAL_PRECEDENCE: usize = ADDITION_PRECEDENCE + 1;
+const BITSHIFT_PRECEDENCE: usize = ADDITION_PRECEDENCE + 1;
+const RELATIONAL_PRECEDENCE: usize = BITSHIFT_PRECEDENCE + 1;
 const EQUALITY_PRECEDENCE: usize = RELATIONAL_PRECEDENCE + 1;
-const AND_PRECEDENCE: usize = EQUALITY_PRECEDENCE + 1;
-const OR_PRECEDENCE: usize = AND_PRECEDENCE + 1;
+const BITWISE_AND_PRECEDENCE: usize = EQUALITY_PRECEDENCE + 1;
+const BITWISE_XOR_PRECEDENCE: usize = BITWISE_AND_PRECEDENCE + 1;
+const BITWISE_OR_PRECEDENCE: usize = BITWISE_XOR_PRECEDENCE + 1;
+const LOGICAL_AND_PRECEDENCE: usize = BITWISE_OR_PRECEDENCE + 1;
+const LOGICAL_XOR_PRECEDENCE: usize = LOGICAL_AND_PRECEDENCE + 1;
+const LOGICAL_OR_PRECEDENCE: usize = LOGICAL_XOR_PRECEDENCE + 1;
 
 pub struct PrecedenceGroup {
     parent: usize,
@@ -33,10 +38,15 @@ impl PrecedenceGroup {
         members.push(vec![]); // EXPONENTIAL_PRECEDENCE
         members.push(vec![]); // MULTIPLICATION_PRECEDENCE
         members.push(vec![]); // ADDITION_PRECEDENCE
+        members.push(vec![]); // BITSHIFT_PRECEDENCE
         members.push(vec![]); // RELATIONAL_PRECEDENCE
         members.push(vec![]); // EQUALITY_PRECEDENCE
-        members.push(vec![]); // AND_PRECEDENCE
-        members.push(vec![]); // OR_PRECEDENCE
+        members.push(vec![]); // BITWISE_AND_PRECEDENCE
+        members.push(vec![]); // BITWISE_XOR_PRECEDENCE
+        members.push(vec![]); // BITWISE_OR_PRECEDENCE
+        members.push(vec![]); // LOGICAL_AND_PRECEDENCE
+        members.push(vec![]); // LOGICAL_XOR_PRECEDENCE
+        members.push(vec![]); // LOGICAL_OR_PRECEDENCE
 
         return PrecedenceGroup {
             first: 0,
@@ -82,6 +92,7 @@ impl PrecedenceManager {
         operation_priorities.insert(Operation::Group, GROUP_PRECEDENCE);
 
         operation_priorities.insert(Operation::LogicalNot, UNARY_PRECEDENCE);
+        operation_priorities.insert(Operation::BitwiseNot, UNARY_PRECEDENCE);
         operation_priorities.insert(Operation::Negation, UNARY_PRECEDENCE);
 
         operation_priorities.insert(Operation::ExclusiveRange, RANGE_PRECEDENCE);
@@ -91,10 +102,14 @@ impl PrecedenceManager {
 
         operation_priorities.insert(Operation::Multiplication, MULTIPLICATION_PRECEDENCE);
         operation_priorities.insert(Operation::Division, MULTIPLICATION_PRECEDENCE);
+        operation_priorities.insert(Operation::IntegerDivision, MULTIPLICATION_PRECEDENCE);
         operation_priorities.insert(Operation::Modulo, MULTIPLICATION_PRECEDENCE);
 
         operation_priorities.insert(Operation::Addition, ADDITION_PRECEDENCE);
         operation_priorities.insert(Operation::Subtraction, ADDITION_PRECEDENCE);
+
+        operation_priorities.insert(Operation::BitwiseRightShift, BITSHIFT_PRECEDENCE);
+        operation_priorities.insert(Operation::BitwiseLeftShift, BITSHIFT_PRECEDENCE);
 
         operation_priorities.insert(Operation::GreaterThan, RELATIONAL_PRECEDENCE);
         operation_priorities.insert(Operation::GreaterThanOrEqual, RELATIONAL_PRECEDENCE);
@@ -104,9 +119,17 @@ impl PrecedenceManager {
         operation_priorities.insert(Operation::Equality, EQUALITY_PRECEDENCE);
         operation_priorities.insert(Operation::Inequality, EQUALITY_PRECEDENCE);
 
-        operation_priorities.insert(Operation::LogicalAnd, AND_PRECEDENCE);
+        operation_priorities.insert(Operation::BitwiseAnd, BITWISE_AND_PRECEDENCE);
 
-        operation_priorities.insert(Operation::LogicalOr, OR_PRECEDENCE);
+        operation_priorities.insert(Operation::BitwiseXOR, BITWISE_XOR_PRECEDENCE);
+
+        operation_priorities.insert(Operation::BitwiseOr, BITWISE_OR_PRECEDENCE);
+
+        operation_priorities.insert(Operation::LogicalAnd, LOGICAL_AND_PRECEDENCE);
+
+        operation_priorities.insert(Operation::LogicalXOR, LOGICAL_XOR_PRECEDENCE);
+
+        operation_priorities.insert(Operation::LogicalOr, LOGICAL_OR_PRECEDENCE);
 
         let mut root_group_tier: Vec<PrecedenceGroup> = vec![];
         root_group_tier.push(PrecedenceGroup::new(0));
