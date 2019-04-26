@@ -50,6 +50,18 @@ impl SELValue {
         };
     }
 
+    pub fn new_from_range(lower: i32, upper: i32) -> Self {
+        let mut lower_bytes = to_byte_vec(lower);
+        let mut upper_bytes = to_byte_vec(upper);
+
+        lower_bytes.append(&mut upper_bytes);
+
+        return SELValue {
+            data_type: DataType::Range,
+            value: Some(lower_bytes),
+        };
+    }
+
     pub fn get_type(&self) -> DataType {
         return self.data_type;
     }
@@ -79,6 +91,13 @@ impl std::fmt::Display for SELValue {
             DataType::Integer => format!("{}", from_byte_vec::<i32>(val.unwrap())),
             DataType::Decimal => format!("{}", from_byte_vec::<f64>(val.unwrap())),
             DataType::Boolean => format!("{}", from_byte_vec::<bool>(val.unwrap())),
+            DataType::Range => {
+                let val = val.unwrap();
+                let lower = from_byte_vec::<i32>(&Vec::from(&val[0..4]));
+                let upper = from_byte_vec::<i32>(&Vec::from(&val[4..]));
+
+                format!("{}..{}", lower, upper)
+            }
             DataType::Unit => String::from("()"),
             _ => none_str,
         };
@@ -128,6 +147,15 @@ mod tests {
     }
 
     #[test]
+    fn display_range() {
+        let result = SELValue::new_from_range(5, 10);
+
+        let formatted = format!("{}", result);
+
+        assert_eq!(formatted, "5..10");
+    }
+
+    #[test]
     fn display_unit() {
         let result = SELValue::new();
 
@@ -170,6 +198,15 @@ mod tests {
         let formatted = format!("{:?}", result);
 
         assert_eq!(formatted, "Boolean - false");
+    }
+
+    #[test]
+    fn debug_range() {
+        let result = SELValue::new_from_range(5, 10);
+
+        let formatted = format!("{:?}", result);
+
+        assert_eq!(formatted, "Range - 5..10");
     }
 
     #[test]
