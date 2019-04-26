@@ -325,8 +325,6 @@ fn multiple_groups_nested() {
 
     let tree = compiler.compile(&input);
 
-    println!("{:?}", tree);
-
     // tree should look like
     //              +
     //            /  \
