@@ -16,6 +16,8 @@ fn range_operation(
             let (left_val, right_val) =
                 get_values_from_results::<i32, i32>(&left_result, &right_result);
 
+            // internally, all ranges will be exclusive
+            // so we simply add 1 to give upper bound to make inclusive of that number
             let right_val = if inclusive { right_val + 1 } else { right_val };
 
             let mut left_bytes = to_byte_vec(left_val);
