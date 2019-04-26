@@ -1,4 +1,3 @@
-
 use super::super::compiler::Compiler;
 use sel_common::{DataType, Operation};
 
@@ -114,7 +113,7 @@ fn compiles_modulus_operation() {
 
 #[test]
 fn compiles_exponential_operation() {
-    let input = String::from("5^10");
+    let input = String::from("5**10");
     let compiler = Compiler::new();
 
     let tree = compiler.compile(&input);

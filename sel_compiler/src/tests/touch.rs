@@ -1,4 +1,3 @@
-
 use super::super::compiler::Compiler;
 use sel_common::{DataType, Operation};
 
@@ -108,22 +107,6 @@ fn compiles_touch_single_quote_string() {
 #[test]
 fn compiles_touch_double_quote_string() {
     let input = String::from("\"hello world\"");
-    let compiler = Compiler::new();
-
-    let tree = compiler.compile(&input);
-
-    let root = tree.get_root();
-
-    let root_value: String = tree.get_string_value_of(&root).unwrap();
-
-    assert_eq!(root.get_operation(), Operation::Touch);
-    assert_eq!(root.get_data_type(), DataType::String);
-    assert_eq!(root_value, "hello world");
-}
-
-#[test]
-fn compiles_touch_formatted_string() {
-    let input = String::from("`hello world`");
     let compiler = Compiler::new();
 
     let tree = compiler.compile(&input);

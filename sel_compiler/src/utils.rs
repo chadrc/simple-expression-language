@@ -46,7 +46,6 @@ pub fn get_operation_type_for_token(token: &Token) -> Operation {
         | TokenType::Decimal
         | TokenType::SingleQuotedString
         | TokenType::DoubleQuotedString
-        | TokenType::FormattedString
         | TokenType::Unit => Operation::Touch,
         _ => Operation::None,
     };
@@ -56,9 +55,7 @@ pub fn get_data_type_for_token(token: &Token) -> DataType {
     return match token.get_token_type() {
         TokenType::Integer => DataType::Integer,
         TokenType::Decimal => DataType::Decimal,
-        TokenType::SingleQuotedString
-        | TokenType::DoubleQuotedString
-        | TokenType::FormattedString => DataType::String,
+        TokenType::SingleQuotedString | TokenType::DoubleQuotedString => DataType::String,
         TokenType::Boolean => DataType::Boolean,
         TokenType::Unit => DataType::Unit,
         _ => DataType::Unknown,

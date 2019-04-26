@@ -22,7 +22,8 @@ impl<'a> Tokenizer<'a> {
         symbol_tree.attach("-", TokenType::MinusSign);
         symbol_tree.attach("*", TokenType::MultiplicationSign);
         symbol_tree.attach("/", TokenType::DivisionSign);
-        symbol_tree.attach("^", TokenType::ExponentialSign);
+        symbol_tree.attach("//", TokenType::IntegerDivisionSign);
+        symbol_tree.attach("**", TokenType::ExponentialSign);
         symbol_tree.attach("%", TokenType::ModulusSign);
         symbol_tree.attach("==", TokenType::Equal);
         symbol_tree.attach("!=", TokenType::NotEqual);
@@ -32,7 +33,15 @@ impl<'a> Tokenizer<'a> {
         symbol_tree.attach("<=", TokenType::LessThanOrEqual);
         symbol_tree.attach("&&", TokenType::LogicalAnd);
         symbol_tree.attach("||", TokenType::LogicalOr);
+        symbol_tree.attach("^^", TokenType::LogicalXOR);
         symbol_tree.attach("!", TokenType::LogicalNot);
+        symbol_tree.attach("|", TokenType::BitwiseOrSign);
+        symbol_tree.attach("&", TokenType::BitwiseAndSign);
+        symbol_tree.attach("^", TokenType::BitwiseXorSign);
+        symbol_tree.attach("~", TokenType::BitwiseNotSign);
+        symbol_tree.attach("<<", TokenType::BitwiseLeftShiftSign);
+        symbol_tree.attach(">>", TokenType::BitwiseRightShiftSign);
+        symbol_tree.attach("`", TokenType::TransformationSign);
         symbol_tree.attach("$", TokenType::Input);
         symbol_tree.attach("?", TokenType::CurrentResult);
         symbol_tree.attach("(", TokenType::StartGroup);
@@ -68,10 +77,6 @@ impl<'a> Tokenizer<'a> {
             '"' => {
                 self.current_token_type = TokenType::DoubleQuotedString;
                 self.parse_state = ParseState::ParsingDoubleQuotedString;
-            }
-            '`' => {
-                self.current_token_type = TokenType::FormattedString;
-                self.parse_state = ParseState::ParsingFormattedString;
             }
             '.' => {
                 self.current_token.push(c);
@@ -214,9 +219,6 @@ impl<'a> Iterator for Tokenizer<'a> {
                         }
                         ParseState::ParsingDoubleQuotedString => {
                             self.check_escape_character(c, '"');
-                        }
-                        ParseState::ParsingFormattedString => {
-                            self.check_escape_character(c, '`');
                         }
                         ParseState::EscapeCharacter => {
                             self.current_token.push(c);

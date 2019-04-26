@@ -87,30 +87,6 @@ mod tests {
     }
 
     #[test]
-    fn tokenize_string_formatted() {
-        let tokens: Vec<Token> = tokens_from_str("`Hello World`");
-
-        assert_eq!(tokens.len(), 1);
-        assert_token(
-            tokens.get(0).unwrap(),
-            TokenType::FormattedString,
-            "Hello World",
-        );
-    }
-
-    #[test]
-    fn tokenize_string_formatted_with_escape() {
-        let tokens: Vec<Token> = tokens_from_str("`Hello\\` World`");
-
-        assert_eq!(tokens.len(), 1);
-        assert_token(
-            tokens.get(0).unwrap(),
-            TokenType::FormattedString,
-            "Hello` World",
-        );
-    }
-
-    #[test]
     fn tokenize_exclusive_range() {
         let tokens: Vec<Token> = tokens_from_str("1..10");
 
@@ -121,7 +97,7 @@ mod tests {
     }
 
     #[test]
-    fn tokenize_inxclusive_range() {
+    fn tokenize_inclusive_range() {
         let tokens: Vec<Token> = tokens_from_str("1...10");
 
         assert_eq!(tokens.len(), 3);
@@ -185,13 +161,57 @@ mod tests {
     }
 
     #[test]
+    fn tokenize_integer_division() {
+        assert_4_5_binary_operation("//", TokenType::IntegerDivisionSign);
+    }
+
+    #[test]
     fn tokenize_modulus() {
         assert_4_5_binary_operation("%", TokenType::ModulusSign);
     }
 
     #[test]
     fn tokenize_exponential() {
-        assert_4_5_binary_operation("^", TokenType::ExponentialSign);
+        assert_4_5_binary_operation("**", TokenType::ExponentialSign);
+    }
+
+    #[test]
+    fn tokenize_transformation_operator() {
+        assert_4_5_binary_operation("`", TokenType::TransformationSign);
+    }
+
+    #[test]
+    fn tokenize_bitwise_or() {
+        assert_4_5_binary_operation("|", TokenType::BitwiseOrSign);
+    }
+
+    #[test]
+    fn tokenize_bitwise_and() {
+        assert_4_5_binary_operation("&", TokenType::BitwiseAndSign);
+    }
+
+    #[test]
+    fn tokenize_bitwise_xor() {
+        assert_4_5_binary_operation("^", TokenType::BitwiseXorSign);
+    }
+
+    #[test]
+    fn tokenize_bitwise_not() {
+        let tokens: Vec<Token> = tokens_from_str("~2");
+
+        assert_eq!(tokens.len(), 2);
+        assert_token(tokens.get(0).unwrap(), TokenType::BitwiseNotSign, "~");
+        assert_token(tokens.get(1).unwrap(), TokenType::Integer, "2");
+    }
+
+    #[test]
+    fn tokenize_bitwise_left_shift() {
+        assert_4_5_binary_operation("<<", TokenType::BitwiseLeftShiftSign);
+    }
+
+    #[test]
+    fn tokenize_bitwise_right_shift() {
+        assert_4_5_binary_operation(">>", TokenType::BitwiseRightShiftSign);
     }
 
     #[test]
@@ -234,8 +254,13 @@ mod tests {
     }
 
     #[test]
-    fn tokenize_logicial_and() {
+    fn tokenize_logical_and() {
         assert_4_5_binary_operation("&&", TokenType::LogicalAnd);
+    }
+
+    #[test]
+    fn tokenize_logical_xor() {
+        assert_4_5_binary_operation("^^", TokenType::LogicalXOR);
     }
 
     #[test]
@@ -285,9 +310,9 @@ mod tests {
     #[test]
     fn all_token_count() {
         let tokens = tokens_from_str(
-            "100 3.13 true 'string' \"string\" `string`\n1..10 1...10 + - * / % ^ == != < <= > >= && || !false () $ ?",
+            "100 3.13 true 'string' \"string\"\n1..10 1...10 + - * / % ** == != < <= > >= && || ^^ | & ^ ~ << >> ` !false () $ ?",
         );
-        assert_eq!(tokens.len(), 32);
+        assert_eq!(tokens.len(), 39);
     }
 
     // Test utils

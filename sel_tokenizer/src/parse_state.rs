@@ -6,7 +6,6 @@ pub enum ParseState {
     ParsingDecimal,
     ParsingSingleQuotedString,
     ParsingDoubleQuotedString,
-    ParsingFormattedString,
     EscapeCharacter,
     ParsingExclusiveRange,
     ParsingSymbol,
