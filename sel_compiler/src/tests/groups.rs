@@ -217,7 +217,7 @@ fn single_group_begin_end_lower_begin() {
 
     assert_eq!(r_left.get_operation(), Operation::Group);
 
-    assert_eq!(rl_right.get_operation(), Operation::Group);
+    assert_eq!(rl_right.get_operation(), Operation::Addition);
 
     assert_eq!(r_right.get_operation(), Operation::Touch);
     assert_eq!(r_right.get_data_type(), DataType::Integer);

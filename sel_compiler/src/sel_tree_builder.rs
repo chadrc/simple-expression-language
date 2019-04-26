@@ -1,4 +1,4 @@
-use super::precedence_manager::PrecedenceManager;
+use super::precedence_manager::{PrecedenceGroup, PrecedenceManager};
 use super::utils::{get_data_type_for_token, get_operation_type_for_token, loop_max};
 use sel_common::{DataHeap, DataType, NodeSide, Operation, SELTree, SELTreeNode};
 use sel_tokenizer::{TokenType, Tokenizer};
@@ -261,21 +261,98 @@ impl SELTreeBuilder {
             }
 
             {
-                let nodes = &mut nodes;
-
-                for change in changes {
-                    let node = nodes.get_mut(change.index_to_change).unwrap();
-
-                    match change.side_to_set {
-                        NodeSide::Left => node.set_left(change.new_index),
-                        NodeSide::Right => node.set_right(change.new_index),
-                        NodeSide::Parent => node.set_parent(change.new_index),
-                    }
-                }
+                SELTreeBuilder::apply_changes(&mut nodes, changes)
             }
         }
 
         return nodes;
+    }
+
+    fn correct_group(
+        &self,
+        mut nodes: Vec<SELTreeNode>,
+        precedence_group: &PrecedenceGroup,
+    ) -> Vec<SELTreeNode> {
+        let mut changes: Vec<Change> = vec![];
+
+        // each group will be made into a tree to begin with
+        // in order to do this, we'll set the
+        // first node's left and the last node's right
+        // to None
+
+        changes.push(Change {
+            index_to_change: precedence_group.get_first(),
+            new_index: None,
+            side_to_set: NodeSide::Left,
+        });
+
+        changes.push(Change {
+            index_to_change: precedence_group.get_last(),
+            new_index: None,
+            side_to_set: NodeSide::Right,
+        });
+
+        // take last node in group and make its right's left the group node
+        nodes
+            // get last node in group
+            .get(precedence_group.get_last())
+            // check if last node has a right
+            .and_then(|last| last.get_right())
+            // if it does, update its left to be the groups parent node
+            .and_then(|lasts_right_index| -> Option<usize> {
+                changes.push(Change {
+                    index_to_change: lasts_right_index,
+                    new_index: Some(precedence_group.get_parent()),
+                    side_to_set: NodeSide::Left,
+                });
+
+                None
+            });
+
+        SELTreeBuilder::apply_changes(&mut nodes, changes);
+
+        nodes
+    }
+
+    fn update_group(
+        &self,
+        mut nodes: Vec<SELTreeNode>,
+        precedence_group: &PrecedenceGroup,
+    ) -> Vec<SELTreeNode> {
+        // get root of group tree
+        let root = SELTreeBuilder::find_root_index(&nodes, Some(precedence_group.get_first()));
+
+        // update root's parent to be the group parent
+        // and group parent's right to be the root
+        let mut changes: Vec<Change> = vec![];
+
+        changes.push(Change {
+            index_to_change: root,
+            new_index: Some(precedence_group.get_parent()),
+            side_to_set: NodeSide::Parent,
+        });
+
+        changes.push(Change {
+            index_to_change: precedence_group.get_parent(),
+            new_index: Some(root),
+            side_to_set: NodeSide::Right,
+        });
+
+        SELTreeBuilder::apply_changes(&mut nodes, changes);
+
+        nodes
+    }
+
+    fn apply_changes(nodes: &mut Vec<SELTreeNode>, changes: Vec<Change>) {
+        for change in changes {
+            let node = nodes.get_mut(change.index_to_change).unwrap();
+
+            match change.side_to_set {
+                NodeSide::Left => node.set_left(change.new_index),
+                NodeSide::Right => node.set_right(change.new_index),
+                NodeSide::Parent => node.set_parent(change.new_index),
+            }
+        }
     }
 
     fn build(&mut self, s: &String) -> SELTree {
@@ -285,12 +362,25 @@ impl SELTreeBuilder {
 
         let precedence_groups = self.precedence_manager.get_group_tiers();
 
-        for tier in precedence_groups.iter().rev() {
+        for (index, tier) in precedence_groups.iter().enumerate().rev() {
             for group in tier.iter().rev() {
+                // base tier doesn't need any correction
+                // before or after creating the tree
+
+                if index != 0 {
+                    nodes = self.correct_group(nodes, group);
+                }
+
                 // skip value and group precedences
                 for bucket in group.get_members().iter().skip(2) {
                     nodes = self.resolve_tree(nodes, &bucket);
                 }
+
+                if index != 0 {
+                    nodes = self.update_group(nodes, group);
+                }
+
+                println!("updated {:?}", nodes);
             }
         }
 
