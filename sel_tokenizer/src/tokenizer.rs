@@ -53,7 +53,7 @@ impl<'a> Tokenizer<'a> {
             parse_state: ParseState::NoToken,
             deferred_parse_state: ParseState::NoToken,
             chars: input.chars(),
-            symbol_tree: symbol_tree,
+            symbol_tree,
         };
     }
 
