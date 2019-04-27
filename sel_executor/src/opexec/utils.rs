@@ -133,6 +133,29 @@ where
     );
 }
 
+pub fn match_int_math_ops<FI, FF, R>(
+    tree: &SELTree,
+    node: &SELTreeNode,
+    context: &SELContext,
+    integer_func: FI,
+    float_func: FF,
+) -> OptionOr<SELExecutionResult, (SELExecutionResult, SELExecutionResult)>
+where
+    FI: Fn(i32, i32) -> R,
+    FF: Fn(f64, f64) -> R,
+    R: ToByteVec,
+{
+    return match_int_dec_ops(
+        tree,
+        node,
+        context,
+        integer_func,
+        float_func,
+        DataType::Integer,
+        DataType::Integer,
+    );
+}
+
 pub fn match_comparison_ops<FI, FF, FS>(
     tree: &SELTree,
     node: &SELTreeNode,

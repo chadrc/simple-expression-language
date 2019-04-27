@@ -45,11 +45,11 @@ There is no null value but the unit value `()` is provided to represent somethin
 10 * 5
 
 /// Float Division
-3 / 10
+10 / 3
 /// 3.333334
 
 /// Integer Division
-3 // 10
+10 // 3
 /// 3
 
 /// Remainder
