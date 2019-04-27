@@ -326,6 +326,12 @@ mod tests {
     }
 
     #[test]
+    fn tokenize_identifier_with_nums() {
+        let tokens = tokens_from_str("value12");
+        assert_token(tokens.get(0).unwrap(), TokenType::Identifier, "value12");
+    }
+
+    #[test]
     fn all_token_count() {
         let tokens = tokens_from_str(
             "100 3.13 true 'string' \"string\"\n1..10 1...10 + - * / % ** == != < <= > >= && || ^^ | & ^ ~ << >> ` !false () $ ?",
