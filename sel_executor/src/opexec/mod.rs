@@ -43,6 +43,7 @@ pub fn get_node_result(
         Operation::Exponential => exponential::operation(tree, node, context),
         Operation::Negation => negation::operation(tree, node, context),
         Operation::LogicalOr => logical::or_operation(tree, node, context),
+        Operation::LogicalXOR => logical::xor_operation(tree, node, context),
         Operation::LogicalAnd => logical::and_operation(tree, node, context),
         Operation::LogicalNot => logical_not::operation(tree, node, context),
         Operation::GreaterThan => greater_than::operation(tree, node, context),

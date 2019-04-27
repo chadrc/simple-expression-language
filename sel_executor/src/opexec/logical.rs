@@ -3,6 +3,10 @@ use super::utils::{get_left_right_results, get_value_from_result, get_values_fro
 use super::SELExecutionResult;
 use sel_common::{to_byte_vec, DataType, SELTree, SELTreeNode};
 
+fn logical_xor(left: bool, right: bool) -> bool {
+    return left || right;
+}
+
 fn match_logical<F>(
     tree: &SELTree,
     node: &SELTreeNode,
@@ -39,6 +43,14 @@ where
         }
         _ => SELExecutionResult::new(DataType::Unknown, Some(vec![])),
     };
+}
+
+pub fn xor_operation(
+    tree: &SELTree,
+    node: &SELTreeNode,
+    context: &SELContext,
+) -> SELExecutionResult {
+    return match_logical(tree, node, context, |left, right| left || right);
 }
 
 pub fn or_operation(
@@ -174,5 +186,24 @@ mod tests {
 
         assert_eq!(result.get_type(), DataType::Boolean);
         assert_eq!(result_value, Some(false));
+    }
+
+    #[test]
+    fn executes_logical_xor() {
+        let result = result_of_binary_op(
+            Operation::LogicalXOR,
+            DataType::Boolean,
+            "true",
+            DataType::Boolean,
+            "false",
+        );
+
+        let result_value = match result.get_value() {
+            Some(value) => Some(from_byte_vec(value)),
+            None => None,
+        };
+
+        assert_eq!(result.get_type(), DataType::Boolean);
+        assert_eq!(result_value, Some(true));
     }
 }
