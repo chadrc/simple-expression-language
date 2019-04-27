@@ -221,7 +221,7 @@ To use as both. Provide a combination of above items.
     10, /// index 0
     20, /// index 1
     first_name = "James",
-    last_name: = "Smith",
+    last_name = "Smith",
     30, /// index 2
     age = 36
 ]
