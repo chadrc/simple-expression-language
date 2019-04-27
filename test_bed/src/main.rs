@@ -6,6 +6,8 @@ fn main() {
     let inputs = [
         "5 + $ * 8 - 3",
         "3 > 5 || 89 != 43",
+        "true ^^ true",
+        "10 // 3",
         "3.14 ** 2",
         "'Hello ' + 'World'",
         "5 + 9 * 3 + ()",
@@ -21,6 +23,7 @@ fn main() {
         0...100
         ",
     ];
+
     // let tokenizer = sel_tokenizer::Tokenizer::new(&input);
     // for token in tokenizer {
     //     println!("{:?}", token);
@@ -32,13 +35,17 @@ fn main() {
 
     context.set_input(sel_executor::SELValue::new_from_int(12345));
 
+    println!("{}", "-".repeat(100));
     for (index, input) in inputs.iter().enumerate() {
-        let tree = compiler.compile(&String::from(*input));
+        let input_str = String::from(*input);
+        let tree = compiler.compile(&input_str);
 
         let results = sel_executor::execute_sel_tree(&tree, &context);
 
+        println!("{}", input_str);
         for (result_index, result) in results.iter().enumerate() {
-            println!("({}:{}) {}", index, result_index, result);
+            println!("{}: {}", result_index + 1, result);
         }
+        println!("{}", "-".repeat(100));
     }
 }
