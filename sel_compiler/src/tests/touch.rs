@@ -137,7 +137,7 @@ fn compiles_touch_boolean() {
 }
 
 #[test]
-fn compiles_resolve_identifier() {
+fn compiles_touch_identifier() {
     let input = String::from("value");
     let compiler = Compiler::new();
 
