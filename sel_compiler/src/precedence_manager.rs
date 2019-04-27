@@ -90,6 +90,7 @@ impl PrecedenceManager {
 
         operation_priorities.insert(Operation::Group, GROUP_PRECEDENCE);
 
+        operation_priorities.insert(Operation::Symbol, UNARY_PRECEDENCE);
         operation_priorities.insert(Operation::LogicalNot, UNARY_PRECEDENCE);
         operation_priorities.insert(Operation::BitwiseNot, UNARY_PRECEDENCE);
         operation_priorities.insert(Operation::Negation, UNARY_PRECEDENCE);

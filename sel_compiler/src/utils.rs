@@ -49,6 +49,7 @@ pub fn get_operation_type_for_token(token: &Token) -> Operation {
         TokenType::BitwiseLeftShiftSign => Operation::BitwiseLeftShift,
         TokenType::BitwiseRightShiftSign => Operation::BitwiseRightShift,
         TokenType::BitwiseNotSign => Operation::BitwiseNot,
+        TokenType::Symbol => Operation::Symbol,
         TokenType::Boolean
         | TokenType::Integer
         | TokenType::Decimal
