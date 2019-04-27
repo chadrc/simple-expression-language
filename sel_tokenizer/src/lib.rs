@@ -326,6 +326,12 @@ mod tests {
     }
 
     #[test]
+    fn tokenize_identifier_with_underscores() {
+        let tokens = tokens_from_str("_my_value");
+        assert_token(tokens.get(0).unwrap(), TokenType::Identifier, "_my_value");
+    }
+
+    #[test]
     fn tokenize_identifier_with_nums() {
         let tokens = tokens_from_str("value12");
         assert_token(tokens.get(0).unwrap(), TokenType::Identifier, "value12");

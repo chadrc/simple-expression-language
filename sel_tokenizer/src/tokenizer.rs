@@ -229,7 +229,7 @@ impl<'a> Iterator for Tokenizer<'a> {
                             self.deferred_parse_state = ParseState::NoToken;
                         }
                         ParseState::ParsingIdentifier => {
-                            if c.is_alphanumeric() {
+                            if c.is_alphanumeric() || c == '_' {
                                 self.current_token.push(c);
                             } else {
                                 return self.end_current_token(c);
