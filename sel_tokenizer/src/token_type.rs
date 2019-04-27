@@ -34,6 +34,7 @@ pub enum TokenType {
     Unit,
     Input,
     CurrentResult,
+    Identifier,
     StartGroup,
     EndGroup,
     LineEnd,
