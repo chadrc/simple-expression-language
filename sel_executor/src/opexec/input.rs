@@ -18,7 +18,9 @@ pub fn operation(_tree: &SELTree, _node: &SELTreeNode, context: &SELContext) -> 
 mod tests {
     use super::super::super::context::SELValue;
     use super::super::{get_node_result, SELContext};
-    use sel_common::{from_byte_vec, DataHeap, DataType, Operation, SELTree, SELTreeNode};
+    use sel_common::{
+        from_byte_vec, DataHeap, DataType, Operation, SELTree, SELTreeNode, SymbolTable,
+    };
 
     #[test]
     fn executes_input() {
@@ -29,7 +31,7 @@ mod tests {
 
         nodes.push(root);
 
-        let tree = SELTree::new(0, vec![], nodes, heap);
+        let tree = SELTree::new(0, vec![], nodes, heap, SymbolTable::new());
 
         let mut context = SELContext::new();
 
@@ -57,7 +59,7 @@ mod tests {
 
         nodes.push(root);
 
-        let tree = SELTree::new(0, vec![], nodes, heap);
+        let tree = SELTree::new(0, vec![], nodes, heap, SymbolTable::new());
 
         let context = SELContext::new();
 

@@ -63,7 +63,7 @@ pub fn get_node_result(
 pub mod test_utils {
     use super::super::context;
     use super::*;
-    use sel_common::{DataHeap, DataType, Operation, SELTree, SELTreeNode};
+    use sel_common::{DataHeap, DataType, Operation, SELTree, SELTreeNode, SymbolTable};
 
     pub fn result_of_binary_op(
         op: Operation,
@@ -101,7 +101,7 @@ pub mod test_utils {
         nodes.push(right);
         nodes.push(root);
 
-        let tree = SELTree::new(2, vec![], nodes, heap);
+        let tree = SELTree::new(2, vec![], nodes, heap, SymbolTable::new());
 
         let context = context::SELContext::new();
 

@@ -71,6 +71,10 @@ impl SELTreeNode {
     pub fn set_parent(&mut self, parent: Option<usize>) {
         self.parent = parent;
     }
+
+    pub fn set_value(&mut self, value: Option<usize>) {
+        self.value = value;
+    }
 }
 
 #[derive(Debug)]
@@ -88,13 +92,14 @@ impl SELTree {
         sub_roots: Vec<usize>,
         nodes: Vec<SELTreeNode>,
         data: DataHeap,
+        symbol_table: SymbolTable,
     ) -> SELTree {
         return SELTree {
             root,
             sub_roots,
             nodes,
             data,
-            symbol_table: SymbolTable::new(),
+            symbol_table,
         };
     }
 

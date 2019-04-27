@@ -36,7 +36,9 @@ mod tests {
     use super::super::get_node_result;
     use super::super::test_utils::result_of_binary_op;
     use super::*;
-    use sel_common::{from_byte_vec, DataHeap, DataType, Operation, SELTree, SELTreeNode};
+    use sel_common::{
+        from_byte_vec, DataHeap, DataType, Operation, SELTree, SELTreeNode, SymbolTable,
+    };
 
     #[test]
     fn executes_integer_negation() {
@@ -60,7 +62,7 @@ mod tests {
         nodes.push(right);
         nodes.push(root);
 
-        let tree = SELTree::new(1, vec![], nodes, heap);
+        let tree = SELTree::new(1, vec![], nodes, heap, SymbolTable::new());
 
         let context = SELContext::new();
 
@@ -97,7 +99,7 @@ mod tests {
         nodes.push(right);
         nodes.push(root);
 
-        let tree = SELTree::new(1, vec![], nodes, heap);
+        let tree = SELTree::new(1, vec![], nodes, heap, SymbolTable::new());
 
         let context = SELContext::new();
 

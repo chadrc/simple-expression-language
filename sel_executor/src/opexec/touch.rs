@@ -16,14 +16,16 @@ pub fn operation(tree: &SELTree, node: &SELTreeNode, _context: &SELContext) -> S
 mod tests {
     use super::super::get_node_result;
     use super::*;
-    use sel_common::{from_byte_vec, DataHeap, DataType, Operation, SELTree, SELTreeNode};
+    use sel_common::{
+        from_byte_vec, DataHeap, DataType, Operation, SELTree, SELTreeNode, SymbolTable,
+    };
 
     #[test]
     fn executes_unit_touch() {
         let mut nodes: Vec<SELTreeNode> = vec![];
         nodes.push(SELTreeNode::new(Operation::Touch, DataType::Unit, 0, None));
 
-        let tree = SELTree::new(0, vec![], nodes, DataHeap::new());
+        let tree = SELTree::new(0, vec![], nodes, DataHeap::new(), SymbolTable::new());
 
         let context = SELContext::new();
 
@@ -46,7 +48,7 @@ mod tests {
             value,
         ));
 
-        let tree = SELTree::new(0, vec![], nodes, heap);
+        let tree = SELTree::new(0, vec![], nodes, heap, SymbolTable::new());
 
         let context = SELContext::new();
 
@@ -74,7 +76,7 @@ mod tests {
             value,
         ));
 
-        let tree = SELTree::new(0, vec![], nodes, heap);
+        let tree = SELTree::new(0, vec![], nodes, heap, SymbolTable::new());
 
         let context = SELContext::new();
 
@@ -102,7 +104,7 @@ mod tests {
             value,
         ));
 
-        let tree = SELTree::new(0, vec![], nodes, heap);
+        let tree = SELTree::new(0, vec![], nodes, heap, SymbolTable::new());
 
         let context = SELContext::new();
 
@@ -130,7 +132,7 @@ mod tests {
             value,
         ));
 
-        let tree = SELTree::new(0, vec![], nodes, heap);
+        let tree = SELTree::new(0, vec![], nodes, heap, SymbolTable::new());
 
         let context = SELContext::new();
 

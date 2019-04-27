@@ -1,6 +1,6 @@
 use super::precedence_manager::{PrecedenceGroup, PrecedenceManager};
 use super::utils::{get_data_type_for_token, get_operation_type_for_token, loop_max};
-use sel_common::{DataHeap, DataType, NodeSide, Operation, SELTree, SELTreeNode};
+use sel_common::{DataHeap, DataType, NodeSide, Operation, SELTree, SELTreeNode, SymbolTable};
 use sel_tokenizer::{TokenType, Tokenizer};
 
 #[derive(PartialEq, Debug, Clone, Copy)]
@@ -46,9 +46,10 @@ impl SELTreeBuilder {
     fn make_nodes_from_tokenizer(
         &mut self,
         tokenizer: &mut Tokenizer,
-    ) -> (Vec<SELTreeNode>, DataHeap, Vec<usize>) {
+    ) -> (Vec<SELTreeNode>, DataHeap, SymbolTable, Vec<usize>) {
         let mut nodes: Vec<SELTreeNode> = vec![];
-        let mut data: DataHeap = DataHeap::new();
+        let mut data = DataHeap::new();
+        let mut symbol_table = SymbolTable::new();
         let mut firsts_of_expression: Vec<usize> = vec![];
 
         // loop trough all tokens
@@ -58,9 +59,15 @@ impl SELTreeBuilder {
         let mut last_data_type = DataType::Unknown;
         let mut last_op = Operation::None;
         let mut link_next = true;
+        let mut symbol_next = false;
 
         for token in tokenizer {
             let inserted_index = nodes.len();
+            let previous_index = if nodes.len() > 0 {
+                inserted_index - 1
+            } else {
+                0
+            };
 
             if token.get_token_type() == TokenType::LineEnd {
                 // set next token to not be linked to previous
@@ -76,8 +83,22 @@ impl SELTreeBuilder {
                 continue;
             }
 
+            if symbol_next {
+                let symbol_value = symbol_table.add(&token.get_token_str());
+                nodes
+                    .get_mut(previous_index)
+                    .and_then(|previous_node| -> Option<usize> {
+                        previous_node.set_value(data.insert_integer(symbol_value as i64));
+                        None
+                    });
+            }
+
             let mut op = get_operation_type_for_token(&token);
             let data_type = get_data_type_for_token(&token);
+
+            if data_type == DataType::Symbol {
+                symbol_next = true;
+            }
 
             let value = data.insert_from_string(data_type, &token.get_token_str());
 
@@ -103,7 +124,6 @@ impl SELTreeBuilder {
             }
 
             if inserted_index > 0 && link_next {
-                let previous_index = inserted_index - 1;
                 match nodes.get_mut(previous_index) {
                     None => (),
                     Some(previous_node) => {
@@ -138,7 +158,7 @@ impl SELTreeBuilder {
             nodes.push(SELTreeNode::new(Operation::None, DataType::Unit, 0, None));
         }
 
-        return (nodes, data, firsts_of_expression);
+        return (nodes, data, symbol_table, firsts_of_expression);
     }
 
     fn find_root_index(nodes: &Vec<SELTreeNode>, start_index: Option<usize>) -> usize {
@@ -365,7 +385,7 @@ impl SELTreeBuilder {
 
     fn build(&mut self, s: &String) -> SELTree {
         let mut tokenizer = Tokenizer::new(s);
-        let (mut nodes, data, firsts_of_expression) =
+        let (mut nodes, data, symbol_table, firsts_of_expression) =
             self.make_nodes_from_tokenizer(&mut tokenizer);
 
         let precedence_groups = self.precedence_manager.get_group_tiers();
@@ -400,7 +420,7 @@ impl SELTreeBuilder {
             .map(|first| SELTreeBuilder::find_root_index(&nodes, Some(*first)))
             .collect();
 
-        return SELTree::new(root, sub_roots, nodes, data);
+        return SELTree::new(root, sub_roots, nodes, data, symbol_table);
     }
 }
 

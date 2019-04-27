@@ -14,11 +14,7 @@ impl DataHeap {
 
     pub fn insert_from_string(&mut self, data_type: DataType, value_str: &String) -> Option<usize> {
         return match data_type {
-            DataType::Integer => {
-                let num = value_str.parse::<i64>().unwrap();
-                self.data.push(to_byte_vec(num));
-                Some(self.data.len() - 1)
-            }
+            DataType::Integer => self.insert_integer(value_str.parse::<i64>().unwrap()),
             DataType::Decimal => {
                 let num = value_str.parse::<f64>().unwrap();
                 self.data.push(to_byte_vec(num));
@@ -39,6 +35,11 @@ impl DataHeap {
             }
             _ => None,
         };
+    }
+
+    pub fn insert_integer(&mut self, value: i64) -> Option<usize> {
+        self.data.push(to_byte_vec(value));
+        Some(self.data.len() - 1)
     }
 
     pub fn get_bytes(&self, index: usize) -> Option<Vec<u8>> {

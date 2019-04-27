@@ -14,10 +14,12 @@ impl SymbolTable {
         };
     }
 
-    pub fn add(&mut self, symbol: &String) {
+    pub fn add(&mut self, symbol: &String) -> usize {
+        let index = self.symbols.len();
         self.symbols.push(symbol.clone());
-        self.key_to_index
-            .insert(symbol.clone(), self.symbols.len() - 1);
+        self.key_to_index.insert(symbol.clone(), index);
+
+        index
     }
 
     pub fn get_symbol(&self, value: usize) -> Option<&String> {
