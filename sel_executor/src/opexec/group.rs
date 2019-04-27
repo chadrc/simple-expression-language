@@ -1,6 +1,7 @@
+use sel_common::{DataType, SELTree, SELTreeNode};
+
 use super::execution_result::SELExecutionResult;
 use super::{get_node_result, SELContext};
-use sel_common::{DataType, SELTree, SELTreeNode};
 
 pub fn operation(tree: &SELTree, node: &SELTreeNode, context: &SELContext) -> SELExecutionResult {
     return match node
@@ -14,11 +15,12 @@ pub fn operation(tree: &SELTree, node: &SELTreeNode, context: &SELContext) -> SE
 
 #[cfg(test)]
 mod tests {
+    use sel_common::{from_byte_vec, DataHeap, DataType, Operation, SELTree, SELTreeNode};
+    use sel_compiler::Compiler;
+
     use super::super::super::execute_sel_tree;
     use super::super::get_node_result;
     use super::*;
-    use sel_common::{from_byte_vec, DataHeap, DataType, Operation, SELTree, SELTreeNode};
-    use sel_compiler::Compiler;
 
     #[test]
     fn executes_group() {

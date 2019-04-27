@@ -78,7 +78,6 @@ pub struct PrecedenceManager {
     operation_priorities: HashMap<Operation, usize>,
     precedence_groups: Vec<Vec<PrecedenceGroup>>,
     current_tier: usize,
-    current_group: usize,
 }
 
 impl PrecedenceManager {
@@ -141,7 +140,6 @@ impl PrecedenceManager {
             operation_priorities,
             precedence_groups,
             current_tier: 0,
-            current_group: 0,
         };
     }
 
@@ -195,7 +193,6 @@ impl PrecedenceManager {
 
     pub fn start_group(&mut self) {
         // parent of new group is always the last group of the current tier
-        let parent = self.last_group_in_current_tier();
         let last_of_parent_group = self.current_group().last;
 
         // update and fetch new current tier

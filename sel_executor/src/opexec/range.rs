@@ -1,8 +1,10 @@
+use sel_common::{to_byte_vec, DataType, SELTree, SELTreeNode};
+
+use crate::opexec::utils::get_values_from_results;
+
 use super::execution_result::SELExecutionResult;
 use super::utils::get_left_right_results;
 use super::{get_node_result, SELContext};
-use crate::opexec::utils::get_values_from_results;
-use sel_common::{to_byte_vec, DataType, SELTree, SELTreeNode};
 
 fn range_operation(
     tree: &SELTree,
@@ -49,11 +51,12 @@ pub fn inclusive_range_operation(
 
 #[cfg(test)]
 mod tests {
+    use sel_common::{from_byte_vec, DataHeap, DataType, Operation, SELTree, SELTreeNode};
+    use sel_compiler::Compiler;
+
     use super::super::super::execute_sel_tree;
     use super::super::get_node_result;
     use super::*;
-    use sel_common::{from_byte_vec, DataHeap, DataType, Operation, SELTree, SELTreeNode};
-    use sel_compiler::Compiler;
 
     #[test]
     fn exclusive_range() {
