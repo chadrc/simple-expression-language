@@ -135,3 +135,19 @@ fn compiles_touch_boolean() {
     assert_eq!(root.get_data_type(), DataType::Boolean);
     assert_eq!(root_value, true);
 }
+
+#[test]
+fn compiles_resolve_identifier() {
+    let input = String::from("value");
+    let compiler = Compiler::new();
+
+    let tree = compiler.compile(&input);
+
+    let root = tree.get_root();
+
+    let root_value = tree.get_value_bytes_of(&root);
+
+    assert_eq!(root.get_operation(), Operation::Touch);
+    assert_eq!(root.get_data_type(), DataType::Identifier);
+    assert_eq!(root_value, None);
+}

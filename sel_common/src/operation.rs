@@ -30,5 +30,7 @@ pub enum Operation {
     BitwiseLeftShift,
     BitwiseRightShift,
     Group,
+    Symbol,
+    Pair,
     None,
 }
