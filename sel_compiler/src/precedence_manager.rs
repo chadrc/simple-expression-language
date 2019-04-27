@@ -170,6 +170,7 @@ impl PrecedenceManager {
         return &self.precedence_groups;
     }
 
+    #[allow(dead_code)]
     pub fn get_current_tier(&self) -> usize {
         return self.current_tier;
     }
