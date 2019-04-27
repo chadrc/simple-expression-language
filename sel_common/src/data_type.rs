@@ -4,6 +4,7 @@ use std::fmt;
 pub enum DataType {
     Unknown,
     Unit,
+    Symbol,
     Identifier,
     Integer,
     Decimal,

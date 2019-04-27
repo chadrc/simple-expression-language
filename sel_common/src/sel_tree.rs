@@ -17,12 +17,12 @@ impl SELTreeNode {
     pub fn new(op: Operation, data_type: DataType, own_index: usize, value: Option<usize>) -> Self {
         return SELTreeNode {
             operation: op,
-            value: value,
+            value,
             left: None,
             right: None,
             parent: None,
-            data_type: data_type,
-            own_index: own_index,
+            data_type,
+            own_index,
         };
     }
 
@@ -83,10 +83,10 @@ impl SELTree {
         data: DataHeap,
     ) -> SELTree {
         return SELTree {
-            root: root,
-            sub_roots: sub_roots,
-            nodes: nodes,
-            data: data,
+            root,
+            sub_roots,
+            nodes,
+            data,
         };
     }
 

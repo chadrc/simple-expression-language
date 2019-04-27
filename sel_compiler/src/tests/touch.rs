@@ -151,3 +151,24 @@ fn compiles_touch_identifier() {
     assert_eq!(root.get_data_type(), DataType::Identifier);
     assert_eq!(root_value, None);
 }
+
+#[test]
+fn compiles_symbol_operation() {
+    let input = String::from(":value");
+    let compiler = Compiler::new();
+
+    let tree = compiler.compile(&input);
+
+    let root = tree.get_root();
+
+    let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
+
+    let root_value = tree.get_integer_value_of(&root);
+
+    let symbol = tree.get_symbol_table().get(root_value.unwrap());
+
+    assert_eq!(root.get_operation(), Operation::Touch);
+    assert_eq!(root.get_data_type(), DataType::Symbol);
+    assert_eq!(root_value, Some(0));
+    assert_eq!(symbol, "value");
+}
