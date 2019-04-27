@@ -26,6 +26,12 @@ false
 /// Ranges
 5..10 /// Exclusive, contains 5, 6, 7, 8, and 9
 5...10 /// Inclusive, contains 5, 6, 7, 8, 9 and 10
+
+/// Symbol
+:my_symbol
+
+/// Pairs
+value = 123
 ```
 
 ### Non-existence
@@ -178,18 +184,19 @@ A single collection type is provided being a combination of associative array an
 
 The types of the values do not have to be the same.
 
-To use like a map. Provide a list of key-value pairs where key is specified first followed by a semi-colon and then the value.
+To use like a map. Provide a list of pair objects where key is specified first followed by a semi-colon and then the value.
 
 ```
 [
-    first_name: "James",
-    last_name: "Smith",
-    age: 36
+    :first_name = "James", /// use a symbol key
+    "last_name" = "Smith", /// a string key
+    email = "james@example.com", /// unbound identifier automatically treated as a symbol
+    1 = 36, /// or an integer key
 ]
 ```
 
 If you want to include an exposed variable inside a map using the variable identifier as the key and variable value as the value. You may omit the value, keeping the tailing semi-colon.
-
+_Won't work right now, rethink design_
 ```
 [
     first_name:,
@@ -213,10 +220,10 @@ To use as both. Provide a combination of above items.
 [
     10, /// index 0
     20, /// index 1
-    first_name: "James",
-    last_name: "Smith",
+    first_name = "James",
+    last_name: = "Smith",
     30, /// index 2
-    age: 36
+    age = 36
 ]
 ```
 
@@ -263,13 +270,13 @@ _Note: that these operators produce a new associative array. The original arrays
 When using concatenation operations with key-value pairs, 'prepend' and 'append' are equivalent since key-value pairs are unordered. Same is true for the direction of the operator.
 
 ```
-[email: "john@example.com"] -> [first_name: "John", last_name: "Smith"]
-[email: "john@example.com"] <- [first_name: "John", last_name: "Smith"]
-[email: "john@example.com"] |> [first_name: "John", last_name: "Smith"]
-[email: "john@example.com"] <| [first_name: "John", last_name: "Smith"]
+[email = "john@example.com"] -> [first_name = "John", last_name = "Smith"]
+[email = "john@example.com"] <- [first_name = "John", last_name = "Smith"]
+[email = "john@example.com"] |> [first_name = "John", last_name = "Smith"]
+[email = "john@example.com"] <| [first_name = "John", last_name = "Smith"]
 
 /// All above have same result
-/// [first_name: "John", last_name: "Smith", email: "john@example.com"]
+/// [first_name = "John", last_name = "Smith", email = "john@example.com"]
 ```
 
 #### Comparison
@@ -291,13 +298,13 @@ Values - Checks to see if the two arrays contain the same values
 [1, 2, 3, 4, 5] $= [1, 2, 3, 4]
 /// false
 
-[first_name: "John", last_name: "Smith"] $= [first_name: "John", last_name: "Smith"]
+[first_name = "John", last_name = "Smith"] $= [first_name = "John", last_name = "Smith"]
 /// true
 
-[first_name: "John", last_name: "Smith"] $= [first_name: "John", last_name: "Anderson"]
+[first_name = "John", last_name = "Smith"] $= [first_name = "John", last_name = "Anderson"]
 /// false
 
-[first_name: "John", last_name: "Smith"] $= [first_name: "John", last_name: "Smith", admin: true]
+[first_name = "John", last_name = "Smith"] $= [first_name = "John", last_name = "Smith", admin: true]
 /// false
 
 [] $= []
@@ -313,13 +320,13 @@ Key-value Pairs - Check to see if the two arrays contain all the same keys with 
 [1, 2, 3, 4, 5] == [4, 3, 5, 2, 1]
 /// false
 
-[first_name: "John", last_name: "Smith"] == [first_name: "John", last_name: "Smith"]
+[first_name = "John", last_name = "Smith"] == [first_name = "John", last_name = "Smith"]
 /// true
 
-[first_name: "John", last_name: "Smith"] == [first_name: "John", last_name: "Anderson"]
+[first_name = "John", last_name = "Smith"] == [first_name = "John", last_name = "Anderson"]
 /// false
 
-[first_name: "John", last_name: "Smith"] == [first_name: "John", last_name: "Smith", admin: true]
+[first_name = "John", last_name = "Smith"] == [first_name = "John", last_name = "Smith", admin = true]
 /// false
 
 [] == []
@@ -341,13 +348,13 @@ Keys - Checks to see if the two arrays contain all the same keys.
 [1, 2, 3, 4, 5] := [4, 3, 5, 2, 6]
 /// true
 
-[first_name: "John", last_name: "Smith"] := [first_name: "John", last_name: "Smith"]
+[first_name = "John", last_name = "Smith"] := [first_name = "John", last_name = "Smith"]
 /// true
 
-[first_name: "John", last_name: "Smith"] := [first_name: "John", last_name: "Anderson"]
+[first_name = "John", last_name = "Smith"] := [first_name = "John", last_name = "Anderson"]
 /// true
 
-[first_name: "John", last_name: "Smith"] := [first_name: "John", last_name: "Smith", admin: true]
+[first_name = "John", last_name = "Smith"] := [first_name = "John", last_name = "Smith", admin = true]
 /// false
 
 [] := []
@@ -356,52 +363,52 @@ Keys - Checks to see if the two arrays contain all the same keys.
 
 #### Contains
 
-Can check if an associative array contains a specific value, key-value, or key with the `~` operator.
+Can check if an associative array contains a specific value, key-value, or key with the `~=` operator.
 
 Contains Value
 
 ```
-[1, 2, 3, 4, 5] ~ [1]
+[1, 2, 3, 4, 5] ~= 1
 /// true
 
-[1, 2, 3, 4, 5] ~ [6]
+[1, 2, 3, 4, 5] ~= 6
 /// false
 
-[first_name: "John", last_name: "Smith"] ~ ["John"]
+[first_name = "John", last_name = "Smith"] ~= "John"
 /// true
 
-[first_name: "John", last_name: "Smith"] ~ ["Anderson"]
+[first_name = "John", last_name = "Smith"] ~= "Anderson"
 /// false
 ```
 
 Contains Key-Value pair
 ```
-[1, 2, 3, 4, 5] ~= [0: 1]
+[1, 2, 3, 4, 5] ~= :0 = 1
 /// true
 
-[1, 2, 3, 4, 5] ~= [0: 2]
+[1, 2, 3, 4, 5] ~= :0 = 2
 /// false
 
-[first_name: "John", last_name: "Smith"] ~= [first_name: "John"]
+[first_name = "John", last_name = "Smith"] ~= first_name = "John"
 /// true
 
-[first_name: "John", last_name: "Smith"] ~= [last_name: "Anderson"]
+[first_name = "John", last_name = "Smith"] ~= last_name = "Anderson"
 /// false
 ```
 
 Contains Key
 
 ```
-[1, 2, 3, 4, 5] ~= [1:]
+[1, 2, 3, 4, 5] ~= :1
 /// true
 
-[1, 2, 3, 4, 5] ~= [6:]
+[1, 2, 3, 4, 5] ~= :6
 /// false
 
-[first_name: "John", last_name: "Smith"] ~= [last_name:]
+[first_name = "John", last_name = "Smith"] ~= :last_name
 /// true
 
-[first_name: "John", last_name: "Smith"] ~= [admin:]
+[first_name = "John", last_name = "Smith"] ~= :admin
 /// false
 ```
 
@@ -409,7 +416,7 @@ Can also specify multiple and a mix of the checks
 
 ```
 /// Contains the value 2, the pair [2: 3], and the key 4
-[1, 2, 3, 4, 5] ~= [2, 2: 3, 4:]
+[1, 2, 3, 4, 5] ~= [2, 2 = 3, :4]
 /// true
 ```
 
@@ -431,6 +438,7 @@ numbers[3]
 /// 4
 
 user["first_name"]
+user[:first_name]
 /// "James"
 
 user.last_name
@@ -449,10 +457,10 @@ Can use the length operator on associative arrays but note that it will return t
 [1, 2, 3, 4, 5]`l
 /// 5
 
-[first_name: "James", last_name: "Smith", age: 36]`l
+[first_name = "James", last_name = "Smith", age = 36]`l
 /// 3
 
-[1, 2, 3, 4, 5, first_name: "James", last_name: "Smith", age: 36]`l
+[1, 2, 3, 4, 5, first_name = "James", last_name = "Smith", age = 36]`l
 /// 8
 ```
 
