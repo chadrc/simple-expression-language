@@ -96,7 +96,10 @@ impl<'a> Tokenizer<'a> {
                             self.parse_state = ParseState::ParsingSymbol;
                             self.current_token_type = node.get_token_type();
                         }
-                        None => (),
+                        None => {
+                            self.parse_state = ParseState::ParsingIdentifier;
+                            self.current_token_type = TokenType::Identifier;
+                        }
                     }
                 }
             }
@@ -224,6 +227,13 @@ impl<'a> Iterator for Tokenizer<'a> {
                             self.current_token.push(c);
                             self.parse_state = self.deferred_parse_state;
                             self.deferred_parse_state = ParseState::NoToken;
+                        }
+                        ParseState::ParsingIdentifier => {
+                            if c.is_alphanumeric() {
+                                self.current_token.push(c);
+                            } else {
+                                return self.end_current_token(c);
+                            }
                         }
                         ParseState::ParsingSymbol => {
                             let mut node: Option<&SymbolTreeNode> = None;
