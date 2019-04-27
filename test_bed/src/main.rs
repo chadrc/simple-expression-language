@@ -36,7 +36,7 @@ fn main() {
     context.set_input(sel_executor::SELValue::new_from_int(12345));
 
     println!("{}", "-".repeat(100));
-    for (index, input) in inputs.iter().enumerate() {
+    for input in inputs.iter() {
         let input_str = String::from(*input);
         let tree = compiler.compile(&input_str);
 

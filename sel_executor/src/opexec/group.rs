@@ -15,11 +15,10 @@ pub fn operation(tree: &SELTree, node: &SELTreeNode, context: &SELContext) -> SE
 
 #[cfg(test)]
 mod tests {
-    use sel_common::{from_byte_vec, DataHeap, DataType, Operation, SELTree, SELTreeNode};
+    use sel_common::{from_byte_vec, DataType};
     use sel_compiler::Compiler;
 
     use super::super::super::execute_sel_tree;
-    use super::super::get_node_result;
     use super::*;
 
     #[test]
