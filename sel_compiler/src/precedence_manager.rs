@@ -171,6 +171,7 @@ impl PrecedenceManager {
     }
 
     #[allow(dead_code)]
+    // will be used eventually in error handling
     pub fn get_current_tier(&self) -> usize {
         return self.current_tier;
     }
