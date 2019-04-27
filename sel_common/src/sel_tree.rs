@@ -1,6 +1,7 @@
 use super::data_type::DataType;
 use super::operation::Operation;
 use super::DataHeap;
+use crate::symbol_table::SymbolTable;
 
 #[derive(PartialEq, Debug, Clone, Copy)]
 pub struct SELTreeNode {
@@ -72,12 +73,13 @@ impl SELTreeNode {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct SELTree {
     data: DataHeap,
     root: usize,
     sub_roots: Vec<usize>,
     nodes: Vec<SELTreeNode>,
+    symbol_table: SymbolTable,
 }
 
 impl SELTree {
@@ -92,6 +94,7 @@ impl SELTree {
             sub_roots,
             nodes,
             data,
+            symbol_table: SymbolTable::new(),
         };
     }
 
@@ -105,6 +108,10 @@ impl SELTree {
 
     pub fn get_root(&self) -> &SELTreeNode {
         return &self.nodes.get(self.root).unwrap();
+    }
+
+    pub fn get_symbol_table(&self) -> &SymbolTable {
+        return &self.symbol_table;
     }
 
     pub fn get_sub_root(&self, index: usize) -> Option<&SELTreeNode> {

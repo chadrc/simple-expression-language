@@ -161,14 +161,14 @@ fn compiles_symbol_operation() {
 
     let root = tree.get_root();
 
-    let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
-
     let root_value = tree.get_integer_value_of(&root);
 
-    let symbol = tree.get_symbol_table().get(root_value.unwrap());
+    let symbol = tree
+        .get_symbol_table()
+        .get_symbol(root_value.unwrap() as usize);
 
     assert_eq!(root.get_operation(), Operation::Touch);
     assert_eq!(root.get_data_type(), DataType::Symbol);
     assert_eq!(root_value, Some(0));
-    assert_eq!(symbol, "value");
+    assert_eq!(symbol, Some(&String::from("value")));
 }
