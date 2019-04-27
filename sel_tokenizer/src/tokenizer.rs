@@ -46,6 +46,8 @@ impl<'a> Tokenizer<'a> {
         symbol_tree.attach("?", TokenType::CurrentResult);
         symbol_tree.attach("(", TokenType::StartGroup);
         symbol_tree.attach(")", TokenType::EndGroup);
+        symbol_tree.attach(":", TokenType::Symbol);
+        symbol_tree.attach("=", TokenType::Pair);
 
         return Tokenizer {
             current_token: String::new(),
