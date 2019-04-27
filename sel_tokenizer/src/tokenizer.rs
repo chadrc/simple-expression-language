@@ -260,7 +260,23 @@ impl<'a> Iterator for Tokenizer<'a> {
                                     ns.push(c);
                                     match n.get(&ns) {
                                         None => {
-                                            return self.end_current_token(c);
+                                            let first_is_alpha = self
+                                                .current_token
+                                                .chars()
+                                                .next()
+                                                .map_or(false, |c| c.is_alphabetic() || c == '_');
+
+                                            let curr_is_alpha_num = c.is_alphanumeric();
+
+                                            if first_is_alpha && curr_is_alpha_num {
+                                                // continuing an identifier
+                                                self.parse_state = ParseState::ParsingIdentifier;
+                                                self.current_token_type = TokenType::Identifier;
+                                                self.current_token.push(c);
+                                            } else {
+                                                // end of symbol
+                                                return self.end_current_token(c);
+                                            }
                                         }
                                         Some(next) => {
                                             // has child for current character

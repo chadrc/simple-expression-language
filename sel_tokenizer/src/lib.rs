@@ -314,6 +314,18 @@ mod tests {
     }
 
     #[test]
+    fn tokenize_identifier_like_true() {
+        let tokens = tokens_from_str("trueish");
+        assert_token(tokens.get(0).unwrap(), TokenType::Identifier, "trueish");
+    }
+
+    #[test]
+    fn tokenize_identifier_like_false() {
+        let tokens = tokens_from_str("falseish");
+        assert_token(tokens.get(0).unwrap(), TokenType::Identifier, "falseish");
+    }
+
+    #[test]
     fn all_token_count() {
         let tokens = tokens_from_str(
             "100 3.13 true 'string' \"string\"\n1..10 1...10 + - * / % ** == != < <= > >= && || ^^ | & ^ ~ << >> ` !false () $ ?",
