@@ -50,7 +50,7 @@ fn match_int_dec_ops<FI, FF, RI, RF>(
     float_type: DataType,
 ) -> OptionOr<SELExecutionResult, (SELExecutionResult, SELExecutionResult)>
 where
-    FI: Fn(i32, i32) -> RI,
+    FI: Fn(i64, i64) -> RI,
     FF: Fn(f64, f64) -> RF,
     RI: ToByteVec,
     RF: ToByteVec,
@@ -60,7 +60,7 @@ where
     return match (left_result.get_type(), right_result.get_type()) {
         (DataType::Integer, DataType::Integer) => {
             let (left_val, right_val) =
-                get_values_from_results::<i32, i32>(&left_result, &right_result);
+                get_values_from_results::<i64, i64>(&left_result, &right_result);
 
             let result = integer_func(left_val, right_val);
 
@@ -71,9 +71,9 @@ where
         }
         (DataType::Integer, DataType::Decimal) => {
             let (left_val, right_val) =
-                get_values_from_results::<i32, f64>(&left_result, &right_result);
+                get_values_from_results::<i64, f64>(&left_result, &right_result);
 
-            let result = float_func(f64::from(left_val), right_val);
+            let result = float_func(left_val as f64, right_val);
 
             OptionOr::Some(SELExecutionResult::new(
                 float_type,
@@ -82,9 +82,9 @@ where
         }
         (DataType::Decimal, DataType::Integer) => {
             let (left_val, right_val) =
-                get_values_from_results::<f64, i32>(&left_result, &right_result);
+                get_values_from_results::<f64, i64>(&left_result, &right_result);
 
-            let result = float_func(left_val, f64::from(right_val));
+            let result = float_func(left_val, right_val as f64);
 
             OptionOr::Some(SELExecutionResult::new(
                 float_type,
@@ -117,7 +117,7 @@ pub fn match_math_ops<FI, FF, RI, RF>(
     float_func: FF,
 ) -> OptionOr<SELExecutionResult, (SELExecutionResult, SELExecutionResult)>
 where
-    FI: Fn(i32, i32) -> RI,
+    FI: Fn(i64, i64) -> RI,
     FF: Fn(f64, f64) -> RF,
     RI: ToByteVec,
     RF: ToByteVec,
@@ -141,7 +141,7 @@ pub fn match_int_math_ops<FI, FF, R>(
     float_func: FF,
 ) -> OptionOr<SELExecutionResult, (SELExecutionResult, SELExecutionResult)>
 where
-    FI: Fn(i32, i32) -> R,
+    FI: Fn(i64, i64) -> R,
     FF: Fn(f64, f64) -> R,
     R: ToByteVec,
 {
@@ -165,7 +165,7 @@ pub fn match_comparison_ops<FI, FF, FS>(
     string_func: FS,
 ) -> SELExecutionResult
 where
-    FI: Fn(i32, i32) -> bool,
+    FI: Fn(i64, i64) -> bool,
     FF: Fn(f64, f64) -> bool,
     FS: Fn(&String, &String) -> bool,
 {

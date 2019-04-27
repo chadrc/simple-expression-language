@@ -15,7 +15,7 @@ impl DataHeap {
     pub fn insert_from_string(&mut self, data_type: DataType, value_str: &String) -> Option<usize> {
         return match data_type {
             DataType::Integer => {
-                let num = value_str.parse::<i32>().unwrap();
+                let num = value_str.parse::<i64>().unwrap();
                 self.data.push(to_byte_vec(num));
                 Some(self.data.len() - 1)
             }
@@ -48,7 +48,7 @@ impl DataHeap {
         };
     }
 
-    pub fn get_integer(&self, index: usize) -> Option<i32> {
+    pub fn get_integer(&self, index: usize) -> Option<i64> {
         return match self.data.get(index) {
             Some(datum) => Some(from_byte_vec(datum)),
             None => None,

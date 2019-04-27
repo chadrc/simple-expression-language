@@ -116,7 +116,7 @@ impl SELTree {
         };
     }
 
-    pub fn get_integer_value_of(&self, node: &SELTreeNode) -> Option<i32> {
+    pub fn get_integer_value_of(&self, node: &SELTreeNode) -> Option<i64> {
         return match node.get_value() {
             Some(value_index) => self.data.get_integer(value_index),
             None => None,

@@ -39,6 +39,23 @@ impl FromByteVec for i32 {
     }
 }
 
+impl ToByteVec for i64 {
+    fn to_byte_vec(&self) -> Vec<u8> {
+        let mut bytes: Vec<u8> = vec![];
+        bytes.write_i64::<LittleEndian>(*self).unwrap();
+        return bytes;
+    }
+}
+
+impl FromByteVec for i64 {
+    fn from_byte_vec(v: &Vec<u8>) -> Self {
+        return match Cursor::new(v).read_i64::<LittleEndian>() {
+            Ok(val) => val,
+            Err(_) => 0,
+        };
+    }
+}
+
 impl ToByteVec for f64 {
     fn to_byte_vec(&self) -> Vec<u8> {
         let mut bytes: Vec<u8> = vec![];

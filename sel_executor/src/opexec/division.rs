@@ -31,7 +31,7 @@ pub fn integer_division_operation(
         node,
         context,
         |left, right| left / right,
-        |left, right| (left / right).floor() as i32,
+        |left, right| (left / right).floor() as i64,
     ) {
         OptionOr::Some(result) => result,
         OptionOr::Or(_) => SELExecutionResult::new(DataType::Unknown, Some(vec![])),
