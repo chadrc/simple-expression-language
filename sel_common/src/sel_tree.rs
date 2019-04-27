@@ -14,9 +14,14 @@ pub struct SELTreeNode {
 }
 
 impl SELTreeNode {
-    pub fn new(op: Operation, data_type: DataType, own_index: usize, value: Option<usize>) -> Self {
+    pub fn new(
+        operation: Operation,
+        data_type: DataType,
+        own_index: usize,
+        value: Option<usize>,
+    ) -> Self {
         return SELTreeNode {
-            operation: op,
+            operation,
             value,
             left: None,
             right: None,
