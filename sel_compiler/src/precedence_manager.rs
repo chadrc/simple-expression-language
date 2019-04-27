@@ -18,6 +18,7 @@ const BITWISE_OR_PRECEDENCE: usize = BITWISE_XOR_PRECEDENCE + 1;
 const LOGICAL_AND_PRECEDENCE: usize = BITWISE_OR_PRECEDENCE + 1;
 const LOGICAL_XOR_PRECEDENCE: usize = LOGICAL_AND_PRECEDENCE + 1;
 const LOGICAL_OR_PRECEDENCE: usize = LOGICAL_XOR_PRECEDENCE + 1;
+const PAIR_PRECEDENCE: usize = LOGICAL_OR_PRECEDENCE + 1;
 
 pub struct PrecedenceGroup {
     parent: usize,
@@ -47,6 +48,7 @@ impl PrecedenceGroup {
         members.push(vec![]); // LOGICAL_AND_PRECEDENCE
         members.push(vec![]); // LOGICAL_XOR_PRECEDENCE
         members.push(vec![]); // LOGICAL_OR_PRECEDENCE
+        members.push(vec![]); // PAIR_PRECEDENCE
 
         return PrecedenceGroup {
             first: 0,
@@ -130,6 +132,8 @@ impl PrecedenceManager {
         operation_priorities.insert(Operation::LogicalXOR, LOGICAL_XOR_PRECEDENCE);
 
         operation_priorities.insert(Operation::LogicalOr, LOGICAL_OR_PRECEDENCE);
+
+        operation_priorities.insert(Operation::Pair, PAIR_PRECEDENCE);
 
         let mut root_group_tier: Vec<PrecedenceGroup> = vec![];
         root_group_tier.push(PrecedenceGroup::new(0));
