@@ -101,7 +101,12 @@ impl SELTreeBuilder {
                 symbol_next = true;
             }
 
-            let value = data.insert_from_string(data_type, &token.get_token_str());
+            let value = if token.get_token_type() == TokenType::Identifier {
+                let symbol_value = symbol_table.add(&token.get_token_str());
+                data.insert_integer(symbol_value as i64)
+            } else {
+                data.insert_from_string(data_type, &token.get_token_str())
+            };
 
             if op == Operation::Subtraction && last_data_type == DataType::Unknown {
                 // if previous node is not a value

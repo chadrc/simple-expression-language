@@ -145,11 +145,16 @@ fn compiles_touch_identifier() {
 
     let root = tree.get_root();
 
-    let root_value = tree.get_value_bytes_of(&root);
+    let root_value = tree.get_integer_value_of(&root);
+
+    let symbol = tree
+        .get_symbol_table()
+        .get_symbol(root_value.unwrap() as usize);
 
     assert_eq!(root.get_operation(), Operation::Touch);
     assert_eq!(root.get_data_type(), DataType::Identifier);
-    assert_eq!(root_value, None);
+    assert_eq!(root_value, Some(0));
+    assert_eq!(symbol, Some(&String::from("value")));
 }
 
 #[test]
