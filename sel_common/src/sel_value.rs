@@ -1,4 +1,4 @@
-use super::sel_types::{Pair, Range};
+use super::sel_types::{Pair, Range, Symbol};
 use super::{from_byte_vec, to_byte_vec, DataType};
 use std::fmt;
 
@@ -72,6 +72,13 @@ impl SELValue {
         };
     }
 
+    pub fn new_from_symbol(symbol: Symbol) -> Self {
+        return SELValue {
+            data_type: DataType::Symbol,
+            value: Some(to_byte_vec(symbol)),
+        };
+    }
+
     pub fn get_type(&self) -> DataType {
         return self.data_type;
     }
@@ -86,7 +93,20 @@ impl SELValue {
 
 impl std::fmt::Debug for SELValue {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{:?} - {}", self.data_type, self)
+        match self.data_type {
+            DataType::Symbol => {
+                let val = self.get_value();
+                let symbol: Symbol = from_byte_vec(val.unwrap());
+                write!(
+                    f,
+                    "{:?}({}) - {}",
+                    self.data_type,
+                    symbol.get_table_index(),
+                    symbol.get_identifier()
+                )
+            }
+            _ => write!(f, "{:?} - {}", self.data_type, self),
+        }
     }
 }
 
@@ -101,6 +121,11 @@ impl std::fmt::Display for SELValue {
             DataType::Integer => format!("{}", from_byte_vec::<i32>(val.unwrap())),
             DataType::Decimal => format!("{}", from_byte_vec::<f64>(val.unwrap())),
             DataType::Boolean => format!("{}", from_byte_vec::<bool>(val.unwrap())),
+            DataType::Symbol => {
+                let symbol: Symbol = from_byte_vec(val.unwrap());
+
+                format!("{}", symbol.get_identifier())
+            }
             DataType::Range => {
                 let range: Range = from_byte_vec(val.unwrap());
 
@@ -157,6 +182,15 @@ mod tests {
         let formatted = format!("{}", result);
 
         assert_eq!(formatted, "false");
+    }
+
+    #[test]
+    fn display_symbol() {
+        let result = SELValue::new_from_symbol(Symbol::new(String::from("value"), 10));
+
+        let formatted = format!("{}", result);
+
+        assert_eq!(formatted, "value");
     }
 
     #[test]
@@ -223,6 +257,15 @@ mod tests {
         let formatted = format!("{:?}", result);
 
         assert_eq!(formatted, "Boolean - false");
+    }
+
+    #[test]
+    fn debug_symbol() {
+        let result = SELValue::new_from_symbol(Symbol::new(String::from("value"), 10));
+
+        let formatted = format!("{:?}", result);
+
+        assert_eq!(formatted, "Symbol(10) - value");
     }
 
     #[test]
