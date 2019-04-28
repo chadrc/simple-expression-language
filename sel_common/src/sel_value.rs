@@ -99,7 +99,7 @@ impl std::fmt::Debug for SELValue {
                 let symbol: Symbol = from_byte_vec(val.unwrap());
                 write!(
                     f,
-                    "{:?}({}) - {}",
+                    "{:?}({}) - :{}",
                     self.data_type,
                     symbol.get_table_index(),
                     symbol.get_identifier()
@@ -124,7 +124,7 @@ impl std::fmt::Display for SELValue {
             DataType::Symbol => {
                 let symbol: Symbol = from_byte_vec(val.unwrap());
 
-                format!("{}", symbol.get_identifier())
+                format!(":{}", symbol.get_identifier())
             }
             DataType::Range => {
                 let range: Range = from_byte_vec(val.unwrap());
@@ -190,7 +190,7 @@ mod tests {
 
         let formatted = format!("{}", result);
 
-        assert_eq!(formatted, "value");
+        assert_eq!(formatted, ":value");
     }
 
     #[test]
@@ -265,7 +265,7 @@ mod tests {
 
         let formatted = format!("{:?}", result);
 
-        assert_eq!(formatted, "Symbol(10) - value");
+        assert_eq!(formatted, "Symbol(10) - :value");
     }
 
     #[test]
