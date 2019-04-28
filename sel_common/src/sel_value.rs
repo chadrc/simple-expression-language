@@ -1,4 +1,5 @@
 use super::{from_byte_vec, to_byte_vec, DataType};
+use crate::Pair;
 use std::fmt;
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -69,6 +70,13 @@ impl SELValue {
         };
     }
 
+    pub fn new_from_pair(pair: Pair) -> Self {
+        return SELValue {
+            data_type: DataType::Pair,
+            value: Some(to_byte_vec(pair)),
+        };
+    }
+
     pub fn get_type(&self) -> DataType {
         return self.data_type;
     }
@@ -104,6 +112,11 @@ impl std::fmt::Display for SELValue {
                 let upper = from_byte_vec::<i32>(&Vec::from(&val[4..]));
 
                 format!("{}..{}", lower, upper)
+            }
+            DataType::Pair => {
+                let pair: Pair = from_byte_vec(val.unwrap());
+
+                format!("{} = {}", pair.get_left(), pair.get_right())
             }
             DataType::Unit => String::from("()"),
             _ => none_str,
@@ -163,6 +176,18 @@ mod tests {
     }
 
     #[test]
+    fn display_pair() {
+        let result = SELValue::new_from_pair(Pair::new(
+            SELValue::new_from_string(&String::from("value")),
+            SELValue::new_from_int(10),
+        ));
+
+        let formatted = format!("{}", result);
+
+        assert_eq!(formatted, "\"value\" = 10");
+    }
+
+    #[test]
     fn display_unit() {
         let result = SELValue::new();
 
@@ -214,6 +239,18 @@ mod tests {
         let formatted = format!("{:?}", result);
 
         assert_eq!(formatted, "Range - 5..10");
+    }
+
+    #[test]
+    fn debug_pair() {
+        let result = SELValue::new_from_pair(Pair::new(
+            SELValue::new_from_string(&String::from("value")),
+            SELValue::new_from_int(10),
+        ));
+
+        let formatted = format!("{:?}", result);
+
+        assert_eq!(formatted, "Pair - \"value\" = 10");
     }
 
     #[test]
