@@ -24,6 +24,13 @@ impl SELContext {
     pub fn get_integer_value(&self, index: usize) -> Option<i64> {
         return self.symbol_values.get(&index).map(|val| from_byte_vec(val));
     }
+
+    pub fn get_integer_value_with_key(&self, key: &String) -> Option<i64> {
+        return self
+            .symbol_table
+            .get_value(key)
+            .and_then(|index| self.get_integer_value(*index));
+    }
 }
 
 #[cfg(test)]
@@ -52,6 +59,18 @@ mod tests {
         let insert_index = context.set_integer_symbol(&String::from("value"), 10);
 
         let value = context.get_integer_value(insert_index).unwrap();
+
+        assert_eq!(value, 10);
+    }
+
+    #[test]
+    fn get_integer_value_with_key() {
+        let mut context = SELContext::new();
+        let insert_index = context.set_integer_symbol(&String::from("value"), 10);
+
+        let value = context
+            .get_integer_value_with_key(&String::from("value"))
+            .unwrap();
 
         assert_eq!(value, 10);
     }
