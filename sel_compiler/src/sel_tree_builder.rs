@@ -91,6 +91,7 @@ impl SELTreeBuilder {
                         previous_node.set_value(data.insert_integer(symbol_value as i64));
                         None
                     });
+                continue;
             }
 
             let mut op = get_operation_type_for_token(&token);
