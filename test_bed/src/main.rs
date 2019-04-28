@@ -1,3 +1,4 @@
+use sel_common::SELContext;
 use sel_compiler;
 use sel_executor;
 // use sel_tokenizer;
@@ -22,6 +23,8 @@ fn main() {
         0..100
         0...100
         ",
+        "count",
+        "count + 5",
     ];
 
     // let tokenizer = sel_tokenizer::Tokenizer::new(&input);
@@ -29,18 +32,21 @@ fn main() {
     //     println!("{:?}", token);
     // }
 
-    let compiler = sel_compiler::Compiler::new();
-
-    let mut context = sel_executor::SELExecutionContext::new();
-
-    context.set_input(sel_common::SELValue::new_from_int(12345));
-
     println!("{}", "-".repeat(100));
     for input in inputs.iter() {
-        let input_str = String::from(*input);
-        let tree = compiler.compile(&input_str);
+        let mut context = SELContext::new();
+        context.set_integer_symbol(&String::from("count"), 100);
 
-        let results = sel_executor::execute_sel_tree(&tree, &context);
+        let compiler = sel_compiler::Compiler::new();
+
+        let mut execution_context = sel_executor::SELExecutionContext::new();
+
+        execution_context.set_input(sel_common::SELValue::new_from_int(12345));
+
+        let input_str = String::from(*input);
+        let tree = compiler.compile_with_context(&input_str, context);
+
+        let results = sel_executor::execute_sel_tree(&tree, &execution_context);
 
         println!("{}", input_str);
         for (result_index, result) in results.iter().enumerate() {
