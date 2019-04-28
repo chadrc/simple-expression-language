@@ -1,13 +1,20 @@
 use super::{from_byte_vec, to_byte_vec, DataType};
 use std::fmt;
 
-#[derive(Clone)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct SELValue {
     data_type: DataType,
     value: Option<Vec<u8>>,
 }
 
 impl SELValue {
+    pub fn unknown() -> Self {
+        return SELValue {
+            data_type: DataType::Unknown,
+            value: None,
+        };
+    }
+
     pub fn new() -> Self {
         return SELValue {
             data_type: DataType::Unit,

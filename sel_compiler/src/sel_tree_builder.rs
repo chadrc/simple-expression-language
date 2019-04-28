@@ -93,6 +93,7 @@ impl SELTreeBuilder {
                         previous_node.set_value(data.insert_integer(symbol_value as i64));
                         None
                     });
+                symbol_next = false;
                 continue;
             }
 

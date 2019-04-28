@@ -29,6 +29,10 @@ impl SELExecutionResult {
             None => None,
         };
     }
+
+    pub fn get_sel_value(&self) -> &SELValue {
+        return &self.value;
+    }
 }
 
 impl std::fmt::Debug for SELExecutionResult {

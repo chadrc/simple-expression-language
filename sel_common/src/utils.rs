@@ -1,3 +1,4 @@
+use crate::Pair;
 use bincode::{deserialize, serialize};
 
 pub trait ToByteVec {
@@ -77,6 +78,18 @@ impl ToByteVec for bool {
 impl FromByteVec for bool {
     fn from_byte_vec(v: &Vec<u8>) -> Self {
         return deserialize(v).unwrap_or(false);
+    }
+}
+
+impl ToByteVec for Pair {
+    fn to_byte_vec(&self) -> Vec<u8> {
+        return serialize(self).unwrap_or(vec![]);
+    }
+}
+
+impl FromByteVec for Pair {
+    fn from_byte_vec(v: &Vec<u8>) -> Self {
+        return deserialize(v).unwrap_or(Pair::empty());
     }
 }
 
