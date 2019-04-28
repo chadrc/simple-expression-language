@@ -1,6 +1,6 @@
 use super::super::context::SELExecutionContext;
 use super::execution_result::SELExecutionResult;
-use sel_common::{DataType, SELTree, SELTreeNode};
+use sel_common::{to_byte_vec, DataType, SELTree, SELTreeNode, Symbol};
 
 pub fn operation(
     tree: &SELTree,
@@ -15,11 +15,16 @@ pub fn operation(
             .map_or(SELExecutionResult::new(DataType::Unit, None), |value| {
                 SELExecutionResult::from(value)
             }),
-        DataType::Integer
-        | DataType::Decimal
-        | DataType::String
-        | DataType::Boolean
-        | DataType::Symbol => {
+        DataType::Symbol => {
+            let value = tree.get_usize_value_of(node).unwrap();
+            let identifier = tree.get_symbol_table().get_symbol(value).unwrap();
+
+            SELExecutionResult::new(
+                DataType::Symbol,
+                Some(to_byte_vec(Symbol::new(identifier.clone(), value))),
+            )
+        }
+        DataType::Integer | DataType::Decimal | DataType::String | DataType::Boolean => {
             SELExecutionResult::new(node.get_data_type(), tree.get_value_bytes_of(node))
         }
         _ => SELExecutionResult::new(DataType::Unknown, None),
@@ -170,13 +175,11 @@ mod tests {
 
         let result = get_node_result(&tree, tree.get_root(), &context);
 
-        let result_value = match result.get_value() {
-            Some(value) => Some(from_byte_vec(value)),
-            None => None,
-        };
+        let symbol: Symbol = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Symbol);
-        assert_eq!(result_value, Some(0));
+        assert_eq!(symbol.get_identifier(), &String::from("value"));
+        assert_eq!(symbol.get_table_index(), 0);
     }
 
     #[test]

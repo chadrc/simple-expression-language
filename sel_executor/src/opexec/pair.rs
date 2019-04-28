@@ -23,7 +23,8 @@ mod tests {
     use std::io::Cursor;
 
     use sel_common::{
-        from_byte_vec, DataHeap, DataType, Operation, SELContext, SELTree, SELTreeNode, SymbolTable,
+        from_byte_vec, DataHeap, DataType, Operation, SELContext, SELTree, SELTreeNode, Symbol,
+        SymbolTable,
     };
     use sel_compiler::Compiler;
 
@@ -43,11 +44,12 @@ mod tests {
 
         let pair: Pair = from_byte_vec(result.get_value().unwrap());
 
-        let left_value: usize = from_byte_vec(pair.get_left().get_value().unwrap());
+        let left_value: Symbol = from_byte_vec(pair.get_left().get_value().unwrap());
         let right_value: i64 = from_byte_vec(pair.get_right().get_value().unwrap());
 
         assert_eq!(pair.get_left().get_type(), DataType::Symbol);
-        assert_eq!(left_value, 0);
+        assert_eq!(left_value.get_identifier(), &String::from("value"));
+        assert_eq!(left_value.get_table_index(), 0);
         assert_eq!(pair.get_right().get_type(), DataType::Integer);
         assert_eq!(right_value, 10);
     }

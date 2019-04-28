@@ -3,7 +3,7 @@ use sel_compiler;
 use sel_executor;
 // use sel_tokenizer;
 
-const INPUTS: [&str; 12] = [
+const INPUTS: [&str; 14] = [
     "5 + $ * 8 - 3",
     "3 > 5 || 89 != 43",
     "true ^^ true",
@@ -22,6 +22,8 @@ const INPUTS: [&str; 12] = [
 0...100",
     "count",
     "count + 5",
+    ":my_symbol",
+    ":email = \"panda@example.com\"",
 ];
 
 fn main() {

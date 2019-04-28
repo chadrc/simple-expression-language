@@ -1,4 +1,4 @@
-use super::types::{Pair, Range};
+use super::sel_types::{Pair, Range};
 use super::{from_byte_vec, to_byte_vec, DataType};
 use std::fmt;
 
