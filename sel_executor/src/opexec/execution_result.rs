@@ -1,5 +1,4 @@
-use super::super::context::SELValue;
-use sel_common::DataType;
+use sel_common::{DataType, SELValue};
 use std::fmt;
 
 #[derive(Clone)]
@@ -13,6 +12,13 @@ impl SELExecutionResult {
             value: SELValue::new_from_raw(data_type, value),
         };
     }
+
+    pub fn from(value: &SELValue) -> Self {
+        return SELExecutionResult {
+            value: value.clone(),
+        };
+    }
+
     pub fn get_type(&self) -> DataType {
         return self.value.get_type();
     }

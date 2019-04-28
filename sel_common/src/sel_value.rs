@@ -1,4 +1,4 @@
-use sel_common::{from_byte_vec, to_byte_vec, DataType};
+use super::{from_byte_vec, to_byte_vec, DataType};
 use std::fmt;
 
 #[derive(Clone)]
@@ -17,12 +17,12 @@ impl SELValue {
 
     pub fn new_from_raw(data_type: DataType, v: Option<Vec<u8>>) -> Self {
         return SELValue {
-            data_type: data_type,
+            data_type,
             value: v,
         };
     }
 
-    pub fn new_from_int(num: i32) -> Self {
+    pub fn new_from_int(num: i64) -> Self {
         return SELValue {
             data_type: DataType::Integer,
             value: Some(to_byte_vec(num)),

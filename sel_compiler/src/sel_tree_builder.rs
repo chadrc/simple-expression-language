@@ -1,6 +1,8 @@
 use super::precedence_manager::{PrecedenceGroup, PrecedenceManager};
 use super::utils::{get_data_type_for_token, get_operation_type_for_token, loop_max};
-use sel_common::{DataHeap, DataType, NodeSide, Operation, SELTree, SELTreeNode, SymbolTable};
+use sel_common::{
+    DataHeap, DataType, NodeSide, Operation, SELContext, SELTree, SELTreeNode, SymbolTable,
+};
 use sel_tokenizer::{TokenType, Tokenizer};
 
 #[derive(PartialEq, Debug, Clone, Copy)]
@@ -46,10 +48,10 @@ impl SELTreeBuilder {
     fn make_nodes_from_tokenizer(
         &mut self,
         tokenizer: &mut Tokenizer,
-    ) -> (Vec<SELTreeNode>, DataHeap, SymbolTable, Vec<usize>) {
+        context: &mut SELContext,
+    ) -> (Vec<SELTreeNode>, DataHeap, Vec<usize>) {
         let mut nodes: Vec<SELTreeNode> = vec![];
         let mut data = DataHeap::new();
-        let mut symbol_table = SymbolTable::new();
         let mut firsts_of_expression: Vec<usize> = vec![];
 
         // loop trough all tokens
@@ -84,7 +86,7 @@ impl SELTreeBuilder {
             }
 
             if symbol_next {
-                let symbol_value = symbol_table.add(&token.get_token_str());
+                let symbol_value = context.add_symbol(&token.get_token_str());
                 nodes
                     .get_mut(previous_index)
                     .and_then(|previous_node| -> Option<usize> {
@@ -102,7 +104,7 @@ impl SELTreeBuilder {
             }
 
             let value = if token.get_token_type() == TokenType::Identifier {
-                let symbol_value = symbol_table.add(&token.get_token_str());
+                let symbol_value = context.add_symbol(&token.get_token_str());
                 data.insert_integer(symbol_value as i64)
             } else {
                 data.insert_from_string(data_type, &token.get_token_str())
@@ -164,7 +166,7 @@ impl SELTreeBuilder {
             nodes.push(SELTreeNode::new(Operation::None, DataType::Unit, 0, None));
         }
 
-        return (nodes, data, symbol_table, firsts_of_expression);
+        return (nodes, data, firsts_of_expression);
     }
 
     fn find_root_index(nodes: &Vec<SELTreeNode>, start_index: Option<usize>) -> usize {
@@ -389,10 +391,11 @@ impl SELTreeBuilder {
         }
     }
 
-    fn build(&mut self, s: &String) -> SELTree {
+    fn build(&mut self, s: &String, context: SELContext) -> SELTree {
+        let mut context = context;
         let mut tokenizer = Tokenizer::new(s);
-        let (mut nodes, data, symbol_table, firsts_of_expression) =
-            self.make_nodes_from_tokenizer(&mut tokenizer);
+        let (mut nodes, data, firsts_of_expression) =
+            self.make_nodes_from_tokenizer(&mut tokenizer, &mut context);
 
         let precedence_groups = self.precedence_manager.get_group_tiers();
 
@@ -426,11 +429,11 @@ impl SELTreeBuilder {
             .map(|first| SELTreeBuilder::find_root_index(&nodes, Some(*first)))
             .collect();
 
-        return SELTree::new(root, sub_roots, nodes, data, symbol_table);
+        return SELTree::new(root, sub_roots, nodes, data, context);
     }
 }
 
-pub fn build_tree_from_string(s: &String) -> SELTree {
+pub fn build_tree_from_string(s: &String, context: SELContext) -> SELTree {
     let mut builder = SELTreeBuilder::new();
-    return builder.build(s);
+    return builder.build(s, context);
 }

@@ -20,10 +20,10 @@ pub fn operation(
 
 #[cfg(test)]
 mod tests {
-    use super::super::super::context::SELValue;
     use super::super::{get_node_result, SELExecutionContext};
     use sel_common::{
-        from_byte_vec, DataHeap, DataType, Operation, SELTree, SELTreeNode, SymbolTable,
+        from_byte_vec, DataHeap, DataType, Operation, SELContext, SELTree, SELTreeNode, SELValue,
+        SymbolTable,
     };
 
     #[test]
@@ -35,7 +35,7 @@ mod tests {
 
         nodes.push(root);
 
-        let tree = SELTree::new(0, vec![], nodes, heap, SymbolTable::new());
+        let tree = SELTree::new(0, vec![], nodes, heap, SELContext::new());
 
         let mut context = SELExecutionContext::new();
 
@@ -63,7 +63,7 @@ mod tests {
 
         nodes.push(root);
 
-        let tree = SELTree::new(0, vec![], nodes, heap, SymbolTable::new());
+        let tree = SELTree::new(0, vec![], nodes, heap, SELContext::new());
 
         let context = SELExecutionContext::new();
 

@@ -9,10 +9,12 @@ pub fn operation(
 ) -> SELExecutionResult {
     return match node.get_data_type() {
         DataType::Unit => SELExecutionResult::new(DataType::Unit, None),
-        DataType::Identifier => {
-            //            let symbol_value = tree.get_integer_value_of(node);
-            SELExecutionResult::new(DataType::Unit, None)
-        }
+        DataType::Identifier => tree
+            .get_usize_value_of(node)
+            .and_then(|index| tree.get_context().get_value(index))
+            .map_or(SELExecutionResult::new(DataType::Unit, None), |value| {
+                SELExecutionResult::from(value)
+            }),
         DataType::Integer
         | DataType::Decimal
         | DataType::String
@@ -29,7 +31,7 @@ mod tests {
     use super::super::get_node_result;
     use super::*;
     use sel_common::{
-        from_byte_vec, DataHeap, DataType, Operation, SELTree, SELTreeNode, SymbolTable,
+        from_byte_vec, DataHeap, DataType, Operation, SELContext, SELTree, SELTreeNode, SymbolTable,
     };
     use sel_compiler::Compiler;
 
@@ -38,7 +40,7 @@ mod tests {
         let mut nodes: Vec<SELTreeNode> = vec![];
         nodes.push(SELTreeNode::new(Operation::Touch, DataType::Unit, 0, None));
 
-        let tree = SELTree::new(0, vec![], nodes, DataHeap::new(), SymbolTable::new());
+        let tree = SELTree::new(0, vec![], nodes, DataHeap::new(), SELContext::new());
 
         let context = SELExecutionContext::new();
 
@@ -61,7 +63,7 @@ mod tests {
             value,
         ));
 
-        let tree = SELTree::new(0, vec![], nodes, heap, SymbolTable::new());
+        let tree = SELTree::new(0, vec![], nodes, heap, SELContext::new());
 
         let context = SELExecutionContext::new();
 
@@ -89,7 +91,7 @@ mod tests {
             value,
         ));
 
-        let tree = SELTree::new(0, vec![], nodes, heap, SymbolTable::new());
+        let tree = SELTree::new(0, vec![], nodes, heap, SELContext::new());
 
         let context = SELExecutionContext::new();
 
@@ -117,7 +119,7 @@ mod tests {
             value,
         ));
 
-        let tree = SELTree::new(0, vec![], nodes, heap, SymbolTable::new());
+        let tree = SELTree::new(0, vec![], nodes, heap, SELContext::new());
 
         let context = SELExecutionContext::new();
 
@@ -145,7 +147,7 @@ mod tests {
             value,
         ));
 
-        let tree = SELTree::new(0, vec![], nodes, heap, SymbolTable::new());
+        let tree = SELTree::new(0, vec![], nodes, heap, SELContext::new());
 
         let context = SELExecutionContext::new();
 
@@ -193,13 +195,20 @@ mod tests {
     #[test]
     fn executes_identifier_touch_with_value() {
         let compiler = Compiler::new();
-        let tree = compiler.compile(&String::from("value"));
-        let context = SELExecutionContext::new();
+        let mut context = SELContext::new();
+        context.set_integer_symbol(&String::from("value"), 10);
 
-        let result = get_node_result(&tree, tree.get_root(), &context);
+        let tree = compiler.compile_with_context(&String::from("value"), context);
+        let execution_context = SELExecutionContext::new();
 
-        // identifiers with no context value always yield unit
-        assert_eq!(result.get_type(), DataType::Unit);
-        assert_eq!(result.get_value(), None);
+        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+
+        let result_value = match result.get_value() {
+            Some(value) => Some(from_byte_vec(value)),
+            None => None,
+        };
+
+        assert_eq!(result.get_type(), DataType::Integer);
+        assert_eq!(result_value, Some(10));
     }
 }

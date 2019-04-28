@@ -2,6 +2,7 @@ use super::data_type::DataType;
 use super::operation::Operation;
 use super::DataHeap;
 use crate::symbol_table::SymbolTable;
+use crate::SELContext;
 
 #[derive(PartialEq, Debug, Clone, Copy)]
 pub struct SELTreeNode {
@@ -83,7 +84,7 @@ pub struct SELTree {
     root: usize,
     sub_roots: Vec<usize>,
     nodes: Vec<SELTreeNode>,
-    symbol_table: SymbolTable,
+    context: SELContext,
 }
 
 impl SELTree {
@@ -92,14 +93,14 @@ impl SELTree {
         sub_roots: Vec<usize>,
         nodes: Vec<SELTreeNode>,
         data: DataHeap,
-        symbol_table: SymbolTable,
+        context: SELContext,
     ) -> SELTree {
         return SELTree {
             root,
             sub_roots,
             nodes,
             data,
-            symbol_table,
+            context,
         };
     }
 
@@ -115,8 +116,12 @@ impl SELTree {
         return &self.nodes.get(self.root).unwrap();
     }
 
+    pub fn get_context(&self) -> &SELContext {
+        return &self.context;
+    }
+
     pub fn get_symbol_table(&self) -> &SymbolTable {
-        return &self.symbol_table;
+        return &self.context.get_symbol_table();
     }
 
     pub fn get_sub_root(&self, index: usize) -> Option<&SELTreeNode> {
@@ -131,6 +136,12 @@ impl SELTree {
             Some(value_index) => self.data.get_bytes(value_index),
             None => None,
         };
+    }
+
+    pub fn get_usize_value_of(&self, node: &SELTreeNode) -> Option<usize> {
+        return node
+            .get_value()
+            .and_then(|index| self.data.get_usize(index));
     }
 
     pub fn get_integer_value_of(&self, node: &SELTreeNode) -> Option<i64> {

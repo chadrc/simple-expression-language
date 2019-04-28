@@ -5,7 +5,6 @@ mod opexec;
 mod tests;
 
 pub use context::SELExecutionContext;
-pub use context::SELValue;
 pub use opexec::SELExecutionResult;
 use sel_common::{DataType, SELTree};
 

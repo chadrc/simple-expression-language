@@ -28,9 +28,8 @@ pub fn operation(
 
 #[cfg(test)]
 mod tests {
-    use super::super::super::context::SELValue;
     use super::super::{get_node_result, SELExecutionContext};
-    use sel_common::{from_byte_vec, DataType};
+    use sel_common::{from_byte_vec, DataType, SELValue};
     use sel_compiler::Compiler;
 
     #[test]

@@ -1,7 +1,5 @@
-mod sel_value;
-
 use super::opexec::SELExecutionResult;
-pub use sel_value::SELValue;
+use sel_common::SELValue;
 
 #[derive(Clone)]
 pub struct SELExecutionContext {

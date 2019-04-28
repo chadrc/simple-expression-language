@@ -1,5 +1,5 @@
 use super::sel_tree_builder::build_tree_from_string;
-use sel_common::SELTree;
+use sel_common::{SELContext, SELTree};
 
 pub struct Compiler {}
 
@@ -9,6 +9,10 @@ impl Compiler {
     }
 
     pub fn compile(&self, s: &String) -> SELTree {
-        return build_tree_from_string(s);
+        return build_tree_from_string(s, SELContext::new());
+    }
+
+    pub fn compile_with_context(&self, s: &String, context: SELContext) -> SELTree {
+        return build_tree_from_string(s, context);
     }
 }

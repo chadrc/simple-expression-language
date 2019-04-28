@@ -33,7 +33,7 @@ fn main() {
 
     let mut context = sel_executor::SELExecutionContext::new();
 
-    context.set_input(sel_executor::SELValue::new_from_int(12345));
+    context.set_input(sel_common::SELValue::new_from_int(12345));
 
     println!("{}", "-".repeat(100));
     for input in inputs.iter() {

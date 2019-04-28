@@ -49,6 +49,10 @@ impl DataHeap {
         };
     }
 
+    pub fn get_usize(&self, index: usize) -> Option<usize> {
+        return self.data.get(index).map(|datum| from_byte_vec(datum));
+    }
+
     pub fn get_integer(&self, index: usize) -> Option<i64> {
         return match self.data.get(index) {
             Some(datum) => Some(from_byte_vec(datum)),

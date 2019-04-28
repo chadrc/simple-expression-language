@@ -41,7 +41,7 @@ mod tests {
     use super::super::test_utils::result_of_binary_op;
     use super::*;
     use sel_common::{
-        from_byte_vec, DataHeap, DataType, Operation, SELTree, SELTreeNode, SymbolTable,
+        from_byte_vec, DataHeap, DataType, Operation, SELContext, SELTree, SELTreeNode, SymbolTable,
     };
 
     #[test]
@@ -66,7 +66,7 @@ mod tests {
         nodes.push(right);
         nodes.push(root);
 
-        let tree = SELTree::new(1, vec![], nodes, heap, SymbolTable::new());
+        let tree = SELTree::new(1, vec![], nodes, heap, SELContext::new());
 
         let context = SELExecutionContext::new();
 
@@ -103,7 +103,7 @@ mod tests {
         nodes.push(right);
         nodes.push(root);
 
-        let tree = SELTree::new(1, vec![], nodes, heap, SymbolTable::new());
+        let tree = SELTree::new(1, vec![], nodes, heap, SELContext::new());
 
         let context = SELExecutionContext::new();
 
