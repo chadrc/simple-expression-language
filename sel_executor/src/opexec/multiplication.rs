@@ -1,9 +1,13 @@
-use super::super::context::SELContext;
+use super::super::context::SELExecutionContext;
 use super::utils::{match_math_ops, OptionOr};
 use super::SELExecutionResult;
 use sel_common::{DataType, SELTree, SELTreeNode};
 
-pub fn operation(tree: &SELTree, node: &SELTreeNode, context: &SELContext) -> SELExecutionResult {
+pub fn operation(
+    tree: &SELTree,
+    node: &SELTreeNode,
+    context: &SELExecutionContext,
+) -> SELExecutionResult {
     return match match_math_ops(
         tree,
         node,

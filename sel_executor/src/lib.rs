@@ -4,12 +4,12 @@ mod opexec;
 #[cfg(test)]
 mod tests;
 
-pub use context::SELContext;
+pub use context::SELExecutionContext;
 pub use context::SELValue;
 pub use opexec::SELExecutionResult;
 use sel_common::{DataType, SELTree};
 
-pub fn execute_sel_tree(tree: &SELTree, context: &SELContext) -> Vec<SELExecutionResult> {
+pub fn execute_sel_tree(tree: &SELTree, context: &SELExecutionContext) -> Vec<SELExecutionResult> {
     let mut current_context = context.clone();
 
     if tree.get_nodes().len() > 0 {

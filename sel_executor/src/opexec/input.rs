@@ -1,7 +1,11 @@
-use super::{SELContext, SELExecutionResult};
+use super::{SELExecutionContext, SELExecutionResult};
 use sel_common::{DataType, SELTree, SELTreeNode};
 
-pub fn operation(_tree: &SELTree, _node: &SELTreeNode, context: &SELContext) -> SELExecutionResult {
+pub fn operation(
+    _tree: &SELTree,
+    _node: &SELTreeNode,
+    context: &SELExecutionContext,
+) -> SELExecutionResult {
     return match context.get_input() {
         Some(input) => SELExecutionResult::new(
             input.get_type(),
@@ -17,7 +21,7 @@ pub fn operation(_tree: &SELTree, _node: &SELTreeNode, context: &SELContext) -> 
 #[cfg(test)]
 mod tests {
     use super::super::super::context::SELValue;
-    use super::super::{get_node_result, SELContext};
+    use super::super::{get_node_result, SELExecutionContext};
     use sel_common::{
         from_byte_vec, DataHeap, DataType, Operation, SELTree, SELTreeNode, SymbolTable,
     };
@@ -33,7 +37,7 @@ mod tests {
 
         let tree = SELTree::new(0, vec![], nodes, heap, SymbolTable::new());
 
-        let mut context = SELContext::new();
+        let mut context = SELExecutionContext::new();
 
         let input = SELValue::new_from_int(100);
 
@@ -61,7 +65,7 @@ mod tests {
 
         let tree = SELTree::new(0, vec![], nodes, heap, SymbolTable::new());
 
-        let context = SELContext::new();
+        let context = SELExecutionContext::new();
 
         let result = get_node_result(&tree, tree.get_root(), &context);
 

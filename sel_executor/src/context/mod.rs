@@ -4,14 +4,14 @@ use super::opexec::SELExecutionResult;
 pub use sel_value::SELValue;
 
 #[derive(Clone)]
-pub struct SELContext {
+pub struct SELExecutionContext {
     input: Option<SELValue>,
     results: Vec<SELExecutionResult>,
 }
 
-impl SELContext {
+impl SELExecutionContext {
     pub fn new() -> Self {
-        return SELContext {
+        return SELExecutionContext {
             input: None,
             results: vec![],
         };

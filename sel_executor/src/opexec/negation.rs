@@ -1,8 +1,12 @@
-use super::super::context::SELContext;
+use super::super::context::SELExecutionContext;
 use super::{get_node_result, SELExecutionResult};
 use sel_common::{from_byte_vec, to_byte_vec, DataType, SELTree, SELTreeNode};
 
-pub fn operation(tree: &SELTree, node: &SELTreeNode, context: &SELContext) -> SELExecutionResult {
+pub fn operation(
+    tree: &SELTree,
+    node: &SELTreeNode,
+    context: &SELExecutionContext,
+) -> SELExecutionResult {
     let right = tree.get_nodes().get(node.get_right().unwrap()).unwrap();
     let result = get_node_result(tree, &right, context);
 
@@ -64,7 +68,7 @@ mod tests {
 
         let tree = SELTree::new(1, vec![], nodes, heap, SymbolTable::new());
 
-        let context = SELContext::new();
+        let context = SELExecutionContext::new();
 
         let result = get_node_result(&tree, tree.get_root(), &context);
 
@@ -101,7 +105,7 @@ mod tests {
 
         let tree = SELTree::new(1, vec![], nodes, heap, SymbolTable::new());
 
-        let context = SELContext::new();
+        let context = SELExecutionContext::new();
 
         let result = get_node_result(&tree, tree.get_root(), &context);
 

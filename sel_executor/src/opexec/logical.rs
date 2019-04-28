@@ -1,4 +1,4 @@
-use super::super::context::SELContext;
+use super::super::context::SELExecutionContext;
 use super::utils::{get_left_right_results, get_value_from_result, get_values_from_results};
 use super::SELExecutionResult;
 use sel_common::{to_byte_vec, DataType, SELTree, SELTreeNode};
@@ -10,7 +10,7 @@ fn logical_xor(left: bool, right: bool) -> bool {
 fn match_logical<F>(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELContext,
+    context: &SELExecutionContext,
     f: F,
 ) -> SELExecutionResult
 where
@@ -48,7 +48,7 @@ where
 pub fn xor_operation(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELContext,
+    context: &SELExecutionContext,
 ) -> SELExecutionResult {
     return match_logical(tree, node, context, logical_xor);
 }
@@ -56,7 +56,7 @@ pub fn xor_operation(
 pub fn or_operation(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELContext,
+    context: &SELExecutionContext,
 ) -> SELExecutionResult {
     return match_logical(tree, node, context, |left, right| left || right);
 }
@@ -64,7 +64,7 @@ pub fn or_operation(
 pub fn and_operation(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELContext,
+    context: &SELExecutionContext,
 ) -> SELExecutionResult {
     return match_logical(tree, node, context, |left, right| left && right);
 }

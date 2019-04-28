@@ -31,7 +31,7 @@ fn main() {
 
     let compiler = sel_compiler::Compiler::new();
 
-    let mut context = sel_executor::SELContext::new();
+    let mut context = sel_executor::SELExecutionContext::new();
 
     context.set_input(sel_executor::SELValue::new_from_int(12345));
 

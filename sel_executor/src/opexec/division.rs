@@ -1,4 +1,4 @@
-use super::super::context::SELContext;
+use super::super::context::SELExecutionContext;
 use super::utils::{match_math_ops, OptionOr};
 use super::SELExecutionResult;
 use crate::opexec::utils::match_int_math_ops;
@@ -7,7 +7,7 @@ use sel_common::{DataType, SELTree, SELTreeNode};
 pub fn division_operation(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELContext,
+    context: &SELExecutionContext,
 ) -> SELExecutionResult {
     return match match_math_ops(
         tree,
@@ -24,7 +24,7 @@ pub fn division_operation(
 pub fn integer_division_operation(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELContext,
+    context: &SELExecutionContext,
 ) -> SELExecutionResult {
     return match match_int_math_ops(
         tree,

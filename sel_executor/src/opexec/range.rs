@@ -4,12 +4,12 @@ use crate::opexec::utils::get_values_from_results;
 
 use super::execution_result::SELExecutionResult;
 use super::utils::get_left_right_results;
-use super::SELContext;
+use super::SELExecutionContext;
 
 fn range_operation(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELContext,
+    context: &SELExecutionContext,
     inclusive: bool,
 ) -> SELExecutionResult {
     let (left_result, right_result) = get_left_right_results(tree, node, context);
@@ -36,7 +36,7 @@ fn range_operation(
 pub fn exclusive_range_operation(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELContext,
+    context: &SELExecutionContext,
 ) -> SELExecutionResult {
     return range_operation(tree, node, context, false);
 }
@@ -44,7 +44,7 @@ pub fn exclusive_range_operation(
 pub fn inclusive_range_operation(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELContext,
+    context: &SELExecutionContext,
 ) -> SELExecutionResult {
     return range_operation(tree, node, context, true);
 }
@@ -62,7 +62,7 @@ mod tests {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("5..10"));
 
-        let context = SELContext::new();
+        let context = SELExecutionContext::new();
 
         let results = execute_sel_tree(&tree, &context);
 
@@ -87,7 +87,7 @@ mod tests {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("5...10"));
 
-        let context = SELContext::new();
+        let context = SELExecutionContext::new();
 
         let results = execute_sel_tree(&tree, &context);
 

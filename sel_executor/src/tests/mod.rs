@@ -1,6 +1,6 @@
 mod tree_execution {
     use super::super::execute_sel_tree;
-    use super::super::SELContext;
+    use super::super::SELExecutionContext;
     use sel_common::{from_byte_vec, DataHeap, DataType, SELTree, SymbolTable};
     use sel_compiler::Compiler;
 
@@ -8,7 +8,7 @@ mod tree_execution {
     fn executes_empty() {
         let tree = SELTree::new(0, vec![], vec![], DataHeap::new(), SymbolTable::new());
 
-        let context = SELContext::new();
+        let context = SELExecutionContext::new();
 
         let results = execute_sel_tree(&tree, &context);
 
@@ -23,7 +23,7 @@ mod tree_execution {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("5 + 10\n15 + 20"));
 
-        let context = SELContext::new();
+        let context = SELExecutionContext::new();
 
         let results = execute_sel_tree(&tree, &context);
 
@@ -51,7 +51,7 @@ mod tree_execution {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("5 + 10\n? + 20"));
 
-        let context = SELContext::new();
+        let context = SELExecutionContext::new();
 
         let results = execute_sel_tree(&tree, &context);
 

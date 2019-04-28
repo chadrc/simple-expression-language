@@ -1,9 +1,13 @@
 use sel_common::{DataType, SELTree, SELTreeNode};
 
 use super::execution_result::SELExecutionResult;
-use super::{get_node_result, SELContext};
+use super::{get_node_result, SELExecutionContext};
 
-pub fn operation(tree: &SELTree, node: &SELTreeNode, context: &SELContext) -> SELExecutionResult {
+pub fn operation(
+    tree: &SELTree,
+    node: &SELTreeNode,
+    context: &SELExecutionContext,
+) -> SELExecutionResult {
     return match node
         .get_right()
         .and_then(|index| tree.get_nodes().get(index))
@@ -26,7 +30,7 @@ mod tests {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("5 * (4 + 3)"));
 
-        let context = SELContext::new();
+        let context = SELExecutionContext::new();
 
         let results = execute_sel_tree(&tree, &context);
 

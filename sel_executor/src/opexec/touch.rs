@@ -1,8 +1,12 @@
-use super::super::context::SELContext;
+use super::super::context::SELExecutionContext;
 use super::execution_result::SELExecutionResult;
 use sel_common::{DataType, SELTree, SELTreeNode};
 
-pub fn operation(tree: &SELTree, node: &SELTreeNode, _context: &SELContext) -> SELExecutionResult {
+pub fn operation(
+    tree: &SELTree,
+    node: &SELTreeNode,
+    _context: &SELExecutionContext,
+) -> SELExecutionResult {
     return match node.get_data_type() {
         DataType::Unit => SELExecutionResult::new(DataType::Unit, None),
         DataType::Identifier => {
@@ -36,7 +40,7 @@ mod tests {
 
         let tree = SELTree::new(0, vec![], nodes, DataHeap::new(), SymbolTable::new());
 
-        let context = SELContext::new();
+        let context = SELExecutionContext::new();
 
         let result = get_node_result(&tree, tree.get_root(), &context);
 
@@ -59,7 +63,7 @@ mod tests {
 
         let tree = SELTree::new(0, vec![], nodes, heap, SymbolTable::new());
 
-        let context = SELContext::new();
+        let context = SELExecutionContext::new();
 
         let result = get_node_result(&tree, tree.get_root(), &context);
 
@@ -87,7 +91,7 @@ mod tests {
 
         let tree = SELTree::new(0, vec![], nodes, heap, SymbolTable::new());
 
-        let context = SELContext::new();
+        let context = SELExecutionContext::new();
 
         let result = get_node_result(&tree, tree.get_root(), &context);
 
@@ -115,7 +119,7 @@ mod tests {
 
         let tree = SELTree::new(0, vec![], nodes, heap, SymbolTable::new());
 
-        let context = SELContext::new();
+        let context = SELExecutionContext::new();
 
         let result = get_node_result(&tree, tree.get_root(), &context);
 
@@ -143,7 +147,7 @@ mod tests {
 
         let tree = SELTree::new(0, vec![], nodes, heap, SymbolTable::new());
 
-        let context = SELContext::new();
+        let context = SELExecutionContext::new();
 
         let result = get_node_result(&tree, tree.get_root(), &context);
 
@@ -160,7 +164,7 @@ mod tests {
     fn executes_symbol_touch() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from(":value"));
-        let context = SELContext::new();
+        let context = SELExecutionContext::new();
 
         let result = get_node_result(&tree, tree.get_root(), &context);
 
@@ -177,7 +181,7 @@ mod tests {
     fn executes_identifier_touch() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("value"));
-        let context = SELContext::new();
+        let context = SELExecutionContext::new();
 
         let result = get_node_result(&tree, tree.get_root(), &context);
 
@@ -190,7 +194,7 @@ mod tests {
     fn executes_identifier_touch_with_value() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("value"));
-        let context = SELContext::new();
+        let context = SELExecutionContext::new();
 
         let result = get_node_result(&tree, tree.get_root(), &context);
 

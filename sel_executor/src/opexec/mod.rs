@@ -21,14 +21,14 @@ mod subtraction;
 mod touch;
 mod utils;
 
-use super::context::SELContext;
+use super::context::SELExecutionContext;
 pub use execution_result::SELExecutionResult;
 use sel_common::{DataType, Operation, SELTree, SELTreeNode};
 
 pub fn get_node_result(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELContext,
+    context: &SELExecutionContext,
 ) -> SELExecutionResult {
     return match node.get_operation() {
         Operation::Touch => touch::operation(tree, node, context),
@@ -103,7 +103,7 @@ pub mod test_utils {
 
         let tree = SELTree::new(2, vec![], nodes, heap, SymbolTable::new());
 
-        let context = context::SELContext::new();
+        let context = context::SELExecutionContext::new();
 
         return get_node_result(&tree, tree.get_root(), &context);
     }

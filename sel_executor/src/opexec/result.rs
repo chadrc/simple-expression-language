@@ -1,7 +1,11 @@
-use super::{SELContext, SELExecutionResult};
+use super::{SELExecutionContext, SELExecutionResult};
 use sel_common::{DataType, SELTree, SELTreeNode};
 
-pub fn operation(_tree: &SELTree, _node: &SELTreeNode, context: &SELContext) -> SELExecutionResult {
+pub fn operation(
+    _tree: &SELTree,
+    _node: &SELTreeNode,
+    context: &SELExecutionContext,
+) -> SELExecutionResult {
     return if context.get_results().len() > 0 {
         // if there is are results in context
         // clone the latest one and use it as the result
@@ -25,7 +29,7 @@ pub fn operation(_tree: &SELTree, _node: &SELTreeNode, context: &SELContext) -> 
 #[cfg(test)]
 mod tests {
     use super::super::super::context::SELValue;
-    use super::super::{get_node_result, SELContext};
+    use super::super::{get_node_result, SELExecutionContext};
     use sel_common::{from_byte_vec, DataType};
     use sel_compiler::Compiler;
 
@@ -34,7 +38,7 @@ mod tests {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("?"));
 
-        let mut context = SELContext::new();
+        let mut context = SELExecutionContext::new();
 
         let input = SELValue::new_from_int(100);
 
@@ -56,7 +60,7 @@ mod tests {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("?"));
 
-        let context = SELContext::new();
+        let context = SELExecutionContext::new();
 
         let result = get_node_result(&tree, tree.get_root(), &context);
 
