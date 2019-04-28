@@ -1,4 +1,4 @@
-use crate::{to_byte_vec, SymbolTable};
+use crate::{from_byte_vec, to_byte_vec, SymbolTable};
 use std::collections::HashMap;
 
 pub struct SELContext {
@@ -20,6 +20,10 @@ impl SELContext {
 
         index
     }
+
+    pub fn get_integer_value(&self, index: usize) -> Option<i64> {
+        return self.symbol_values.get(&index).map(|val| from_byte_vec(val));
+    }
 }
 
 #[cfg(test)]
@@ -38,6 +42,16 @@ mod tests {
         let insert_index = context.set_integer_symbol(&String::from("value"), 10);
         let bytes = context.symbol_values.get(&insert_index).unwrap();
         let value: i64 = from_byte_vec(bytes);
+
+        assert_eq!(value, 10);
+    }
+
+    #[test]
+    fn get_integer_value_with_index() {
+        let mut context = SELContext::new();
+        let insert_index = context.set_integer_symbol(&String::from("value"), 10);
+
+        let value = context.get_integer_value(insert_index).unwrap();
 
         assert_eq!(value, 10);
     }
