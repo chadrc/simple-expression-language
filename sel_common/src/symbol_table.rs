@@ -56,9 +56,10 @@ mod tests {
     #[test]
     fn add_same() {
         let mut table = SymbolTable::new();
-        table.add(&String::from("symbol1"));
-        table.add(&String::from("symbol1"));
+        let value = table.add(&String::from("symbol1"));
+        let value2 = table.add(&String::from("symbol1"));
 
         assert_eq!(table.symbols.len(), 1);
+        assert_eq!(value, value2);
     }
 }
