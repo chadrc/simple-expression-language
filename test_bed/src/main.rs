@@ -3,37 +3,35 @@ use sel_compiler;
 use sel_executor;
 // use sel_tokenizer;
 
+const INPUTS: [&str; 12] = [
+    "5 + $ * 8 - 3",
+    "3 > 5 || 89 != 43",
+    "true ^^ true",
+    "10 // 3",
+    "3.14 ** 2",
+    "'Hello ' + 'World'",
+    "5 + 9 * 3 + ()",
+    "\
+5 + $ * 3 / 7
+
+'Result is: ' + ?
+'Input is: ' + $",
+    "5.0 * (8 + 2) / (3 + (9 - 4)) * ((4 + 7) * 3)",
+    "\
+0..100
+0...100",
+    "count",
+    "count + 5",
+];
+
 fn main() {
-    let inputs = [
-        "5 + $ * 8 - 3",
-        "3 > 5 || 89 != 43",
-        "true ^^ true",
-        "10 // 3",
-        "3.14 ** 2",
-        "'Hello ' + 'World'",
-        "5 + 9 * 3 + ()",
-        "
-        5 + $ * 3 / 7
-
-        'Result is: ' + ?
-        'Input is: ' + $
-        ",
-        "5.0 * (8 + 2) / (3 + (9 - 4)) * ((4 + 7) * 3)",
-        "
-        0..100
-        0...100
-        ",
-        "count",
-        "count + 5",
-    ];
-
     // let tokenizer = sel_tokenizer::Tokenizer::new(&input);
     // for token in tokenizer {
     //     println!("{:?}", token);
     // }
 
     println!("{}", "-".repeat(100));
-    for input in inputs.iter() {
+    for input in INPUTS.iter() {
         let mut context = SELContext::new();
         context.set_integer_symbol(&String::from("count"), 100);
 
