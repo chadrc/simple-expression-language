@@ -73,6 +73,36 @@ impl FromByteVec for f64 {
     }
 }
 
+impl ToByteVec for usize {
+    fn to_byte_vec(&self) -> Vec<u8> {
+        let mut bytes: Vec<u8> = vec![];
+
+        if std::mem::size_of::<usize>() == 8 {
+            bytes.write_i64::<LittleEndian>(*self as i64).unwrap()
+        } else {
+            bytes.write_i32::<LittleEndian>(*self as i32).unwrap()
+        }
+
+        return bytes;
+    }
+}
+
+impl FromByteVec for usize {
+    fn from_byte_vec(v: &Vec<u8>) -> Self {
+        return if std::mem::size_of::<usize>() == 8 {
+            match Cursor::new(v).read_i64::<LittleEndian>() {
+                Ok(val) => val as usize,
+                Err(_) => 0,
+            }
+        } else {
+            match Cursor::new(v).read_i32::<LittleEndian>() {
+                Ok(val) => val as usize,
+                Err(_) => 0,
+            }
+        };
+    }
+}
+
 impl ToByteVec for bool {
     fn to_byte_vec(&self) -> Vec<u8> {
         let mut bytes: Vec<u8> = vec![];
