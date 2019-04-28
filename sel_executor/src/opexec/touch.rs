@@ -5,6 +5,10 @@ use sel_common::{DataType, SELTree, SELTreeNode};
 pub fn operation(tree: &SELTree, node: &SELTreeNode, _context: &SELContext) -> SELExecutionResult {
     return match node.get_data_type() {
         DataType::Unit => SELExecutionResult::new(DataType::Unit, None),
+        DataType::Identifier => {
+            //            let symbol_value = tree.get_integer_value_of(node);
+            SELExecutionResult::new(DataType::Unit, None)
+        }
         DataType::Integer
         | DataType::Decimal
         | DataType::String
@@ -167,5 +171,18 @@ mod tests {
 
         assert_eq!(result.get_type(), DataType::Symbol);
         assert_eq!(result_value, Some(0));
+    }
+
+    #[test]
+    fn executes_identifier_touch() {
+        let compiler = Compiler::new();
+        let tree = compiler.compile(&String::from("value"));
+        let context = SELContext::new();
+
+        let result = get_node_result(&tree, tree.get_root(), &context);
+
+        // identifiers with no context value always yield unit
+        assert_eq!(result.get_type(), DataType::Unit);
+        assert_eq!(result.get_value(), None);
     }
 }
