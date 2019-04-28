@@ -1,5 +1,4 @@
-use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
-use std::io::Cursor;
+use bincode::{deserialize, serialize};
 
 pub trait ToByteVec {
     fn to_byte_vec(&self) -> Vec<u8>;
@@ -11,119 +10,73 @@ pub trait FromByteVec {
 
 impl ToByteVec for &String {
     fn to_byte_vec(&self) -> Vec<u8> {
-        return (*self).clone().into_bytes();
+        return serialize(self).unwrap_or(vec![]);
     }
 }
 
 impl FromByteVec for String {
     fn from_byte_vec(v: &Vec<u8>) -> Self {
-        let cow = String::from_utf8_lossy(v);
-        return cow.to_owned().to_string();
+        return deserialize(v).unwrap_or(String::from(""));
     }
 }
 
 impl ToByteVec for i32 {
     fn to_byte_vec(&self) -> Vec<u8> {
-        let mut bytes: Vec<u8> = vec![];
-        bytes.write_i32::<LittleEndian>(*self).unwrap();
-        return bytes;
+        return serialize(self).unwrap_or(vec![]);
     }
 }
 
 impl FromByteVec for i32 {
     fn from_byte_vec(v: &Vec<u8>) -> Self {
-        return match Cursor::new(v).read_i32::<LittleEndian>() {
-            Ok(val) => val,
-            Err(_) => 0,
-        };
+        return deserialize(v).unwrap_or(0);
     }
 }
 
 impl ToByteVec for i64 {
     fn to_byte_vec(&self) -> Vec<u8> {
-        let mut bytes: Vec<u8> = vec![];
-        bytes.write_i64::<LittleEndian>(*self).unwrap();
-        return bytes;
+        return serialize(self).unwrap_or(vec![]);
     }
 }
 
 impl FromByteVec for i64 {
     fn from_byte_vec(v: &Vec<u8>) -> Self {
-        return match Cursor::new(v).read_i64::<LittleEndian>() {
-            Ok(val) => val,
-            Err(_) => 0,
-        };
+        return deserialize(v).unwrap_or(0);
     }
 }
 
 impl ToByteVec for f64 {
     fn to_byte_vec(&self) -> Vec<u8> {
-        let mut bytes: Vec<u8> = vec![];
-        bytes.write_f64::<LittleEndian>(*self).unwrap();
-        return bytes;
+        return serialize(self).unwrap_or(vec![]);
     }
 }
 
 impl FromByteVec for f64 {
     fn from_byte_vec(v: &Vec<u8>) -> Self {
-        return match Cursor::new(v).read_f64::<LittleEndian>() {
-            Ok(val) => val,
-            Err(_) => 0.0,
-        };
+        return deserialize(v).unwrap_or(0.0);
     }
 }
 
 impl ToByteVec for usize {
     fn to_byte_vec(&self) -> Vec<u8> {
-        let mut bytes: Vec<u8> = vec![];
-
-        if std::mem::size_of::<usize>() == 8 {
-            bytes.write_i64::<LittleEndian>(*self as i64).unwrap()
-        } else {
-            bytes.write_i32::<LittleEndian>(*self as i32).unwrap()
-        }
-
-        return bytes;
+        return serialize(self).unwrap_or(vec![]);
     }
 }
 
 impl FromByteVec for usize {
     fn from_byte_vec(v: &Vec<u8>) -> Self {
-        return if std::mem::size_of::<usize>() == 8 {
-            match Cursor::new(v).read_i64::<LittleEndian>() {
-                Ok(val) => val as usize,
-                Err(_) => 0,
-            }
-        } else {
-            match Cursor::new(v).read_i32::<LittleEndian>() {
-                Ok(val) => val as usize,
-                Err(_) => 0,
-            }
-        };
+        return deserialize(v).unwrap_or(0);
     }
 }
 
 impl ToByteVec for bool {
     fn to_byte_vec(&self) -> Vec<u8> {
-        let mut bytes: Vec<u8> = vec![];
-        match self {
-            true => bytes.push(1),
-            false => bytes.push(0),
-        }
-        return bytes;
+        return serialize(self).unwrap_or(vec![]);
     }
 }
 
 impl FromByteVec for bool {
     fn from_byte_vec(v: &Vec<u8>) -> Self {
-        return match v.get(0) {
-            Some(num) => match num {
-                0 => false,
-                1 => true,
-                _ => false,
-            },
-            None => false,
-        };
+        return deserialize(v).unwrap_or(false);
     }
 }
 
