@@ -1,5 +1,5 @@
+use super::types::{Pair, Range};
 use super::{from_byte_vec, to_byte_vec, DataType};
-use crate::Pair;
 use std::fmt;
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -58,15 +58,10 @@ impl SELValue {
         };
     }
 
-    pub fn new_from_range(lower: i32, upper: i32) -> Self {
-        let mut lower_bytes = to_byte_vec(lower);
-        let mut upper_bytes = to_byte_vec(upper);
-
-        lower_bytes.append(&mut upper_bytes);
-
+    pub fn new_from_range(lower: i64, upper: i64) -> Self {
         return SELValue {
             data_type: DataType::Range,
-            value: Some(lower_bytes),
+            value: Some(to_byte_vec(Range::new(lower, upper))),
         };
     }
 
@@ -107,11 +102,9 @@ impl std::fmt::Display for SELValue {
             DataType::Decimal => format!("{}", from_byte_vec::<f64>(val.unwrap())),
             DataType::Boolean => format!("{}", from_byte_vec::<bool>(val.unwrap())),
             DataType::Range => {
-                let val = val.unwrap();
-                let lower = from_byte_vec::<i32>(&Vec::from(&val[0..4]));
-                let upper = from_byte_vec::<i32>(&Vec::from(&val[4..]));
+                let range: Range = from_byte_vec(val.unwrap());
 
-                format!("{}..{}", lower, upper)
+                format!("{}..{}", range.get_lower(), range.get_upper())
             }
             DataType::Pair => {
                 let pair: Pair = from_byte_vec(val.unwrap());

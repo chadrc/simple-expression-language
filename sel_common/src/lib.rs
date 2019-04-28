@@ -18,7 +18,7 @@ pub use operation::Operation;
 pub use sel_tree::{NodeSide, SELTree, SELTreeNode};
 pub use sel_value::SELValue;
 pub use symbol_table::SymbolTable;
-pub use types::Pair;
+pub use types::{Pair, Range};
 pub use utils::{from_byte_vec, to_byte_vec, FromByteVec, ToByteVec};
 
 #[cfg(test)]

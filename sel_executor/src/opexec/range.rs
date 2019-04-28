@@ -1,4 +1,4 @@
-use sel_common::{to_byte_vec, DataType, SELTree, SELTreeNode};
+use sel_common::{to_byte_vec, DataType, Range, SELTree, SELTreeNode};
 
 use crate::opexec::utils::get_values_from_results;
 
@@ -16,18 +16,15 @@ fn range_operation(
     return match (left_result.get_type(), right_result.get_type()) {
         (DataType::Integer, DataType::Integer) => {
             let (left_val, right_val) =
-                get_values_from_results::<i32, i32>(&left_result, &right_result);
+                get_values_from_results::<i64, i64>(&left_result, &right_result);
 
             // internally, all ranges will be exclusive
             // so we simply add 1 to give upper bound to make inclusive of that number
             let right_val = if inclusive { right_val + 1 } else { right_val };
 
-            let mut left_bytes = to_byte_vec(left_val);
-            let mut right_bytes = to_byte_vec(right_val);
+            let range = Range::new(left_val, right_val);
 
-            left_bytes.append(&mut right_bytes);
-
-            SELExecutionResult::new(DataType::Range, Some(left_bytes))
+            SELExecutionResult::new(DataType::Range, Some(to_byte_vec(range)))
         }
         _ => SELExecutionResult::new(DataType::Unknown, None),
     };
@@ -67,19 +64,11 @@ mod tests {
         let results = execute_sel_tree(&tree, &context);
 
         let first_result = results.get(0).unwrap();
-        let first_result_value = match first_result.get_value() {
-            Some(value) => {
-                let left = from_byte_vec(&Vec::from(&value[0..4]));
-                let right = from_byte_vec(&Vec::from(&value[4..]));
-
-                (left, right)
-            }
-            None => (0, 0),
-        };
+        let range: Range = from_byte_vec(first_result.get_value().unwrap());
 
         assert_eq!(first_result.get_type(), DataType::Range);
-        assert_eq!(first_result_value.0, 5);
-        assert_eq!(first_result_value.1, 10);
+        assert_eq!(range.get_lower(), 5);
+        assert_eq!(range.get_upper(), 10);
     }
 
     #[test]
@@ -92,18 +81,10 @@ mod tests {
         let results = execute_sel_tree(&tree, &context);
 
         let first_result = results.get(0).unwrap();
-        let first_result_value = match first_result.get_value() {
-            Some(value) => {
-                let left = from_byte_vec(&Vec::from(&value[0..4]));
-                let right = from_byte_vec(&Vec::from(&value[4..]));
-
-                (left, right)
-            }
-            None => (0, 0),
-        };
+        let range: Range = from_byte_vec(first_result.get_value().unwrap());
 
         assert_eq!(first_result.get_type(), DataType::Range);
-        assert_eq!(first_result_value.0, 5);
-        assert_eq!(first_result_value.1, 11);
+        assert_eq!(range.get_lower(), 5);
+        assert_eq!(range.get_upper(), 11);
     }
 }

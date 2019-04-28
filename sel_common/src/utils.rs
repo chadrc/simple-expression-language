@@ -1,4 +1,4 @@
-use crate::Pair;
+use super::types::{Pair, Range};
 use bincode::{deserialize, serialize};
 
 pub trait ToByteVec {
@@ -90,6 +90,18 @@ impl ToByteVec for Pair {
 impl FromByteVec for Pair {
     fn from_byte_vec(v: &Vec<u8>) -> Self {
         return deserialize(v).unwrap_or(Pair::empty());
+    }
+}
+
+impl ToByteVec for Range {
+    fn to_byte_vec(&self) -> Vec<u8> {
+        return serialize(self).unwrap_or(vec![]);
+    }
+}
+
+impl FromByteVec for Range {
+    fn from_byte_vec(v: &Vec<u8>) -> Self {
+        return deserialize(v).unwrap_or(Range::new(0, 0));
     }
 }
 
