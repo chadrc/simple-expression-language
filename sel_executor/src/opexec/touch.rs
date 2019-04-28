@@ -5,7 +5,11 @@ use sel_common::{DataType, SELTree, SELTreeNode};
 pub fn operation(tree: &SELTree, node: &SELTreeNode, _context: &SELContext) -> SELExecutionResult {
     return match node.get_data_type() {
         DataType::Unit => SELExecutionResult::new(DataType::Unit, None),
-        DataType::Integer | DataType::Decimal | DataType::String | DataType::Boolean => {
+        DataType::Integer
+        | DataType::Decimal
+        | DataType::String
+        | DataType::Boolean
+        | DataType::Symbol => {
             SELExecutionResult::new(node.get_data_type(), tree.get_value_bytes_of(node))
         }
         _ => SELExecutionResult::new(DataType::Unknown, None),
@@ -19,6 +23,7 @@ mod tests {
     use sel_common::{
         from_byte_vec, DataHeap, DataType, Operation, SELTree, SELTreeNode, SymbolTable,
     };
+    use sel_compiler::Compiler;
 
     #[test]
     fn executes_unit_touch() {
@@ -145,5 +150,22 @@ mod tests {
 
         assert_eq!(result.get_type(), DataType::Boolean);
         assert_eq!(result_value, Some(true));
+    }
+
+    #[test]
+    fn executes_symbol_touch() {
+        let compiler = Compiler::new();
+        let tree = compiler.compile(&String::from(":value"));
+        let context = SELContext::new();
+
+        let result = get_node_result(&tree, tree.get_root(), &context);
+
+        let result_value = match result.get_value() {
+            Some(value) => Some(from_byte_vec(value)),
+            None => None,
+        };
+
+        assert_eq!(result.get_type(), DataType::Symbol);
+        assert_eq!(result_value, Some(0));
     }
 }
