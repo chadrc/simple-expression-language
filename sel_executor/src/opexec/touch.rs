@@ -185,4 +185,17 @@ mod tests {
         assert_eq!(result.get_type(), DataType::Unit);
         assert_eq!(result.get_value(), None);
     }
+
+    #[test]
+    fn executes_identifier_touch_with_value() {
+        let compiler = Compiler::new();
+        let tree = compiler.compile(&String::from("value"));
+        let context = SELContext::new();
+
+        let result = get_node_result(&tree, tree.get_root(), &context);
+
+        // identifiers with no context value always yield unit
+        assert_eq!(result.get_type(), DataType::Unit);
+        assert_eq!(result.get_value(), None);
+    }
 }
