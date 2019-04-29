@@ -48,6 +48,7 @@ impl<'a> Tokenizer<'a> {
         symbol_tree.attach(")", TokenType::EndGroup);
         symbol_tree.attach(":", TokenType::Symbol);
         symbol_tree.attach("=", TokenType::Pair);
+        symbol_tree.attach(",", TokenType::Comma);
 
         return Tokenizer {
             current_token: String::new(),
