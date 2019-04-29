@@ -51,24 +51,6 @@ pub fn xor_operation(
     return match_bitwise_op(tree, node, context, |left, right| left ^ right);
 }
 
-pub fn not_operation(
-    tree: &SELTree,
-    node: &SELTreeNode,
-    context: &SELExecutionContext,
-) -> SELExecutionResult {
-    let right = tree.get_nodes().get(node.get_right().unwrap()).unwrap();
-    let result = get_node_result(tree, &right, context);
-
-    if result.get_type() == DataType::Integer {
-        let result_value: i64 = from_byte_vec(result.get_value().unwrap());
-        let new_value = !result_value;
-
-        return SELExecutionResult::new(DataType::Integer, Some(to_byte_vec(new_value)));
-    }
-
-    return SELExecutionResult::new(DataType::Unknown, None);
-}
-
 pub fn left_shift_operation(
     tree: &SELTree,
     node: &SELTreeNode,
@@ -131,19 +113,6 @@ mod tests {
 
         assert_eq!(result.get_type(), DataType::Integer);
         assert_eq!(value, 250 ^ 10928);
-    }
-
-    #[test]
-    fn executes_bitwise_not() {
-        let compiler = Compiler::new();
-        let tree = compiler.compile(&String::from("~10928"));
-        let execution_context = SELExecutionContext::new();
-
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
-        let value: i64 = from_byte_vec(result.get_value().unwrap());
-
-        assert_eq!(result.get_type(), DataType::Integer);
-        assert_eq!(value, !10928);
     }
 
     #[test]

@@ -248,15 +248,6 @@ mod tests {
     }
 
     #[test]
-    fn tokenize_bitwise_not() {
-        let tokens: Vec<Token> = tokens_from_str("~2");
-
-        assert_eq!(tokens.len(), 2);
-        assert_token(tokens.get(0).unwrap(), TokenType::BitwiseNotSign, "~");
-        assert_token(tokens.get(1).unwrap(), TokenType::Integer, "2");
-    }
-
-    #[test]
     fn tokenize_bitwise_left_shift() {
         assert_4_5_binary_operation("<<", TokenType::BitwiseLeftShiftSign);
     }
@@ -325,7 +316,7 @@ mod tests {
         let tokens: Vec<Token> = tokens_from_str("!true");
 
         assert_eq!(tokens.len(), 2);
-        assert_token(tokens.get(0).unwrap(), TokenType::LogicalNot, "!");
+        assert_token(tokens.get(0).unwrap(), TokenType::NotSign, "!");
         assert_token(tokens.get(1).unwrap(), TokenType::Boolean, "true");
     }
 

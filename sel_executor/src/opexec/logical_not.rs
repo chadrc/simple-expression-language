@@ -1,7 +1,7 @@
 use super::super::context::SELExecutionContext;
 use super::utils::get_value_from_result;
 use super::{get_node_result, SELExecutionResult};
-use sel_common::{to_byte_vec, DataType, SELTree, SELTreeNode};
+use sel_common::{from_byte_vec, to_byte_vec, DataType, SELTree, SELTreeNode};
 
 pub fn operation(
     tree: &SELTree,
@@ -19,6 +19,12 @@ pub fn operation(
 
             SELExecutionResult::new(DataType::Boolean, Some(to_byte_vec(val)))
         }
+        DataType::Integer => {
+            let result_value: i64 = get_value_from_result(&result);
+            let val = !result_value;
+
+            return SELExecutionResult::new(DataType::Integer, Some(to_byte_vec(val)));
+        }
         // Unit value is considered logically false
         // so negating it will always result in true
         DataType::Unit => SELExecutionResult::new(DataType::Boolean, Some(to_byte_vec(true))),
@@ -31,9 +37,11 @@ mod tests {
     use super::super::super::context;
     use super::super::get_node_result;
     use super::super::test_utils::result_of_binary_op;
+    use crate::SELExecutionContext;
     use sel_common::{
         from_byte_vec, DataHeap, DataType, Operation, SELContext, SELTree, SELTreeNode, SymbolTable,
     };
+    use sel_compiler::Compiler;
 
     #[test]
     fn executes_boolean() {
@@ -47,7 +55,7 @@ mod tests {
             heap.insert_from_string(DataType::Boolean, &String::from("true")),
         );
 
-        let mut root = SELTreeNode::new(Operation::LogicalNot, DataType::Unknown, 1, None);
+        let mut root = SELTreeNode::new(Operation::Not, DataType::Unknown, 1, None);
 
         right.set_parent(Some(1));
 
@@ -74,13 +82,8 @@ mod tests {
 
     #[test]
     fn executes_unit() {
-        let result = result_of_binary_op(
-            Operation::LogicalNot,
-            DataType::Unknown,
-            "",
-            DataType::Unit,
-            "()",
-        );
+        let result =
+            result_of_binary_op(Operation::Not, DataType::Unknown, "", DataType::Unit, "()");
 
         let result_value = match result.get_value() {
             Some(value) => Some(from_byte_vec(value)),
@@ -89,5 +92,18 @@ mod tests {
 
         assert_eq!(result.get_type(), DataType::Boolean);
         assert_eq!(result_value, Some(true));
+    }
+
+    #[test]
+    fn executes_bitwise_not() {
+        let compiler = Compiler::new();
+        let tree = compiler.compile(&String::from("!10928"));
+        let execution_context = SELExecutionContext::new();
+
+        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let value: i64 = from_byte_vec(result.get_value().unwrap());
+
+        assert_eq!(result.get_type(), DataType::Integer);
+        assert_eq!(value, !10928);
     }
 }

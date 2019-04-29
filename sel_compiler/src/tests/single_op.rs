@@ -408,7 +408,7 @@ fn compiles_logical_not_operation() {
 
     let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
 
-    assert_eq!(root.get_operation(), Operation::LogicalNot);
+    assert_eq!(root.get_operation(), Operation::Not);
     assert_eq!(root.get_data_type(), DataType::Unknown);
 
     assert_eq!(right.get_operation(), Operation::Touch);
@@ -545,7 +545,7 @@ fn compiles_bitwise_right_shift_operation() {
 
 #[test]
 fn compiles_bitwise_not_operation() {
-    let input = String::from("~4");
+    let input = String::from("!4");
     let compiler = Compiler::new();
 
     let tree = compiler.compile(&input);
@@ -554,7 +554,7 @@ fn compiles_bitwise_not_operation() {
 
     let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
 
-    assert_eq!(root.get_operation(), Operation::BitwiseNot);
+    assert_eq!(root.get_operation(), Operation::Not);
     assert_eq!(root.get_data_type(), DataType::Unknown);
 
     assert_eq!(right.get_operation(), Operation::Touch);

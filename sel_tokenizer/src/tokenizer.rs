@@ -34,11 +34,10 @@ impl<'a> Tokenizer<'a> {
         symbol_tree.attach("&&", TokenType::LogicalAnd);
         symbol_tree.attach("||", TokenType::LogicalOr);
         symbol_tree.attach("^^", TokenType::LogicalXOR);
-        symbol_tree.attach("!", TokenType::LogicalNot);
+        symbol_tree.attach("!", TokenType::NotSign);
         symbol_tree.attach("|", TokenType::BitwiseOrSign);
         symbol_tree.attach("&", TokenType::BitwiseAndSign);
         symbol_tree.attach("^", TokenType::BitwiseXorSign);
-        symbol_tree.attach("~", TokenType::BitwiseNotSign);
         symbol_tree.attach("<<", TokenType::BitwiseLeftShiftSign);
         symbol_tree.attach(">>", TokenType::BitwiseRightShiftSign);
         symbol_tree.attach("`", TokenType::TransformationSign);

@@ -74,7 +74,7 @@ fn operation_with_not() {
     assert_eq!(left.get_operation(), Operation::Touch);
     assert_eq!(left.get_data_type(), DataType::Boolean);
 
-    assert_eq!(right.get_operation(), Operation::LogicalNot);
+    assert_eq!(right.get_operation(), Operation::Not);
     assert_eq!(right.get_data_type(), DataType::Unknown);
 
     assert_eq!(right.get_left(), None);

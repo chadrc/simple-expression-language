@@ -101,8 +101,7 @@ impl PrecedenceManager {
         operation_priorities.insert(Operation::DotAccess, ACCESS_PRECEDENCE);
 
         operation_priorities.insert(Operation::Symbol, UNARY_PRECEDENCE);
-        operation_priorities.insert(Operation::LogicalNot, UNARY_PRECEDENCE);
-        operation_priorities.insert(Operation::BitwiseNot, UNARY_PRECEDENCE);
+        operation_priorities.insert(Operation::Not, UNARY_PRECEDENCE);
         operation_priorities.insert(Operation::Negation, UNARY_PRECEDENCE);
 
         operation_priorities.insert(Operation::ExclusiveRange, RANGE_PRECEDENCE);
