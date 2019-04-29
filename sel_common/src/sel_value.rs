@@ -150,7 +150,7 @@ impl std::fmt::Display for SELValue {
                 let mut item_strs: Vec<String> = vec![];
 
                 for item in list.get_values() {
-                    item_strs.push(format!("{}", item));
+                    item_strs.push(list_format(&item));
                 }
 
                 format!("{}", item_strs.join(", "))
@@ -167,6 +167,17 @@ fn pair_format(value: &SELValue) -> String {
     format!(
         "{}",
         if value.get_type() == DataType::Pair {
+            format!("({})", value)
+        } else {
+            format!("{}", value)
+        }
+    )
+}
+
+fn list_format(value: &SELValue) -> String {
+    format!(
+        "{}",
+        if value.get_type() == DataType::List {
             format!("({})", value)
         } else {
             format!("{}", value)
@@ -233,18 +244,6 @@ mod tests {
     }
 
     #[test]
-    fn display_pair() {
-        let result = SELValue::new_from_pair(Pair::new(
-            SELValue::new_from_string(&String::from("value")),
-            SELValue::new_from_int(10),
-        ));
-
-        let formatted = format!("{}", result);
-
-        assert_eq!(formatted, "\"value\" = 10");
-    }
-
-    #[test]
     fn display_list() {
         let mut list = List::new();
         list.push(SELValue::new_from_string(&String::from("value")));
@@ -255,6 +254,39 @@ mod tests {
         let formatted = format!("{}", result);
 
         assert_eq!(formatted, "\"value\", 10");
+    }
+
+    #[test]
+    fn display_nested_lists() {
+        let mut list = List::new();
+        let mut sub_list = List::new();
+        sub_list.push(SELValue::new_from_int(300));
+        sub_list.push(SELValue::new_from_int(400));
+        sub_list.push(SELValue::new_from_int(500));
+
+        list.push(SELValue::new_from_int(100));
+        list.push(SELValue::new_from_int(200));
+        list.push(SELValue::new_from_list(sub_list));
+        list.push(SELValue::new_from_int(600));
+        list.push(SELValue::new_from_int(700));
+
+        let result = SELValue::new_from_list(list);
+
+        let formatted = format!("{}", result);
+
+        assert_eq!(formatted, "100, 200, (300, 400, 500), 600, 700");
+    }
+
+    #[test]
+    fn display_pair() {
+        let result = SELValue::new_from_pair(Pair::new(
+            SELValue::new_from_string(&String::from("value")),
+            SELValue::new_from_int(10),
+        ));
+
+        let formatted = format!("{}", result);
+
+        assert_eq!(formatted, "\"value\" = 10");
     }
 
     #[test]
@@ -346,6 +378,27 @@ mod tests {
         let formatted = format!("{:?}", result);
 
         assert_eq!(formatted, "List - \"value\", 10");
+    }
+
+    #[test]
+    fn debug_nested_lists() {
+        let mut list = List::new();
+        let mut sub_list = List::new();
+        sub_list.push(SELValue::new_from_int(300));
+        sub_list.push(SELValue::new_from_int(400));
+        sub_list.push(SELValue::new_from_int(500));
+
+        list.push(SELValue::new_from_int(100));
+        list.push(SELValue::new_from_int(200));
+        list.push(SELValue::new_from_list(sub_list));
+        list.push(SELValue::new_from_int(600));
+        list.push(SELValue::new_from_int(700));
+
+        let result = SELValue::new_from_list(list);
+
+        let formatted = format!("{:?}", result);
+
+        assert_eq!(formatted, "List - 100, 200, (300, 400, 500), 600, 700");
     }
 
     #[test]
