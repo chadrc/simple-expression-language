@@ -3,7 +3,7 @@ use sel_compiler;
 use sel_executor;
 // use sel_tokenizer;
 
-const INPUTS: [&str; 14] = [
+const INPUTS: [&str; 15] = [
     "5 + $ * 8 - 3",
     "3 > 5 || 89 != 43",
     "true ^^ true",
@@ -24,14 +24,10 @@ const INPUTS: [&str; 14] = [
     "count + 5",
     ":my_symbol",
     ":email = \"panda@example.com\"",
+    ":user = :first_name = \"Panda\"",
 ];
 
 fn main() {
-    // let tokenizer = sel_tokenizer::Tokenizer::new(&input);
-    // for token in tokenizer {
-    //     println!("{:?}", token);
-    // }
-
     println!("{}", "-".repeat(100));
     for input in INPUTS.iter() {
         let mut context = SELContext::new();
