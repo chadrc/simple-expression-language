@@ -3,7 +3,7 @@ use sel_compiler;
 use sel_executor;
 // use sel_tokenizer;
 
-const INPUTS: [&str; 19] = [
+const INPUTS: [&str; 20] = [
     "5 + $ * 8 - 3",
     "3 > 5 || 89 != 43",
     "true ^^ true",
@@ -11,6 +11,7 @@ const INPUTS: [&str; 19] = [
     "3.14 ** 2",
     "'Hello ' + 'World'",
     "5 + 9 * 3 + ()",
+    "10 * .5",
     "\
 5 + $ * 3 / 7
 
@@ -27,7 +28,11 @@ const INPUTS: [&str; 19] = [
     ":user = :first_name = \"Panda\"",
     "count = \"Panda\"",
     "100, true, count, 10 > count, $, \"pandas\", :my_symbol = 500",
-    "(0, 0), (50, 40), (20, 90)",
+    "\
+(0, 0), (50, 40), (20, 90)
+
+?.2.0
+",
     "\
 :name = (:first = \"Panda\", :last = \"Bear\")
 
