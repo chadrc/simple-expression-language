@@ -174,7 +174,6 @@ impl<'a> Iterator for Tokenizer<'a> {
                             } else if c == '.' {
                                 // slight look ahead to determine if this dot is its own token
                                 let next = self.input.chars().nth(self.next_index).unwrap_or('\0');
-                                println!("look ahead {:?} {:?} {:?}", self.next_index, c, next);
                                 if next.is_alphabetic() || next == '_' {
                                     // it is a dot
                                     // end current integer
