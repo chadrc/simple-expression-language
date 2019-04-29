@@ -12,6 +12,7 @@ pub enum DataType {
     Boolean,
     Range,
     Pair,
+    List,
 }
 
 impl std::fmt::Display for DataType {

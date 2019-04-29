@@ -5,7 +5,8 @@ use std::collections::HashMap;
 const VALUE_PRECEDENCE: usize = 0;
 const GROUP_PRECEDENCE: usize = VALUE_PRECEDENCE + 1;
 const UNARY_PRECEDENCE: usize = GROUP_PRECEDENCE + 1;
-const RANGE_PRECEDENCE: usize = UNARY_PRECEDENCE + 1;
+const ACCESS_PRECEDENCE: usize = UNARY_PRECEDENCE + 1;
+const RANGE_PRECEDENCE: usize = ACCESS_PRECEDENCE + 1;
 const EXPONENTIAL_PRECEDENCE: usize = RANGE_PRECEDENCE + 1;
 const MULTIPLICATION_PRECEDENCE: usize = EXPONENTIAL_PRECEDENCE + 1;
 const ADDITION_PRECEDENCE: usize = MULTIPLICATION_PRECEDENCE + 1;
@@ -19,6 +20,7 @@ const LOGICAL_AND_PRECEDENCE: usize = BITWISE_OR_PRECEDENCE + 1;
 const LOGICAL_XOR_PRECEDENCE: usize = LOGICAL_AND_PRECEDENCE + 1;
 const LOGICAL_OR_PRECEDENCE: usize = LOGICAL_XOR_PRECEDENCE + 1;
 const PAIR_PRECEDENCE: usize = LOGICAL_OR_PRECEDENCE + 1;
+const LIST_PRECEDENCE: usize = PAIR_PRECEDENCE + 1;
 
 pub const RIGHT_TO_LEFT_PRECEDENCES: [usize; 1] = [PAIR_PRECEDENCE];
 
@@ -36,6 +38,7 @@ impl PrecedenceGroup {
 
         members.push(vec![]); // VALUE_PRECEDENCE
         members.push(vec![]); // GROUP_PRECEDENCE
+        members.push(vec![]); // ACCESS_PRECEDENCE
         members.push(vec![]); // UNARY_PRECEDENCE
         members.push(vec![]); // RANGE_PRECEDENCE
         members.push(vec![]); // EXPONENTIAL_PRECEDENCE
@@ -51,6 +54,7 @@ impl PrecedenceGroup {
         members.push(vec![]); // LOGICAL_XOR_PRECEDENCE
         members.push(vec![]); // LOGICAL_OR_PRECEDENCE
         members.push(vec![]); // PAIR_PRECEDENCE
+        members.push(vec![]); // LIST_PRECEDENCE
 
         return PrecedenceGroup {
             first: 0,
@@ -94,6 +98,8 @@ impl PrecedenceManager {
 
         operation_priorities.insert(Operation::Group, GROUP_PRECEDENCE);
 
+        operation_priorities.insert(Operation::DotAccess, ACCESS_PRECEDENCE);
+
         operation_priorities.insert(Operation::Symbol, UNARY_PRECEDENCE);
         operation_priorities.insert(Operation::LogicalNot, UNARY_PRECEDENCE);
         operation_priorities.insert(Operation::BitwiseNot, UNARY_PRECEDENCE);
@@ -136,6 +142,8 @@ impl PrecedenceManager {
         operation_priorities.insert(Operation::LogicalOr, LOGICAL_OR_PRECEDENCE);
 
         operation_priorities.insert(Operation::Pair, PAIR_PRECEDENCE);
+
+        operation_priorities.insert(Operation::List, LIST_PRECEDENCE);
 
         let mut root_group_tier: Vec<PrecedenceGroup> = vec![];
         root_group_tier.push(PrecedenceGroup::new(0));
