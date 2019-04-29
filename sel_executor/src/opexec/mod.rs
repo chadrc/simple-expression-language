@@ -11,6 +11,7 @@ mod inequality;
 mod input;
 mod less_than;
 mod less_than_equal;
+mod list;
 mod logical;
 mod logical_not;
 mod modulo;
@@ -62,6 +63,7 @@ pub fn get_node_result(
         Operation::InclusiveRange => range::inclusive_range_operation(tree, node, context),
         Operation::ExclusiveRange => range::exclusive_range_operation(tree, node, context),
         Operation::Pair => pair::operation(tree, node, context),
+        Operation::List => list::operation(tree, node, context),
         Operation::Group => group::operation(tree, node, context),
         _ => SELExecutionResult::new(DataType::Unknown, None),
     };
