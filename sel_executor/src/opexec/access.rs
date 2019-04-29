@@ -39,6 +39,10 @@ pub fn dot_access_operation(
             let pair: Pair = from_byte_vec(left_result.get_value().unwrap());
             SELExecutionResult::from(pair.get_left())
         }
+        (DataType::Pair, "right") => {
+            let pair: Pair = from_byte_vec(left_result.get_value().unwrap());
+            SELExecutionResult::from(pair.get_right())
+        }
         _ => SELExecutionResult::new(DataType::Unknown, None),
     };
 }
@@ -63,5 +67,18 @@ mod tests {
 
         assert_eq!(result.get_type(), DataType::Symbol);
         assert_eq!(symbol.get_identifier(), &String::from("my_value"));
+    }
+
+    #[test]
+    fn executes_pair_right_access() {
+        let compiler = Compiler::new();
+        let tree = compiler.compile(&String::from("(:my_value = 100).right"));
+        let execution_context = SELExecutionContext::new();
+
+        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let value: i64 = from_byte_vec(result.get_value().unwrap());
+
+        assert_eq!(result.get_type(), DataType::Integer);
+        assert_eq!(value, 100);
     }
 }
