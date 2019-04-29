@@ -43,7 +43,7 @@ pub fn dot_access_operation(
                 _ => SELExecutionResult::new(DataType::Unit, None),
             }
         }
-        _ => SELExecutionResult::new(DataType::Unknown, None),
+        _ => SELExecutionResult::new(DataType::Unit, None),
     };
 }
 
@@ -86,6 +86,17 @@ mod tests {
     fn executes_access_of_non_existent_identifier() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("(:my_value = 100).center"));
+        let execution_context = SELExecutionContext::new();
+
+        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+
+        assert_eq!(result.get_type(), DataType::Unit);
+    }
+
+    #[test]
+    fn executes_access_of_non_existent_value() {
+        let compiler = Compiler::new();
+        let tree = compiler.compile(&String::from("uninitialized.field"));
         let execution_context = SELExecutionContext::new();
 
         let result = get_node_result(&tree, tree.get_root(), &execution_context);
