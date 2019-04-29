@@ -10,6 +10,7 @@ pub struct Tokenizer<'a> {
     deferred_parse_state: ParseState,
     chars: std::str::Chars<'a>,
     symbol_tree: SymbolTree,
+    input: String,
 }
 
 impl<'a> Tokenizer<'a> {
@@ -56,6 +57,7 @@ impl<'a> Tokenizer<'a> {
             deferred_parse_state: ParseState::NoToken,
             chars: input.chars(),
             symbol_tree,
+            input: input.clone(),
         };
     }
 
@@ -151,6 +153,9 @@ impl<'a> Iterator for Tokenizer<'a> {
     type Item = Token;
 
     fn next(&mut self) -> Option<Token> {
+        // enumerate was causing mutability issues
+        // maintaining own index for now
+        let mut i = 0;
         loop {
             match self.chars.next() {
                 Some(c) => {
@@ -165,11 +170,19 @@ impl<'a> Iterator for Tokenizer<'a> {
                             if c.is_numeric() {
                                 self.current_token.push(c);
                             } else if c == '.' {
-                                // consume and
-                                // convert to decimal token
-                                self.current_token.push(c);
-                                self.current_token_type = TokenType::Decimal;
-                                self.parse_state = ParseState::ParsingDecimal;
+                                // slight look ahead to determine if this dot is its own token
+                                let next = self.input.chars().nth(i + 1).unwrap_or('\0');
+                                if next.is_alphabetic() || next == '_' {
+                                    // it is a dot
+                                    // end current integer
+                                    // starting dot token as well
+                                    return self.end_current_token(c);
+                                } else {
+                                    // consume and convert to decimal token
+                                    self.current_token.push(c);
+                                    self.current_token_type = TokenType::Decimal;
+                                    self.parse_state = ParseState::ParsingDecimal;
+                                }
                             } else {
                                 return self.end_current_token(c);
                             }
@@ -231,6 +244,12 @@ impl<'a> Iterator for Tokenizer<'a> {
 
                                 self.current_token_type = TokenType::ExclusiveRange;
                                 self.parse_state = ParseState::ParsingExclusiveRange;
+                            } else if c.is_numeric() {
+                                // actually parsing a decimal
+                                self.current_token.push(c);
+
+                                self.current_token_type = TokenType::Decimal;
+                                self.parse_state = ParseState::ParsingDecimal;
                             } else {
                                 return self.end_current_token(c);
                             }
@@ -311,6 +330,7 @@ impl<'a> Iterator for Tokenizer<'a> {
                 // will return None if there is not a last token
                 None => return self.make_current_token(),
             }
+            i += 1;
         }
     }
 }

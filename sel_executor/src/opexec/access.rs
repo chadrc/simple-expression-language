@@ -172,4 +172,21 @@ mod tests {
 
         assert_eq!(result.get_type(), DataType::Unit);
     }
+
+    #[test]
+    fn executes_list_pair_access() {
+        let compiler = Compiler::new();
+        let tree = compiler.compile(&String::from(
+            "(:name = (:first = \"Panda\", :last = \"Bear\")).right.1.right",
+        ));
+        let execution_context = SELExecutionContext::new();
+
+        println!("{:?}", tree);
+
+        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let value: String = from_byte_vec(result.get_value().unwrap());
+
+        assert_eq!(result.get_type(), DataType::String);
+        assert_eq!(value, String::from("Bear"));
+    }
 }

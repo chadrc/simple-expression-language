@@ -31,11 +31,29 @@ mod tests {
     }
 
     #[test]
+    fn tokenize_integer_dot_identifier() {
+        let tokens: Vec<Token> = tokens_from_str("3.field");
+
+        assert_eq!(tokens.len(), 3);
+        assert_token(tokens.get(0).unwrap(), TokenType::Integer, "3");
+        assert_token(tokens.get(1).unwrap(), TokenType::Dot, ".");
+        assert_token(tokens.get(2).unwrap(), TokenType::Identifier, "field");
+    }
+
+    #[test]
     fn tokenize_decimal_number() {
         let tokens: Vec<Token> = tokens_from_str("3.14");
 
         assert_eq!(tokens.len(), 1);
         assert_token(tokens.get(0).unwrap(), TokenType::Decimal, "3.14");
+    }
+
+    #[test]
+    fn tokenize_decimal_number_starting_dot() {
+        let tokens: Vec<Token> = tokens_from_str(".01");
+
+        assert_eq!(tokens.len(), 1);
+        assert_token(tokens.get(0).unwrap(), TokenType::Decimal, ".01");
     }
 
     #[test]
