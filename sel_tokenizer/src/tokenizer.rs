@@ -257,24 +257,29 @@ impl<'a> Iterator for Tokenizer<'a> {
                             }
                         }
                         ParseState::ParsingDot => {
+                            println!("{:?}", self.token_type_history);
+                            let preceded_by_value =
+                                self.nth_token_history_is(1, TokenType::Identifier);
+
+                            let preceded_by_integer =
+                                self.nth_token_history_is(1, TokenType::Integer);
+
+                            println!("{:?}, {:?}", preceded_by_value, preceded_by_integer);
+
                             if c == '.' {
                                 // start parsing inclusive range
                                 self.current_token.push(c);
 
                                 self.current_token_type = TokenType::ExclusiveRange;
                                 self.parse_state = ParseState::ParsingExclusiveRange;
-                            }
-                            // Taking away for now in favor of dot access
-                            // TODO: look into supporting this
+                            } else if c.is_numeric() && !(preceded_by_value || preceded_by_integer)
+                            {
+                                // actually parsing a decimal
+                                self.current_token.push(c);
 
-                            //                            else if c.is_numeric() {
-                            //                                // actually parsing a decimal
-                            //                                self.current_token.push(c);
-                            //
-                            //                                self.current_token_type = TokenType::Decimal;
-                            //                                self.parse_state = ParseState::ParsingDecimal;
-                            //                            }
-                            else {
+                                self.current_token_type = TokenType::Decimal;
+                                self.parse_state = ParseState::ParsingDecimal;
+                            } else {
                                 return self.end_current_token(c);
                             }
                         }
