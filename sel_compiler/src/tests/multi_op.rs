@@ -525,7 +525,7 @@ fn compiles_pair_of_pair() {
     //         /         \
     //     :value     __ = __
     //               /       \
-    //        :sub_value     50
+    //         :sub_value    50
 
     let root = tree.get_root();
 
