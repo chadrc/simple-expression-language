@@ -1,3 +1,4 @@
+mod access;
 mod addition;
 mod bitwise;
 mod division;
@@ -64,6 +65,7 @@ pub fn get_node_result(
         Operation::ExclusiveRange => range::exclusive_range_operation(tree, node, context),
         Operation::Pair => pair::operation(tree, node, context),
         Operation::List => list::operation(tree, node, context),
+        Operation::DotAccess => access::dot_access_operation(tree, node, context),
         Operation::Group => group::operation(tree, node, context),
         _ => SELExecutionResult::new(DataType::Unknown, None),
     };
