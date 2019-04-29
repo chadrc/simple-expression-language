@@ -51,6 +51,20 @@ mod tests {
     }
 
     #[test]
+    fn tokenize_identifier_dot_integer_dot_identifier() {
+        let tokens: Vec<Token> = tokens_from_str("3.value.3.field");
+
+        assert_eq!(tokens.len(), 7);
+        assert_token(tokens.get(0).unwrap(), TokenType::Integer, "3");
+        assert_token(tokens.get(1).unwrap(), TokenType::Dot, ".");
+        assert_token(tokens.get(2).unwrap(), TokenType::Identifier, "value");
+        assert_token(tokens.get(3).unwrap(), TokenType::Dot, ".");
+        assert_token(tokens.get(4).unwrap(), TokenType::Integer, "3");
+        assert_token(tokens.get(5).unwrap(), TokenType::Dot, ".");
+        assert_token(tokens.get(6).unwrap(), TokenType::Identifier, "field");
+    }
+
+    #[test]
     fn tokenize_decimal_number() {
         let tokens: Vec<Token> = tokens_from_str("3.14");
 

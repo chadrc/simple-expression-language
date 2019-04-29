@@ -11,6 +11,7 @@ pub struct Tokenizer<'a> {
     chars: std::str::Chars<'a>,
     symbol_tree: SymbolTree,
     input: String,
+    next_index: usize,
 }
 
 impl<'a> Tokenizer<'a> {
@@ -58,6 +59,7 @@ impl<'a> Tokenizer<'a> {
             chars: input.chars(),
             symbol_tree,
             input: input.clone(),
+            next_index: 0,
         };
     }
 
@@ -153,10 +155,10 @@ impl<'a> Iterator for Tokenizer<'a> {
     type Item = Token;
 
     fn next(&mut self) -> Option<Token> {
-        // enumerate was causing mutability issues
-        // maintaining own index for now
-        let mut i = 0;
         loop {
+            // enumerate was causing mutability issues
+            // maintaining own index for now
+            self.next_index += 1;
             match self.chars.next() {
                 Some(c) => {
                     match self.parse_state {
@@ -171,7 +173,8 @@ impl<'a> Iterator for Tokenizer<'a> {
                                 self.current_token.push(c);
                             } else if c == '.' {
                                 // slight look ahead to determine if this dot is its own token
-                                let next = self.input.chars().nth(i + 1).unwrap_or('\0');
+                                let next = self.input.chars().nth(self.next_index).unwrap_or('\0');
+                                println!("look ahead {:?} {:?} {:?}", self.next_index, c, next);
                                 if next.is_alphabetic() || next == '_' {
                                     // it is a dot
                                     // end current integer
@@ -335,7 +338,6 @@ impl<'a> Iterator for Tokenizer<'a> {
                 // will return None if there is not a last token
                 None => return self.make_current_token(),
             }
-            i += 1;
         }
     }
 }
