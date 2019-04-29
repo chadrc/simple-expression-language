@@ -141,8 +141,8 @@ impl std::fmt::Display for SELValue {
                 let pair: Pair = from_byte_vec(val.unwrap());
                 format!(
                     "{} = {}",
-                    pair_format(&pair.get_left()),
-                    pair_format(&pair.get_right())
+                    wrap_format(&pair.get_left(), DataType::Pair),
+                    wrap_format(&pair.get_right(), DataType::Pair)
                 )
             }
             DataType::List => {
@@ -150,7 +150,7 @@ impl std::fmt::Display for SELValue {
                 let mut item_strs: Vec<String> = vec![];
 
                 for item in list.get_values() {
-                    item_strs.push(list_format(&item));
+                    item_strs.push(wrap_format(&item, DataType::List));
                 }
 
                 format!("{}", item_strs.join(", "))
@@ -163,21 +163,10 @@ impl std::fmt::Display for SELValue {
     }
 }
 
-fn pair_format(value: &SELValue) -> String {
+fn wrap_format(value: &SELValue, data_type: DataType) -> String {
     format!(
         "{}",
-        if value.get_type() == DataType::Pair {
-            format!("({})", value)
-        } else {
-            format!("{}", value)
-        }
-    )
-}
-
-fn list_format(value: &SELValue) -> String {
-    format!(
-        "{}",
-        if value.get_type() == DataType::List {
+        if value.get_type() == data_type {
             format!("({})", value)
         } else {
             format!("{}", value)
