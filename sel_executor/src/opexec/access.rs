@@ -40,7 +40,7 @@ pub fn dot_access_operation(
             match identifier.as_ref() {
                 "left" => SELExecutionResult::from(pair.get_left()),
                 "right" => SELExecutionResult::from(pair.get_right()),
-                _ => SELExecutionResult::new(DataType::Unknown, None),
+                _ => SELExecutionResult::new(DataType::Unit, None),
             }
         }
         _ => SELExecutionResult::new(DataType::Unknown, None),
@@ -80,5 +80,16 @@ mod tests {
 
         assert_eq!(result.get_type(), DataType::Integer);
         assert_eq!(value, 100);
+    }
+
+    #[test]
+    fn executes_access_of_non_existent_identifier() {
+        let compiler = Compiler::new();
+        let tree = compiler.compile(&String::from("(:my_value = 100).center"));
+        let execution_context = SELExecutionContext::new();
+
+        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+
+        assert_eq!(result.get_type(), DataType::Unit);
     }
 }
