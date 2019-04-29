@@ -34,14 +34,14 @@ pub fn dot_access_operation(
         })
         .map_or(String::from(""), |s| s.clone());
 
-    return match (left_result.get_type(), identifier.as_ref()) {
-        (DataType::Pair, "left") => {
+    return match left_result.get_type() {
+        DataType::Pair => {
             let pair: Pair = from_byte_vec(left_result.get_value().unwrap());
-            SELExecutionResult::from(pair.get_left())
-        }
-        (DataType::Pair, "right") => {
-            let pair: Pair = from_byte_vec(left_result.get_value().unwrap());
-            SELExecutionResult::from(pair.get_right())
+            match identifier.as_ref() {
+                "left" => SELExecutionResult::from(pair.get_left()),
+                "right" => SELExecutionResult::from(pair.get_right()),
+                _ => SELExecutionResult::new(DataType::Unknown, None),
+            }
         }
         _ => SELExecutionResult::new(DataType::Unknown, None),
     };
