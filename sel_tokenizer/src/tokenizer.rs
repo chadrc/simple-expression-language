@@ -244,13 +244,18 @@ impl<'a> Iterator for Tokenizer<'a> {
 
                                 self.current_token_type = TokenType::ExclusiveRange;
                                 self.parse_state = ParseState::ParsingExclusiveRange;
-                            } else if c.is_numeric() {
-                                // actually parsing a decimal
-                                self.current_token.push(c);
+                            }
+                            // Taking away for now in favor of dot access
+                            // TODO: look into supporting this
 
-                                self.current_token_type = TokenType::Decimal;
-                                self.parse_state = ParseState::ParsingDecimal;
-                            } else {
+                            //                            else if c.is_numeric() {
+                            //                                // actually parsing a decimal
+                            //                                self.current_token.push(c);
+                            //
+                            //                                self.current_token_type = TokenType::Decimal;
+                            //                                self.parse_state = ParseState::ParsingDecimal;
+                            //                            }
+                            else {
                                 return self.end_current_token(c);
                             }
                         }
