@@ -1,5 +1,6 @@
 use super::precedence_manager::{PrecedenceGroup, PrecedenceManager};
 use super::utils::{get_data_type_for_token, get_operation_type_for_token, loop_max};
+use crate::precedence_manager::RIGHT_TO_LEFT_PRECEDENCES;
 use sel_common::{
     DataHeap, DataType, NodeSide, Operation, SELContext, SELTree, SELTreeNode, SymbolTable,
 };
@@ -201,96 +202,114 @@ impl SELTreeBuilder {
         return node.get_own_index();
     }
 
+    fn resolve_node(
+        &self,
+        mut nodes: Vec<SELTreeNode>,
+        indices_to_resolve: &Vec<usize>,
+        index: usize,
+    ) -> Vec<SELTreeNode> {
+        let mut changes: Vec<Change> = vec![];
+        {
+            let nodes = &nodes;
+            let node = nodes.get(index).unwrap();
+
+            let index_for_side = |side: NodeSide| match side {
+                NodeSide::Parent => panic!("NodeSide::Parent can't be updated."),
+                NodeSide::Right => node.get_right(),
+                NodeSide::Left => node.get_left(),
+            };
+
+            let mut update_node_side = |side: NodeSide| {
+                let start_index = index_for_side(side);
+
+                match start_index {
+                    None => (),
+                    Some(node_index) => {
+                        let mut next_node = nodes.get(node_index).unwrap();
+
+                        loop_max(nodes.len(), || match next_node.get_parent() {
+                            None => {
+                                return;
+                            }
+                            Some(parent_index) => {
+                                if parent_index == node.get_own_index() {
+                                    return;
+                                }
+
+                                next_node = nodes.get(parent_index).unwrap();
+                            }
+                        });
+
+                        let next_is_lower = self
+                            .precedence_manager
+                            .is_lower(next_node.get_operation(), node.get_operation());
+
+                        if !next_is_lower {
+                            changes.push(Change {
+                                index_to_change: node.get_own_index(),
+                                new_index: Some(next_node.get_own_index()),
+                                side_to_set: side,
+                            });
+                        }
+
+                        let is_value_precedence = self
+                            .precedence_manager
+                            .is_op_value_precedence(next_node.get_operation());
+
+                        if is_value_precedence {
+                            changes.append(&mut none_left_right(next_node.get_own_index()));
+                        }
+
+                        if next_is_lower {
+                            changes.push(Change {
+                                index_to_change: node.get_own_index(),
+                                new_index: Some(next_node.get_own_index()),
+                                side_to_set: NodeSide::Parent,
+                            });
+
+                            // just set the side we're checking to node's parent
+                            // set side we're checking to None, since we don't need it anymore
+
+                            changes.push(Change {
+                                index_to_change: node.get_own_index(),
+                                new_index: None,
+                                side_to_set: side,
+                            });
+                        } else {
+                            changes.push(Change {
+                                index_to_change: next_node.get_own_index(),
+                                new_index: Some(node.get_own_index()),
+                                side_to_set: NodeSide::Parent,
+                            });
+                        }
+                    }
+                }
+            };
+
+            update_node_side(NodeSide::Left);
+            update_node_side(NodeSide::Right);
+        }
+
+        {
+            SELTreeBuilder::apply_changes(&mut nodes, changes)
+        }
+
+        return nodes;
+    }
+
     fn resolve_tree(
         &self,
         mut nodes: Vec<SELTreeNode>,
         indices_to_resolve: &Vec<usize>,
+        right_to_left: bool,
     ) -> Vec<SELTreeNode> {
-        for i in indices_to_resolve {
-            let mut changes: Vec<Change> = vec![];
-            {
-                let nodes = &nodes;
-                let node = nodes.get(*i).unwrap();
-
-                let index_for_side = |side: NodeSide| match side {
-                    NodeSide::Parent => panic!("NodeSide::Parent can't be updated."),
-                    NodeSide::Right => node.get_right(),
-                    NodeSide::Left => node.get_left(),
-                };
-
-                let mut update_node_side = |side: NodeSide| {
-                    let start_index = index_for_side(side);
-
-                    match start_index {
-                        None => (),
-                        Some(node_index) => {
-                            let mut next_node = nodes.get(node_index).unwrap();
-
-                            loop_max(nodes.len(), || match next_node.get_parent() {
-                                None => {
-                                    return;
-                                }
-                                Some(parent_index) => {
-                                    if parent_index == node.get_own_index() {
-                                        return;
-                                    }
-
-                                    next_node = nodes.get(parent_index).unwrap();
-                                }
-                            });
-
-                            let next_is_lower = self
-                                .precedence_manager
-                                .is_lower(next_node.get_operation(), node.get_operation());
-
-                            if !next_is_lower {
-                                changes.push(Change {
-                                    index_to_change: node.get_own_index(),
-                                    new_index: Some(next_node.get_own_index()),
-                                    side_to_set: side,
-                                });
-                            }
-
-                            let is_value_precedence = self
-                                .precedence_manager
-                                .is_op_value_precedence(next_node.get_operation());
-
-                            if is_value_precedence {
-                                changes.append(&mut none_left_right(next_node.get_own_index()));
-                            }
-
-                            if next_is_lower {
-                                changes.push(Change {
-                                    index_to_change: node.get_own_index(),
-                                    new_index: Some(next_node.get_own_index()),
-                                    side_to_set: NodeSide::Parent,
-                                });
-
-                                // just set the side we're checking to node's parent
-                                // set side we're checking to None, since we don't need it anymore
-
-                                changes.push(Change {
-                                    index_to_change: node.get_own_index(),
-                                    new_index: None,
-                                    side_to_set: side,
-                                });
-                            } else {
-                                changes.push(Change {
-                                    index_to_change: next_node.get_own_index(),
-                                    new_index: Some(node.get_own_index()),
-                                    side_to_set: NodeSide::Parent,
-                                });
-                            }
-                        }
-                    }
-                };
-
-                update_node_side(NodeSide::Left);
-                update_node_side(NodeSide::Right);
+        if right_to_left {
+            for i in indices_to_resolve.iter().rev() {
+                nodes = self.resolve_node(nodes, indices_to_resolve, *i);
             }
-
-            {
-                SELTreeBuilder::apply_changes(&mut nodes, changes)
+        } else {
+            for i in indices_to_resolve {
+                nodes = self.resolve_node(nodes, indices_to_resolve, *i);
             }
         }
 
@@ -410,8 +429,10 @@ impl SELTreeBuilder {
                 }
 
                 // skip value and group precedences
-                for bucket in group.get_members().iter().skip(2) {
-                    nodes = self.resolve_tree(nodes, &bucket);
+                for (i, bucket) in group.get_members().iter().skip(2).enumerate() {
+                    // plus two to compensate for skipped precedences
+                    let right_to_left = RIGHT_TO_LEFT_PRECEDENCES.contains(&(i + 2));
+                    nodes = self.resolve_tree(nodes, &bucket, right_to_left);
                 }
 
                 if index != 0 {
