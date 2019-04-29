@@ -51,6 +51,70 @@ mod tests {
     }
 
     #[test]
+    fn tokenize_decimal_dot_integer() {
+        let tokens: Vec<Token> = tokens_from_str("3.14.3");
+
+        assert_eq!(tokens.len(), 3);
+        assert_token(tokens.get(0).unwrap(), TokenType::Decimal, "3.14");
+        assert_token(tokens.get(1).unwrap(), TokenType::Dot, ".");
+        assert_token(tokens.get(2).unwrap(), TokenType::Integer, "3");
+    }
+
+    #[test]
+    fn tokenize_group_dot_integer() {
+        let tokens: Vec<Token> = tokens_from_str(").3");
+
+        assert_eq!(tokens.len(), 3);
+        assert_token(tokens.get(0).unwrap(), TokenType::EndGroup, ")");
+        assert_token(tokens.get(1).unwrap(), TokenType::Dot, ".");
+        assert_token(tokens.get(2).unwrap(), TokenType::Integer, "3");
+    }
+
+    #[test]
+    fn tokenize_string_dot_integer() {
+        let tokens: Vec<Token> = tokens_from_str("\"pandas\".3");
+
+        assert_eq!(tokens.len(), 3);
+        assert_token(
+            tokens.get(0).unwrap(),
+            TokenType::DoubleQuotedString,
+            "pandas",
+        );
+        assert_token(tokens.get(1).unwrap(), TokenType::Dot, ".");
+        assert_token(tokens.get(2).unwrap(), TokenType::Integer, "3");
+    }
+
+    #[test]
+    fn tokenize_bool_dot_integer() {
+        let tokens: Vec<Token> = tokens_from_str("true.3");
+
+        assert_eq!(tokens.len(), 3);
+        assert_token(tokens.get(0).unwrap(), TokenType::Boolean, "true");
+        assert_token(tokens.get(1).unwrap(), TokenType::Dot, ".");
+        assert_token(tokens.get(2).unwrap(), TokenType::Integer, "3");
+    }
+
+    #[test]
+    fn tokenize_input_dot_integer() {
+        let tokens: Vec<Token> = tokens_from_str("$.3");
+
+        assert_eq!(tokens.len(), 3);
+        assert_token(tokens.get(0).unwrap(), TokenType::Input, "$");
+        assert_token(tokens.get(1).unwrap(), TokenType::Dot, ".");
+        assert_token(tokens.get(2).unwrap(), TokenType::Integer, "3");
+    }
+
+    #[test]
+    fn tokenize_result_dot_integer() {
+        let tokens: Vec<Token> = tokens_from_str("?.3");
+
+        assert_eq!(tokens.len(), 3);
+        assert_token(tokens.get(0).unwrap(), TokenType::CurrentResult, "?");
+        assert_token(tokens.get(1).unwrap(), TokenType::Dot, ".");
+        assert_token(tokens.get(2).unwrap(), TokenType::Integer, "3");
+    }
+
+    #[test]
     fn tokenize_identifier_dot_integer_dot_identifier() {
         let tokens: Vec<Token> = tokens_from_str("3.value.3.field");
 

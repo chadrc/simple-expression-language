@@ -153,7 +153,7 @@ impl<'a> Tokenizer<'a> {
         return token;
     }
 
-    fn nth_token_history_is(&self, n: usize, token_type: TokenType) -> bool {
+    fn nth_token_history_is(&self, n: usize, token_types: &[TokenType]) -> bool {
         if (self.token_type_history.len() as i64) - (n as i64) < 0 {
             return false;
         }
@@ -161,7 +161,7 @@ impl<'a> Tokenizer<'a> {
         return self
             .token_type_history
             .get(self.token_type_history.len() - n)
-            .map_or(false, |history_type| token_type == *history_type);
+            .map_or(false, |history_type| token_types.contains(history_type));
     }
 }
 
@@ -186,7 +186,8 @@ impl<'a> Iterator for Tokenizer<'a> {
                             if c.is_numeric() {
                                 self.current_token.push(c);
                             } else if c == '.' {
-                                let preceded_by_dot = self.nth_token_history_is(1, TokenType::Dot);
+                                let preceded_by_dot =
+                                    self.nth_token_history_is(1, &[TokenType::Dot]);
                                 // slight look ahead to determine if this dot is its own token
                                 // check for alpha or _ because 3.value or 3._ are not decimals
                                 // also check if preceded by a dot because .3. is not a decimal
@@ -207,9 +208,12 @@ impl<'a> Iterator for Tokenizer<'a> {
                             }
                         }
                         ParseState::ParsingDecimal => {
-                            if c == '.' {
+                            let curr_last_char =
+                                self.current_token.chars().rev().next().unwrap_or('\0');
+                            if c == '.' && curr_last_char == '.' {
                                 // have one '.' in current token to be here
-                                // if we receive another one, we're parsing a range
+                                // if we receive another one in a row
+                                // we're parsing a range
 
                                 // remove first '.' char from current_token
                                 // and change it back to an integer
@@ -257,14 +261,19 @@ impl<'a> Iterator for Tokenizer<'a> {
                             }
                         }
                         ParseState::ParsingDot => {
-                            println!("{:?}", self.token_type_history);
-                            let preceded_by_value =
-                                self.nth_token_history_is(1, TokenType::Identifier);
-
-                            let preceded_by_integer =
-                                self.nth_token_history_is(1, TokenType::Integer);
-
-                            println!("{:?}, {:?}", preceded_by_value, preceded_by_integer);
+                            let preceded_by_value = self.nth_token_history_is(
+                                1,
+                                &[
+                                    TokenType::Identifier,
+                                    TokenType::DoubleQuotedString,
+                                    TokenType::Boolean,
+                                    TokenType::CurrentResult,
+                                    TokenType::Input,
+                                    TokenType::Integer,
+                                    TokenType::Decimal,
+                                    TokenType::EndGroup,
+                                ],
+                            );
 
                             if c == '.' {
                                 // start parsing inclusive range
@@ -272,8 +281,7 @@ impl<'a> Iterator for Tokenizer<'a> {
 
                                 self.current_token_type = TokenType::ExclusiveRange;
                                 self.parse_state = ParseState::ParsingExclusiveRange;
-                            } else if c.is_numeric() && !(preceded_by_value || preceded_by_integer)
-                            {
+                            } else if c.is_numeric() && !preceded_by_value {
                                 // actually parsing a decimal
                                 self.current_token.push(c);
 
