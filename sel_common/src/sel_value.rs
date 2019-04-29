@@ -124,36 +124,19 @@ impl std::fmt::Display for SELValue {
             DataType::Boolean => format!("{}", from_byte_vec::<bool>(val.unwrap())),
             DataType::Symbol => {
                 let symbol: Symbol = from_byte_vec(val.unwrap());
-
                 format!(":{}", symbol.get_identifier())
             }
             DataType::Range => {
                 let range: Range = from_byte_vec(val.unwrap());
-
                 format!("{}..{}", range.get_lower(), range.get_upper())
             }
             DataType::Pair => {
                 let pair: Pair = from_byte_vec(val.unwrap());
-
-                let left_str = format!(
-                    "{}",
-                    if pair.get_left().get_type() == DataType::Pair {
-                        format!("({})", pair.get_left())
-                    } else {
-                        format!("{}", pair.get_left())
-                    }
-                );
-
-                let right_str = format!(
-                    "{}",
-                    if pair.get_right().get_type() == DataType::Pair {
-                        format!("({})", pair.get_right())
-                    } else {
-                        format!("{}", pair.get_right())
-                    }
-                );
-
-                format!("{} = {}", left_str, right_str)
+                format!(
+                    "{} = {}",
+                    pair_format(&pair.get_left()),
+                    pair_format(&pair.get_right())
+                )
             }
             DataType::Unit => String::from("()"),
             _ => none_str,
@@ -161,6 +144,17 @@ impl std::fmt::Display for SELValue {
 
         write!(f, "{}", val_str)
     }
+}
+
+fn pair_format(value: &SELValue) -> String {
+    format!(
+        "{}",
+        if value.get_type() == DataType::Pair {
+            format!("({})", value)
+        } else {
+            format!("{}", value)
+        }
+    )
 }
 
 #[cfg(test)]
