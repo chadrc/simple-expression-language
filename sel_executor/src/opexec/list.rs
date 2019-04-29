@@ -2,7 +2,9 @@ use super::SELExecutionContext;
 use crate::opexec::execution_result::SELExecutionResult;
 use crate::opexec::get_node_result;
 use crate::opexec::utils::get_left_right_results;
-use sel_common::{from_byte_vec, to_byte_vec, DataType, List, SELTree, SELTreeNode, SELValue};
+use sel_common::{
+    from_byte_vec, to_byte_vec, DataType, List, Operation, SELTree, SELTreeNode, SELValue,
+};
 
 fn add_value_to_list(value: SELValue, list: &mut List) {
     if value.get_type() == DataType::List {
@@ -24,12 +26,26 @@ fn add_if_exists(
     context: &SELExecutionContext,
     list: &mut List,
 ) {
-    let result: Option<SELExecutionResult> = index
+    let result_info: Option<(SELExecutionResult, bool)> = index
         .and_then(|index| tree.get_nodes().get(index))
-        .map(|node| get_node_result(tree, node, context));
+        .map(|node| {
+            let result: SELExecutionResult = get_node_result(tree, node, context);
+            let nested =
+                result.get_type() == DataType::List && node.get_operation() == Operation::Group;
 
-    if result.is_some() {
-        add_value_to_list(result.unwrap().get_sel_value().to_owned(), list);
+            (result, nested)
+        });
+
+    if result_info.is_some() {
+        let (result, nested) = result_info.unwrap();
+        if nested {
+            // already checked that value type is list
+            // and marked as nested
+            // push directly to main list
+            list.push(result.get_sel_value().to_owned());
+        } else {
+            add_value_to_list(result.get_sel_value().to_owned(), list);
+        }
     }
 }
 
@@ -134,5 +150,58 @@ mod tests {
 
         assert_eq!(fifth_value.get_type(), DataType::Integer);
         assert_eq!(from_byte_vec::<i64>(fifth_value.get_value().unwrap()), 500);
+    }
+
+    #[test]
+    fn executes_nested_list() {
+        let compiler = Compiler::new();
+        let tree = compiler.compile(&String::from("100, 200, (300, 400, 500)"));
+        let execution_context = SELExecutionContext::new();
+
+        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let list: List = from_byte_vec(result.get_value().unwrap());
+
+        assert_eq!(result.get_type(), DataType::List);
+
+        let values = list.get_values();
+
+        assert_eq!(values.len(), 3);
+
+        let first_value: &SELValue = values.get(0).unwrap();
+        let second_value: &SELValue = values.get(1).unwrap();
+        let third_value: &SELValue = values.get(2).unwrap();
+
+        let nested_list: List = from_byte_vec(third_value.get_value().unwrap());
+        let nested_values = nested_list.get_values();
+
+        let nested_first_value: &SELValue = nested_values.get(0).unwrap();
+        let nested_second_value: &SELValue = nested_values.get(1).unwrap();
+        let nested_third_value: &SELValue = nested_values.get(2).unwrap();
+
+        assert_eq!(first_value.get_type(), DataType::Integer);
+        assert_eq!(from_byte_vec::<i64>(first_value.get_value().unwrap()), 100);
+
+        assert_eq!(second_value.get_type(), DataType::Integer);
+        assert_eq!(from_byte_vec::<i64>(second_value.get_value().unwrap()), 200);
+
+        assert_eq!(third_value.get_type(), DataType::List);
+
+        assert_eq!(nested_first_value.get_type(), DataType::Integer);
+        assert_eq!(
+            from_byte_vec::<i64>(nested_first_value.get_value().unwrap()),
+            300
+        );
+
+        assert_eq!(nested_second_value.get_type(), DataType::Integer);
+        assert_eq!(
+            from_byte_vec::<i64>(nested_second_value.get_value().unwrap()),
+            400
+        );
+
+        assert_eq!(nested_third_value.get_type(), DataType::Integer);
+        assert_eq!(
+            from_byte_vec::<i64>(nested_third_value.get_value().unwrap()),
+            500
+        );
     }
 }
