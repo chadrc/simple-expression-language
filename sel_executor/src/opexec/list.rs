@@ -116,6 +116,48 @@ mod tests {
     }
 
     #[test]
+    fn executes_single_item_list_trailing() {
+        let compiler = Compiler::new();
+        let tree = compiler.compile(&String::from("100,"));
+        let execution_context = SELExecutionContext::new();
+
+        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let list: List = from_byte_vec(result.get_value().unwrap());
+
+        assert_eq!(result.get_type(), DataType::List);
+
+        let values = list.get_values();
+
+        assert_eq!(values.len(), 1);
+
+        let first_value: &SELValue = values.get(0).unwrap();
+
+        assert_eq!(first_value.get_type(), DataType::Integer);
+        assert_eq!(from_byte_vec::<i64>(first_value.get_value().unwrap()), 100);
+    }
+
+    #[test]
+    fn executes_single_item_list_leading() {
+        let compiler = Compiler::new();
+        let tree = compiler.compile(&String::from(",100"));
+        let execution_context = SELExecutionContext::new();
+
+        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let list: List = from_byte_vec(result.get_value().unwrap());
+
+        assert_eq!(result.get_type(), DataType::List);
+
+        let values = list.get_values();
+
+        assert_eq!(values.len(), 1);
+
+        let first_value: &SELValue = values.get(0).unwrap();
+
+        assert_eq!(first_value.get_type(), DataType::Integer);
+        assert_eq!(from_byte_vec::<i64>(first_value.get_value().unwrap()), 100);
+    }
+
+    #[test]
     fn executes_five_member_list() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("100, 200, 300, 400, 500"));
