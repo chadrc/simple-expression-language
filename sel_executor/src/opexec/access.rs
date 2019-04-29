@@ -161,4 +161,15 @@ mod tests {
         assert_eq!(result.get_type(), DataType::Integer);
         assert_eq!(value, 200);
     }
+
+    #[test]
+    fn executes_list_index_access_out_of_bounds() {
+        let compiler = Compiler::new();
+        let tree = compiler.compile(&String::from("(100, 200, 300).3"));
+        let execution_context = SELExecutionContext::new();
+
+        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+
+        assert_eq!(result.get_type(), DataType::Unit);
+    }
 }
