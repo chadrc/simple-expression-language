@@ -1,5 +1,6 @@
 use super::sel_types::{Pair, Range, Symbol};
 use super::{from_byte_vec, to_byte_vec, DataType};
+use core::fmt::Debug;
 use std::fmt;
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -134,7 +135,25 @@ impl std::fmt::Display for SELValue {
             DataType::Pair => {
                 let pair: Pair = from_byte_vec(val.unwrap());
 
-                format!("{} = {}", pair.get_left(), pair.get_right())
+                let left_str = format!(
+                    "{}",
+                    if pair.get_left().get_type() == DataType::Pair {
+                        format!("({})", pair.get_left())
+                    } else {
+                        format!("{}", pair.get_left())
+                    }
+                );
+
+                let right_str = format!(
+                    "{}",
+                    if pair.get_right().get_type() == DataType::Pair {
+                        format!("({})", pair.get_right())
+                    } else {
+                        format!("{}", pair.get_right())
+                    }
+                );
+
+                format!("{} = {}", left_str, right_str)
             }
             DataType::Unit => String::from("()"),
             _ => none_str,
@@ -215,6 +234,21 @@ mod tests {
     }
 
     #[test]
+    fn display_pair_pair() {
+        let result = SELValue::new_from_pair(Pair::new(
+            SELValue::new_from_string(&String::from("value")),
+            SELValue::new_from_pair(Pair::new(
+                SELValue::new_from_symbol(Symbol::new(String::from("field"), 0)),
+                SELValue::new_from_int(50),
+            )),
+        ));
+
+        let formatted = format!("{}", result);
+
+        assert_eq!(formatted, "\"value\" = (:field = 50)");
+    }
+
+    #[test]
     fn display_unit() {
         let result = SELValue::new();
 
@@ -287,6 +321,21 @@ mod tests {
         let formatted = format!("{:?}", result);
 
         assert_eq!(formatted, "Pair - \"value\" = 10");
+    }
+
+    #[test]
+    fn debug_pair_pair() {
+        let result = SELValue::new_from_pair(Pair::new(
+            SELValue::new_from_string(&String::from("value")),
+            SELValue::new_from_pair(Pair::new(
+                SELValue::new_from_symbol(Symbol::new(String::from("field"), 0)),
+                SELValue::new_from_int(50),
+            )),
+        ));
+
+        let formatted = format!("{:?}", result);
+
+        assert_eq!(formatted, "Pair - \"value\" = (:field = 50)");
     }
 
     #[test]
