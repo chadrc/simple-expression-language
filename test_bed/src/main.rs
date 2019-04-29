@@ -29,7 +29,9 @@ const INPUTS: [&str; 20] = [
     "count = \"Panda\"",
     "100, true, count, 10 > count, $, \"pandas\", :my_symbol = 500",
     "\
-(0, 0), (50, 40), (20, 90)
+(0, 0), 
+(50, 40), 
+(20, 90)
 
 ?.2.0
 ",
