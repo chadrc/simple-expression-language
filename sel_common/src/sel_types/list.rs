@@ -13,4 +13,8 @@ impl List {
     pub fn get_values(&self) -> &Vec<SELValue> {
         return &self.values;
     }
+
+    pub fn push(&mut self, value: SELValue) {
+        self.values.push(value);
+    }
 }

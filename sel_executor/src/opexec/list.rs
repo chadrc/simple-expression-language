@@ -1,12 +1,24 @@
-use super::{SELExecutionContext, SELExecutionResult};
-use sel_common::{DataType, SELTree, SELTreeNode};
+use super::SELExecutionContext;
+use crate::opexec::execution_result::SELExecutionResult;
+use crate::opexec::utils::get_left_right_results;
+use sel_common::{to_byte_vec, DataType, List, SELTree, SELTreeNode};
+
+fn add_result_to_list(result: SELExecutionResult, list: &mut List) {
+    list.push(result.get_sel_value().to_owned());
+}
 
 pub fn operation(
     tree: &SELTree,
     node: &SELTreeNode,
     context: &SELExecutionContext,
 ) -> SELExecutionResult {
-    return SELExecutionResult::new(DataType::Unit, None);
+    let (left_result, right_result) = get_left_right_results(tree, node, context);
+    let mut list = List::new();
+
+    add_result_to_list(left_result, &mut list);
+    add_result_to_list(right_result, &mut list);
+
+    return SELExecutionResult::new(DataType::List, Some(to_byte_vec(list)));
 }
 
 #[cfg(test)]
