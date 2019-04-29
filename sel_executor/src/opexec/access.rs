@@ -105,6 +105,17 @@ mod tests {
     }
 
     #[test]
+    fn executes_access_of_non_existent_chain() {
+        let compiler = Compiler::new();
+        let tree = compiler.compile(&String::from("uninitialized.next.field"));
+        let execution_context = SELExecutionContext::new();
+
+        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+
+        assert_eq!(result.get_type(), DataType::Unit);
+    }
+
+    #[test]
     fn executes_chain_access() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("(:top = :next = 100).right.right"));
