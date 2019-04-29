@@ -13,7 +13,7 @@ fn add_value_to_list(value: SELValue, list: &mut List) {
             .map_or(List::new(), |value| from_byte_vec(value));
 
         for item in sub_list.get_values() {
-            add_value_to_list(item.to_owned(), list);
+            list.push(item.to_owned());
         }
     } else {
         list.push(value);
@@ -202,6 +202,73 @@ mod tests {
         assert_eq!(
             from_byte_vec::<i64>(nested_third_value.get_value().unwrap()),
             500
+        );
+    }
+
+    #[test]
+    fn executes_multiple_nested_list() {
+        let compiler = Compiler::new();
+        let tree = compiler.compile(&String::from("100, 200, (300, (400, 500), 600)"));
+        let execution_context = SELExecutionContext::new();
+
+        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let list: List = from_byte_vec(result.get_value().unwrap());
+
+        assert_eq!(result.get_type(), DataType::List);
+
+        let values = list.get_values();
+
+        assert_eq!(values.len(), 3);
+
+        let first_value: &SELValue = values.get(0).unwrap();
+        let second_value: &SELValue = values.get(1).unwrap();
+        let third_value: &SELValue = values.get(2).unwrap();
+
+        let nested_list: List = from_byte_vec(third_value.get_value().unwrap());
+        let nested_values = nested_list.get_values();
+
+        let nested_first_value: &SELValue = nested_values.get(0).unwrap();
+        let nested_second_value: &SELValue = nested_values.get(1).unwrap();
+        let nested_third_value: &SELValue = nested_values.get(2).unwrap();
+
+        let second_nested_list: List = from_byte_vec(nested_second_value.get_value().unwrap());
+        let second_nested_values = second_nested_list.get_values();
+
+        let second_nested_first_value: &SELValue = second_nested_values.get(0).unwrap();
+        let second_nested_second_value: &SELValue = second_nested_values.get(1).unwrap();
+
+        assert_eq!(first_value.get_type(), DataType::Integer);
+        assert_eq!(from_byte_vec::<i64>(first_value.get_value().unwrap()), 100);
+
+        assert_eq!(second_value.get_type(), DataType::Integer);
+        assert_eq!(from_byte_vec::<i64>(second_value.get_value().unwrap()), 200);
+
+        assert_eq!(third_value.get_type(), DataType::List);
+
+        assert_eq!(nested_first_value.get_type(), DataType::Integer);
+        assert_eq!(
+            from_byte_vec::<i64>(nested_first_value.get_value().unwrap()),
+            300
+        );
+
+        assert_eq!(nested_second_value.get_type(), DataType::List);
+
+        assert_eq!(second_nested_first_value.get_type(), DataType::Integer);
+        assert_eq!(
+            from_byte_vec::<i64>(second_nested_first_value.get_value().unwrap()),
+            400
+        );
+
+        assert_eq!(second_nested_second_value.get_type(), DataType::Integer);
+        assert_eq!(
+            from_byte_vec::<i64>(second_nested_second_value.get_value().unwrap()),
+            500
+        );
+
+        assert_eq!(nested_third_value.get_type(), DataType::Integer);
+        assert_eq!(
+            from_byte_vec::<i64>(nested_third_value.get_value().unwrap()),
+            600
         );
     }
 }
