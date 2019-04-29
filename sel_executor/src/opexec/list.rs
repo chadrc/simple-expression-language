@@ -2,10 +2,20 @@ use super::SELExecutionContext;
 use crate::opexec::execution_result::SELExecutionResult;
 use crate::opexec::get_node_result;
 use crate::opexec::utils::get_left_right_results;
-use sel_common::{to_byte_vec, DataType, List, SELTree, SELTreeNode};
+use sel_common::{from_byte_vec, to_byte_vec, DataType, List, SELTree, SELTreeNode, SELValue};
 
-fn add_result_to_list(result: SELExecutionResult, list: &mut List) {
-    list.push(result.get_sel_value().to_owned());
+fn add_value_to_list(value: SELValue, list: &mut List) {
+    if value.get_type() == DataType::List {
+        let sub_list = value
+            .get_value()
+            .map_or(List::new(), |value| from_byte_vec(value));
+
+        for item in sub_list.get_values() {
+            add_value_to_list(item.to_owned(), list);
+        }
+    } else {
+        list.push(value);
+    }
 }
 
 fn add_if_exists(
@@ -14,12 +24,12 @@ fn add_if_exists(
     context: &SELExecutionContext,
     list: &mut List,
 ) {
-    let result = index
+    let result: Option<SELExecutionResult> = index
         .and_then(|index| tree.get_nodes().get(index))
         .map(|node| get_node_result(tree, node, context));
 
     if result.is_some() {
-        add_result_to_list(result.unwrap(), list);
+        add_value_to_list(result.unwrap().get_sel_value().to_owned(), list);
     }
 }
 
@@ -87,5 +97,42 @@ mod tests {
         let values = list.get_values();
 
         assert_eq!(values.len(), 0);
+    }
+
+    #[test]
+    fn executes_five_member_list() {
+        let compiler = Compiler::new();
+        let tree = compiler.compile(&String::from("100, 200, 300, 400, 500"));
+        let execution_context = SELExecutionContext::new();
+
+        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let list: List = from_byte_vec(result.get_value().unwrap());
+
+        assert_eq!(result.get_type(), DataType::List);
+
+        let values = list.get_values();
+
+        assert_eq!(values.len(), 5);
+
+        let first_value: &SELValue = values.get(0).unwrap();
+        let second_value: &SELValue = values.get(1).unwrap();
+        let third_value: &SELValue = values.get(2).unwrap();
+        let fourth_value: &SELValue = values.get(3).unwrap();
+        let fifth_value: &SELValue = values.get(4).unwrap();
+
+        assert_eq!(first_value.get_type(), DataType::Integer);
+        assert_eq!(from_byte_vec::<i64>(first_value.get_value().unwrap()), 100);
+
+        assert_eq!(second_value.get_type(), DataType::Integer);
+        assert_eq!(from_byte_vec::<i64>(second_value.get_value().unwrap()), 200);
+
+        assert_eq!(third_value.get_type(), DataType::Integer);
+        assert_eq!(from_byte_vec::<i64>(third_value.get_value().unwrap()), 300);
+
+        assert_eq!(fourth_value.get_type(), DataType::Integer);
+        assert_eq!(from_byte_vec::<i64>(fourth_value.get_value().unwrap()), 400);
+
+        assert_eq!(fifth_value.get_type(), DataType::Integer);
+        assert_eq!(from_byte_vec::<i64>(fifth_value.get_value().unwrap()), 500);
     }
 }
