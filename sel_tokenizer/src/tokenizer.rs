@@ -12,6 +12,7 @@ pub struct Tokenizer<'a> {
     symbol_tree: SymbolTree,
     input: String,
     next_index: usize,
+    token_type_history: Vec<TokenType>,
 }
 
 impl<'a> Tokenizer<'a> {
@@ -60,6 +61,7 @@ impl<'a> Tokenizer<'a> {
             symbol_tree,
             input: input.clone(),
             next_index: 0,
+            token_type_history: vec![],
         };
     }
 
@@ -145,9 +147,21 @@ impl<'a> Tokenizer<'a> {
     }
 
     fn end_current_token(&mut self, c: char) -> Option<Token> {
+        self.token_type_history.push(self.current_token_type);
         let token = self.make_current_token();
         self.start_new_token(c);
         return token;
+    }
+
+    fn nth_token_history_is(&self, n: usize, token_type: TokenType) -> bool {
+        if (self.token_type_history.len() as i64) - (n as i64) < 0 {
+            return false;
+        }
+
+        return self
+            .token_type_history
+            .get(self.token_type_history.len() - n)
+            .map_or(false, |history_type| token_type == *history_type);
     }
 }
 
@@ -172,9 +186,12 @@ impl<'a> Iterator for Tokenizer<'a> {
                             if c.is_numeric() {
                                 self.current_token.push(c);
                             } else if c == '.' {
+                                let preceded_by_dot = self.nth_token_history_is(1, TokenType::Dot);
                                 // slight look ahead to determine if this dot is its own token
+                                // check for alpha or _ because 3.value or 3._ are not decimals
+                                // also check if preceded by a dot because .3. is not a decimal
                                 let next = self.input.chars().nth(self.next_index).unwrap_or('\0');
-                                if next.is_alphabetic() || next == '_' {
+                                if (next.is_alphabetic() || next == '_') || preceded_by_dot {
                                     // it is a dot
                                     // end current integer
                                     // starting dot token as well

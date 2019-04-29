@@ -65,6 +65,22 @@ mod tests {
     }
 
     #[test]
+    fn tokenize_identifier_dot_integers() {
+        let tokens: Vec<Token> = tokens_from_str("value.3.3.3.3");
+
+        assert_eq!(tokens.len(), 9);
+        assert_token(tokens.get(0).unwrap(), TokenType::Identifier, "value");
+        assert_token(tokens.get(1).unwrap(), TokenType::Dot, ".");
+        assert_token(tokens.get(2).unwrap(), TokenType::Integer, "3");
+        assert_token(tokens.get(3).unwrap(), TokenType::Dot, ".");
+        assert_token(tokens.get(4).unwrap(), TokenType::Integer, "3");
+        assert_token(tokens.get(5).unwrap(), TokenType::Dot, ".");
+        assert_token(tokens.get(6).unwrap(), TokenType::Integer, "3");
+        assert_token(tokens.get(7).unwrap(), TokenType::Dot, ".");
+        assert_token(tokens.get(8).unwrap(), TokenType::Integer, "3");
+    }
+
+    #[test]
     fn tokenize_decimal_number() {
         let tokens: Vec<Token> = tokens_from_str("3.14");
 
@@ -72,16 +88,13 @@ mod tests {
         assert_token(tokens.get(0).unwrap(), TokenType::Decimal, "3.14");
     }
 
-    // Taking away for now in favor of dot access
-    // TODO: look into supporting this
+    #[test]
+    fn tokenize_decimal_number_starting_dot() {
+        let tokens: Vec<Token> = tokens_from_str(".01");
 
-    //    #[test]
-    //    fn tokenize_decimal_number_starting_dot() {
-    //        let tokens: Vec<Token> = tokens_from_str(".01");
-    //
-    //        assert_eq!(tokens.len(), 1);
-    //        assert_token(tokens.get(0).unwrap(), TokenType::Decimal, ".01");
-    //    }
+        assert_eq!(tokens.len(), 1);
+        assert_token(tokens.get(0).unwrap(), TokenType::Decimal, ".01");
+    }
 
     #[test]
     fn tokenize_string_single_quote() {
