@@ -1,4 +1,4 @@
-use super::sel_types::{Pair, Range, Symbol};
+use super::sel_types::{List, Pair, Range, Symbol};
 use super::{from_byte_vec, to_byte_vec, DataType};
 use core::fmt::Debug;
 use std::fmt;
@@ -80,6 +80,13 @@ impl SELValue {
         };
     }
 
+    pub fn new_from_list(list: List) -> Self {
+        return SELValue {
+            data_type: DataType::List,
+            value: Some(to_byte_vec(list)),
+        };
+    }
+
     pub fn get_type(&self) -> DataType {
         return self.data_type;
     }
@@ -137,6 +144,16 @@ impl std::fmt::Display for SELValue {
                     pair_format(&pair.get_left()),
                     pair_format(&pair.get_right())
                 )
+            }
+            DataType::List => {
+                let list: List = from_byte_vec(val.unwrap());
+                let mut item_strs: Vec<String> = vec![];
+
+                for item in list.get_values() {
+                    item_strs.push(format!("{}", item));
+                }
+
+                format!("{}", item_strs.join(", "))
             }
             DataType::Unit => String::from("()"),
             _ => none_str,
@@ -228,6 +245,19 @@ mod tests {
     }
 
     #[test]
+    fn display_list() {
+        let mut list = List::new();
+        list.push(SELValue::new_from_string(&String::from("value")));
+        list.push(SELValue::new_from_int(10));
+
+        let result = SELValue::new_from_list(list);
+
+        let formatted = format!("{}", result);
+
+        assert_eq!(formatted, "\"value\", 10");
+    }
+
+    #[test]
     fn display_pair_pair() {
         let result = SELValue::new_from_pair(Pair::new(
             SELValue::new_from_string(&String::from("value")),
@@ -303,6 +333,19 @@ mod tests {
         let formatted = format!("{:?}", result);
 
         assert_eq!(formatted, "Range - 5..10");
+    }
+
+    #[test]
+    fn debug_list() {
+        let mut list = List::new();
+        list.push(SELValue::new_from_string(&String::from("value")));
+        list.push(SELValue::new_from_int(10));
+
+        let result = SELValue::new_from_list(list);
+
+        let formatted = format!("{:?}", result);
+
+        assert_eq!(formatted, "List - \"value\", 10");
     }
 
     #[test]
