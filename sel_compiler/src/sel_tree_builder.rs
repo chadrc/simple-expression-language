@@ -204,9 +204,9 @@ impl SELTreeBuilder {
     fn resolve_tree(
         &self,
         mut nodes: Vec<SELTreeNode>,
-        indicies_to_resolve: &Vec<usize>,
+        indices_to_resolve: &Vec<usize>,
     ) -> Vec<SELTreeNode> {
-        for i in indicies_to_resolve {
+        for i in indices_to_resolve {
             let mut changes: Vec<Change> = vec![];
             {
                 let nodes = &nodes;

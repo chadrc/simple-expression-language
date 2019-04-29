@@ -1,4 +1,3 @@
-
 use super::super::compiler::Compiler;
 use sel_common::{DataType, Operation};
 
@@ -512,4 +511,42 @@ fn logical_operations_3() {
 
     assert_eq!(lrll_right.get_operation(), Operation::Touch);
     assert_eq!(lrll_right.get_data_type(), DataType::Integer);
+}
+
+#[test]
+fn compiles_pair_of_pair() {
+    let input = String::from(":value = :sub_value = 50");
+    let compiler = Compiler::new();
+
+    let tree = compiler.compile(&input);
+
+    // tree should look like
+    //          ___ = ___
+    //         /         \
+    //     :value     __ = __
+    //               /       \
+    //        :sub_value     50
+
+    let root = tree.get_root();
+
+    let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
+    let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
+
+    let r_left = tree.get_nodes().get(right.get_left().unwrap()).unwrap();
+    let r_right = tree.get_nodes().get(right.get_right().unwrap()).unwrap();
+
+    assert_eq!(root.get_operation(), Operation::Pair);
+    assert_eq!(root.get_data_type(), DataType::Unknown);
+
+    assert_eq!(left.get_operation(), Operation::Touch);
+    assert_eq!(left.get_data_type(), DataType::Symbol);
+
+    assert_eq!(right.get_operation(), Operation::Pair);
+    assert_eq!(right.get_data_type(), DataType::Unknown);
+
+    assert_eq!(r_left.get_operation(), Operation::Touch);
+    assert_eq!(r_left.get_data_type(), DataType::Symbol);
+
+    assert_eq!(r_right.get_operation(), Operation::Touch);
+    assert_eq!(r_right.get_data_type(), DataType::Integer);
 }

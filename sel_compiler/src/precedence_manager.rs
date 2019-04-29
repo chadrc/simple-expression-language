@@ -20,6 +20,8 @@ const LOGICAL_XOR_PRECEDENCE: usize = LOGICAL_AND_PRECEDENCE + 1;
 const LOGICAL_OR_PRECEDENCE: usize = LOGICAL_XOR_PRECEDENCE + 1;
 const PAIR_PRECEDENCE: usize = LOGICAL_OR_PRECEDENCE + 1;
 
+pub const RIGHT_TO_LEFT_PRECEDENCES: [usize; 1] = [PAIR_PRECEDENCE];
+
 pub struct PrecedenceGroup {
     parent: usize,
     first: usize,
