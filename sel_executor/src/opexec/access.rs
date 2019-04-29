@@ -103,4 +103,17 @@ mod tests {
 
         assert_eq!(result.get_type(), DataType::Unit);
     }
+
+    #[test]
+    fn executes_chain_access() {
+        let compiler = Compiler::new();
+        let tree = compiler.compile(&String::from("(:top = :next = 100).right.right"));
+        let execution_context = SELExecutionContext::new();
+
+        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let value: i64 = from_byte_vec(result.get_value().unwrap());
+
+        assert_eq!(result.get_type(), DataType::Integer);
+        assert_eq!(value, 100);
+    }
 }
