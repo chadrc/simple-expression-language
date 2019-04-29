@@ -290,6 +290,12 @@ mod tests {
     }
 
     #[test]
+    fn tokenize_dot_symbol() {
+        let tokens: Vec<Token> = tokens_from_str(".");
+        assert_token(tokens.get(0).unwrap(), TokenType::Dot, ".");
+    }
+
+    #[test]
     fn tokenize_new_line() {
         let tokens = tokens_from_str("\n");
         assert_token(tokens.get(0).unwrap(), TokenType::LineEnd, "\n");

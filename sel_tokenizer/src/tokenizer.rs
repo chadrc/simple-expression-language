@@ -82,8 +82,8 @@ impl<'a> Tokenizer<'a> {
             }
             '.' => {
                 self.current_token.push(c);
-                self.current_token_type = TokenType::ExclusiveRange;
-                self.parse_state = ParseState::ParsingExclusiveRange;
+                self.current_token_type = TokenType::Dot;
+                self.parse_state = ParseState::ParsingDot;
             }
             _ => {
                 self.current_token.push(c);
@@ -193,6 +193,11 @@ impl<'a> Iterator for Tokenizer<'a> {
                                 // add current one as well
                                 self.current_token.push(c);
 
+                                // the start_new_token will set parsing to Dot
+                                // override because we already added second dot
+                                self.current_token_type = TokenType::ExclusiveRange;
+                                self.parse_state = ParseState::ParsingExclusiveRange;
+
                                 // return integer token that just ended
                                 return integer_token;
                             } else if c.is_numeric() {
@@ -216,6 +221,17 @@ impl<'a> Iterator for Tokenizer<'a> {
                             } else {
                                 // not an inclusive range
                                 // end with exclusive range token
+                                return self.end_current_token(c);
+                            }
+                        }
+                        ParseState::ParsingDot => {
+                            if c == '.' {
+                                // start parsing inclusive range
+                                self.current_token.push(c);
+
+                                self.current_token_type = TokenType::ExclusiveRange;
+                                self.parse_state = ParseState::ParsingExclusiveRange;
+                            } else {
                                 return self.end_current_token(c);
                             }
                         }

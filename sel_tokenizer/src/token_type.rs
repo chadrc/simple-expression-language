@@ -34,6 +34,7 @@ pub enum TokenType {
     Unit,
     Input,
     CurrentResult,
+    Dot,
     Identifier,
     Symbol,
     Pair,

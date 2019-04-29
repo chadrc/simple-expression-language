@@ -10,4 +10,5 @@ pub enum ParseState {
     EscapeCharacter,
     ParsingExclusiveRange,
     ParsingSymbol,
+    ParsingDot,
 }
