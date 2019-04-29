@@ -97,6 +97,32 @@ mod tests {
     }
 
     #[test]
+    fn tokenize_exclusive_range_open_begin() {
+        let tokens: Vec<Token> = tokens_from_str("..10");
+
+        assert_eq!(tokens.len(), 2);
+        assert_token(tokens.get(0).unwrap(), TokenType::ExclusiveRange, "..");
+        assert_token(tokens.get(1).unwrap(), TokenType::Integer, "10");
+    }
+
+    #[test]
+    fn tokenize_exclusive_range_open_end() {
+        let tokens: Vec<Token> = tokens_from_str("1..");
+
+        assert_eq!(tokens.len(), 2);
+        assert_token(tokens.get(0).unwrap(), TokenType::Integer, "1");
+        assert_token(tokens.get(1).unwrap(), TokenType::ExclusiveRange, "..");
+    }
+
+    #[test]
+    fn tokenize_exclusive_range_open() {
+        let tokens: Vec<Token> = tokens_from_str("..");
+
+        assert_eq!(tokens.len(), 1);
+        assert_token(tokens.get(0).unwrap(), TokenType::ExclusiveRange, "..");
+    }
+
+    #[test]
     fn tokenize_inclusive_range() {
         let tokens: Vec<Token> = tokens_from_str("1...10");
 
@@ -104,6 +130,32 @@ mod tests {
         assert_token(tokens.get(0).unwrap(), TokenType::Integer, "1");
         assert_token(tokens.get(1).unwrap(), TokenType::InclusiveRange, "...");
         assert_token(tokens.get(2).unwrap(), TokenType::Integer, "10");
+    }
+
+    #[test]
+    fn tokenize_inclusive_range_open_begin() {
+        let tokens: Vec<Token> = tokens_from_str("...10");
+
+        assert_eq!(tokens.len(), 2);
+        assert_token(tokens.get(0).unwrap(), TokenType::InclusiveRange, "...");
+        assert_token(tokens.get(1).unwrap(), TokenType::Integer, "10");
+    }
+
+    #[test]
+    fn tokenize_inclusive_range_open_end() {
+        let tokens: Vec<Token> = tokens_from_str("1...");
+
+        assert_eq!(tokens.len(), 2);
+        assert_token(tokens.get(0).unwrap(), TokenType::Integer, "1");
+        assert_token(tokens.get(1).unwrap(), TokenType::InclusiveRange, "...");
+    }
+
+    #[test]
+    fn tokenize_inclusive_range_open() {
+        let tokens: Vec<Token> = tokens_from_str("...");
+
+        assert_eq!(tokens.len(), 1);
+        assert_token(tokens.get(0).unwrap(), TokenType::InclusiveRange, "...");
     }
 
     #[test]
