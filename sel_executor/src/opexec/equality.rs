@@ -1,20 +1,22 @@
 use super::super::context::SELExecutionContext;
 use super::utils::match_comparison_ops;
 use super::SELExecutionResult;
-use sel_common::{SELTree, SELTreeNode};
+use crate::opexec::utils::match_equality_ops;
+use sel_common::{DataType, SELTree, SELTreeNode};
 
 pub fn operation(
     tree: &SELTree,
     node: &SELTreeNode,
     context: &SELExecutionContext,
 ) -> SELExecutionResult {
-    return match_comparison_ops(
+    return match_equality_ops(
         tree,
         node,
         context,
         |left, right| left == right,
         |left, right| left == right,
         |left, right| left == right,
+        |left_unit, right_unit| (DataType::Boolean, Some(left_unit && right_unit)),
     );
 }
 

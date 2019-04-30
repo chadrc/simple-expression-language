@@ -40,7 +40,7 @@ pub enum OptionOr<T, V> {
     Or(V),
 }
 
-fn match_int_dec_ops<FI, FF, RI, RF>(
+fn match_int_dec_ops<FI, FF, RI, RF, FU, RU>(
     tree: &SELTree,
     node: &SELTreeNode,
     context: &SELExecutionContext,
@@ -48,12 +48,15 @@ fn match_int_dec_ops<FI, FF, RI, RF>(
     float_func: FF,
     integer_type: DataType,
     float_type: DataType,
+    unit_func: FU,
 ) -> OptionOr<SELExecutionResult, (SELExecutionResult, SELExecutionResult)>
 where
     FI: Fn(i64, i64) -> RI,
     FF: Fn(f64, f64) -> RF,
     RI: ToByteVec,
     RF: ToByteVec,
+    FU: Fn(bool, bool) -> (DataType, Option<RU>),
+    RU: ToByteVec,
 {
     let (left_result, right_result) = get_left_right_results(tree, node, context);
 
@@ -102,8 +105,35 @@ where
                 Some(to_byte_vec(result)),
             ))
         }
-        (_, DataType::Unit) | (DataType::Unit, _) => {
-            OptionOr::Some(SELExecutionResult::new(DataType::Unit, None))
+        (DataType::Unit, DataType::Unit) => {
+            let (data_type, value) = unit_func(true, true);
+
+            let bytes = match value {
+                Some(v) => Some(to_byte_vec(v)),
+                None => None,
+            };
+
+            OptionOr::Some(SELExecutionResult::new(data_type, bytes))
+        }
+        (_, DataType::Unit) => {
+            let (data_type, value) = unit_func(false, true);
+
+            let bytes = match value {
+                Some(v) => Some(to_byte_vec(v)),
+                None => None,
+            };
+
+            OptionOr::Some(SELExecutionResult::new(data_type, bytes))
+        }
+        (DataType::Unit, _) => {
+            let (data_type, value) = unit_func(true, false);
+
+            let bytes = match value {
+                Some(v) => Some(to_byte_vec(v)),
+                None => None,
+            };
+
+            OptionOr::Some(SELExecutionResult::new(data_type, bytes))
         }
         _ => OptionOr::Or((left_result, right_result)),
     };
@@ -130,6 +160,7 @@ where
         float_func,
         DataType::Integer,
         DataType::Decimal,
+        |_l, _r| -> (DataType, Option<bool>) { (DataType::Unit, None) },
     );
 }
 
@@ -153,6 +184,7 @@ where
         float_func,
         DataType::Integer,
         DataType::Integer,
+        |_l, _r| -> (DataType, Option<bool>) { (DataType::Unit, None) },
     );
 }
 
@@ -177,6 +209,47 @@ where
         float_func,
         DataType::Boolean,
         DataType::Boolean,
+        |_l, _r| -> (DataType, Option<bool>) { (DataType::Unit, None) },
+    ) {
+        OptionOr::Some(result) => result,
+        OptionOr::Or((left, right)) => match (left.get_type(), right.get_type()) {
+            (DataType::String, DataType::String) => {
+                let (left_val, right_val) =
+                    get_values_from_results::<String, String>(&left, &right);
+
+                let result = string_func(&left_val, &right_val);
+
+                SELExecutionResult::new(DataType::Boolean, Some(to_byte_vec(result)))
+            }
+            _ => SELExecutionResult::new(DataType::Unknown, Some(vec![])),
+        },
+    };
+}
+
+pub fn match_equality_ops<FI, FF, FS, FU>(
+    tree: &SELTree,
+    node: &SELTreeNode,
+    context: &SELExecutionContext,
+    integer_func: FI,
+    float_func: FF,
+    string_func: FS,
+    unit_func: FU,
+) -> SELExecutionResult
+where
+    FI: Fn(i64, i64) -> bool,
+    FF: Fn(f64, f64) -> bool,
+    FS: Fn(&String, &String) -> bool,
+    FU: Fn(bool, bool) -> (DataType, Option<bool>),
+{
+    return match match_int_dec_ops(
+        tree,
+        node,
+        context,
+        integer_func,
+        float_func,
+        DataType::Boolean,
+        DataType::Boolean,
+        unit_func,
     ) {
         OptionOr::Some(result) => result,
         OptionOr::Or((left, right)) => match (left.get_type(), right.get_type()) {
