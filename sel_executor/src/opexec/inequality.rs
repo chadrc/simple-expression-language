@@ -128,8 +128,10 @@ mod tests {
             "()",
         );
 
-        assert_eq!(result.get_type(), DataType::Unit);
-        assert_eq!(result.get_value(), None);
+        let value: bool = from_byte_vec(result.get_value().unwrap());
+
+        assert_eq!(result.get_type(), DataType::Boolean);
+        assert_eq!(value, true);
     }
 
     #[test]
@@ -142,7 +144,25 @@ mod tests {
             "9",
         );
 
-        assert_eq!(result.get_type(), DataType::Unit);
-        assert_eq!(result.get_value(), None);
+        let value: bool = from_byte_vec(result.get_value().unwrap());
+
+        assert_eq!(result.get_type(), DataType::Boolean);
+        assert_eq!(value, true);
+    }
+
+    #[test]
+    fn executes_unit_unit() {
+        let result = result_of_binary_op(
+            Operation::Inequality,
+            DataType::Unit,
+            "()",
+            DataType::Unit,
+            "()",
+        );
+
+        let value: bool = from_byte_vec(result.get_value().unwrap());
+
+        assert_eq!(result.get_type(), DataType::Boolean);
+        assert_eq!(value, false);
     }
 }
