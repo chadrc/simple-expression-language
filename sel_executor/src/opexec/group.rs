@@ -29,8 +29,8 @@ pub fn operation(
                         Some(SELExecutionResult::from(&func(sel_value)))
                     })
             }
-            // if no left side
-            // simple group operation, return that result
+            // no left means this is just a group op
+            // using None to let caller handle things as normal
             None => None,
         }
     };
