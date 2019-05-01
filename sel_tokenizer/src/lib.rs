@@ -527,6 +527,30 @@ mod tests {
     }
 
     #[test]
+    fn tokenize_comment() {
+        let tokens = tokens_from_str("/// this is a comment");
+        assert_token(
+            tokens.get(0).unwrap(),
+            TokenType::Comment,
+            "/// this is a comment",
+        );
+    }
+
+    #[test]
+    fn tokenize_comment_with_newline_then_value() {
+        let tokens = tokens_from_str("/// this is a comment\n1");
+        assert_token(
+            tokens.get(0).unwrap(),
+            TokenType::Comment,
+            "/// this is a comment",
+        );
+
+        assert_token(tokens.get(1).unwrap(), TokenType::LineEnd, "\n");
+
+        assert_token(tokens.get(2).unwrap(), TokenType::Integer, "1");
+    }
+
+    #[test]
     fn all_token_count() {
         let tokens = tokens_from_str(
             "100 3.13 true 'string' \"string\"\n1..10 1...10 + - * / % ** == != < <= > >= && || ^^ | & ^ ~ << >> ` !false () $ ?",

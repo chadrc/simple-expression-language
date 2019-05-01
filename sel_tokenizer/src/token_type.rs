@@ -41,5 +41,6 @@ pub enum TokenType {
     StartGroup,
     EndGroup,
     LineEnd,
+    Comment,
     Unknown,
 }

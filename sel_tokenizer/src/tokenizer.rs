@@ -51,6 +51,7 @@ impl<'a> Tokenizer<'a> {
         symbol_tree.attach(":", TokenType::Symbol);
         symbol_tree.attach("=", TokenType::Pair);
         symbol_tree.attach(",", TokenType::Comma);
+        symbol_tree.attach("///", TokenType::Comment);
 
         return Tokenizer {
             current_token: String::new(),
@@ -309,6 +310,15 @@ impl<'a> Iterator for Tokenizer<'a> {
                                 return self.end_current_token(c);
                             }
                         }
+                        ParseState::ParsingComment => {
+                            if c == '\n' {
+                                // starting new EndLine token shouldn't affect anything
+                                // may want to skip in future anyway
+                                return self.end_current_token(c);
+                            } else {
+                                self.current_token.push(c);
+                            }
+                        }
                         ParseState::ParsingSymbol => {
                             let mut node: Option<&SymbolTreeNode> = None;
 
@@ -346,6 +356,12 @@ impl<'a> Iterator for Tokenizer<'a> {
                                                 // continuing an identifier
                                                 self.parse_state = ParseState::ParsingIdentifier;
                                                 self.current_token_type = TokenType::Identifier;
+                                                self.current_token.push(c);
+                                            } else if self.current_token_type == TokenType::Comment
+                                            {
+                                                // comment tokens consist of entire line
+                                                // not just the comment symbol
+                                                self.parse_state = ParseState::ParsingComment;
                                                 self.current_token.push(c);
                                             } else {
                                                 // end of symbol
