@@ -1,10 +1,13 @@
 use crate::{from_byte_vec, to_byte_vec, SELValue, SymbolTable};
 use std::collections::HashMap;
 
+pub type SELFunction = fn(SELValue) -> SELValue;
+
 #[derive(Debug)]
 pub struct SELContext {
     symbol_table: SymbolTable,
     symbol_values: HashMap<usize, SELValue>,
+    functions: HashMap<String, SELFunction>,
 }
 
 impl SELContext {
@@ -12,6 +15,7 @@ impl SELContext {
         return SELContext {
             symbol_table: SymbolTable::new(),
             symbol_values: HashMap::new(),
+            functions: HashMap::new(),
         };
     }
 
@@ -48,6 +52,14 @@ impl SELContext {
             .symbol_table
             .get_value(key)
             .and_then(|index| self.get_integer_value(*index));
+    }
+
+    pub fn register_function(&mut self, name: &str, func: SELFunction) {
+        self.functions.insert(String::from(name), func);
+    }
+
+    pub fn get_functions(&self) -> &HashMap<String, SELFunction> {
+        return &self.functions;
     }
 }
 

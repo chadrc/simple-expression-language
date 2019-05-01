@@ -409,6 +409,24 @@ impl SELTreeBuilder {
             side_to_set: NodeSide::Right,
         });
 
+        // Check group's left side
+        // if anything but an identifier
+        // set to none
+        nodes
+            .get(precedence_group.get_parent())
+            .and_then(|parent_node| parent_node.get_left())
+            .and_then(|left_index| nodes.get(left_index))
+            .filter(|left_node| left_node.get_data_type() != DataType::Identifier)
+            .and_then(|left_node| {
+                changes.push(Change {
+                    index_to_change: precedence_group.get_parent(),
+                    new_index: None,
+                    side_to_set: NodeSide::Left,
+                });
+
+                Some(true)
+            });
+
         SELTreeBuilder::apply_changes(&mut nodes, changes);
 
         nodes

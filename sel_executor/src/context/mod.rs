@@ -1,10 +1,12 @@
 use super::opexec::SELExecutionResult;
-use sel_common::SELValue;
+use sel_common::{SELContext, SELFunction, SELValue};
+use std::collections::HashMap;
 
 #[derive(Clone)]
 pub struct SELExecutionContext {
     input: Option<SELValue>,
     results: Vec<SELExecutionResult>,
+    functions: HashMap<String, SELFunction>,
 }
 
 impl SELExecutionContext {
@@ -12,6 +14,15 @@ impl SELExecutionContext {
         return SELExecutionContext {
             input: None,
             results: vec![],
+            functions: HashMap::new(),
+        };
+    }
+
+    pub fn from(context: &SELContext) -> Self {
+        return SELExecutionContext {
+            input: None,
+            results: vec![],
+            functions: context.get_functions().clone(),
         };
     }
 
@@ -32,5 +43,9 @@ impl SELExecutionContext {
 
     pub fn get_results(&self) -> &Vec<SELExecutionResult> {
         return &self.results;
+    }
+
+    pub fn get_function(&self, name: &str) -> Option<&SELFunction> {
+        return self.functions.get(name);
     }
 }

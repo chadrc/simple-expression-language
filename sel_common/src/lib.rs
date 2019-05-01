@@ -11,7 +11,7 @@ mod sel_value;
 mod symbol_table;
 mod utils;
 
-pub use context::SELContext;
+pub use context::{SELContext, SELFunction};
 pub use data_heap::DataHeap;
 pub use data_type::DataType;
 pub use operation::Operation;
