@@ -418,30 +418,40 @@ impl SELTreeBuilder {
         // if an identifier is followed by a group operation
         // it is a call operation
         // make the group the parent of the identifier
-        // set identifiers right to None
+        // set identifier's right to None
+        // also, make the identifier's left's right point to the group
 
         for index in indices_to_resolve {
-            nodes
-                .get(*index)
-                .and_then(|node| node.get_right())
-                .and_then(|right_index| nodes.get(right_index))
-                .and_then(|right_node| {
-                    if right_node.get_operation() == Operation::Group {
-                        changes.push(Change {
-                            index_to_change: *index,
-                            new_index: Some(right_node.get_own_index()),
-                            side_to_set: NodeSide::Parent,
-                        });
+            nodes.get(*index).map(|node| {
+                node.get_right()
+                    .and_then(|right_index| nodes.get(right_index))
+                    .and_then(|right_node| {
+                        if right_node.get_operation() == Operation::Group {
+                            changes.push(Change {
+                                index_to_change: *index,
+                                new_index: Some(right_node.get_own_index()),
+                                side_to_set: NodeSide::Parent,
+                            });
 
-                        changes.push(Change {
-                            index_to_change: *index,
-                            new_index: None,
-                            side_to_set: NodeSide::Right,
-                        });
-                    }
+                            changes.push(Change {
+                                index_to_change: *index,
+                                new_index: None,
+                                side_to_set: NodeSide::Right,
+                            });
 
-                    Some(true)
-                });
+                            node.get_left().and_then(|left_index| {
+                                changes.push(Change {
+                                    index_to_change: left_index,
+                                    new_index: Some(right_node.get_own_index()),
+                                    side_to_set: NodeSide::Right,
+                                });
+                                Some(true)
+                            });
+                        }
+
+                        Some(true)
+                    })
+            });
         }
 
         SELTreeBuilder::apply_changes(&mut nodes, changes);
