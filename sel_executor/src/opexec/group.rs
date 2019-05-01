@@ -129,17 +129,10 @@ mod tests {
     #[test]
     fn executes_call_with_unregistered_function() {
         let compiler = Compiler::new();
-        let mut context = SELContext::new();
 
-        context.register_function("get_vars", |sel_value: SELValue| {
-            let arg: i64 = sel_value.get_value().map_or(0, |val| from_byte_vec(val));
+        let execution_context = SELExecutionContext::new();
 
-            SELValue::new_from_int(arg * 10)
-        });
-
-        let execution_context = SELExecutionContext::from(&context);
-
-        let tree = compiler.compile_with_context(&String::from("fetch(10)"), context);
+        let tree = compiler.compile(&String::from("fetch(10)"));
 
         let results = execute_sel_tree(&tree, &execution_context);
 
