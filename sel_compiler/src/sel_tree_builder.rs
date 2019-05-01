@@ -73,6 +73,12 @@ impl SELTreeBuilder {
                 0
             };
 
+            if token.get_token_type() == TokenType::Comment {
+                // will store later for meta data
+                // for now, just drop the token
+                continue;
+            }
+
             if token.get_token_type() == TokenType::LineEnd {
                 // set next token to not be linked to previous
                 // skip this token, no need to convert LineEnd to a node
