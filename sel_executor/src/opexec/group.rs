@@ -1,8 +1,7 @@
-use sel_common::{DataType, SELFunction, SELTree, SELTreeNode, SELValue};
-
 use super::execution_result::SELExecutionResult;
 use super::{get_node_result, SELExecutionContext};
 use crate::opexec::utils::get_value_from_result;
+use sel_common::{DataType, SELFunction, SELTree, SELTreeNode, SELValue};
 
 pub fn operation(
     tree: &SELTree,
