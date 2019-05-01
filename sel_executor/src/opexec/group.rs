@@ -9,7 +9,6 @@ pub fn operation(
     node: &SELTreeNode,
     context: &SELExecutionContext,
 ) -> SELExecutionResult {
-    println!("node {:?}", node);
     let call_result = |sel_value: SELValue| -> Option<SELExecutionResult> {
         match node.get_left() {
             // having left index means this is a call operation
