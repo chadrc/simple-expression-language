@@ -1,5 +1,19 @@
 # Simple Expression Language
 
+Still a work in progress, but some examples have been written.
+
+If you don't have Rust installed, follow instructions at [https://rustup.rs](https://rustup.rs) to do so.
+
+Run following to execute example project.
+```bash
+git clone https://github.com/chadrc/simple-expression-language
+cd simple-expression-language
+
+cargo run -p test_bed
+```
+
+# Specification
+The following spec is less of a living spec and more of a place to organize my thoughts. When the features and grammar are more established, I plan on making a Book detailing everything.
 ## Literals
 
 ```
