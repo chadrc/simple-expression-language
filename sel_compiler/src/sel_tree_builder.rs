@@ -63,6 +63,7 @@ impl SELTreeBuilder {
         let mut last_op = Operation::None;
         let mut link_next = true;
         let mut symbol_next = false;
+        let mut empty_group = false;
 
         for token in tokenizer {
             let inserted_index = nodes.len();
@@ -99,10 +100,18 @@ impl SELTreeBuilder {
             }
 
             let mut op = get_operation_type_for_token(&token);
-            let data_type = get_data_type_for_token(&token);
+            let mut data_type = get_data_type_for_token(&token);
 
             if data_type == DataType::Symbol {
                 symbol_next = true;
+            } else if data_type == DataType::Unit {
+                // if Unit symbol immediately follows an identifier
+                // it is an empty argument list
+                if last_data_type == DataType::Identifier {
+                    op = Operation::Group;
+                    data_type = DataType::Unknown;
+                    empty_group = true; // so we don't start a group later
+                }
             }
 
             let value = if token.get_token_type() == TokenType::Identifier {
@@ -154,7 +163,7 @@ impl SELTreeBuilder {
             self.precedence_manager
                 .add_index_with_operation(node.get_operation(), node.get_own_index());
 
-            if node.get_operation() == Operation::Group {
+            if node.get_operation() == Operation::Group && !empty_group {
                 self.precedence_manager.start_group();
             }
 
@@ -399,6 +408,47 @@ impl SELTreeBuilder {
         nodes
     }
 
+    fn identifier_call_check(
+        &self,
+        mut nodes: Vec<SELTreeNode>,
+        indices_to_resolve: &Vec<usize>,
+    ) -> Vec<SELTreeNode> {
+        let mut changes: Vec<Change> = vec![];
+
+        // if an identifier is followed by a group operation
+        // it is a call operation
+        // make the group the parent of the identifier
+        // set identifiers right to None
+
+        for index in indices_to_resolve {
+            nodes
+                .get(*index)
+                .and_then(|node| node.get_right())
+                .and_then(|right_index| nodes.get(right_index))
+                .and_then(|right_node| {
+                    if right_node.get_operation() == Operation::Group {
+                        changes.push(Change {
+                            index_to_change: *index,
+                            new_index: Some(right_node.get_own_index()),
+                            side_to_set: NodeSide::Parent,
+                        });
+
+                        changes.push(Change {
+                            index_to_change: *index,
+                            new_index: None,
+                            side_to_set: NodeSide::Right,
+                        });
+                    }
+
+                    Some(true)
+                });
+        }
+
+        SELTreeBuilder::apply_changes(&mut nodes, changes);
+
+        nodes
+    }
+
     fn apply_changes(nodes: &mut Vec<SELTreeNode>, changes: Vec<Change>) {
         for change in changes {
             let node = nodes.get_mut(change.index_to_change).unwrap();
@@ -427,6 +477,9 @@ impl SELTreeBuilder {
                 if index != 0 {
                     nodes = self.correct_group(nodes, group);
                 }
+
+                // check identifiers first
+                nodes = self.identifier_call_check(nodes, group.get_members().get(0).unwrap());
 
                 // skip value and group precedences
                 for (i, bucket) in group.get_members().iter().skip(2).enumerate() {
