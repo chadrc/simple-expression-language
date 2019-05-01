@@ -98,4 +98,31 @@ mod tests {
         assert_eq!(first_result.get_type(), DataType::Integer);
         assert_eq!(first_result_value, Some(10));
     }
+
+    #[test]
+    fn executes_call_with_single_arg() {
+        let compiler = Compiler::new();
+        let mut context = SELContext::new();
+
+        context.register_function("get_vars", |sel_value: SELValue| {
+            let arg: i64 = sel_value.get_value().map_or(0, |val| from_byte_vec(val));
+
+            SELValue::new_from_int(arg * 10)
+        });
+
+        let execution_context = SELExecutionContext::from(&context);
+
+        let tree = compiler.compile_with_context(&String::from("get_vars(10)"), context);
+
+        let results = execute_sel_tree(&tree, &execution_context);
+
+        let first_result = results.get(0).unwrap();
+        let first_result_value = match first_result.get_value() {
+            Some(value) => Some(from_byte_vec(value)),
+            None => None,
+        };
+
+        assert_eq!(first_result.get_type(), DataType::Integer);
+        assert_eq!(first_result_value, Some(100));
+    }
 }
