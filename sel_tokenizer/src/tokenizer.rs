@@ -52,6 +52,11 @@ impl<'a> Tokenizer<'a> {
         symbol_tree.attach("=", TokenType::Pair);
         symbol_tree.attach(",", TokenType::Comma);
         symbol_tree.attach("///", TokenType::Comment);
+        symbol_tree.attach("->", TokenType::PipeFirstRight);
+        symbol_tree.attach("<-", TokenType::PipeFirstLeft);
+        symbol_tree.attach("|>", TokenType::PipeLastRight);
+        symbol_tree.attach("<|", TokenType::PipeLastLeft);
+        symbol_tree.attach("~", TokenType::Partial);
 
         return Tokenizer {
             current_token: String::new(),

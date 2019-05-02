@@ -42,5 +42,10 @@ pub enum TokenType {
     EndGroup,
     LineEnd,
     Comment,
+    PipeFirstRight,
+    PipeFirstLeft,
+    PipeLastRight,
+    PipeLastLeft,
+    Partial,
     Unknown,
 }

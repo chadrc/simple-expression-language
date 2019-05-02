@@ -527,6 +527,36 @@ mod tests {
     }
 
     #[test]
+    fn tokenize_pipe_first_right() {
+        let tokens = tokens_from_str("->");
+        assert_token(tokens.get(0).unwrap(), TokenType::PipeFirstRight, "->");
+    }
+
+    #[test]
+    fn tokenize_pipe_first_left() {
+        let tokens = tokens_from_str("<-");
+        assert_token(tokens.get(0).unwrap(), TokenType::PipeFirstLeft, "<-");
+    }
+
+    #[test]
+    fn tokenize_pipe_last_right() {
+        let tokens = tokens_from_str("|>");
+        assert_token(tokens.get(0).unwrap(), TokenType::PipeLastRight, "|>");
+    }
+
+    #[test]
+    fn tokenize_pipe_last_left() {
+        let tokens = tokens_from_str("<|");
+        assert_token(tokens.get(0).unwrap(), TokenType::PipeLastLeft, "<|");
+    }
+
+    #[test]
+    fn tokenize_apply_partial() {
+        let tokens = tokens_from_str("~");
+        assert_token(tokens.get(0).unwrap(), TokenType::Partial, "~");
+    }
+
+    #[test]
     fn tokenize_comment() {
         let tokens = tokens_from_str("/// this is a comment");
         assert_token(
