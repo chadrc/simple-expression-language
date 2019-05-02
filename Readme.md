@@ -971,7 +971,7 @@ The right side expression receives input with shape:
 
 [result: T, value: any]
 
-Where result is the type of the seed value and value is the current value being streamed.
+Where result is the type of the seed value (or any for case of no seed value) and value is the current value being streamed.
 
 Result becomes the value returned from the expression
 
@@ -980,7 +980,7 @@ Sum numbers in an array
 ```
 /// Input: [1, 2, 3, 4, 5]
 
-$ >>> $ * 2 <0> $.value + $.result
+$ >>> $ * 2 <{0}> $.value + $.result
 /// 15
 ```
 
