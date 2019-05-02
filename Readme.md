@@ -826,7 +826,7 @@ Assuming clamp accesses its inputs by name (see Functions _TODO: add link_ secti
 
 ## Match Operations
 
-Match operators evaluate their left side to determine if they match the current result.
+Match operators evaluate their left side to determine if they match the current result. If left does not match then current result is re-output
 
 Operators:
 * `=>` - Executes right if left evaluates to `true`.
@@ -840,50 +840,47 @@ On input or last result
 /// Input: 5
 
 /// last result, implicit match on input
-1 => "One",
-2 => "Couple",
-3 => "Few",
-4 => "Some",
-5 => "Many",
-12 => "Dozen",
-_ => "Several"
+$ > 3 => ? + 1
+/// 6
 
-/// "Many"
+10 ==> ? * 3
+/// 6 doesn't equal 10 so 6 is the output
+/// 6
+```
 
-/// explicit match on input
+### Match Lists
+Match expressions can be separated by a comma to make a list of matches to evaluate. They are checked in declaration order and checking stops as soon as the first match expression is evaluated.
 
-$ /// Effectivly making it the last result
+```
+/// Input: 10
 
-1 => "One",
-2 => "Couple",
-3 => "Few",
-4 => "Some",
-5 => "Many",
-12 => "Dozen",
-_ => "Several"
+? % 15 == 0 => "Divisible by 15",
+? % 5 == 0 => "Divisible by 5",
+? % 3 == 0 => "Divisible by 3"
 
-/// "Many"
+/// ? == "Divisible by 5"
+```
 
-/// Match on last result again
-10 - 8
+Provide a default match by using `true =>` as the last match in the list
 
-1 => "One",
-2 => "Couple",
-3 => "Few",
-4 => "Some",
-5 => "Many",
-12 => "Dozen",
-_ => "Several"
+```
+/// Input: 4
 
-/// "Couple"
+? % 15 == 0 => "Divisible by 15",
+? % 5 == 0 => "Divisible by 5",
+? % 3 == 0 => "Divisible by 3",
+true => "Not divisible by 3, 5, or 15"
+
+/// ? == "Not divisible by 3, 5, or 15"
 ```
 
 ### Something or Nothing
 
-To check if a value has not been initialized the unit `()` as the match condition.
+To check if a value has not been initialized the unit `()` as the match condition with the `==>`
 
 ```
-() => "Value is uninitialized",
+() ==> "Value is uninitialized",
+/// Could also use () == ? => ....
 _ => "Since value is not uninitialized, it has some type of value"
 ```
 
@@ -942,105 +939,26 @@ _ => ...
 /// "John has an email"
 ```
 
-### Matching with Functions and Named Expressions
-
-Functions and named expressions may be used in the conditional part of a match expression.
-
-```
-/// Input: 11
-
-is_prime => $ + " is a prime number.",
-#is_even => $ + " is even.",
-#is_odd => $ + " is odd.",
-_ => $ + " is not an integer."
-```
-
-They may also be used in the right side. Either just by name, which will pass through the input, or explicitly called for custom input.
-
-```
-/// Input: [first_name: "John", last_name: "Smith", email: "johnsmith@example.com"]
-
-[email: ()] => #error("no email set", $) /// explicit
-[email: _] => send_email /// implicit
-_ => ()
-```
-
 ## Iteration
 
 There are two operations for iteration of associative arrays.
 
 ### Streaming
 
-Streaming takes in an associative array and outputs each value one at a time.
+Streaming takes in an collection passing each value to the right side expression and then outputs that expressions result one at a time
 
-It is performed with the following operators.
+The right side is an expression with input:
 
-- `<->` - Iterate over index-value pairs
-- `<=>` - Iterate over key-value pairs
-
-Left side is the collection to map. Right side is an expression that receives input with shape.
-
-[key: number | string, value: any]
-
-#### Value stream
-
-Output is the value returned from right side expression
+[value: any, index: Integer]
 
 ```
-/// Input: [1, 2, 3, 4, 5]
+(100, 200, 300, 400, 500) >>> $.value / 100
 
-$ <-> $.value * $.key
-/// outputs the following in order
-/// 0
+/// 1
 /// 2
-/// 6
-/// 12
-/// 20
-```
-
-With keys
-
-```
-/// Input: [first_name: "John", last_name: "Smith", email: "johnsmith@example.com"]
-
-$ <=> $.key + ": " + $.value
-/// outputs the following in order
-/// "first_name: John"
-/// "last_name: Smith"
-/// "email: johnsmith@example.com"
-```
-
-#### Key-pair stream
-
-Output is an associative array with shape:
-
-[key: number | string, value: any]
-
-Where key is which ever keys was just processed and value is the value returned from right side expression
-
-```
-/// Input: [1, 2, 3, 4, 5]
-
-$ <-> $.value * $.key
-/// outputs the following in order
-/// [key: 0, value: 0]
-/// [key: 1, value: 2]
-/// [key: 2, value: 6]
-/// [key: 3, value: 12]
-/// [key: 4, value: 20]
-```
-
-With keys
-
-```
-/// Input: [first_name: "John", last_name: "Smith", email: "johnsmith@example.com"]
-
-/// each value is mapped to the corresponding key
-$ <=> $.key + ": " + $.value
-/// outputs the following in order
-/// [key: first_name, value: "first_name: John"]
-/// [key: last_name, value: "last_name: Smith"]
-/// [key: email, value: "email: johnsmith@example.com"]
+/// 3
+/// 4
+/// 5
 ```
 
 ### Collecting
