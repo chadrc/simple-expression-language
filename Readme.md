@@ -980,7 +980,7 @@ Sum numbers in an array
 ```
 /// Input: [1, 2, 3, 4, 5]
 
-$ <-> $ * 2 <0> $.value + $.result
+$ >>> $ * 2 <0> $.value + $.result
 /// 15
 ```
 
@@ -989,7 +989,7 @@ Map an array
 ```
 /// Input: [1, 2, 3, 4, 5]
 
-$ <-> $ * 2 <[]> $.value -> $.result
+$ >>> $ * 2 <[]> $.value -> $.result
 /// [2, 4, 6, 8, 10]
 ```
 
@@ -998,7 +998,7 @@ For convenience, if doing a simple assignment to a new associative array like th
 ```
 /// Input: [1, 2, 3, 4, 5]
 
-$ <-> $ * 2 <[]>
+$ >>> $ * 2 <[]>
 /// [2, 4, 6, 8, 10]
 ```
 
@@ -1009,7 +1009,7 @@ May also opt out of collecting by not specifying a seed value. This will output 
 ```
 /// Input: [1, 2, 3, 4, 5]
 
-$ <-> log($) <>
+$ >>> log($) <>
 /// [1, 2, 3, 4, 5]
 ```
 
@@ -1019,7 +1019,7 @@ Can use the first value in the stream as the input with the `?` symbol as the se
 /// Input: [1, 2, 3, 4, 5]
 
 /// multiply by 2, then take average
-$ <-> $ * 2 <?> ($.result + $.value) / 2
+$ >>> $ * 2 <?> ($.result + $.value) / 2
 /// 6
 ```
 
