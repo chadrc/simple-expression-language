@@ -35,6 +35,14 @@ impl SELContext {
         index
     }
 
+    pub fn set_decimal_symbol(&mut self, symbol: &String, value: f64) -> usize {
+        let index = self.symbol_table.add(symbol);
+        self.symbol_values
+            .insert(index, SELValue::new_from_decimal(value));
+
+        index
+    }
+
     pub fn get_value(&self, index: usize) -> Option<&SELValue> {
         return self.symbol_values.get(&index);
     }
