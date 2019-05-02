@@ -831,6 +831,8 @@ Match operators evaluate their left side to determine if they match the current 
 Operators:
 * `=>` - Executes right if left evaluates to `true`.
 * `==>` - Executes right if left is equal to current result.
+* `:=>` - Executes right if all of left's keys are in current result.
+* `$=>` - Executes right if all of left's values are in current result.
 * `!=>` - Executes right if left is not equal to current result.
 * `~=>` - Executes right if current result contains right.
 
