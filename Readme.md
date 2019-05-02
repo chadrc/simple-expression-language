@@ -830,11 +830,19 @@ Match operators evaluate their left side to determine if they match the current 
 
 Operators:
 * `=>` - Executes right if left evaluates to `true`.
+* `!=>` - Executes right if left evaluates to `false`.
 * `==>` - Executes right if left is equal to current result.
+* `!==>` - Executes right if left is not equal to current result.
+* `<=>` - Executes right if left is less than current result.
+* `<==>` - Executes right if left is less than or equal to current result.
+* `>=>` - Executes right if left is greater than current result.
+* `>==>` - Executes right if left is greater than or equal to current result.
 * `:=>` - Executes right if all of left's keys are in current result.
+* `!:=>` - Executes right if all of left's keys are not in current result.
 * `$=>` - Executes right if all of left's values are in current result.
-* `!=>` - Executes right if left is not equal to current result.
-* `~=>` - Executes right if current result contains right.
+* `!$=>` - Executes right if all of left's values are not in current result.
+* `~=>` - Executes right if current result contains left.
+* `!~=>` - Executes right if current result does not contain left.
 
 On input or last result
 
