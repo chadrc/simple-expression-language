@@ -19,6 +19,7 @@ mod modulo;
 mod multiplication;
 mod negation;
 mod pair;
+mod pipe;
 mod range;
 mod result;
 mod subtraction;
@@ -66,6 +67,10 @@ pub fn get_node_result(
         Operation::Pair => pair::operation(tree, node, context),
         Operation::List => list::operation(tree, node, context),
         Operation::DotAccess => access::dot_access_operation(tree, node, context),
+        Operation::PipeFirstRight => pipe::pipe_first_right_operation(tree, node, context),
+        Operation::PipeFirstLeft => pipe::pipe_first_left_operation(tree, node, context),
+        Operation::PipeLastRight => pipe::pipe_last_right_operation(tree, node, context),
+        Operation::PipeLastLeft => pipe::pipe_last_left_operation(tree, node, context),
         Operation::Group => group::operation(tree, node, context),
         _ => SELExecutionResult::new(DataType::Unknown, None),
     };
