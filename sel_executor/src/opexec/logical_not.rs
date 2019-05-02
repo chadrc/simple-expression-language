@@ -1,7 +1,7 @@
 use super::super::context::SELExecutionContext;
 use super::utils::get_value_from_result;
 use super::{get_node_result, SELExecutionResult};
-use sel_common::{from_byte_vec, to_byte_vec, DataType, SELTree, SELTreeNode};
+use sel_common::{to_byte_vec, DataType, SELTree, SELTreeNode};
 
 pub fn operation(
     tree: &SELTree,
@@ -39,7 +39,7 @@ mod tests {
     use super::super::test_utils::result_of_binary_op;
     use crate::SELExecutionContext;
     use sel_common::{
-        from_byte_vec, DataHeap, DataType, Operation, SELContext, SELTree, SELTreeNode, SymbolTable,
+        from_byte_vec, DataHeap, DataType, Operation, SELContext, SELTree, SELTreeNode,
     };
     use sel_compiler::Compiler;
 

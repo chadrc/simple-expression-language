@@ -23,7 +23,6 @@ mod tests {
     use super::super::{get_node_result, SELExecutionContext};
     use sel_common::{
         from_byte_vec, DataHeap, DataType, Operation, SELContext, SELTree, SELTreeNode, SELValue,
-        SymbolTable,
     };
 
     #[test]

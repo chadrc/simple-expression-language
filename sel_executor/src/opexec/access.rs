@@ -1,10 +1,7 @@
 use super::SELExecutionContext;
 use crate::opexec::execution_result::SELExecutionResult;
 use crate::opexec::get_node_result;
-use crate::opexec::utils::get_left_right_results;
-use sel_common::{
-    from_byte_vec, to_byte_vec, DataType, List, Operation, Pair, SELTree, SELTreeNode, SELValue,
-};
+use sel_common::{from_byte_vec, DataType, List, Pair, SELTree, SELTreeNode, SELValue};
 
 fn get_identifier(node: &SELTreeNode, tree: &SELTree) -> String {
     node.get_right()
@@ -71,10 +68,7 @@ pub fn dot_access_operation(
 #[cfg(test)]
 mod tests {
     use super::super::{get_node_result, SELExecutionContext};
-    use sel_common::{
-        from_byte_vec, DataHeap, DataType, Operation, SELContext, SELTree, SELTreeNode, SELValue,
-        Symbol, SymbolTable,
-    };
+    use sel_common::{from_byte_vec, DataType, Symbol};
     use sel_compiler::Compiler;
 
     #[test]

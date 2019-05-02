@@ -1,5 +1,4 @@
 use super::super::context::SELExecutionContext;
-use super::utils::match_comparison_ops;
 use super::SELExecutionResult;
 use crate::opexec::utils::match_equality_ops;
 use sel_common::{DataType, SELTree, SELTreeNode};

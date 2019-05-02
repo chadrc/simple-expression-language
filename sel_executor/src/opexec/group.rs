@@ -1,7 +1,6 @@
 use super::execution_result::SELExecutionResult;
 use super::{get_node_result, SELExecutionContext};
-use crate::opexec::utils::get_value_from_result;
-use sel_common::{DataType, SELFunction, SELTree, SELTreeNode, SELValue};
+use sel_common::{DataType, SELTree, SELTreeNode, SELValue};
 
 pub fn operation(
     tree: &SELTree,
@@ -81,7 +80,9 @@ mod tests {
     fn executes_call() {
         let compiler = Compiler::new();
         let mut context = SELContext::new();
-        context.register_function("get_vars", |sel_value: SELValue| SELValue::new_from_int(10));
+        context.register_function("get_vars", |_sel_value: SELValue| {
+            SELValue::new_from_int(10)
+        });
 
         let execution_context = SELExecutionContext::from(&context);
 

@@ -1,7 +1,6 @@
 use super::SELExecutionContext;
 use crate::opexec::execution_result::SELExecutionResult;
 use crate::opexec::get_node_result;
-use crate::opexec::utils::get_left_right_results;
 use sel_common::{
     from_byte_vec, to_byte_vec, DataType, List, Operation, SELTree, SELTreeNode, SELValue,
 };
@@ -65,10 +64,7 @@ pub fn operation(
 #[cfg(test)]
 mod tests {
     use super::super::{get_node_result, SELExecutionContext};
-    use sel_common::{
-        from_byte_vec, DataHeap, DataType, List, Operation, SELContext, SELTree, SELTreeNode,
-        SELValue, SymbolTable,
-    };
+    use sel_common::{from_byte_vec, DataType, List, SELValue};
     use sel_compiler::Compiler;
 
     #[test]

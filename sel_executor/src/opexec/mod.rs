@@ -80,9 +80,7 @@ pub fn get_node_result(
 pub mod test_utils {
     use super::super::context;
     use super::*;
-    use sel_common::{
-        DataHeap, DataType, Operation, SELContext, SELTree, SELTreeNode, SymbolTable,
-    };
+    use sel_common::{DataHeap, DataType, Operation, SELContext, SELTree, SELTreeNode};
 
     pub fn result_of_binary_op(
         op: Operation,

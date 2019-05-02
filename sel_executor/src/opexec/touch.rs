@@ -36,7 +36,7 @@ mod tests {
     use super::super::get_node_result;
     use super::*;
     use sel_common::{
-        from_byte_vec, DataHeap, DataType, Operation, SELContext, SELTree, SELTreeNode, SymbolTable,
+        from_byte_vec, DataHeap, DataType, Operation, SELContext, SELTree, SELTreeNode,
     };
     use sel_compiler::Compiler;
 

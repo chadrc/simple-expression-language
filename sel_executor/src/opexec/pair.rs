@@ -1,6 +1,6 @@
 use sel_common::{to_byte_vec, DataType, Pair, SELTree, SELTreeNode};
 
-use super::utils::{get_left_right_results, get_values_from_results};
+use super::utils::get_left_right_results;
 
 use super::super::context::SELExecutionContext;
 use super::execution_result::SELExecutionResult;
@@ -20,12 +20,7 @@ pub fn operation(
 
 #[cfg(test)]
 mod tests {
-    use std::io::Cursor;
-
-    use sel_common::{
-        from_byte_vec, DataHeap, DataType, Operation, SELContext, SELTree, SELTreeNode, Symbol,
-        SymbolTable,
-    };
+    use sel_common::{from_byte_vec, DataType, SELContext, Symbol};
     use sel_compiler::Compiler;
 
     use super::super::get_node_result;
@@ -34,7 +29,7 @@ mod tests {
     #[test]
     fn executes_pair() {
         let compiler = Compiler::new();
-        let mut context = SELContext::new();
+        let context = SELContext::new();
         let tree = compiler.compile_with_context(&String::from(":value = 10"), context);
         let execution_context = SELExecutionContext::new();
 

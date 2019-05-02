@@ -1,7 +1,6 @@
 use super::{SELExecutionContext, SELExecutionResult};
-use crate::opexec::get_node_result;
 use crate::opexec::utils::{get_left_right_results, get_values_from_results};
-use sel_common::{from_byte_vec, to_byte_vec, DataType, SELTree, SELTreeNode};
+use sel_common::{to_byte_vec, DataType, SELTree, SELTreeNode};
 
 fn match_bitwise_op<F>(
     tree: &SELTree,
@@ -70,10 +69,7 @@ pub fn right_shift_operation(
 #[cfg(test)]
 mod tests {
     use super::super::{get_node_result, SELExecutionContext};
-    use sel_common::{
-        from_byte_vec, DataHeap, DataType, Operation, SELContext, SELTree, SELTreeNode, SELValue,
-        SymbolTable,
-    };
+    use sel_common::{from_byte_vec, DataType};
     use sel_compiler::Compiler;
 
     #[test]

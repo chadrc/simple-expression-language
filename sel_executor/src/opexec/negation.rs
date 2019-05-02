@@ -41,7 +41,7 @@ mod tests {
     use super::super::test_utils::result_of_binary_op;
     use super::*;
     use sel_common::{
-        from_byte_vec, DataHeap, DataType, Operation, SELContext, SELTree, SELTreeNode, SymbolTable,
+        from_byte_vec, DataHeap, DataType, Operation, SELContext, SELTree, SELTreeNode,
     };
 
     #[test]
