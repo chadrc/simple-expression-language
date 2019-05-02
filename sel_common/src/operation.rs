@@ -33,5 +33,9 @@ pub enum Operation {
     BitwiseRightShift,
     DotAccess,
     Group,
+    PipeFirstRight,
+    PipeFirstLeft,
+    PipeLastRight,
+    PipeLastLeft,
     None,
 }

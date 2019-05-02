@@ -21,6 +21,8 @@ const LOGICAL_XOR_PRECEDENCE: usize = LOGICAL_AND_PRECEDENCE + 1;
 const LOGICAL_OR_PRECEDENCE: usize = LOGICAL_XOR_PRECEDENCE + 1;
 const PAIR_PRECEDENCE: usize = LOGICAL_OR_PRECEDENCE + 1;
 const LIST_PRECEDENCE: usize = PAIR_PRECEDENCE + 1;
+const PIPE_RIGHT_PRECEDENCE: usize = LIST_PRECEDENCE + 1;
+const PIPE_LEFT_PRECEDENCE: usize = PIPE_RIGHT_PRECEDENCE + 1;
 
 pub const RIGHT_TO_LEFT_PRECEDENCES: [usize; 1] = [PAIR_PRECEDENCE];
 
@@ -55,6 +57,8 @@ impl PrecedenceGroup {
         members.push(vec![]); // LOGICAL_OR_PRECEDENCE
         members.push(vec![]); // PAIR_PRECEDENCE
         members.push(vec![]); // LIST_PRECEDENCE
+        members.push(vec![]); // PIPE_RIGHT_PRECEDENCE
+        members.push(vec![]); // PIPE_LEFT_PRECEDENCE
 
         return PrecedenceGroup {
             first: 0,
@@ -143,6 +147,12 @@ impl PrecedenceManager {
         operation_priorities.insert(Operation::Pair, PAIR_PRECEDENCE);
 
         operation_priorities.insert(Operation::List, LIST_PRECEDENCE);
+
+        operation_priorities.insert(Operation::PipeFirstRight, PIPE_RIGHT_PRECEDENCE);
+        operation_priorities.insert(Operation::PipeLastRight, PIPE_RIGHT_PRECEDENCE);
+
+        operation_priorities.insert(Operation::PipeFirstLeft, PIPE_LEFT_PRECEDENCE);
+        operation_priorities.insert(Operation::PipeLastLeft, PIPE_LEFT_PRECEDENCE);
 
         let mut root_group_tier: Vec<PrecedenceGroup> = vec![];
         root_group_tier.push(PrecedenceGroup::new(0));

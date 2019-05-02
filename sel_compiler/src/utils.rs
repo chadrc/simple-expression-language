@@ -51,6 +51,10 @@ pub fn get_operation_type_for_token(token: &Token) -> Operation {
         TokenType::Pair => Operation::Pair,
         TokenType::Comma => Operation::List,
         TokenType::Dot => Operation::DotAccess,
+        TokenType::PipeFirstRight => Operation::PipeFirstRight,
+        TokenType::PipeFirstLeft => Operation::PipeFirstLeft,
+        TokenType::PipeLastRight => Operation::PipeLastRight,
+        TokenType::PipeLastLeft => Operation::PipeLastLeft,
         TokenType::Boolean
         | TokenType::Integer
         | TokenType::Decimal

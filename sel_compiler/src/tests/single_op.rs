@@ -627,6 +627,94 @@ fn compiles_list_operation() {
     assert_eq!(right.get_data_type(), DataType::Integer);
 }
 
+#[test]
+fn compiles_pipe_first_right() {
+    let input = String::from("10 -> func");
+    let compiler = Compiler::new();
+
+    let tree = compiler.compile(&input);
+
+    let root = tree.get_root();
+
+    let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
+    let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
+
+    assert_eq!(root.get_operation(), Operation::PipeFirstRight);
+    assert_eq!(root.get_data_type(), DataType::Unknown);
+
+    assert_eq!(left.get_operation(), Operation::Touch);
+    assert_eq!(left.get_data_type(), DataType::Integer);
+
+    assert_eq!(right.get_operation(), Operation::Touch);
+    assert_eq!(right.get_data_type(), DataType::Identifier);
+}
+
+#[test]
+fn compiles_pipe_first_left() {
+    let input = String::from("func <- 10");
+    let compiler = Compiler::new();
+
+    let tree = compiler.compile(&input);
+
+    let root = tree.get_root();
+
+    let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
+    let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
+
+    assert_eq!(root.get_operation(), Operation::PipeFirstLeft);
+    assert_eq!(root.get_data_type(), DataType::Unknown);
+
+    assert_eq!(left.get_operation(), Operation::Touch);
+    assert_eq!(left.get_data_type(), DataType::Identifier);
+
+    assert_eq!(right.get_operation(), Operation::Touch);
+    assert_eq!(right.get_data_type(), DataType::Integer);
+}
+
+#[test]
+fn compiles_pipe_last_right() {
+    let input = String::from("10 |> func");
+    let compiler = Compiler::new();
+
+    let tree = compiler.compile(&input);
+
+    let root = tree.get_root();
+
+    let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
+    let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
+
+    assert_eq!(root.get_operation(), Operation::PipeLastRight);
+    assert_eq!(root.get_data_type(), DataType::Unknown);
+
+    assert_eq!(left.get_operation(), Operation::Touch);
+    assert_eq!(left.get_data_type(), DataType::Integer);
+
+    assert_eq!(right.get_operation(), Operation::Touch);
+    assert_eq!(right.get_data_type(), DataType::Identifier);
+}
+
+#[test]
+fn compiles_pipe_last_left() {
+    let input = String::from("func <| 10");
+    let compiler = Compiler::new();
+
+    let tree = compiler.compile(&input);
+
+    let root = tree.get_root();
+
+    let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
+    let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
+
+    assert_eq!(root.get_operation(), Operation::PipeLastLeft);
+    assert_eq!(root.get_data_type(), DataType::Unknown);
+
+    assert_eq!(left.get_operation(), Operation::Touch);
+    assert_eq!(left.get_data_type(), DataType::Identifier);
+
+    assert_eq!(right.get_operation(), Operation::Touch);
+    assert_eq!(right.get_data_type(), DataType::Integer);
+}
+
 //#[test]
 //fn compiles_transformation_operation() {
 //    let input = String::from("5`l");
