@@ -824,9 +824,15 @@ Assuming clamp accesses its inputs by name (see Functions _TODO: add link_ secti
 #clamp_10_to_20 ~ clamp(min=10, max=20)
 ```
 
-## Matching
+## Match Operations
 
-Can perform pattern matching on a value.
+Match operators evaluate their left side to determine if they match the current result.
+
+Operators:
+* `=>` - Executes right if left evaluates to `true`.
+* `==>` - Executes right if left is equal to current result.
+* `!=>` - Executes right if left is not equal to current result.
+* `~=>` - Executes right if current result contains right.
 
 On input or last result
 
@@ -958,28 +964,6 @@ They may also be used in the right side. Either just by name, which will pass th
 [email: _] => send_email /// implicit
 _ => ()
 ```
-
-### Exhaustiveness
-
-Since there are no variants, enums or types, in order to be an exhaustive match the '\_' catch all pattern must be specified, expect for the following cases.
-
-The following exceptions are exhaustive by definition and do not require the '\_' catch all. However, the '\_' could be used in place of any 1 of the patterns and still be considered exhaustive.
-
-True or False
-
-```
-true => ...,
-false => ...
-```
-
-Exists or Not
-
-```
-[some_key: _] => "some_key exists",
-[some_key: ()] => "some_key does not exist"
-```
-
-This type of exhaustiveness only works with a single key in the left side.
 
 ## Iteration
 
