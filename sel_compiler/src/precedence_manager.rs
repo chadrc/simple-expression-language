@@ -103,6 +103,8 @@ impl PrecedenceManager {
         operation_priorities.insert(Operation::CurrentResult, VALUE_PRECEDENCE);
 
         operation_priorities.insert(Operation::Group, GROUP_PRECEDENCE);
+        operation_priorities.insert(Operation::AssociativeList, GROUP_PRECEDENCE);
+        operation_priorities.insert(Operation::Expression, GROUP_PRECEDENCE);
 
         operation_priorities.insert(Operation::DotAccess, ACCESS_PRECEDENCE);
 

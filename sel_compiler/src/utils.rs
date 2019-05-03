@@ -43,6 +43,8 @@ pub fn get_operation_type_for_token(token: &Token) -> Operation {
         TokenType::Input => Operation::Input,
         TokenType::CurrentResult => Operation::CurrentResult,
         TokenType::StartGroup => Operation::Group,
+        TokenType::StartAssociativeList => Operation::AssociativeList,
+        TokenType::StartExpressionBlock => Operation::Expression,
         TokenType::BitwiseOrSign => Operation::BitwiseOr,
         TokenType::BitwiseXorSign => Operation::BitwiseXOR,
         TokenType::BitwiseAndSign => Operation::BitwiseAnd,

@@ -84,7 +84,10 @@ impl SELTreeBuilder {
                 continue;
             }
 
-            if token.get_token_type() == TokenType::EndGroup {
+            if token.get_token_type() == TokenType::EndGroup
+                || token.get_token_type() == TokenType::EndAssociativeList
+                || token.get_token_type() == TokenType::EndExpressionBlock
+            {
                 // end current group
                 // and drop token
                 self.precedence_manager.end_group();
@@ -167,7 +170,10 @@ impl SELTreeBuilder {
             self.precedence_manager
                 .add_index_with_operation(node.get_operation(), node.get_own_index());
 
-            if node.get_operation() == Operation::Group && !empty_group {
+            if (node.get_operation() == Operation::Group && !empty_group)
+                || node.get_operation() == Operation::AssociativeList
+                || node.get_operation() == Operation::Expression
+            {
                 self.precedence_manager.start_group();
             }
 

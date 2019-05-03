@@ -33,6 +33,8 @@ pub enum Operation {
     BitwiseRightShift,
     DotAccess,
     Group,
+    AssociativeList,
+    Expression,
     PipeFirstRight,
     PipeFirstLeft,
     PipeLastRight,
