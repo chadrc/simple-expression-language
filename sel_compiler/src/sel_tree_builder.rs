@@ -1,9 +1,7 @@
 use super::precedence_manager::{PrecedenceGroup, PrecedenceManager};
 use super::utils::{get_data_type_for_token, get_operation_type_for_token, loop_max};
 use crate::precedence_manager::RIGHT_TO_LEFT_PRECEDENCES;
-use sel_common::{
-    DataHeap, DataType, NodeSide, Operation, SELContext, SELTree, SELTreeNode, SymbolTable,
-};
+use sel_common::{DataHeap, DataType, NodeSide, Operation, SELContext, SELTree, SELTreeNode};
 use sel_tokenizer::{TokenType, Tokenizer};
 
 #[derive(PartialEq, Debug, Clone, Copy)]
@@ -217,12 +215,7 @@ impl SELTreeBuilder {
         return node.get_own_index();
     }
 
-    fn resolve_node(
-        &self,
-        mut nodes: Vec<SELTreeNode>,
-        indices_to_resolve: &Vec<usize>,
-        index: usize,
-    ) -> Vec<SELTreeNode> {
+    fn resolve_node(&self, mut nodes: Vec<SELTreeNode>, index: usize) -> Vec<SELTreeNode> {
         let mut changes: Vec<Change> = vec![];
         {
             let nodes = &nodes;
@@ -320,11 +313,11 @@ impl SELTreeBuilder {
     ) -> Vec<SELTreeNode> {
         if right_to_left {
             for i in indices_to_resolve.iter().rev() {
-                nodes = self.resolve_node(nodes, indices_to_resolve, *i);
+                nodes = self.resolve_node(nodes, *i);
             }
         } else {
             for i in indices_to_resolve {
-                nodes = self.resolve_node(nodes, indices_to_resolve, *i);
+                nodes = self.resolve_node(nodes, *i);
             }
         }
 
@@ -417,7 +410,7 @@ impl SELTreeBuilder {
             .and_then(|parent_node| parent_node.get_left())
             .and_then(|left_index| nodes.get(left_index))
             .filter(|left_node| left_node.get_data_type() != DataType::Identifier)
-            .and_then(|left_node| {
+            .and_then(|_left_node| {
                 changes.push(Change {
                     index_to_change: precedence_group.get_parent(),
                     new_index: None,
