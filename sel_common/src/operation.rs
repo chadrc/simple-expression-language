@@ -35,6 +35,7 @@ pub enum Operation {
     Group,
     AssociativeList,
     Expression,
+    Transform,
     PipeFirstRight,
     PipeFirstLeft,
     PipeLastRight,

@@ -4,7 +4,8 @@ use std::collections::HashMap;
 // lower number means higher priority
 const VALUE_PRECEDENCE: usize = 0;
 const GROUP_PRECEDENCE: usize = VALUE_PRECEDENCE + 1;
-const UNARY_PRECEDENCE: usize = GROUP_PRECEDENCE + 1;
+const TRANSFORM_PRECEDENCE: usize = GROUP_PRECEDENCE + 1;
+const UNARY_PRECEDENCE: usize = TRANSFORM_PRECEDENCE + 1;
 const ACCESS_PRECEDENCE: usize = UNARY_PRECEDENCE + 1;
 const RANGE_PRECEDENCE: usize = ACCESS_PRECEDENCE + 1;
 const EXPONENTIAL_PRECEDENCE: usize = RANGE_PRECEDENCE + 1;
@@ -41,6 +42,7 @@ impl PrecedenceGroup {
 
         members.push(vec![]); // VALUE_PRECEDENCE
         members.push(vec![]); // GROUP_PRECEDENCE
+        members.push(vec![]); // TRANSFORM_PRECEDENCE
         members.push(vec![]); // ACCESS_PRECEDENCE
         members.push(vec![]); // UNARY_PRECEDENCE
         members.push(vec![]); // RANGE_PRECEDENCE
@@ -105,6 +107,8 @@ impl PrecedenceManager {
         operation_priorities.insert(Operation::Group, GROUP_PRECEDENCE);
         operation_priorities.insert(Operation::AssociativeList, GROUP_PRECEDENCE);
         operation_priorities.insert(Operation::Expression, GROUP_PRECEDENCE);
+
+        operation_priorities.insert(Operation::Transform, TRANSFORM_PRECEDENCE);
 
         operation_priorities.insert(Operation::DotAccess, ACCESS_PRECEDENCE);
 

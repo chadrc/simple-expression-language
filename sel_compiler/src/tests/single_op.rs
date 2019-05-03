@@ -1023,24 +1023,24 @@ fn compiles_match_not_contains() {
     assert_eq!(right.get_data_type(), DataType::Integer);
 }
 
-//#[test]
-//fn compiles_transformation_operation() {
-//    let input = String::from("5`l");
-//    let compiler = Compiler::new();
-//
-//    let tree = compiler.compile(&input);
-//
-//    let root = tree.get_root();
-//
-//    let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
-//    let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
-//
-//    assert_eq!(root.get_operation(), Operation::BitwiseRightShift);
-//    assert_eq!(root.get_data_type(), DataType::Unknown);
-//
-//    assert_eq!(left.get_operation(), Operation::Touch);
-//    assert_eq!(left.get_data_type(), DataType::Integer);
-//
-//    assert_eq!(right.get_operation(), Operation::Touch);
-//    assert_eq!(right.get_data_type(), DataType::Integer);
-//}
+#[test]
+fn compiles_transformation_operation() {
+    let input = String::from("\"Jan 1, 2019\"`Date");
+    let compiler = Compiler::new();
+
+    let tree = compiler.compile(&input);
+
+    let root = tree.get_root();
+
+    let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
+    let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
+
+    assert_eq!(root.get_operation(), Operation::Transform);
+    assert_eq!(root.get_data_type(), DataType::Unknown);
+
+    assert_eq!(left.get_operation(), Operation::Touch);
+    assert_eq!(left.get_data_type(), DataType::String);
+
+    assert_eq!(right.get_operation(), Operation::Touch);
+    assert_eq!(right.get_data_type(), DataType::Identifier);
+}
