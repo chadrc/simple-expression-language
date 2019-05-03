@@ -485,6 +485,30 @@ mod tests {
     }
 
     #[test]
+    fn tokenize_start_associative_list() {
+        let tokens = tokens_from_str("[");
+        assert_token(tokens.get(0).unwrap(), TokenType::StartAssociativeList, "[");
+    }
+
+    #[test]
+    fn tokenize_end_associative_list() {
+        let tokens = tokens_from_str("]");
+        assert_token(tokens.get(0).unwrap(), TokenType::EndAssociativeList, "]");
+    }
+
+    #[test]
+    fn tokenize_start_expression_block() {
+        let tokens = tokens_from_str("{");
+        assert_token(tokens.get(0).unwrap(), TokenType::StartExpressionBlock, "{");
+    }
+
+    #[test]
+    fn tokenize_end_expression_block() {
+        let tokens = tokens_from_str("}");
+        assert_token(tokens.get(0).unwrap(), TokenType::EndExpressionBlock, "}");
+    }
+
+    #[test]
     fn tokenize_symbol_operator() {
         let tokens = tokens_from_str(":");
         assert_token(tokens.get(0).unwrap(), TokenType::Symbol, ":");

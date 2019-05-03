@@ -48,6 +48,10 @@ impl<'a> Tokenizer<'a> {
         symbol_tree.attach("?", TokenType::CurrentResult);
         symbol_tree.attach("(", TokenType::StartGroup);
         symbol_tree.attach(")", TokenType::EndGroup);
+        symbol_tree.attach("[", TokenType::StartAssociativeList);
+        symbol_tree.attach("]", TokenType::EndAssociativeList);
+        symbol_tree.attach("{", TokenType::StartExpressionBlock);
+        symbol_tree.attach("}", TokenType::EndExpressionBlock);
         symbol_tree.attach(":", TokenType::Symbol);
         symbol_tree.attach("=", TokenType::Pair);
         symbol_tree.attach(",", TokenType::Comma);
