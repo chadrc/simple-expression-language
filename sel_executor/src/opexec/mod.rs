@@ -11,6 +11,7 @@ mod greater_than_equal;
 mod group;
 mod inequality;
 mod input;
+mod keys_equal;
 mod less_than;
 mod less_than_equal;
 mod list;
@@ -74,6 +75,8 @@ pub fn get_node_result(
         Operation::PipeLastLeft => pipe::pipe_last_left_operation(tree, node, context),
         Operation::Group => group::operation(tree, node, context),
         Operation::AssociativeList => associative_list::operation(tree, node, context),
+        Operation::KeysEqual => keys_equal::equal_operation(tree, node, context),
+        Operation::KeysNotEqual => keys_equal::not_equal_operation(tree, node, context),
         _ => SELExecutionResult::new(DataType::Unknown, None),
     };
 }
