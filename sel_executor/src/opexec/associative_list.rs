@@ -1,7 +1,8 @@
 use super::execution_result::SELExecutionResult;
 use super::{get_node_result, SELExecutionContext};
 use sel_common::{
-    from_byte_vec, to_byte_vec, AssociativeList, DataType, List, SELTree, SELTreeNode, SELValue,
+    from_byte_vec, to_byte_vec, AssociativeList, DataType, List, Pair, SELTree, SELTreeNode,
+    SELValue, Symbol,
 };
 
 pub fn operation(
@@ -31,7 +32,23 @@ pub fn operation(
                     }
                     DataType::List => {
                         let list: List = from_byte_vec(value);
-                        let mut a_list = AssociativeList::from(list);
+                        let a_list = AssociativeList::from(list);
+
+                        Some(SELExecutionResult::new(
+                            DataType::AssociativeList,
+                            Some(to_byte_vec(a_list)),
+                        ))
+                    }
+                    DataType::Pair => {
+                        let mut a_list = AssociativeList::new();
+                        let pair: Pair = from_byte_vec(value);
+
+                        if pair.get_left().get_type() == DataType::Symbol {
+                            let symbol_index: Symbol =
+                                from_byte_vec(pair.get_left().get_value().unwrap());
+
+                            a_list.push_association(symbol_index, &pair);
+                        }
 
                         Some(SELExecutionResult::new(
                             DataType::AssociativeList,
@@ -67,10 +84,48 @@ mod tests {
 
         assert_eq!(values.len(), 1);
 
-        let first_value: &SELValue = values.get(0).unwrap();
+        let first_value: SELValue = values.get(0).unwrap().to_owned();
 
         assert_eq!(first_value.get_type(), DataType::Integer);
         assert_eq!(from_byte_vec::<i64>(first_value.get_value().unwrap()), 100);
+    }
+
+    #[test]
+    fn executes_associative_list_from_single_symbol_integer_pair_value() {
+        let compiler = Compiler::new();
+        let tree = compiler.compile(&String::from("[:max = 100]"));
+        let execution_context = SELExecutionContext::new();
+
+        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let list: AssociativeList = from_byte_vec(result.get_value().unwrap());
+
+        assert_eq!(result.get_type(), DataType::AssociativeList);
+
+        let values = list.get_list().get_values();
+        let associations = list.get_associations();
+
+        assert_eq!(values.len(), 1);
+        assert_eq!(associations.len(), 1);
+
+        let first_value: SELValue = list.get_by_index(0).unwrap().to_owned();
+
+        assert_eq!(first_value.get_type(), DataType::Pair);
+
+        let pair: Pair = from_byte_vec(first_value.get_value().unwrap());
+        let symbol: Symbol = from_byte_vec(pair.get_left().get_value().unwrap());
+        let pair_value: i64 = from_byte_vec(pair.get_right().get_value().unwrap());
+
+        assert_eq!(symbol.get_table_index(), 0);
+        assert_eq!(pair_value, 100);
+
+        let associated_value = list
+            .get_by_association_index(symbol.get_table_index())
+            .unwrap()
+            .to_owned();
+
+        let value: i64 = from_byte_vec(associated_value.get_value().unwrap());
+
+        assert_eq!(value, 100);
     }
 
     #[test]
@@ -88,8 +143,8 @@ mod tests {
 
         assert_eq!(values.len(), 2);
 
-        let first_value: &SELValue = values.get(0).unwrap();
-        let second_value: &SELValue = values.get(1).unwrap();
+        let first_value: SELValue = values.get(0).unwrap().to_owned();
+        let second_value: SELValue = values.get(1).unwrap().to_owned();
 
         assert_eq!(first_value.get_type(), DataType::Integer);
         assert_eq!(from_byte_vec::<i64>(first_value.get_value().unwrap()), 100);
