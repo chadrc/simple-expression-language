@@ -175,7 +175,37 @@ mod tests {
         ));
         let execution_context = SELExecutionContext::new();
 
-        println!("{:?}", tree);
+        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let value: String = from_byte_vec(result.get_value().unwrap());
+
+        assert_eq!(result.get_type(), DataType::String);
+        assert_eq!(value, String::from("Bear"));
+    }
+
+    #[test]
+    fn executes_associative_list_access_single_field() {
+        let compiler = Compiler::new();
+        let tree = compiler.compile(&String::from("[:name = \"Panda\"].name"));
+        let execution_context = SELExecutionContext::new();
+
+        //        println!("{:?}", tree);
+
+        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let value: String = from_byte_vec(result.get_value().unwrap());
+
+        assert_eq!(result.get_type(), DataType::String);
+        assert_eq!(value, String::from("Bear"));
+    }
+
+    #[test]
+    fn executes_associative_list_access_multi_field() {
+        let compiler = Compiler::new();
+        let tree = compiler.compile(&String::from(
+            "[:user = [:first_name = \"Panda\", :last_name = \"Bear\"]].user.last_name",
+        ));
+        let execution_context = SELExecutionContext::new();
+
+        //        println!("{:?}", tree);
 
         let result = get_node_result(&tree, tree.get_root(), &execution_context);
         let value: String = from_byte_vec(result.get_value().unwrap());

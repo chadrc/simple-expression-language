@@ -12,12 +12,8 @@ pub fn operation(
 ) -> SELExecutionResult {
     node.get_right()
         .and_then(|right_index| tree.get_nodes().get(right_index))
-        .map(|right_node| {
-            println!("result {:?}", right_node);
-            get_node_result(tree, right_node, context)
-        })
+        .map(|right_node| get_node_result(tree, right_node, context))
         .and_then(|result: SELExecutionResult| {
-            println!("result {:?}", result);
             result
                 .get_value()
                 .and_then(|value| match result.get_type() {
