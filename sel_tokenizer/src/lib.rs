@@ -399,6 +399,36 @@ mod tests {
     }
 
     #[test]
+    fn tokenize_keys_equal() {
+        assert_4_5_binary_operation(":=", TokenType::KeysEqual);
+    }
+
+    #[test]
+    fn tokenize_keys_not_equal() {
+        assert_4_5_binary_operation(":!=", TokenType::KeysNotEqual);
+    }
+
+    #[test]
+    fn tokenize_values_equal() {
+        assert_4_5_binary_operation("$=", TokenType::ValuesEqual);
+    }
+
+    #[test]
+    fn tokenize_values_not_equal() {
+        assert_4_5_binary_operation("$!=", TokenType::ValuesNotEqual);
+    }
+
+    #[test]
+    fn tokenize_contains() {
+        assert_4_5_binary_operation("~=", TokenType::Contains);
+    }
+
+    #[test]
+    fn tokenize_not_contains() {
+        assert_4_5_binary_operation("~!=", TokenType::NotContains);
+    }
+
+    #[test]
     fn tokenize_greater_than() {
         assert_4_5_binary_operation(">", TokenType::GreaterThan);
     }
@@ -644,8 +674,8 @@ mod tests {
 
     #[test]
     fn tokenize_match_keys_not_equal() {
-        let tokens = tokens_from_str("!:=>");
-        assert_token(tokens.get(0).unwrap(), TokenType::MatchKeysNotEqual, "!:=>");
+        let tokens = tokens_from_str(":!=>");
+        assert_token(tokens.get(0).unwrap(), TokenType::MatchKeysNotEqual, ":!=>");
     }
 
     #[test]
@@ -656,11 +686,11 @@ mod tests {
 
     #[test]
     fn tokenize_match_values_not_equal() {
-        let tokens = tokens_from_str("!$=>");
+        let tokens = tokens_from_str("$!=>");
         assert_token(
             tokens.get(0).unwrap(),
             TokenType::MatchValuesNotEqual,
-            "!$=>",
+            "$!=>",
         );
     }
 
@@ -672,8 +702,8 @@ mod tests {
 
     #[test]
     fn tokenize_match_not_contain() {
-        let tokens = tokens_from_str("!~=>");
-        assert_token(tokens.get(0).unwrap(), TokenType::MatchNotContains, "!~=>");
+        let tokens = tokens_from_str("~!=>");
+        assert_token(tokens.get(0).unwrap(), TokenType::MatchNotContains, "~!=>");
     }
 
     #[test]

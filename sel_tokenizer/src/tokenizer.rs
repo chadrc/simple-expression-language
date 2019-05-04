@@ -30,6 +30,12 @@ impl<'a> Tokenizer<'a> {
         symbol_tree.attach("%", TokenType::ModulusSign);
         symbol_tree.attach("==", TokenType::Equal);
         symbol_tree.attach("!=", TokenType::NotEqual);
+        symbol_tree.attach(":=", TokenType::KeysEqual);
+        symbol_tree.attach(":!=", TokenType::KeysNotEqual);
+        symbol_tree.attach("$=", TokenType::ValuesEqual);
+        symbol_tree.attach("$!=", TokenType::ValuesNotEqual);
+        symbol_tree.attach("~=", TokenType::Contains);
+        symbol_tree.attach("~!=", TokenType::NotContains);
         symbol_tree.attach(">", TokenType::GreaterThan);
         symbol_tree.attach(">=", TokenType::GreaterThanOrEqual);
         symbol_tree.attach("<", TokenType::LessThan);
@@ -70,11 +76,11 @@ impl<'a> Tokenizer<'a> {
         symbol_tree.attach(">=>", TokenType::MatchGreaterThan);
         symbol_tree.attach(">==>", TokenType::MatchGreaterThanEqual);
         symbol_tree.attach(":=>", TokenType::MatchKeysEqual);
-        symbol_tree.attach("!:=>", TokenType::MatchKeysNotEqual);
+        symbol_tree.attach(":!=>", TokenType::MatchKeysNotEqual);
         symbol_tree.attach("$=>", TokenType::MatchValuesEqual);
-        symbol_tree.attach("!$=>", TokenType::MatchValuesNotEqual);
+        symbol_tree.attach("$!=>", TokenType::MatchValuesNotEqual);
         symbol_tree.attach("~=>", TokenType::MatchContains);
-        symbol_tree.attach("!~=>", TokenType::MatchNotContains);
+        symbol_tree.attach("~!=>", TokenType::MatchNotContains);
 
         return Tokenizer {
             current_token: String::new(),

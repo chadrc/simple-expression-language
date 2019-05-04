@@ -297,6 +297,12 @@ When using concatenation operations with key-value pairs, 'prepend' and 'append'
 
 Associative arrays can be compared by values, key-value pairs, and keys.
 
+By value operators - `$=` and `$!=`
+
+By key operators - `:=` and `:!=`
+
+By key and value operators - `==` and `!=`. Same as equality operators above.
+
 Values - Checks to see if the two arrays contain the same values
 
 ```
@@ -377,13 +383,16 @@ Keys - Checks to see if the two arrays contain all the same keys.
 
 #### Contains
 
-Can check if an associative array contains a specific value, key-value, or key with the `~=` operator.
+Can check if an associative array contains a specific value, key-value, or key with the `~=` operator. Also check if the collections doesn't contain a value with the `~!=` operator.
 
 Contains Value
 
 ```
 [1, 2, 3, 4, 5] ~= 1
 /// true
+
+[1, 2, 3, 4, 5] ~!= 1 /// Doesn't contain
+/// false
 
 [1, 2, 3, 4, 5] ~= 6
 /// false

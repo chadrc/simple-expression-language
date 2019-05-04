@@ -915,7 +915,7 @@ fn compiles_match_keys_equal() {
 
 #[test]
 fn compiles_match_keys_not_equal() {
-    let input = String::from("value !:=> 10");
+    let input = String::from("value :!=> 10");
     let compiler = Compiler::new();
 
     let tree = compiler.compile(&input);
@@ -959,7 +959,7 @@ fn compiles_match_values_equal() {
 
 #[test]
 fn compiles_match_values_not_equal() {
-    let input = String::from("value !$=> 10");
+    let input = String::from("value $!=> 10");
     let compiler = Compiler::new();
 
     let tree = compiler.compile(&input);
@@ -1003,7 +1003,7 @@ fn compiles_match_contains() {
 
 #[test]
 fn compiles_match_not_contains() {
-    let input = String::from("func !~=> 10");
+    let input = String::from("func ~!=> 10");
     let compiler = Compiler::new();
 
     let tree = compiler.compile(&input);
