@@ -139,6 +139,12 @@ impl PrecedenceManager {
 
         operation_priorities.insert(Operation::Equality, EQUALITY_PRECEDENCE);
         operation_priorities.insert(Operation::Inequality, EQUALITY_PRECEDENCE);
+        operation_priorities.insert(Operation::KeysEqual, EQUALITY_PRECEDENCE);
+        operation_priorities.insert(Operation::KeysNotEqual, EQUALITY_PRECEDENCE);
+        operation_priorities.insert(Operation::ValuesEqual, EQUALITY_PRECEDENCE);
+        operation_priorities.insert(Operation::ValuesNotEqual, EQUALITY_PRECEDENCE);
+        operation_priorities.insert(Operation::Contains, EQUALITY_PRECEDENCE);
+        operation_priorities.insert(Operation::NotContains, EQUALITY_PRECEDENCE);
 
         operation_priorities.insert(Operation::BitwiseAnd, BITWISE_AND_PRECEDENCE);
 

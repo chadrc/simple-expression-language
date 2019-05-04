@@ -332,6 +332,134 @@ fn compiles_inequality_operation() {
 }
 
 #[test]
+fn compiles_keys_equal() {
+    let input = String::from("(,) := 10");
+    let compiler = Compiler::new();
+
+    let tree = compiler.compile(&input);
+
+    println!("{:?}", tree);
+
+    let root = tree.get_root();
+
+    let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
+    let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
+
+    assert_eq!(root.get_operation(), Operation::KeysEqual);
+    assert_eq!(root.get_data_type(), DataType::Unknown);
+
+    assert_eq!(left.get_operation(), Operation::Group);
+
+    assert_eq!(right.get_operation(), Operation::Touch);
+    assert_eq!(right.get_data_type(), DataType::Integer);
+}
+
+#[test]
+fn compiles_keys_not_equal() {
+    let input = String::from("(,) :!= 10");
+    let compiler = Compiler::new();
+
+    let tree = compiler.compile(&input);
+
+    let root = tree.get_root();
+
+    let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
+    let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
+
+    assert_eq!(root.get_operation(), Operation::KeysNotEqual);
+    assert_eq!(root.get_data_type(), DataType::Unknown);
+
+    assert_eq!(left.get_operation(), Operation::Group);
+
+    assert_eq!(right.get_operation(), Operation::Touch);
+    assert_eq!(right.get_data_type(), DataType::Integer);
+}
+
+#[test]
+fn compiles_values_equal() {
+    let input = String::from("(,) $= 10");
+    let compiler = Compiler::new();
+
+    let tree = compiler.compile(&input);
+
+    let root = tree.get_root();
+
+    let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
+    let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
+
+    assert_eq!(root.get_operation(), Operation::ValuesEqual);
+    assert_eq!(root.get_data_type(), DataType::Unknown);
+
+    assert_eq!(left.get_operation(), Operation::Group);
+
+    assert_eq!(right.get_operation(), Operation::Touch);
+    assert_eq!(right.get_data_type(), DataType::Integer);
+}
+
+#[test]
+fn compiles_values_not_equal() {
+    let input = String::from("(,) $!= 10");
+    let compiler = Compiler::new();
+
+    let tree = compiler.compile(&input);
+
+    let root = tree.get_root();
+
+    let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
+    let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
+
+    assert_eq!(root.get_operation(), Operation::ValuesNotEqual);
+    assert_eq!(root.get_data_type(), DataType::Unknown);
+
+    assert_eq!(left.get_operation(), Operation::Group);
+
+    assert_eq!(right.get_operation(), Operation::Touch);
+    assert_eq!(right.get_data_type(), DataType::Integer);
+}
+
+#[test]
+fn compiles_contains() {
+    let input = String::from("(,) ~= 10");
+    let compiler = Compiler::new();
+
+    let tree = compiler.compile(&input);
+
+    let root = tree.get_root();
+
+    let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
+    let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
+
+    assert_eq!(root.get_operation(), Operation::Contains);
+    assert_eq!(root.get_data_type(), DataType::Unknown);
+
+    assert_eq!(left.get_operation(), Operation::Group);
+
+    assert_eq!(right.get_operation(), Operation::Touch);
+    assert_eq!(right.get_data_type(), DataType::Integer);
+}
+
+#[test]
+fn compiles_not_contains() {
+    let input = String::from("(,) ~!= 10");
+    let compiler = Compiler::new();
+
+    let tree = compiler.compile(&input);
+
+    let root = tree.get_root();
+
+    let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
+    let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
+
+    assert_eq!(root.get_operation(), Operation::NotContains);
+    assert_eq!(root.get_data_type(), DataType::Unknown);
+
+    assert_eq!(left.get_operation(), Operation::Group);
+
+    assert_eq!(right.get_operation(), Operation::Touch);
+    assert_eq!(right.get_data_type(), DataType::Integer);
+}
+
+#[test]
 fn compiles_logical_and_operation() {
     let input = String::from("5 && 10");
     let compiler = Compiler::new();
