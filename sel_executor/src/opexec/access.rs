@@ -194,7 +194,7 @@ mod tests {
         let value: String = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::String);
-        assert_eq!(value, String::from("Bear"));
+        assert_eq!(value, String::from("Panda"));
     }
 
     #[test]
