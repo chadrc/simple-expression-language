@@ -71,6 +71,16 @@ mod tests {
     }
 
     #[test]
+    fn tokenize_bracket_dot_integer() {
+        let tokens: Vec<Token> = tokens_from_str("].3");
+
+        assert_eq!(tokens.len(), 3);
+        assert_token(tokens.get(0).unwrap(), TokenType::EndAssociativeList, "]");
+        assert_token(tokens.get(1).unwrap(), TokenType::Dot, ".");
+        assert_token(tokens.get(2).unwrap(), TokenType::Integer, "3");
+    }
+
+    #[test]
     fn tokenize_string_dot_integer() {
         let tokens: Vec<Token> = tokens_from_str("\"pandas\".3");
 

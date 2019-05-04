@@ -83,7 +83,14 @@ pub fn dot_access_operation(
                         .get_by_association_index(symbol_index)
                         .unwrap_or(SELValue::new()),
                 ),
-                None => SELExecutionResult::new(DataType::Unit, None),
+                None => match get_index(node, tree) {
+                    Some(index) => SELExecutionResult::from(
+                        &associative_list
+                            .get_by_index(index)
+                            .unwrap_or(SELValue::new()),
+                    ),
+                    None => SELExecutionResult::new(DataType::Unit, None),
+                },
             }
         }
         _ => SELExecutionResult::new(DataType::Unit, None),
@@ -227,6 +234,38 @@ mod tests {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from(
             "[:user = [:first_name = \"Panda\", :last_name = \"Bear\"]].user.last_name",
+        ));
+        let execution_context = SELExecutionContext::new();
+
+        //        println!("{:?}", tree);
+
+        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let value: String = from_byte_vec(result.get_value().unwrap());
+
+        assert_eq!(result.get_type(), DataType::String);
+        assert_eq!(value, String::from("Bear"));
+    }
+
+    #[test]
+    fn executes_associative_list_access_single_index() {
+        let compiler = Compiler::new();
+        let tree = compiler.compile(&String::from("[:name = \"Panda\"].0.right"));
+        let execution_context = SELExecutionContext::new();
+
+        println!("{:?}", tree);
+
+        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let value: String = from_byte_vec(result.get_value().unwrap());
+
+        assert_eq!(result.get_type(), DataType::String);
+        assert_eq!(value, String::from("Panda"));
+    }
+
+    #[test]
+    fn executes_associative_list_access_multi_index() {
+        let compiler = Compiler::new();
+        let tree = compiler.compile(&String::from(
+            "[[:first_name = \"Panda\", :last_name = \"Bear\"]].0.1.right",
         ));
         let execution_context = SELExecutionContext::new();
 

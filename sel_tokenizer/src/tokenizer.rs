@@ -302,6 +302,7 @@ impl<'a> Iterator for Tokenizer<'a> {
                                     TokenType::Integer,
                                     TokenType::Decimal,
                                     TokenType::EndGroup,
+                                    TokenType::EndAssociativeList,
                                 ],
                             );
 
