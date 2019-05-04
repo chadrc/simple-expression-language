@@ -22,17 +22,7 @@ impl AssociativeList {
         let mut associative_list = AssociativeList::new();
 
         for value in list.get_values() {
-            if value.get_type() == DataType::Pair {
-                let pair: Pair = from_byte_vec(value.get_value().unwrap());
-
-                if pair.get_left().get_type() == DataType::Symbol {
-                    let symbol_index: Symbol = from_byte_vec(pair.get_left().get_value().unwrap());
-
-                    associative_list.push_association(symbol_index, &pair);
-                }
-            } else {
-                associative_list.push(value.clone());
-            }
+            associative_list.push(value.clone());
         }
 
         return associative_list;
@@ -47,14 +37,20 @@ impl AssociativeList {
     }
 
     pub fn push(&mut self, value: SELValue) {
-        self.list.push(value);
-    }
+        if value.get_type() == DataType::Pair {
+            let pair: Pair = from_byte_vec(value.get_value().unwrap());
 
-    pub fn push_association(&mut self, symbol: Symbol, pair: &Pair) {
-        let new_index = self.list.get_values().len();
-        self.list.push(SELValue::new_from_pair(pair.clone()));
-        self.associations
-            .insert(symbol.get_table_index(), new_index);
+            if pair.get_left().get_type() == DataType::Symbol {
+                let symbol: Symbol = from_byte_vec(pair.get_left().get_value().unwrap());
+
+                let new_index = self.list.get_values().len();
+                self.list.push(SELValue::new_from_pair(pair.clone()));
+                self.associations
+                    .insert(symbol.get_table_index(), new_index);
+            }
+        } else {
+            self.list.push(value);
+        }
     }
 
     pub fn get_by_index(&self, index: usize) -> Option<SELValue> {

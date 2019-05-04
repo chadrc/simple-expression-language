@@ -21,6 +21,7 @@ pub fn operation(
                     | DataType::Integer
                     | DataType::Decimal
                     | DataType::Boolean
+                    | DataType::Pair
                     | DataType::Symbol => {
                         let mut a_list = AssociativeList::new();
                         a_list.push(result.get_sel_value().to_owned());
@@ -33,22 +34,6 @@ pub fn operation(
                     DataType::List => {
                         let list: List = from_byte_vec(value);
                         let a_list = AssociativeList::from(list);
-
-                        Some(SELExecutionResult::new(
-                            DataType::AssociativeList,
-                            Some(to_byte_vec(a_list)),
-                        ))
-                    }
-                    DataType::Pair => {
-                        let mut a_list = AssociativeList::new();
-                        let pair: Pair = from_byte_vec(value);
-
-                        if pair.get_left().get_type() == DataType::Symbol {
-                            let symbol_index: Symbol =
-                                from_byte_vec(pair.get_left().get_value().unwrap());
-
-                            a_list.push_association(symbol_index, &pair);
-                        }
 
                         Some(SELExecutionResult::new(
                             DataType::AssociativeList,
