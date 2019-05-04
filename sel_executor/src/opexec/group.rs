@@ -1,6 +1,6 @@
 use super::execution_result::SELExecutionResult;
 use super::{get_node_result, SELExecutionContext};
-use sel_common::{DataType, SELTree, SELTreeNode, SELValue};
+use sel_common::{from_byte_vec, DataType, Expression, Operation, SELTree, SELTreeNode, SELValue};
 
 pub fn operation(
     tree: &SELTree,
@@ -14,17 +14,43 @@ pub fn operation(
                 tree.get_nodes()
                     .get(left_index)
                     // have a left, get symbol index
-                    .and_then(|left_node| tree.get_usize_value_of(left_node))
-                    // get symbol string
-                    .and_then(|symbol_index| tree.get_symbol_table().get_symbol(symbol_index))
-                    // get function
-                    // if we have gotten to this point
-                    // the identifier should resolve to a function
-                    .and_then(|symbol| context.get_function(symbol))
-                    // if no function found map directly to a Unit value
-                    // else map using the found function
-                    .map_or(Some(SELExecutionResult::from(&SELValue::new())), |func| {
-                        Some(SELExecutionResult::from(&func(sel_value)))
+                    .and_then(|left_node| {
+                        match left_node.get_operation() {
+                            Operation::Touch => {
+                                tree.get_usize_value_of(left_node)
+                                    // get symbol string
+                                    .and_then(|symbol_index| {
+                                        tree.get_symbol_table().get_symbol(symbol_index)
+                                    })
+                                    // get function
+                                    // if we have gotten to this point
+                                    // the identifier should resolve to a function
+                                    .and_then(|symbol| context.get_function(symbol))
+                                    // if no function found map directly to a Unit value
+                                    // else map using the found function
+                                    .map_or(
+                                        Some(SELExecutionResult::from(&SELValue::new())),
+                                        |func| Some(SELExecutionResult::from(&func(sel_value))),
+                                    )
+                            }
+                            _ => {
+                                let left_result = get_node_result(tree, left_node, context);
+                                match left_result.get_type() {
+                                    DataType::Expression => {
+                                        let expr: Expression =
+                                            from_byte_vec(left_result.get_value().unwrap());
+                                        expr.get_root()
+                                            .and_then(|expr_root_index| {
+                                                tree.get_nodes().get(expr_root_index)
+                                            })
+                                            .map(|expr_root_node| {
+                                                get_node_result(tree, expr_root_node, context)
+                                            })
+                                    }
+                                    _ => None,
+                                }
+                            }
+                        }
                     })
             }
             // no left means this is just a group op
@@ -141,5 +167,22 @@ mod tests {
 
         assert_eq!(first_result.get_type(), DataType::Unit);
         assert_eq!(first_result.get_value(), None);
+    }
+
+    #[test]
+    fn executes_call_expression() {
+        let compiler = Compiler::new();
+
+        let execution_context = SELExecutionContext::new();
+
+        let tree = compiler.compile(&String::from("{ 5 + 10 }\n?()"));
+
+        let results = execute_sel_tree(&tree, &execution_context);
+
+        let result = results.get(1).unwrap();
+        let value: i64 = from_byte_vec(result.get_value().unwrap());
+
+        assert_eq!(result.get_type(), DataType::Integer);
+        assert_eq!(value, 15);
     }
 }

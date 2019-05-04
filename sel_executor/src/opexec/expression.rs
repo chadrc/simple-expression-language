@@ -47,7 +47,6 @@ mod tests {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("{ }"));
 
-        println!("{:?}", tree);
         let execution_context = SELExecutionContext::new();
 
         let result = get_node_result(&tree, tree.get_root(), &execution_context);
