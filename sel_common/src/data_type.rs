@@ -13,6 +13,7 @@ pub enum DataType {
     Range,
     Pair,
     List,
+    AssociativeList,
 }
 
 impl std::fmt::Display for DataType {

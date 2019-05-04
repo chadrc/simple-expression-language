@@ -1,5 +1,6 @@
 mod access;
 mod addition;
+mod associative_list;
 mod bitwise;
 mod division;
 mod equality;
@@ -72,6 +73,7 @@ pub fn get_node_result(
         Operation::PipeLastRight => pipe::pipe_last_right_operation(tree, node, context),
         Operation::PipeLastLeft => pipe::pipe_last_left_operation(tree, node, context),
         Operation::Group => group::operation(tree, node, context),
+        Operation::AssociativeList => associative_list::operation(tree, node, context),
         _ => SELExecutionResult::new(DataType::Unknown, None),
     };
 }
