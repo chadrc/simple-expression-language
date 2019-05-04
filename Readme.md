@@ -847,11 +847,11 @@ Operators:
 * `>=>` - Executes right if left is greater than current result.
 * `>==>` - Executes right if left is greater than or equal to current result.
 * `:=>` - Executes right if all of left's keys are in current result.
-* `!:=>` - Executes right if all of left's keys are not in current result.
+* `:!=>` - Executes right if all of left's keys are not in current result.
 * `$=>` - Executes right if all of left's values are in current result.
-* `!$=>` - Executes right if all of left's values are not in current result.
+* `$!=>` - Executes right if all of left's values are not in current result.
 * `~=>` - Executes right if current result contains left.
-* `!~=>` - Executes right if current result does not contain left.
+* `~!=>` - Executes right if current result does not contain left.
 
 On input or last result
 

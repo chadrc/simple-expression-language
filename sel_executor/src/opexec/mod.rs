@@ -2,6 +2,7 @@ mod access;
 mod addition;
 mod associative_list;
 mod bitwise;
+mod conditional;
 mod contains;
 mod division;
 mod equality;
@@ -83,6 +84,8 @@ pub fn get_node_result(
         Operation::ValuesNotEqual => values_equal::not_equal_operation(tree, node, context),
         Operation::Contains => contains::contains_operation(tree, node, context),
         Operation::NotContains => contains::not_contains_operation(tree, node, context),
+        Operation::MatchTrue => conditional::match_true(tree, node, context),
+        Operation::MatchFalse => conditional::match_false(tree, node, context),
         _ => SELExecutionResult::new(DataType::Unknown, None),
     };
 }
