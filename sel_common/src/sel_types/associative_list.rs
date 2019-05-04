@@ -19,10 +19,23 @@ impl AssociativeList {
     }
 
     pub fn from(list: List) -> Self {
-        return AssociativeList {
-            list: list.clone(),
-            associations: HashMap::new(),
-        };
+        let mut associative_list = AssociativeList::new();
+
+        for value in list.get_values() {
+            if value.get_type() == DataType::Pair {
+                let pair: Pair = from_byte_vec(value.get_value().unwrap());
+
+                if pair.get_left().get_type() == DataType::Symbol {
+                    let symbol_index: Symbol = from_byte_vec(pair.get_left().get_value().unwrap());
+
+                    associative_list.push_association(symbol_index, &pair);
+                }
+            } else {
+                associative_list.push(value.clone());
+            }
+        }
+
+        return associative_list;
     }
 
     pub fn get_list(&self) -> &List {

@@ -155,4 +155,55 @@ mod tests {
             true
         );
     }
+
+    #[test]
+    fn executes_associative_list_from_list_of_pairs() {
+        let compiler = Compiler::new();
+        let tree = compiler.compile(&String::from(
+            "[:first_name = \"Panda\", :last_name = \"Bear\"]",
+        ));
+        let execution_context = SELExecutionContext::new();
+
+        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let list: AssociativeList = from_byte_vec(result.get_value().unwrap());
+
+        assert_eq!(result.get_type(), DataType::AssociativeList);
+
+        let values = list.get_list().get_values();
+        let associations = list.get_associations();
+
+        assert_eq!(values.len(), 2);
+        assert_eq!(associations.len(), 2);
+
+        let first_value: SELValue = list.get_by_index(0).unwrap().to_owned();
+        let second_value: SELValue = list.get_by_index(1).unwrap().to_owned();
+
+        assert_pair_equal(&list, &first_value, 0, String::from("Panda"));
+        assert_pair_equal(&list, &second_value, 1, String::from("Bear"));
+    }
+
+    fn assert_pair_equal(
+        list: &AssociativeList,
+        value: &SELValue,
+        symbol_index: usize,
+        pair_value: String,
+    ) {
+        assert_eq!(value.get_type(), DataType::Pair);
+
+        let pair: Pair = from_byte_vec(value.get_value().unwrap());
+        let symbol: Symbol = from_byte_vec(pair.get_left().get_value().unwrap());
+        let p_value: String = from_byte_vec(pair.get_right().get_value().unwrap());
+
+        assert_eq!(symbol.get_table_index(), symbol_index);
+        assert_eq!(p_value, pair_value);
+
+        let associated_value = list
+            .get_by_association_index(symbol.get_table_index())
+            .unwrap()
+            .to_owned();
+
+        let associated_value: String = from_byte_vec(associated_value.get_value().unwrap());
+
+        assert_eq!(associated_value, pair_value);
+    }
 }
