@@ -2,6 +2,7 @@ mod access;
 mod addition;
 mod associative_list;
 mod bitwise;
+mod contains;
 mod division;
 mod equality;
 mod execution_result;
@@ -80,6 +81,8 @@ pub fn get_node_result(
         Operation::KeysNotEqual => keys_equal::not_equal_operation(tree, node, context),
         Operation::ValuesEqual => values_equal::equal_operation(tree, node, context),
         Operation::ValuesNotEqual => values_equal::not_equal_operation(tree, node, context),
+        Operation::Contains => contains::contains_operation(tree, node, context),
+        Operation::NotContains => contains::not_contains_operation(tree, node, context),
         _ => SELExecutionResult::new(DataType::Unknown, None),
     };
 }
