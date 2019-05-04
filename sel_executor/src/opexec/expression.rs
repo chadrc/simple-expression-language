@@ -14,10 +14,13 @@ pub fn operation(
     node.get_right()
         // right index of expression operation is the root of the expression
         .map(|right_index| {
-            let expr = Expression::new(right_index);
+            let expr = Expression::new(Some(right_index));
             SELExecutionResult::new(DataType::Expression, Some(to_byte_vec(expr)))
         })
-        .unwrap_or(SELExecutionResult::new(DataType::Unknown, None))
+        .unwrap_or(SELExecutionResult::new(
+            DataType::Expression,
+            Some(to_byte_vec(Expression::new(None))),
+        ))
 }
 
 #[cfg(test)]
@@ -36,6 +39,21 @@ mod tests {
         let result_value: Expression = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Expression);
-        assert_eq!(result_value.get_root(), 2);
+        assert_eq!(result_value.get_root(), Some(2));
+    }
+
+    #[test]
+    fn executes_empty_expression_declaration() {
+        let compiler = Compiler::new();
+        let tree = compiler.compile(&String::from("{ }"));
+
+        println!("{:?}", tree);
+        let execution_context = SELExecutionContext::new();
+
+        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result_value: Expression = from_byte_vec(result.get_value().unwrap());
+
+        assert_eq!(result.get_type(), DataType::Expression);
+        assert_eq!(result_value.get_root(), None);
     }
 }

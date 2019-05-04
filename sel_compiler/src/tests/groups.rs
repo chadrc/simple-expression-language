@@ -36,6 +36,24 @@ fn single_group() {
 }
 
 #[test]
+fn single_empty_expression_block() {
+    let input = String::from("{}");
+    let compiler = Compiler::new();
+
+    let tree = compiler.compile(&input);
+
+    // tree should look like
+    //         E
+
+    let root = tree.get_root();
+
+    assert_eq!(root.get_operation(), Operation::Expression);
+    assert_eq!(root.get_data_type(), DataType::Unknown);
+    assert_eq!(root.get_parent(), None);
+    assert_eq!(root.get_right(), None);
+}
+
+#[test]
 fn single_expression_block() {
     let input = String::from("{5 + 10}");
     let compiler = Compiler::new();

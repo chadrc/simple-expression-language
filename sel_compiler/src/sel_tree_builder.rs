@@ -399,17 +399,22 @@ impl SELTreeBuilder {
         // and group parent's right to be the root
         let mut changes: Vec<Change> = vec![];
 
-        changes.push(Change {
-            index_to_change: root,
-            new_index: Some(precedence_group.get_parent()),
-            side_to_set: NodeSide::Parent,
-        });
+        // if root is the parent root
+        // we would end up root pointing to itself
+        // we don't want that, and this allows empty groups
+        if root != precedence_group.get_parent() {
+            changes.push(Change {
+                index_to_change: root,
+                new_index: Some(precedence_group.get_parent()),
+                side_to_set: NodeSide::Parent,
+            });
 
-        changes.push(Change {
-            index_to_change: precedence_group.get_parent(),
-            new_index: Some(root),
-            side_to_set: NodeSide::Right,
-        });
+            changes.push(Change {
+                index_to_change: precedence_group.get_parent(),
+                new_index: Some(root),
+                side_to_set: NodeSide::Right,
+            });
+        }
 
         // Check group's left side
         // if anything but an identifier

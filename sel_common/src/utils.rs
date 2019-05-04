@@ -149,7 +149,7 @@ impl ToByteVec for Expression {
 
 impl FromByteVec for Expression {
     fn from_byte_vec(v: &Vec<u8>) -> Self {
-        return deserialize(v).unwrap_or(Expression::new(0));
+        return deserialize(v).unwrap_or(Expression::new(None));
     }
 }
 

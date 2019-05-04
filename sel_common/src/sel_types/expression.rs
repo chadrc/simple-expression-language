@@ -1,14 +1,14 @@
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct Expression {
-    root: usize,
+    root: Option<usize>,
 }
 
 impl Expression {
-    pub fn new(root: usize) -> Self {
+    pub fn new(root: Option<usize>) -> Self {
         return Expression { root };
     }
 
-    pub fn get_root(&self) -> usize {
+    pub fn get_root(&self) -> Option<usize> {
         return self.root;
     }
 }
