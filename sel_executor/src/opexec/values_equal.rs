@@ -12,6 +12,15 @@ fn values_equal_operation(
     let (left_result, right_result) = get_left_right_results(tree, node, context);
 
     return match (left_result.get_type(), right_result.get_type()) {
+        (DataType::List, DataType::List) => {
+            let mut equal = left_result.get_value() == right_result.get_value();
+
+            if invert {
+                equal = !equal;
+            }
+
+            SELExecutionResult::new(DataType::Boolean, Some(to_byte_vec(equal)))
+        }
         (DataType::AssociativeList, DataType::AssociativeList) => {
             let (left_value, right_value) = get_values_from_results::<
                 AssociativeList,
@@ -87,7 +96,7 @@ mod tests {
     use sel_compiler::Compiler;
 
     #[test]
-    fn executes_values_equal_true() {
+    fn executes_associative_list_values_equal_true() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from(
             "[:email = \"panda@example.com\", :username = \"panda\"] $= [:email = \"panda@example.com\", :username = \"panda\"]",
@@ -102,7 +111,7 @@ mod tests {
     }
 
     #[test]
-    fn executes_values_equal_false() {
+    fn executes_associative_list_values_equal_false() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from(
             "[:email = \"panda@example.com\", :username = \"panda\"] $= [:email = \"polar@example.com\", :username = \"polar\"]",
@@ -117,7 +126,7 @@ mod tests {
     }
 
     #[test]
-    fn executes_values_not_equal_false() {
+    fn executes_associative_list_values_not_equal_false() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from(
             "[:email = \"panda@example.com\", :username = \"panda\"] $!= [:email = \"panda@example.com\", :username = \"panda\"]",
@@ -132,11 +141,63 @@ mod tests {
     }
 
     #[test]
-    fn executes_values_not_equal_true() {
+    fn executes_associative_list_values_not_equal_true() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from(
             "[:email = \"panda@example.com\", :username = \"panda\"] $!= [:email = \"polar@example.com\", :username = \"polar\"]",
         ));
+        let execution_context = SELExecutionContext::new();
+
+        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let value: bool = from_byte_vec(result.get_value().unwrap());
+
+        assert_eq!(result.get_type(), DataType::Boolean);
+        assert_eq!(value, true);
+    }
+
+    #[test]
+    fn executes_list_values_equal_true() {
+        let compiler = Compiler::new();
+        let tree = compiler.compile(&String::from("(10, 20, 30) $= (10, 20, 30)"));
+        let execution_context = SELExecutionContext::new();
+
+        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let value: bool = from_byte_vec(result.get_value().unwrap());
+
+        assert_eq!(result.get_type(), DataType::Boolean);
+        assert_eq!(value, true);
+    }
+
+    #[test]
+    fn executes_list_values_equal_false() {
+        let compiler = Compiler::new();
+        let tree = compiler.compile(&String::from("(10, 30, 40) $= (10, 20, 30)"));
+        let execution_context = SELExecutionContext::new();
+
+        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let value: bool = from_byte_vec(result.get_value().unwrap());
+
+        assert_eq!(result.get_type(), DataType::Boolean);
+        assert_eq!(value, false);
+    }
+
+    #[test]
+    fn executes_list_values_not_equal_false() {
+        let compiler = Compiler::new();
+        let tree = compiler.compile(&String::from("(10, 20, 30) $!= (10, 20, 30)"));
+        let execution_context = SELExecutionContext::new();
+
+        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let value: bool = from_byte_vec(result.get_value().unwrap());
+
+        assert_eq!(result.get_type(), DataType::Boolean);
+        assert_eq!(value, false);
+    }
+
+    #[test]
+    fn executes_list_values_not_equal_true() {
+        let compiler = Compiler::new();
+        let tree = compiler.compile(&String::from("(10, 30, 40) $!= (10, 20, 30)"));
         let execution_context = SELExecutionContext::new();
 
         let result = get_node_result(&tree, tree.get_root(), &execution_context);
