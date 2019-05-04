@@ -39,12 +39,17 @@ pub fn operation(
                                     DataType::Expression => {
                                         let expr: Expression =
                                             from_byte_vec(left_result.get_value().unwrap());
+
+                                        // make new context for expression execution
+                                        let mut expr_context = context.clone();
+                                        expr_context.set_input(sel_value);
+
                                         expr.get_root()
                                             .and_then(|expr_root_index| {
                                                 tree.get_nodes().get(expr_root_index)
                                             })
                                             .map(|expr_root_node| {
-                                                get_node_result(tree, expr_root_node, context)
+                                                get_node_result(tree, expr_root_node, &expr_context)
                                             })
                                     }
                                     _ => None,
@@ -176,6 +181,23 @@ mod tests {
         let execution_context = SELExecutionContext::new();
 
         let tree = compiler.compile(&String::from("{ 5 + 10 }\n?()"));
+
+        let results = execute_sel_tree(&tree, &execution_context);
+
+        let result = results.get(1).unwrap();
+        let value: i64 = from_byte_vec(result.get_value().unwrap());
+
+        assert_eq!(result.get_type(), DataType::Integer);
+        assert_eq!(value, 15);
+    }
+
+    #[test]
+    fn executes_call_expression_with_input() {
+        let compiler = Compiler::new();
+
+        let execution_context = SELExecutionContext::new();
+
+        let tree = compiler.compile(&String::from("{ $ + 10 }\n?(5)"));
 
         let results = execute_sel_tree(&tree, &execution_context);
 
