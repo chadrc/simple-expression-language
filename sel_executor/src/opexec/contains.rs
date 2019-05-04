@@ -7,7 +7,7 @@ use sel_common::{
     from_byte_vec, to_byte_vec, AssociativeList, DataType, List, Pair, SELTree, SELTreeNode,
 };
 
-fn keys_equal_operation(
+fn contains(
     tree: &SELTree,
     node: &SELTreeNode,
     context: &SELExecutionContext,
@@ -68,7 +68,7 @@ pub fn contains_operation(
     node: &SELTreeNode,
     context: &SELExecutionContext,
 ) -> SELExecutionResult {
-    return keys_equal_operation(tree, node, context, false);
+    return contains(tree, node, context, false);
 }
 
 pub fn not_contains_operation(
@@ -76,7 +76,7 @@ pub fn not_contains_operation(
     node: &SELTreeNode,
     context: &SELExecutionContext,
 ) -> SELExecutionResult {
-    return keys_equal_operation(tree, node, context, true);
+    return contains(tree, node, context, true);
 }
 
 #[cfg(test)]
