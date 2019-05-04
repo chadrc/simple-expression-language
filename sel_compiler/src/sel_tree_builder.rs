@@ -114,7 +114,7 @@ impl SELTreeBuilder {
             } else if data_type == DataType::Unit {
                 // if Unit symbol immediately follows an identifier
                 // it is an empty argument list
-                if last_data_type == DataType::Identifier {
+                if last_data_type == DataType::Identifier || last_op == Operation::CurrentResult {
                     op = Operation::Group;
                     data_type = DataType::Unknown;
                     empty_group = true; // so we don't start a group later
@@ -423,7 +423,10 @@ impl SELTreeBuilder {
             .get(precedence_group.get_parent())
             .and_then(|parent_node| parent_node.get_left())
             .and_then(|left_index| nodes.get(left_index))
-            .filter(|left_node| left_node.get_data_type() != DataType::Identifier)
+            .filter(|left_node| {
+                left_node.get_operation() != Operation::CurrentResult
+                    && left_node.get_data_type() != DataType::Identifier
+            })
             .and_then(|_left_node| {
                 changes.push(Change {
                     index_to_change: precedence_group.get_parent(),

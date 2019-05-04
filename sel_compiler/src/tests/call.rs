@@ -24,6 +24,28 @@ fn no_argument_with_parenthesis() {
 }
 
 #[test]
+fn no_argument_with_parenthesis_on_result() {
+    let input = String::from("?()");
+    let compiler = Compiler::new();
+
+    let tree = compiler.compile(&input);
+
+    // tree should look like
+    //         _ G _
+    //        /     \
+    //       ?
+
+    let root = tree.get_root();
+
+    let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
+
+    assert_eq!(root.get_operation(), Operation::Group);
+
+    assert_eq!(left.get_operation(), Operation::CurrentResult);
+    assert_eq!(left.get_data_type(), DataType::Unknown);
+}
+
+#[test]
 fn single_argument_with_parenthesis() {
     let input = String::from("get_vars(5)");
     let compiler = Compiler::new();
