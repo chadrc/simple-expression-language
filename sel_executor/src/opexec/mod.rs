@@ -27,6 +27,7 @@ mod result;
 mod subtraction;
 mod touch;
 mod utils;
+mod values_equal;
 
 use super::context::SELExecutionContext;
 pub use execution_result::SELExecutionResult;
@@ -77,6 +78,8 @@ pub fn get_node_result(
         Operation::AssociativeList => associative_list::operation(tree, node, context),
         Operation::KeysEqual => keys_equal::equal_operation(tree, node, context),
         Operation::KeysNotEqual => keys_equal::not_equal_operation(tree, node, context),
+        Operation::ValuesEqual => values_equal::equal_operation(tree, node, context),
+        Operation::ValuesNotEqual => values_equal::not_equal_operation(tree, node, context),
         _ => SELExecutionResult::new(DataType::Unknown, None),
     };
 }
