@@ -8,6 +8,7 @@ mod division;
 mod equality;
 mod execution_result;
 mod exponential;
+mod expression;
 mod greater_than;
 mod greater_than_equal;
 mod group;
@@ -78,6 +79,7 @@ pub fn get_node_result(
         Operation::PipeLastLeft => pipe::pipe_last_left_operation(tree, node, context),
         Operation::Group => group::operation(tree, node, context),
         Operation::AssociativeList => associative_list::operation(tree, node, context),
+        Operation::Expression => expression::operation(tree, node, context),
         Operation::KeysEqual => keys_equal::equal_operation(tree, node, context),
         Operation::KeysNotEqual => keys_equal::not_equal_operation(tree, node, context),
         Operation::ValuesEqual => values_equal::equal_operation(tree, node, context),

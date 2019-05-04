@@ -1,4 +1,4 @@
-use super::sel_types::{AssociativeList, List, Pair, Range, Symbol};
+use super::sel_types::{AssociativeList, Expression, List, Pair, Range, Symbol};
 use bincode::{deserialize, serialize};
 
 pub trait ToByteVec {
@@ -138,6 +138,18 @@ impl ToByteVec for AssociativeList {
 impl FromByteVec for AssociativeList {
     fn from_byte_vec(v: &Vec<u8>) -> Self {
         return deserialize(v).unwrap_or(AssociativeList::new());
+    }
+}
+
+impl ToByteVec for Expression {
+    fn to_byte_vec(&self) -> Vec<u8> {
+        return serialize(self).unwrap_or(vec![]);
+    }
+}
+
+impl FromByteVec for Expression {
+    fn from_byte_vec(v: &Vec<u8>) -> Self {
+        return deserialize(v).unwrap_or(Expression::new(0));
     }
 }
 

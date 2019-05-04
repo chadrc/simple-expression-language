@@ -14,6 +14,7 @@ pub enum DataType {
     Pair,
     List,
     AssociativeList,
+    Expression,
 }
 
 impl std::fmt::Display for DataType {
