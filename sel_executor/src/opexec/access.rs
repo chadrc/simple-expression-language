@@ -220,8 +220,6 @@ mod tests {
         let tree = compiler.compile(&String::from("[:name = \"Panda\"].name"));
         let execution_context = SELExecutionContext::new();
 
-        //        println!("{:?}", tree);
-
         let result = get_node_result(&tree, tree.get_root(), &execution_context);
         let value: String = from_byte_vec(result.get_value().unwrap());
 
@@ -237,8 +235,6 @@ mod tests {
         ));
         let execution_context = SELExecutionContext::new();
 
-        //        println!("{:?}", tree);
-
         let result = get_node_result(&tree, tree.get_root(), &execution_context);
         let value: String = from_byte_vec(result.get_value().unwrap());
 
@@ -251,8 +247,6 @@ mod tests {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("[:name = \"Panda\"].0.right"));
         let execution_context = SELExecutionContext::new();
-
-        println!("{:?}", tree);
 
         let result = get_node_result(&tree, tree.get_root(), &execution_context);
         let value: String = from_byte_vec(result.get_value().unwrap());
@@ -268,8 +262,6 @@ mod tests {
             "[[:first_name = \"Panda\", :last_name = \"Bear\"]].0.1.right",
         ));
         let execution_context = SELExecutionContext::new();
-
-        //        println!("{:?}", tree);
 
         let result = get_node_result(&tree, tree.get_root(), &execution_context);
         let value: String = from_byte_vec(result.get_value().unwrap());
