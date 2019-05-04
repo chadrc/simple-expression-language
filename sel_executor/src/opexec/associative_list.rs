@@ -12,8 +12,12 @@ pub fn operation(
 ) -> SELExecutionResult {
     node.get_right()
         .and_then(|right_index| tree.get_nodes().get(right_index))
-        .map(|right_node| get_node_result(tree, right_node, context))
+        .map(|right_node| {
+            println!("result {:?}", right_node);
+            get_node_result(tree, right_node, context)
+        })
         .and_then(|result: SELExecutionResult| {
+            println!("result {:?}", result);
             result
                 .get_value()
                 .and_then(|value| match result.get_type() {
@@ -22,6 +26,7 @@ pub fn operation(
                     | DataType::Decimal
                     | DataType::Boolean
                     | DataType::Pair
+                    | DataType::AssociativeList
                     | DataType::Symbol => {
                         let mut a_list = AssociativeList::new();
                         a_list.push(result.get_sel_value().to_owned());
@@ -111,6 +116,50 @@ mod tests {
         let value: i64 = from_byte_vec(associated_value.get_value().unwrap());
 
         assert_eq!(value, 100);
+    }
+
+    #[test]
+    fn executes_associative_list_of_associative_list() {
+        let compiler = Compiler::new();
+        let tree = compiler.compile(&String::from("[[:max = 100]]"));
+        println!("{:?}", tree);
+        let execution_context = SELExecutionContext::new();
+
+        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let list: AssociativeList = from_byte_vec(result.get_value().unwrap());
+
+        assert_eq!(result.get_type(), DataType::AssociativeList);
+
+        let values = list.get_list().get_values();
+
+        assert_eq!(values.len(), 1);
+
+        let first_value: SELValue = list.get_by_index(0).unwrap().to_owned();
+
+        assert_eq!(first_value.get_type(), DataType::AssociativeList);
+
+        let nested_list: AssociativeList = from_byte_vec(first_value.get_value().unwrap());
+
+        let pair_value: SELValue = nested_list.get_by_index(0).unwrap().to_owned();
+        let pair: Pair = from_byte_vec(pair_value.get_value().unwrap());
+
+        let symbol_value: &SELValue = pair.get_left();
+        let symbol: Symbol = from_byte_vec(symbol_value.get_value().unwrap());
+
+        assert_eq!(symbol.get_identifier(), &String::from("max"));
+
+        let integer_value: &SELValue = pair.get_right();
+        let integer: i64 = from_byte_vec(integer_value.get_value().unwrap());
+
+        assert_eq!(integer, 100);
+
+        let associated_value = nested_list
+            .get_by_association_index(symbol.get_table_index())
+            .unwrap()
+            .to_owned();
+        let associated_integer: i64 = from_byte_vec(associated_value.get_value().unwrap());
+
+        assert_eq!(associated_integer, 100);
     }
 
     #[test]

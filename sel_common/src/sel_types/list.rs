@@ -1,6 +1,6 @@
 use crate::SELValue;
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct List {
     values: Vec<SELValue>,
 }

@@ -412,3 +412,41 @@ fn multiple_groups_nested() {
     assert_eq!(rrrr_right.get_operation(), Operation::Touch);
     assert_eq!(rrrr_right.get_data_type(), DataType::Integer);
 }
+
+#[test]
+fn multiple_groups_directly_nested() {
+    let input = String::from("[[5 + 3]]");
+    let compiler = Compiler::new();
+
+    let tree = compiler.compile(&input);
+
+    // tree should look like
+    //                  A
+    //                   \
+    //                   A
+    //                    \
+    //                    +
+    //                   / \
+    //                  5   3
+
+    let root = tree.get_root();
+
+    let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
+
+    let r_right = tree.get_nodes().get(right.get_right().unwrap()).unwrap();
+
+    let rr_left = tree.get_nodes().get(r_right.get_left().unwrap()).unwrap();
+    let rr_right = tree.get_nodes().get(r_right.get_right().unwrap()).unwrap();
+
+    assert_eq!(root.get_operation(), Operation::AssociativeList);
+
+    assert_eq!(right.get_operation(), Operation::AssociativeList);
+
+    assert_eq!(r_right.get_operation(), Operation::Addition);
+
+    assert_eq!(rr_left.get_operation(), Operation::Touch);
+    assert_eq!(rr_left.get_data_type(), DataType::Integer);
+
+    assert_eq!(rr_right.get_operation(), Operation::Touch);
+    assert_eq!(rr_right.get_data_type(), DataType::Integer);
+}

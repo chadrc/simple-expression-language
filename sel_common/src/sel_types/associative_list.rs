@@ -4,7 +4,7 @@ use crate::sel_types::symbol::Symbol;
 use crate::{from_byte_vec, DataType, SELValue};
 use std::collections::HashMap;
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct AssociativeList {
     list: List,
     associations: HashMap<usize, usize>,

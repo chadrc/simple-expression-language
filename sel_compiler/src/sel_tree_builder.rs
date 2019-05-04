@@ -355,7 +355,10 @@ impl SELTreeBuilder {
             // only update if not a group operation
             // group operations are evaluated in order
             // so a group operation's right is the sub tree for that group
-            .filter(|last| last.get_operation() != Operation::Group)
+            .filter(|last| {
+                last.get_operation() != Operation::Group
+                    && last.get_operation() != Operation::AssociativeList
+            })
             // check if last node has a right
             .and_then(|last| {
                 // set node's right to none
