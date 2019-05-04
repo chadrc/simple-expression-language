@@ -1,7 +1,9 @@
 use super::SELExecutionContext;
 use crate::opexec::execution_result::SELExecutionResult;
 use crate::opexec::get_node_result;
-use sel_common::{from_byte_vec, DataType, List, Pair, SELTree, SELTreeNode, SELValue};
+use sel_common::{
+    from_byte_vec, AssociativeList, DataType, List, Pair, SELTree, SELTreeNode, SELValue,
+};
 
 fn get_identifier(node: &SELTreeNode, tree: &SELTree) -> String {
     node.get_right()
@@ -15,6 +17,18 @@ fn get_identifier(node: &SELTreeNode, tree: &SELTree) -> String {
             }
         })
         .map_or(String::from(""), |s| s.clone())
+}
+
+fn get_identifier_symbol(node: &SELTreeNode, tree: &SELTree) -> Option<usize> {
+    node.get_right()
+        .and_then(|index| tree.get_nodes().get(index))
+        .and_then(|node| {
+            if node.get_data_type() == DataType::Identifier {
+                tree.get_usize_value_of(node)
+            } else {
+                None
+            }
+        })
 }
 
 fn get_index(node: &SELTreeNode, tree: &SELTree) -> Option<usize> {
@@ -61,6 +75,17 @@ pub fn dot_access_operation(
             }
             None => SELExecutionResult::new(DataType::Unit, None),
         },
+        DataType::AssociativeList => {
+            let associative_list: AssociativeList = from_byte_vec(left_result.get_value().unwrap());
+            match get_identifier_symbol(node, tree) {
+                Some(symbol_index) => SELExecutionResult::from(
+                    &associative_list
+                        .get_by_association_index(symbol_index)
+                        .unwrap_or(SELValue::new()),
+                ),
+                None => SELExecutionResult::new(DataType::Unit, None),
+            }
+        }
         _ => SELExecutionResult::new(DataType::Unit, None),
     };
 }
