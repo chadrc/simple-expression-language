@@ -86,9 +86,13 @@ fn pipe_operation(
                                         DataType::List => {
                                             let mut pipe_list: List =
                                                 from_byte_vec(value.get_value().unwrap());
-                                            pipe_list.append(&mut list);
 
-                                            list = pipe_list;
+                                            if first {
+                                                pipe_list.append(&mut list);
+                                                list = pipe_list;
+                                            } else {
+                                                list.append(&mut pipe_list);
+                                            }
                                         }
                                         // else we just insert at beginning
                                         _ => {
@@ -439,5 +443,46 @@ mod tests {
 
         assert_eq!(result.get_type(), DataType::Integer);
         assert_eq!(value, 15);
+    }
+
+    #[test]
+    fn executes_pipe_last_right_exposed_function_with_multiple_pipe_values() {
+        let compiler = Compiler::new();
+        let mut context = SELContext::new();
+
+        context.register_function("avg", |sel_value, symbol_table| {
+            match sel_value.get_type() {
+                DataType::List => {
+                    let list: List = from_byte_vec(sel_value.get_value().unwrap());
+
+                    let ints: Vec<i64> = list
+                        .get_values()
+                        .iter()
+                        .map(|sel_value| from_byte_vec::<i64>(sel_value.get_value().unwrap()))
+                        .collect();
+
+                    assert_eq!(*ints.get(0).unwrap(), 10);
+                    assert_eq!(*ints.get(1).unwrap(), 20);
+                    assert_eq!(*ints.get(2).unwrap(), 30);
+
+                    let total = ints.iter().fold(0 as i64, |result, i| i + result);
+
+                    let avg = total / list.get_values().len() as i64;
+
+                    SELValue::new_from_int(avg)
+                }
+                _ => SELValue::new(),
+            }
+        });
+
+        let execution_context = SELExecutionContext::from(&context);
+
+        let tree = compiler.compile_with_context(&String::from("20, 30 |> avg(10)"), context);
+
+        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let value: i64 = from_byte_vec(result.get_value().unwrap());
+
+        assert_eq!(result.get_type(), DataType::Integer);
+        assert_eq!(value, 20);
     }
 }
