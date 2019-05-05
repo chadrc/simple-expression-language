@@ -1,5 +1,7 @@
 mod change;
 mod compiler;
+mod find_root;
+mod group_handling;
 mod precedence_manager;
 mod process_tokens;
 mod sel_tree_builder;
