@@ -63,7 +63,7 @@ pub fn correct_group(
 pub fn update_group(
     mut nodes: Vec<SELTreeNode>,
     precedence_group: &PrecedenceGroup,
-) -> Vec<SELTreeNode> {
+) -> (usize, Vec<SELTreeNode>) {
     // get root of group tree
     let root = find_root_index(&nodes, Some(precedence_group.get_first()));
 
@@ -111,7 +111,7 @@ pub fn update_group(
 
     apply_changes(&mut nodes, changes);
 
-    nodes
+    (root, nodes)
 }
 
 pub fn identifier_call_check(

@@ -120,12 +120,15 @@ fn multi_line_nested_expression_nested_expression_roots() {
     let sub_tree_1 = tree.get_sub_trees().get(0).unwrap();
     let sub_tree_2 = tree.get_sub_trees().get(1).unwrap();
 
-    assert_eq!(sub_tree_1.get_root().unwrap(), 2);
-    assert_eq!(sub_tree_1.get_sub_roots().len(), 2);
-    assert_eq!(*sub_tree_1.get_sub_roots().get(0).unwrap(), 3);
-    assert_eq!(*sub_tree_1.get_sub_roots().get(1).unwrap(), 6);
+    // sub trees get inserted in evaluation order
+    // meaning the inner most expression blocks appear first
 
-    assert_eq!(sub_tree_2.get_root().unwrap(), 4);
-    assert_eq!(sub_tree_2.get_sub_roots().len(), 1);
-    assert_eq!(*sub_tree_2.get_sub_roots().get(0).unwrap(), 5);
+    assert_eq!(sub_tree_1.get_roots().len(), 2);
+    assert_eq!(*sub_tree_1.get_roots().get(0).unwrap(), 4);
+    assert_eq!(*sub_tree_1.get_roots().get(1).unwrap(), 5);
+
+    assert_eq!(sub_tree_2.get_roots().len(), 3);
+    assert_eq!(*sub_tree_2.get_roots().get(0).unwrap(), 2);
+    assert_eq!(*sub_tree_2.get_roots().get(1).unwrap(), 3);
+    assert_eq!(*sub_tree_2.get_roots().get(2).unwrap(), 6);
 }

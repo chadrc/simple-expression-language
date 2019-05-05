@@ -3,7 +3,7 @@ use crate::group_handling::{correct_group, identifier_call_check, update_group};
 use crate::precedence_manager::{PrecedenceManager, RIGHT_TO_LEFT_PRECEDENCES};
 use crate::process_tokens::make_nodes_from_tokenizer;
 use crate::resolve_tree::resolve_tree;
-use sel_common::{SELContext, SELTree};
+use sel_common::{Operation, SELContext, SELSubTree, SELTree};
 use sel_tokenizer::Tokenizer;
 use std::collections::HashSet;
 
@@ -17,6 +17,7 @@ pub fn build_tree_from_string(s: &String, context: SELContext) -> SELTree {
     let precedence_groups = precedence_manager.get_group_tiers();
 
     let mut sub_root_ban_set: HashSet<usize> = HashSet::new();
+    let mut sub_trees: Vec<SELSubTree> = vec![];
 
     for (index, tier) in precedence_groups.iter().enumerate().rev() {
         for group in tier.iter().rev() {
@@ -38,7 +39,9 @@ pub fn build_tree_from_string(s: &String, context: SELContext) -> SELTree {
             }
 
             if index != 0 {
-                nodes = update_group(nodes, group);
+                let updated_result = update_group(nodes, group);
+                nodes = updated_result.1;
+                let group_root = updated_result.0;
 
                 // if this is an expression group
                 // create a sub tree
@@ -49,12 +52,27 @@ pub fn build_tree_from_string(s: &String, context: SELContext) -> SELTree {
                 // add found sub roots to a black set, so they are ignored by later expressions
 
                 println!("checking sub roots for group {:?}", group);
+                let mut group_sub_roots: Vec<usize> = vec![];
+
                 for sub_root in firsts_of_expression.iter() {
                     let sub_root = *sub_root;
-                    if group.get_first() <= sub_root && sub_root <= group.get_last() {
+                    if group.get_first() <= sub_root
+                        && sub_root <= group.get_last()
+                        && !sub_root_ban_set.contains(&sub_root)
+                    {
+                        group_sub_roots.push(sub_root);
                         sub_root_ban_set.insert(sub_root);
                     }
                 }
+
+                nodes
+                    .get(group.get_parent())
+                    .filter(|group_parent| group_parent.get_operation() == Operation::Expression)
+                    .and_then(|group_parent| {
+                        sub_trees.push(SELSubTree::new(group_sub_roots));
+
+                        Some(true)
+                    });
             }
         }
     }
@@ -72,5 +90,5 @@ pub fn build_tree_from_string(s: &String, context: SELContext) -> SELTree {
         .map(|first| find_root_index(&nodes, Some(*first)))
         .collect();
 
-    return SELTree::new(root, vec![], sub_roots, nodes, data, context);
+    return SELTree::new(root, sub_trees, sub_roots, nodes, data, context);
 }
