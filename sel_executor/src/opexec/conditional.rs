@@ -83,32 +83,73 @@ pub fn match_list(
     node: &SELTreeNode,
     context: &SELExecutionContext,
 ) -> SELExecutionResult {
-    // start on left side
-    node.get_left()
-        .and_then(|left_index| tree.get_nodes().get(left_index))
-        .and_then(|left_node| {
-            let run = run_match(
-                tree,
-                left_node,
-                context,
-                left_node.get_operation() == Operation::MatchFalse,
-            );
+    let mut match_stack: Vec<&SELTreeNode> = vec![];
+    let mut current_node = node;
 
-            if run {
-                // return left nodes right side
-                left_node
-                    .get_right()
-                    .and_then(|right_index| tree.get_nodes().get(right_index))
-                    .map(|right_node| get_node_result(tree, right_node, context))
-            } else {
-                // move on to right node
-                // will either be another match list or a match
-                node.get_right()
-                    .and_then(|right_index| tree.get_nodes().get(right_index))
-                    .map(|right_node| get_node_result(tree, right_node, context))
+    let mut it_count = 0;
+    while current_node.get_operation() == Operation::MatchList {
+        match current_node
+            .get_right()
+            .and_then(|right_index| tree.get_nodes().get(right_index))
+        {
+            Some(right_node) => {
+                // push right to stack
+                match_stack.push(right_node);
             }
-        })
-        .unwrap_or(SELExecutionResult::new(DataType::Unknown, None))
+            None => (),
+        }
+
+        // set current node to left node
+        match current_node
+            .get_left()
+            .and_then(|left_index| tree.get_nodes().get(left_index))
+        {
+            Some(left_node) => {
+                current_node = left_node;
+            }
+            None => (),
+        }
+
+        // fail safe
+        // node count is more than maximum amount this op should take
+        // but is only value that will scale with any tree
+        it_count += 1;
+        if it_count > tree.get_nodes().len() {
+            break;
+        }
+    }
+
+    match_stack.push(current_node);
+
+    let mut final_result: Option<SELExecutionResult> = None;
+    // iterate top down
+    for node in match_stack.iter().rev() {
+        let run = run_match(
+            tree,
+            node,
+            context,
+            node.get_operation() == Operation::MatchFalse,
+        );
+
+        if run {
+            // return left nodes right side
+            node.get_right()
+                .and_then(|right_index| tree.get_nodes().get(right_index))
+                .and_then(|right_node| {
+                    // only get a result here if the arm was run
+                    // so we can break on first result
+                    final_result = Some(get_node_result(tree, right_node, context));
+
+                    Some(true)
+                });
+        }
+
+        if final_result.is_some() {
+            break;
+        }
+    }
+
+    return final_result.unwrap_or(SELExecutionResult::new(DataType::Unknown, None));
 }
 
 #[cfg(test)]
@@ -192,5 +233,22 @@ mod tests {
 
         assert_eq!(result.get_type(), DataType::String);
         assert_eq!(value, String::from("true 1"));
+    }
+
+    #[test]
+    fn executes_match_list_three_arms() {
+        let compiler = Compiler::new();
+        let tree = compiler.compile(&String::from(
+            "? => \"true 1\", ? !=> \"false\", ? => \"true 2\"",
+        ));
+
+        let mut execution_context = SELExecutionContext::new();
+        execution_context.set_input(SELValue::new_from_boolean(false));
+
+        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let value: String = from_byte_vec(result.get_value().unwrap());
+
+        assert_eq!(result.get_type(), DataType::String);
+        assert_eq!(value, String::from("false"));
     }
 }
