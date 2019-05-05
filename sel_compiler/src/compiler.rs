@@ -1,4 +1,4 @@
-use super::sel_tree_builder::build_tree_from_string;
+use crate::build::build_tree_from_string;
 use sel_common::{SELContext, SELTree};
 
 pub struct Compiler {}
