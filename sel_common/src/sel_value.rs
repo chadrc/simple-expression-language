@@ -92,6 +92,7 @@ impl SELValue {
     }
 
     pub fn new_from_associative_list(list: AssociativeList) -> Self {
+        println!("new {:?}", list);
         return SELValue {
             data_type: DataType::AssociativeList,
             value: Some(to_byte_vec(list)),
@@ -165,6 +166,16 @@ impl std::fmt::Display for SELValue {
                 }
 
                 format!("{}", item_strs.join(", "))
+            }
+            DataType::AssociativeList => {
+                let list: AssociativeList = from_byte_vec(val.unwrap());
+                let mut item_strs: Vec<String> = vec![];
+
+                for item in list.get_list().get_values() {
+                    item_strs.push(wrap_format(&item, DataType::List));
+                }
+
+                format!("[ {} ]", item_strs.join(", "))
             }
             DataType::Unit => String::from("()"),
             _ => none_str,
@@ -275,6 +286,23 @@ mod tests {
         let formatted = format!("{}", result);
 
         assert_eq!(formatted, "100, 200, (300, 400, 500), 600, 700");
+    }
+
+    #[test]
+    fn display_associative_list() {
+        let mut list = AssociativeList::new();
+        list.push(SELValue::new_from_string(&String::from("value")));
+        list.push(SELValue::new_from_int(10));
+        list.push(SELValue::new_from_pair(Pair::new(
+            SELValue::new_from_symbol(Symbol::new(String::from("symbol"), 0)),
+            SELValue::new_from_int(90),
+        )));
+
+        let result = SELValue::new_from_associative_list(list);
+
+        let formatted = format!("{}", result);
+
+        assert_eq!(formatted, "[ \"value\", 10, :symbol = 90 ]");
     }
 
     #[test]
@@ -399,6 +427,26 @@ mod tests {
         let formatted = format!("{:?}", result);
 
         assert_eq!(formatted, "List - 100, 200, (300, 400, 500), 600, 700");
+    }
+
+    #[test]
+    fn debug_associative_list() {
+        let mut list = AssociativeList::new();
+        list.push(SELValue::new_from_string(&String::from("value")));
+        list.push(SELValue::new_from_int(10));
+        list.push(SELValue::new_from_pair(Pair::new(
+            SELValue::new_from_symbol(Symbol::new(String::from("symbol"), 0)),
+            SELValue::new_from_int(90),
+        )));
+
+        let result = SELValue::new_from_associative_list(list);
+
+        let formatted = format!("{:?}", result);
+
+        assert_eq!(
+            formatted,
+            "AssociativeList - [ \"value\", 10, :symbol = 90 ]"
+        );
     }
 
     #[test]
