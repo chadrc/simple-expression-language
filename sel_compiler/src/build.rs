@@ -6,7 +6,7 @@ use crate::resolve_tree::resolve_tree;
 use sel_common::{SELContext, SELTree};
 use sel_tokenizer::Tokenizer;
 
-fn build(s: &String, context: SELContext) -> SELTree {
+pub fn build_tree_from_string(s: &String, context: SELContext) -> SELTree {
     let mut context = context;
     let mut precedence_manager = PrecedenceManager::new();
     let mut tokenizer = Tokenizer::new(s);
@@ -51,8 +51,4 @@ fn build(s: &String, context: SELContext) -> SELTree {
         .collect();
 
     return SELTree::new(root, sub_roots, nodes, data, context);
-}
-
-pub fn build_tree_from_string(s: &String, context: SELContext) -> SELTree {
-    return build(s, context);
 }
