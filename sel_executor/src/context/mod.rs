@@ -1,4 +1,4 @@
-use super::opexec::SELExecutionResult;
+use crate::opexec::execution_result::SELExecutionResult;
 use sel_common::{SELContext, SELFunction, SELValue};
 use std::collections::HashMap;
 

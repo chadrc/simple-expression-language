@@ -4,8 +4,8 @@ mod opexec;
 #[cfg(test)]
 mod tests;
 
+use crate::opexec::execution_result::SELExecutionResult;
 pub use context::SELExecutionContext;
-pub use opexec::SELExecutionResult;
 use sel_common::{DataType, SELTree};
 
 pub fn execute_sel_tree(tree: &SELTree, context: &SELExecutionContext) -> Vec<SELExecutionResult> {

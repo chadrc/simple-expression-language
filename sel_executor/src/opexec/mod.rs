@@ -6,7 +6,7 @@ mod conditional;
 mod contains;
 mod division;
 mod equality;
-mod execution_result;
+pub mod execution_result;
 mod exponential;
 mod expression;
 mod greater_than;
@@ -33,7 +33,7 @@ mod utils;
 mod values_equal;
 
 use super::context::SELExecutionContext;
-pub use execution_result::SELExecutionResult;
+use crate::opexec::execution_result::SELExecutionResult;
 use sel_common::{DataType, Operation, SELTree, SELTreeNode};
 
 pub fn get_node_result(
