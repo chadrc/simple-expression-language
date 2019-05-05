@@ -189,11 +189,18 @@ pub fn pipe_last_right_operation(
 }
 
 pub fn pipe_last_left_operation(
-    _tree: &SELTree,
-    _node: &SELTreeNode,
-    _context: &SELExecutionContext,
+    tree: &SELTree,
+    node: &SELTreeNode,
+    context: &SELExecutionContext,
 ) -> SELExecutionResult {
-    return SELExecutionResult::new(DataType::Unknown, None);
+    return pipe_operation(
+        tree,
+        node,
+        node.get_right(),
+        node.get_left(),
+        context,
+        false,
+    );
 }
 
 #[cfg(test)]
@@ -528,6 +535,47 @@ mod tests {
         let execution_context = SELExecutionContext::from(&context);
 
         let tree = compiler.compile_with_context(&String::from("avg(30) <- 10, 20"), context);
+
+        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let value: i64 = from_byte_vec(result.get_value().unwrap());
+
+        assert_eq!(result.get_type(), DataType::Integer);
+        assert_eq!(value, 20);
+    }
+
+    #[test]
+    fn executes_pipe_last_left_exposed_function_with_multiple_pipe_values() {
+        let compiler = Compiler::new();
+        let mut context = SELContext::new();
+
+        context.register_function("avg", |sel_value, symbol_table| {
+            match sel_value.get_type() {
+                DataType::List => {
+                    let list: List = from_byte_vec(sel_value.get_value().unwrap());
+
+                    let ints: Vec<i64> = list
+                        .get_values()
+                        .iter()
+                        .map(|sel_value| from_byte_vec::<i64>(sel_value.get_value().unwrap()))
+                        .collect();
+
+                    assert_eq!(*ints.get(0).unwrap(), 10);
+                    assert_eq!(*ints.get(1).unwrap(), 20);
+                    assert_eq!(*ints.get(2).unwrap(), 30);
+
+                    let total = ints.iter().fold(0 as i64, |result, i| i + result);
+
+                    let avg = total / list.get_values().len() as i64;
+
+                    SELValue::new_from_int(avg)
+                }
+                _ => SELValue::new(),
+            }
+        });
+
+        let execution_context = SELExecutionContext::from(&context);
+
+        let tree = compiler.compile_with_context(&String::from("avg(10) <| 20, 30"), context);
 
         let result = get_node_result(&tree, tree.get_root(), &execution_context);
         let value: i64 = from_byte_vec(result.get_value().unwrap());
