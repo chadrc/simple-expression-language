@@ -32,6 +32,54 @@ pub fn apply_changes(nodes: &mut Vec<SELTreeNode>, changes: Vec<Change>) {
     }
 }
 
+fn is_match(op: Operation) -> bool {
+    return op == Operation::MatchTrue || op == Operation::MatchFalse;
+}
+
+pub fn promote_match_lists(nodes: Vec<SELTreeNode>, list_indices: &Vec<usize>) -> Vec<SELTreeNode> {
+    let mut nodes = nodes;
+    let mut to_update: Vec<usize> = vec![];
+
+    for index in list_indices {
+        let index = *index;
+
+        let update = nodes
+            .get(index)
+            .and_then(|node| {
+                node.get_left()
+                    .and_then(|left_index| nodes.get(left_index))
+                    .map(|left_node| {
+                        if is_match(left_node.get_operation()) {
+                            true
+                        } else {
+                            node.get_right()
+                                .and_then(|right_index| nodes.get(right_index))
+                                .map(|right_node| is_match(right_node.get_operation()))
+                                .unwrap_or(false)
+                        }
+                    })
+            })
+            .unwrap_or(false);
+
+        if update {
+            to_update.push(index);
+        }
+    }
+
+    {
+        let nodes = &mut nodes;
+
+        for index in to_update {
+            nodes.get_mut(index).and_then(|node| {
+                node.set_operation(Operation::MatchList);
+                Some(true)
+            });
+        }
+    }
+
+    nodes
+}
+
 pub fn get_operation_type_for_token(token: &Token) -> Operation {
     return match token.get_token_type() {
         TokenType::PlusSign => Operation::Addition,

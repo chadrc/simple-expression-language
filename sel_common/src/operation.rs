@@ -48,5 +48,6 @@ pub enum Operation {
     PipeLastLeft,
     MatchTrue,
     MatchFalse,
+    MatchList,
     None,
 }

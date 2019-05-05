@@ -76,6 +76,10 @@ impl SELTreeNode {
     pub fn set_value(&mut self, value: Option<usize>) {
         self.value = value;
     }
+
+    pub fn set_operation(&mut self, op: Operation) {
+        self.operation = op;
+    }
 }
 
 #[derive(Debug)]

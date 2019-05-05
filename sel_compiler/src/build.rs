@@ -1,8 +1,9 @@
 use crate::find_root::find_root_index;
 use crate::group_handling::{correct_group, identifier_call_check, update_group};
-use crate::precedence_manager::{PrecedenceManager, RIGHT_TO_LEFT_PRECEDENCES};
+use crate::precedence_manager::{PrecedenceManager, LIST_PRECEDENCE, RIGHT_TO_LEFT_PRECEDENCES};
 use crate::process_tokens::make_nodes_from_tokenizer;
 use crate::resolve_tree::resolve_tree;
+use crate::utils::promote_match_lists;
 use sel_common::{DataHeap, Operation, SELContext, SELSubTree, SELTree, SELTreeNode};
 use sel_tokenizer::Tokenizer;
 use std::collections::HashSet;
@@ -37,6 +38,8 @@ pub fn build_tree_from_string(s: &String, context: SELContext) -> SELTree {
                 let right_to_left = RIGHT_TO_LEFT_PRECEDENCES.contains(&(i + 2));
                 nodes = resolve_tree(&precedence_manager, nodes, &bucket, right_to_left);
             }
+
+            nodes = promote_match_lists(nodes, group.get_members().get(LIST_PRECEDENCE).unwrap());
 
             if index != 0 {
                 let updated_result = update_group(nodes, group);

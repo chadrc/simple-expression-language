@@ -1,6 +1,7 @@
 mod associative_list;
 mod call;
 mod comment;
+mod conditional;
 mod expressions;
 mod groups;
 mod multi_expr;
