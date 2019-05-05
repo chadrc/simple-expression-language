@@ -1,9 +1,10 @@
 use super::SELExecutionContext;
 use crate::opexec::execution_result::SELExecutionResult;
 use crate::opexec::get_node_result;
-use sel_common::{
-    from_byte_vec, AssociativeList, DataType, List, Pair, SELTree, SELTreeNode, SELValue,
-};
+use sel_common::sel_types::associative_list::AssociativeList;
+use sel_common::sel_types::list::List;
+use sel_common::sel_types::pair::Pair;
+use sel_common::{from_byte_vec, DataType, SELTree, SELTreeNode, SELValue};
 
 fn get_identifier(node: &SELTreeNode, tree: &SELTree) -> String {
     node.get_right()
@@ -100,7 +101,8 @@ pub fn dot_access_operation(
 #[cfg(test)]
 mod tests {
     use super::super::{get_node_result, SELExecutionContext};
-    use sel_common::{from_byte_vec, DataType, Symbol};
+    use sel_common::sel_types::symbol::Symbol;
+    use sel_common::{from_byte_vec, DataType};
     use sel_compiler::Compiler;
 
     #[test]

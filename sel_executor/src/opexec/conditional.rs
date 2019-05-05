@@ -4,7 +4,7 @@ use crate::opexec::get_node_result;
 use crate::opexec::utils::{
     get_left_right_results, get_value_from_result, get_values_from_results, match_equality_ops,
 };
-use sel_common::{to_byte_vec, AssociativeList, DataType, SELTree, SELTreeNode};
+use sel_common::{to_byte_vec, DataType, SELTree, SELTreeNode};
 
 fn match_bool(
     tree: &SELTree,

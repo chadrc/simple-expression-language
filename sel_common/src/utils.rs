@@ -1,4 +1,9 @@
-use super::sel_types::{AssociativeList, Expression, List, Pair, Range, Symbol};
+use crate::sel_types::associative_list::AssociativeList;
+use crate::sel_types::expression::Expression;
+use crate::sel_types::list::List;
+use crate::sel_types::pair::Pair;
+use crate::sel_types::range::Range;
+use crate::sel_types::symbol::Symbol;
 use bincode::{deserialize, serialize};
 
 pub trait ToByteVec {

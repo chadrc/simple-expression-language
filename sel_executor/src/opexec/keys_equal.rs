@@ -1,7 +1,8 @@
 use super::super::context::SELExecutionContext;
 use crate::opexec::execution_result::SELExecutionResult;
 use crate::opexec::utils::{get_left_right_results, get_values_from_results, match_equality_ops};
-use sel_common::{to_byte_vec, AssociativeList, DataType, SELTree, SELTreeNode};
+use sel_common::sel_types::associative_list::AssociativeList;
+use sel_common::{to_byte_vec, DataType, SELTree, SELTreeNode};
 
 fn keys_equal_operation(
     tree: &SELTree,

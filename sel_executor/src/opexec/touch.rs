@@ -1,6 +1,7 @@
 use super::super::context::SELExecutionContext;
 use super::execution_result::SELExecutionResult;
-use sel_common::{to_byte_vec, DataType, SELTree, SELTreeNode, Symbol};
+use sel_common::sel_types::symbol::Symbol;
+use sel_common::{to_byte_vec, DataType, SELTree, SELTreeNode};
 
 pub fn operation(
     tree: &SELTree,

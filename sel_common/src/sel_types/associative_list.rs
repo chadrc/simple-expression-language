@@ -1,6 +1,7 @@
 use crate::sel_types::list::List;
 use crate::sel_types::pair::Pair;
 use crate::sel_types::symbol::Symbol;
+use crate::sel_value::*;
 use crate::{from_byte_vec, DataType, SELValue};
 use std::collections::HashMap;
 

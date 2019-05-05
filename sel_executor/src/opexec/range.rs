@@ -1,10 +1,11 @@
-use sel_common::{to_byte_vec, DataType, Range, SELTree, SELTreeNode};
+use sel_common::{to_byte_vec, DataType, SELTree, SELTreeNode};
 
 use crate::opexec::utils::get_values_from_results;
 
 use super::execution_result::SELExecutionResult;
 use super::utils::get_left_right_results;
 use super::SELExecutionContext;
+use sel_common::sel_types::range::Range;
 
 fn range_operation(
     tree: &SELTree,

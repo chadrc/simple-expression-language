@@ -3,9 +3,10 @@ use crate::opexec::execution_result::SELExecutionResult;
 use crate::opexec::utils::{
     get_left_right_results, get_value_from_result, get_values_from_results, match_equality_ops,
 };
-use sel_common::{
-    from_byte_vec, to_byte_vec, AssociativeList, DataType, List, Pair, SELTree, SELTreeNode,
-};
+use sel_common::sel_types::associative_list::AssociativeList;
+use sel_common::sel_types::list::List;
+use sel_common::sel_types::pair::Pair;
+use sel_common::{from_byte_vec, to_byte_vec, DataType, SELTree, SELTreeNode};
 
 fn contains(
     tree: &SELTree,

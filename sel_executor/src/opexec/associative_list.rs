@@ -1,9 +1,8 @@
 use super::execution_result::SELExecutionResult;
 use super::{get_node_result, SELExecutionContext};
-use sel_common::{
-    from_byte_vec, to_byte_vec, AssociativeList, DataType, List, Pair, SELTree, SELTreeNode,
-    SELValue, Symbol,
-};
+use sel_common::sel_types::associative_list::AssociativeList;
+use sel_common::sel_types::list::List;
+use sel_common::{from_byte_vec, to_byte_vec, DataType, SELTree, SELTreeNode, SELValue};
 
 pub fn operation(
     tree: &SELTree,
@@ -54,6 +53,8 @@ mod tests {
 
     use super::super::super::execute_sel_tree;
     use super::*;
+    use sel_common::sel_types::pair::Pair;
+    use sel_common::sel_types::symbol::Symbol;
 
     #[test]
     fn executes_associative_list_from_single_integer_value() {

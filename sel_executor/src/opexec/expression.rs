@@ -1,10 +1,8 @@
 use super::SELExecutionContext;
 use crate::opexec::execution_result::SELExecutionResult;
 use crate::opexec::get_node_result;
-use sel_common::{
-    from_byte_vec, to_byte_vec, DataType, Expression, List, Operation, SELTree, SELTreeNode,
-    SELValue,
-};
+use sel_common::sel_types::expression::Expression;
+use sel_common::{from_byte_vec, to_byte_vec, DataType, Operation, SELTree, SELTreeNode, SELValue};
 
 pub fn operation(
     tree: &SELTree,
@@ -26,7 +24,8 @@ pub fn operation(
 #[cfg(test)]
 mod tests {
     use super::super::{get_node_result, SELExecutionContext};
-    use sel_common::{from_byte_vec, DataType, Expression, List, SELValue};
+    use sel_common::sel_types::expression::Expression;
+    use sel_common::{from_byte_vec, DataType, SELValue};
     use sel_compiler::Compiler;
 
     #[test]

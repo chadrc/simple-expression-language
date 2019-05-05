@@ -1,9 +1,8 @@
 use super::SELExecutionContext;
 use crate::opexec::execution_result::SELExecutionResult;
 use crate::opexec::get_node_result;
-use sel_common::{
-    from_byte_vec, to_byte_vec, DataType, List, Operation, SELTree, SELTreeNode, SELValue,
-};
+use sel_common::sel_types::list::List;
+use sel_common::{from_byte_vec, to_byte_vec, DataType, Operation, SELTree, SELTreeNode, SELValue};
 
 fn add_value_to_list(value: SELValue, list: &mut List) {
     if value.get_type() == DataType::List {
@@ -64,7 +63,8 @@ pub fn operation(
 #[cfg(test)]
 mod tests {
     use super::super::{get_node_result, SELExecutionContext};
-    use sel_common::{from_byte_vec, DataType, List, SELValue};
+    use sel_common::sel_types::list::List;
+    use sel_common::{from_byte_vec, DataType, SELValue};
     use sel_compiler::Compiler;
 
     #[test]

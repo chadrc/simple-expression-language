@@ -1,5 +1,8 @@
-use super::sel_types::{List, Pair, Range, Symbol};
 use super::{from_byte_vec, to_byte_vec, DataType};
+use crate::sel_types::list::List;
+use crate::sel_types::pair::Pair;
+use crate::sel_types::range::Range;
+use crate::sel_types::symbol::Symbol;
 use core::fmt::Debug;
 use std::fmt;
 

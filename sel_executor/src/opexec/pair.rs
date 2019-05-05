@@ -1,9 +1,10 @@
-use sel_common::{to_byte_vec, DataType, Pair, SELTree, SELTreeNode};
+use sel_common::{to_byte_vec, DataType, SELTree, SELTreeNode};
 
 use super::utils::get_left_right_results;
 
 use super::super::context::SELExecutionContext;
 use super::execution_result::SELExecutionResult;
+use sel_common::sel_types::pair::Pair;
 
 pub fn operation(
     tree: &SELTree,
@@ -20,11 +21,12 @@ pub fn operation(
 
 #[cfg(test)]
 mod tests {
-    use sel_common::{from_byte_vec, DataType, SELContext, Symbol};
+    use sel_common::{from_byte_vec, DataType, SELContext};
     use sel_compiler::Compiler;
 
     use super::super::get_node_result;
     use super::*;
+    use sel_common::sel_types::symbol::Symbol;
 
     #[test]
     fn executes_pair() {
