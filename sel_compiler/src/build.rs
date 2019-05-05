@@ -5,6 +5,7 @@ use crate::process_tokens::make_nodes_from_tokenizer;
 use crate::resolve_tree::resolve_tree;
 use sel_common::{SELContext, SELTree};
 use sel_tokenizer::Tokenizer;
+use std::collections::HashSet;
 
 pub fn build_tree_from_string(s: &String, context: SELContext) -> SELTree {
     let mut context = context;
@@ -14,6 +15,8 @@ pub fn build_tree_from_string(s: &String, context: SELContext) -> SELTree {
         make_nodes_from_tokenizer(&mut precedence_manager, &mut tokenizer, &mut context);
 
     let precedence_groups = precedence_manager.get_group_tiers();
+
+    let mut sub_root_ban_set: HashSet<usize> = HashSet::new();
 
     for (index, tier) in precedence_groups.iter().enumerate().rev() {
         for group in tier.iter().rev() {
@@ -36,9 +39,27 @@ pub fn build_tree_from_string(s: &String, context: SELContext) -> SELTree {
 
             if index != 0 {
                 nodes = update_group(nodes, group);
+
+                // if this is an expression group
+                // create a sub tree
+
+                // find sub roots for this expression
+                // by extracting all sub roots that are between
+                // group.get_first() ..= group.get_last()
+                // add found sub roots to a black set, so they are ignored by later expressions
+
+                println!("checking sub roots for group {:?}", group);
+                for sub_root in firsts_of_expression.iter() {
+                    let sub_root = *sub_root;
+                    if group.get_first() <= sub_root && sub_root <= group.get_last() {
+                        sub_root_ban_set.insert(sub_root);
+                    }
+                }
             }
         }
     }
+
+    println!("final ban set {:?}", sub_root_ban_set);
 
     // firsts of group doesn't contain very first
     // we find this one by starting at 0
@@ -47,6 +68,7 @@ pub fn build_tree_from_string(s: &String, context: SELContext) -> SELTree {
     // collect remaining roots by transforming firsts of group
     let sub_roots: Vec<usize> = firsts_of_expression
         .iter()
+        .filter(|sub_root| !sub_root_ban_set.contains(sub_root))
         .map(|first| find_root_index(&nodes, Some(*first)))
         .collect();
 

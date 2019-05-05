@@ -28,6 +28,7 @@ const PIPE_LEFT_PRECEDENCE: usize = PIPE_RIGHT_PRECEDENCE + 1;
 
 pub const RIGHT_TO_LEFT_PRECEDENCES: [usize; 1] = [PAIR_PRECEDENCE];
 
+#[derive(Debug)]
 pub struct PrecedenceGroup {
     parent: usize,
     first: usize,

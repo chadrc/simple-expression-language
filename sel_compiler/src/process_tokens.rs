@@ -3,8 +3,17 @@ use crate::utils::{get_data_type_for_token, get_operation_type_for_token};
 use sel_common::{DataHeap, DataType, Operation, SELContext, SELTreeNode};
 use sel_tokenizer::{TokenType, Tokenizer};
 
+const TERMINABLE_OPS: [Operation; 6] = [
+    Operation::Touch,
+    Operation::Input,
+    Operation::CurrentResult,
+    Operation::Group,
+    Operation::Expression,
+    Operation::AssociativeList,
+];
+
 fn op_is_terminable(op: Operation) -> bool {
-    return op == Operation::Touch || op == Operation::Input || op == Operation::CurrentResult;
+    return TERMINABLE_OPS.contains(&op);
 }
 
 pub fn make_nodes_from_tokenizer(
