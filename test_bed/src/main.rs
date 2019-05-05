@@ -51,52 +51,58 @@ fn main() {
         context.set_decimal_symbol(&String::from("PI"), PI);
         context.set_decimal_symbol(&String::from("E"), E);
 
-        context.register_function("sin", |sel_value| match sel_value.get_type() {
-            DataType::Integer => sel_value
-                .get_value()
-                .map(|bytes| from_byte_vec::<i64>(bytes))
-                .map_or(SELValue::new(), |val| {
-                    SELValue::new_from_decimal(f64::sin(val as f64))
-                }),
-            DataType::Decimal => sel_value
-                .get_value()
-                .map(|bytes| from_byte_vec::<f64>(bytes))
-                .map_or(SELValue::new(), |val| {
-                    SELValue::new_from_decimal(f64::sin(val))
-                }),
-            _ => SELValue::new(),
+        context.register_function("sin", |sel_value, symbol_table| {
+            match sel_value.get_type() {
+                DataType::Integer => sel_value
+                    .get_value()
+                    .map(|bytes| from_byte_vec::<i64>(bytes))
+                    .map_or(SELValue::new(), |val| {
+                        SELValue::new_from_decimal(f64::sin(val as f64))
+                    }),
+                DataType::Decimal => sel_value
+                    .get_value()
+                    .map(|bytes| from_byte_vec::<f64>(bytes))
+                    .map_or(SELValue::new(), |val| {
+                        SELValue::new_from_decimal(f64::sin(val))
+                    }),
+                _ => SELValue::new(),
+            }
         });
 
-        context.register_function("cos", |sel_value| match sel_value.get_type() {
-            DataType::Integer => sel_value
-                .get_value()
-                .map(|bytes| from_byte_vec::<i64>(bytes))
-                .map_or(SELValue::new(), |val| {
-                    SELValue::new_from_decimal(f64::cos(val as f64))
-                }),
-            DataType::Decimal => sel_value
-                .get_value()
-                .map(|bytes| from_byte_vec::<f64>(bytes))
-                .map_or(SELValue::new(), |val| {
-                    SELValue::new_from_decimal(f64::cos(val))
-                }),
-            _ => SELValue::new(),
+        context.register_function("cos", |sel_value, symbol_table| {
+            match sel_value.get_type() {
+                DataType::Integer => sel_value
+                    .get_value()
+                    .map(|bytes| from_byte_vec::<i64>(bytes))
+                    .map_or(SELValue::new(), |val| {
+                        SELValue::new_from_decimal(f64::cos(val as f64))
+                    }),
+                DataType::Decimal => sel_value
+                    .get_value()
+                    .map(|bytes| from_byte_vec::<f64>(bytes))
+                    .map_or(SELValue::new(), |val| {
+                        SELValue::new_from_decimal(f64::cos(val))
+                    }),
+                _ => SELValue::new(),
+            }
         });
 
-        context.register_function("tan", |sel_value| match sel_value.get_type() {
-            DataType::Integer => sel_value
-                .get_value()
-                .map(|bytes| from_byte_vec::<i64>(bytes))
-                .map_or(SELValue::new(), |val| {
-                    SELValue::new_from_decimal(f64::tan(val as f64))
-                }),
-            DataType::Decimal => sel_value
-                .get_value()
-                .map(|bytes| from_byte_vec::<f64>(bytes))
-                .map_or(SELValue::new(), |val| {
-                    SELValue::new_from_decimal(f64::tan(val))
-                }),
-            _ => SELValue::new(),
+        context.register_function("tan", |sel_value, symbol_table| {
+            match sel_value.get_type() {
+                DataType::Integer => sel_value
+                    .get_value()
+                    .map(|bytes| from_byte_vec::<i64>(bytes))
+                    .map_or(SELValue::new(), |val| {
+                        SELValue::new_from_decimal(f64::tan(val as f64))
+                    }),
+                DataType::Decimal => sel_value
+                    .get_value()
+                    .map(|bytes| from_byte_vec::<f64>(bytes))
+                    .map_or(SELValue::new(), |val| {
+                        SELValue::new_from_decimal(f64::tan(val))
+                    }),
+                _ => SELValue::new(),
+            }
         });
 
         let compiler = sel_compiler::Compiler::new();

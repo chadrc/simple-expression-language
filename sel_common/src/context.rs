@@ -1,13 +1,24 @@
 use crate::{from_byte_vec, to_byte_vec, SELValue, SymbolTable};
 use std::collections::HashMap;
+use std::fmt::{Debug, Error, Formatter};
 
-pub type SELFunction = fn(SELValue) -> SELValue;
+pub type SELFunction = fn(SELValue, &SymbolTable) -> SELValue;
 
-#[derive(Debug)]
 pub struct SELContext {
     symbol_table: SymbolTable,
     symbol_values: HashMap<usize, SELValue>,
     functions: HashMap<String, SELFunction>,
+}
+
+impl Debug for SELContext {
+    fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
+        f.write_str(&format!(
+            "{:?} - {:?} - {:?}",
+            self.symbol_table,
+            self.symbol_values,
+            self.functions.keys()
+        ))
+    }
 }
 
 impl SELContext {

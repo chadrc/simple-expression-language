@@ -1,6 +1,8 @@
 use super::execution_result::SELExecutionResult;
 use super::{get_node_result, SELExecutionContext};
+use sel_common::sel_types::associative_list::AssociativeList;
 use sel_common::sel_types::expression::Expression;
+use sel_common::sel_types::list::List;
 use sel_common::{from_byte_vec, DataType, Operation, SELTree, SELTreeNode, SELValue};
 
 pub fn operation(
@@ -31,7 +33,12 @@ pub fn operation(
                                     // else map using the found function
                                     .map_or(
                                         Some(SELExecutionResult::from(&SELValue::new())),
-                                        |func| Some(SELExecutionResult::from(&func(sel_value))),
+                                        |func| {
+                                            Some(SELExecutionResult::from(&func(
+                                                sel_value,
+                                                tree.get_symbol_table(),
+                                            )))
+                                        },
                                     )
                             }
                             _ => {
@@ -72,7 +79,30 @@ pub fn operation(
             // attempt call op with result from right tree
             .and_then(|right_node| {
                 let result = get_node_result(tree, right_node, context);
-                call_result(result.get_sel_value().to_owned()).or(Some(result))
+
+                match result.get_type() {
+                    DataType::List => {
+                        let mut func_sel_value = result.get_sel_value().clone();
+                        let list: List = from_byte_vec(result.get_value().unwrap());
+                        // if there are any pairs in list
+                        // promote to associative array for function call
+                        for value in list.get_values() {
+                            if value.get_type() == DataType::Pair {
+                                func_sel_value = SELValue::new_from_associative_list(
+                                    AssociativeList::from(list),
+                                );
+                                break;
+                            }
+                        }
+
+                        println!("result {:?}", result);
+
+                        println!("value {:?}", func_sel_value);
+
+                        call_result(func_sel_value).or(Some(result))
+                    }
+                    _ => call_result(result.get_sel_value().to_owned()).or(Some(result)),
+                }
             }),
         // attempt call op with Unit value
         None => call_result(SELValue::new()),
@@ -88,6 +118,7 @@ mod tests {
 
     use super::super::super::execute_sel_tree;
     use super::*;
+    use sel_common::sel_types::associative_list::AssociativeList;
 
     #[test]
     fn executes_group() {
@@ -112,7 +143,7 @@ mod tests {
     fn executes_call() {
         let compiler = Compiler::new();
         let mut context = SELContext::new();
-        context.register_function("get_vars", |_sel_value: SELValue| {
+        context.register_function("get_vars", |_sel_value: SELValue, symbol_table| {
             SELValue::new_from_int(10)
         });
 
@@ -137,7 +168,7 @@ mod tests {
         let compiler = Compiler::new();
         let mut context = SELContext::new();
 
-        context.register_function("get_vars", |sel_value: SELValue| {
+        context.register_function("get_vars", |sel_value: SELValue, symbol_table| {
             let arg: i64 = sel_value.get_value().map_or(0, |val| from_byte_vec(val));
 
             SELValue::new_from_int(arg * 10)
@@ -157,6 +188,51 @@ mod tests {
 
         assert_eq!(first_result.get_type(), DataType::Integer);
         assert_eq!(first_result_value, Some(100));
+    }
+
+    #[test]
+    fn executes_call_with_single_associative_args() {
+        let compiler = Compiler::new();
+        let mut context = SELContext::new();
+
+        context.register_function("middle", |sel_value, symbol_table| {
+            let args: AssociativeList = from_byte_vec(sel_value.get_value().unwrap());
+
+            let first_value: i64 = from_byte_vec(
+                args.get_by_association_index(
+                    *symbol_table.get_value(&String::from("lower")).unwrap(),
+                )
+                .unwrap()
+                .get_value()
+                .unwrap(),
+            );
+
+            let second_value: i64 = from_byte_vec(
+                args.get_by_association_index(
+                    *symbol_table.get_value(&String::from("upper")).unwrap(),
+                )
+                .unwrap()
+                .get_value()
+                .unwrap(),
+            );
+
+            let value: i64 = (second_value - first_value) / 2 + first_value;
+
+            SELValue::new_from_int(value)
+        });
+
+        let execution_context = SELExecutionContext::from(&context);
+
+        let tree = compiler
+            .compile_with_context(&String::from("middle(:lower = 10, :upper = 20)"), context);
+
+        let results = execute_sel_tree(&tree, &execution_context);
+
+        let result = results.get(0).unwrap();
+        let result_value: i64 = from_byte_vec(result.get_value().unwrap());
+
+        assert_eq!(result.get_type(), DataType::Integer);
+        assert_eq!(result_value, 15);
     }
 
     #[test]

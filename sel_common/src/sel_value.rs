@@ -1,4 +1,5 @@
 use super::{from_byte_vec, to_byte_vec, DataType};
+use crate::sel_types::associative_list::AssociativeList;
 use crate::sel_types::list::List;
 use crate::sel_types::pair::Pair;
 use crate::sel_types::range::Range;
@@ -86,6 +87,13 @@ impl SELValue {
     pub fn new_from_list(list: List) -> Self {
         return SELValue {
             data_type: DataType::List,
+            value: Some(to_byte_vec(list)),
+        };
+    }
+
+    pub fn new_from_associative_list(list: AssociativeList) -> Self {
+        return SELValue {
+            data_type: DataType::AssociativeList,
             value: Some(to_byte_vec(list)),
         };
     }

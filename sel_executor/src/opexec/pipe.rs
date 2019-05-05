@@ -49,7 +49,12 @@ pub fn pipe_first_right_operation(
                                         .get_symbol(function_identifier_index)
                                 })
                                 .and_then(|function_symbol| context.get_function(function_symbol))
-                                .map(|func| SELExecutionResult::from(&func(value.clone())))
+                                .map(|func| {
+                                    SELExecutionResult::from(&func(
+                                        value.clone(),
+                                        tree.get_symbol_table(),
+                                    ))
+                                })
                         }
                         (Operation::Group, _) => {
                             // first get value of group
@@ -103,6 +108,7 @@ pub fn pipe_first_right_operation(
                                                 .map(|func| {
                                                     SELExecutionResult::from(&func(
                                                         SELValue::new_from_list(list),
+                                                        tree.get_symbol_table(),
                                                     ))
                                                 })
                                         })
@@ -185,14 +191,16 @@ mod tests {
         let compiler = Compiler::new();
         let mut context = SELContext::new();
 
-        context.register_function("is_even", |sel_value| match sel_value.get_type() {
-            DataType::Integer => {
-                let value: i64 = from_byte_vec(sel_value.get_value().unwrap());
-                let result = value % 2 == 0;
+        context.register_function("is_even", |sel_value, symbol_table| {
+            match sel_value.get_type() {
+                DataType::Integer => {
+                    let value: i64 = from_byte_vec(sel_value.get_value().unwrap());
+                    let result = value % 2 == 0;
 
-                SELValue::new_from_boolean(result)
+                    SELValue::new_from_boolean(result)
+                }
+                _ => SELValue::new(),
             }
-            _ => SELValue::new(),
         });
 
         let execution_context = SELExecutionContext::from(&context);
@@ -211,21 +219,23 @@ mod tests {
         let compiler = Compiler::new();
         let mut context = SELContext::new();
 
-        context.register_function("middle", |sel_value| match sel_value.get_type() {
-            DataType::List => {
-                let list: List = from_byte_vec(sel_value.get_value().unwrap());
+        context.register_function("middle", |sel_value, symbol_table| {
+            match sel_value.get_type() {
+                DataType::List => {
+                    let list: List = from_byte_vec(sel_value.get_value().unwrap());
 
-                let first_value: i64 =
-                    from_byte_vec(list.get_values().get(0).unwrap().get_value().unwrap());
+                    let first_value: i64 =
+                        from_byte_vec(list.get_values().get(0).unwrap().get_value().unwrap());
 
-                let second_value: i64 =
-                    from_byte_vec(list.get_values().get(1).unwrap().get_value().unwrap());
+                    let second_value: i64 =
+                        from_byte_vec(list.get_values().get(1).unwrap().get_value().unwrap());
 
-                let value: i64 = (second_value - first_value) / 2 + first_value;
+                    let value: i64 = (second_value - first_value) / 2 + first_value;
 
-                SELValue::new_from_int(value)
+                    SELValue::new_from_int(value)
+                }
+                _ => SELValue::new(),
             }
-            _ => SELValue::new(),
         });
 
         let execution_context = SELExecutionContext::from(&context);
@@ -244,23 +254,25 @@ mod tests {
         let compiler = Compiler::new();
         let mut context = SELContext::new();
 
-        context.register_function("avg", |sel_value| match sel_value.get_type() {
-            DataType::List => {
-                let list: List = from_byte_vec(sel_value.get_value().unwrap());
+        context.register_function("avg", |sel_value, symbol_table| {
+            match sel_value.get_type() {
+                DataType::List => {
+                    let list: List = from_byte_vec(sel_value.get_value().unwrap());
 
-                let mut result = 1;
+                    let mut result = 1;
 
-                let total = list
-                    .get_values()
-                    .iter()
-                    .map(|sel_value| from_byte_vec::<i64>(sel_value.get_value().unwrap()))
-                    .fold(0 as i64, |result, i| i + result);
+                    let total = list
+                        .get_values()
+                        .iter()
+                        .map(|sel_value| from_byte_vec::<i64>(sel_value.get_value().unwrap()))
+                        .fold(0 as i64, |result, i| i + result);
 
-                let avg = total / list.get_values().len() as i64;
+                    let avg = total / list.get_values().len() as i64;
 
-                SELValue::new_from_int(avg)
+                    SELValue::new_from_int(avg)
+                }
+                _ => SELValue::new(),
             }
-            _ => SELValue::new(),
         });
 
         let execution_context = SELExecutionContext::from(&context);
@@ -279,21 +291,23 @@ mod tests {
         let compiler = Compiler::new();
         let mut context = SELContext::new();
 
-        context.register_function("avg", |sel_value| match sel_value.get_type() {
-            DataType::List => {
-                let list: List = from_byte_vec(sel_value.get_value().unwrap());
+        context.register_function("avg", |sel_value, symbol_table| {
+            match sel_value.get_type() {
+                DataType::List => {
+                    let list: List = from_byte_vec(sel_value.get_value().unwrap());
 
-                let total = list
-                    .get_values()
-                    .iter()
-                    .map(|sel_value| from_byte_vec::<i64>(sel_value.get_value().unwrap()))
-                    .fold(0 as i64, |result, i| i + result);
+                    let total = list
+                        .get_values()
+                        .iter()
+                        .map(|sel_value| from_byte_vec::<i64>(sel_value.get_value().unwrap()))
+                        .fold(0 as i64, |result, i| i + result);
 
-                let avg = total / list.get_values().len() as i64;
+                    let avg = total / list.get_values().len() as i64;
 
-                SELValue::new_from_int(avg)
+                    SELValue::new_from_int(avg)
+                }
+                _ => SELValue::new(),
             }
-            _ => SELValue::new(),
         });
 
         let execution_context = SELExecutionContext::from(&context);
