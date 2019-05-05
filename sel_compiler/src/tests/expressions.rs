@@ -52,3 +52,35 @@ fn single_expression_block() {
     assert_eq!(r_right.get_operation(), Operation::Touch);
     assert_eq!(r_right.get_data_type(), DataType::Integer);
 }
+
+//#[test]
+//fn multi_line_nested_expression() {
+//    let input = String::from(
+//        "\
+//1
+//
+//{
+//    2
+//
+//    {
+//        3
+//
+//        4
+//    }
+//
+//    5
+//}
+//
+//6
+//",
+//    );
+//    let compiler = Compiler::new();
+//
+//    let tree = compiler.compile(&input);
+//
+//    println!("{:?}", tree);
+//
+//    assert_eq!(tree.get_sub_roots().len(), 3);
+//
+//    assert!(false);
+//}
