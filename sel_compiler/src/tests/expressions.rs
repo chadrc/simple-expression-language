@@ -79,8 +79,6 @@ fn multi_line_nested_expression_main_roots() {
 
     let tree = compiler.compile(&input);
 
-    println!("{:?}", tree);
-
     assert_eq!(tree.get_root().get_own_index(), 0);
     assert_eq!(tree.get_sub_roots().len(), 2);
     assert_eq!(*tree.get_sub_roots().get(0).unwrap(), 1);
@@ -113,8 +111,6 @@ fn multi_line_nested_expression_nested_expression_roots() {
 
     let tree = compiler.compile(&input);
 
-    println!("{:?}", tree);
-
     assert_eq!(tree.get_sub_trees().len(), 2);
 
     let sub_tree_1 = tree.get_sub_trees().get(0).unwrap();
@@ -131,4 +127,42 @@ fn multi_line_nested_expression_nested_expression_roots() {
     assert_eq!(*sub_tree_2.get_roots().get(0).unwrap(), 2);
     assert_eq!(*sub_tree_2.get_roots().get(1).unwrap(), 3);
     assert_eq!(*sub_tree_2.get_roots().get(2).unwrap(), 6);
+}
+
+#[test]
+fn multi_line_nested_expression_expression_value_is_sub_tree_index() {
+    let input = String::from(
+        "\
+1
+
+{
+    2
+
+    {
+        3
+
+        4
+    }
+
+    5
+}
+
+6
+",
+    );
+
+    let compiler = Compiler::new();
+
+    let tree = compiler.compile(&input);
+
+    let first_expr = tree.get_nodes().get(1).unwrap();
+    let second_expr = tree.get_nodes().get(3).unwrap();
+
+    let first_expr_value = tree.get_usize_value_of(first_expr).unwrap();
+    let second_expr_value = tree.get_usize_value_of(second_expr).unwrap();
+
+    // sub trees get inserted in evaluation order
+    // meaning the inner most expression blocks appear first
+    assert_eq!(first_expr_value, 1);
+    assert_eq!(second_expr_value, 0);
 }

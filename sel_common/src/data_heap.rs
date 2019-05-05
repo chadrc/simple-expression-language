@@ -42,6 +42,11 @@ impl DataHeap {
         Some(self.data.len() - 1)
     }
 
+    pub fn insert_usize(&mut self, value: usize) -> Option<usize> {
+        self.data.push(to_byte_vec(value));
+        Some(self.data.len() - 1)
+    }
+
     pub fn get_bytes(&self, index: usize) -> Option<Vec<u8>> {
         return match self.data.get(index) {
             Some(datum) => Some(datum.clone()),

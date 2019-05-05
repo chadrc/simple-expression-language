@@ -3,7 +3,7 @@ use crate::group_handling::{correct_group, identifier_call_check, update_group};
 use crate::precedence_manager::{PrecedenceManager, RIGHT_TO_LEFT_PRECEDENCES};
 use crate::process_tokens::make_nodes_from_tokenizer;
 use crate::resolve_tree::resolve_tree;
-use sel_common::{Operation, SELContext, SELSubTree, SELTree};
+use sel_common::{DataHeap, Operation, SELContext, SELSubTree, SELTree, SELTreeNode};
 use sel_tokenizer::Tokenizer;
 use std::collections::HashSet;
 
@@ -11,7 +11,7 @@ pub fn build_tree_from_string(s: &String, context: SELContext) -> SELTree {
     let mut context = context;
     let mut precedence_manager = PrecedenceManager::new();
     let mut tokenizer = Tokenizer::new(s);
-    let (mut nodes, data, firsts_of_expression) =
+    let (mut nodes, mut data, firsts_of_expression) =
         make_nodes_from_tokenizer(&mut precedence_manager, &mut tokenizer, &mut context);
 
     let precedence_groups = precedence_manager.get_group_tiers();
@@ -51,7 +51,6 @@ pub fn build_tree_from_string(s: &String, context: SELContext) -> SELTree {
                 // group.get_first() ..= group.get_last()
                 // add found sub roots to a black set, so they are ignored by later expressions
 
-                println!("checking sub roots for group {:?}", group);
                 let mut group_sub_roots: Vec<usize> = vec![];
 
                 for sub_root in firsts_of_expression.iter() {
@@ -65,19 +64,16 @@ pub fn build_tree_from_string(s: &String, context: SELContext) -> SELTree {
                     }
                 }
 
-                nodes
-                    .get(group.get_parent())
-                    .filter(|group_parent| group_parent.get_operation() == Operation::Expression)
-                    .and_then(|group_parent| {
-                        sub_trees.push(SELSubTree::new(group_sub_roots));
-
-                        Some(true)
-                    });
+                check_set_expression_sub_tree(
+                    &mut nodes,
+                    &mut data,
+                    &mut sub_trees,
+                    group_sub_roots,
+                    group.get_parent(),
+                );
             }
         }
     }
-
-    println!("final ban set {:?}", sub_root_ban_set);
 
     // firsts of group doesn't contain very first
     // we find this one by starting at 0
@@ -91,4 +87,25 @@ pub fn build_tree_from_string(s: &String, context: SELContext) -> SELTree {
         .collect();
 
     return SELTree::new(root, sub_trees, sub_roots, nodes, data, context);
+}
+
+fn check_set_expression_sub_tree(
+    nodes: &mut Vec<SELTreeNode>,
+    data: &mut DataHeap,
+    sub_trees: &mut Vec<SELSubTree>,
+    group_sub_roots: Vec<usize>,
+    expression_index: usize,
+) {
+    nodes
+        .get_mut(expression_index)
+        .filter(|group_parent| group_parent.get_operation() == Operation::Expression)
+        .and_then(|group_parent| {
+            sub_trees.push(SELSubTree::new(group_sub_roots));
+
+            let data_index = data.insert_usize(sub_trees.len() - 1);
+
+            group_parent.set_value(data_index);
+
+            Some(true)
+        });
 }
