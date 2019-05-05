@@ -849,10 +849,6 @@ On input or last result
 /// last result, implicit match on input
 $ > 3 => ? + 1
 /// 6
-
-10 ==> ? * 3
-/// 6 doesn't equal 10 so 6 is the output
-/// 6
 ```
 
 ### Match Lists
