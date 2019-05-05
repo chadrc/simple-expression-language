@@ -6,10 +6,11 @@ use sel_common::sel_types::associative_list::AssociativeList;
 use sel_common::sel_types::list::List;
 use sel_common::{from_byte_vec, DataType, Operation, SELTree, SELTreeNode, SELValue};
 
-pub fn pipe_first_right_operation(
+fn pipe_operation(
     tree: &SELTree,
     node: &SELTreeNode,
     context: &SELExecutionContext,
+    first: bool,
 ) -> SELExecutionResult {
     // first, get value of left
     // this is our value to pipe
@@ -90,7 +91,13 @@ pub fn pipe_first_right_operation(
                                             list = pipe_list;
                                         }
                                         // else we just insert at beginning
-                                        _ => list.insert(0, value.clone()),
+                                        _ => {
+                                            if first {
+                                                list.insert(0, value.clone())
+                                            } else {
+                                                list.push(value.clone())
+                                            }
+                                        }
                                     }
                                     println!("list {:?}", list);
 
@@ -144,6 +151,14 @@ pub fn pipe_first_right_operation(
         .unwrap_or(SELExecutionResult::new(DataType::Unknown, None))
 }
 
+pub fn pipe_first_right_operation(
+    tree: &SELTree,
+    node: &SELTreeNode,
+    context: &SELExecutionContext,
+) -> SELExecutionResult {
+    return pipe_operation(tree, node, context, true);
+}
+
 pub fn pipe_first_left_operation(
     _tree: &SELTree,
     _node: &SELTreeNode,
@@ -153,11 +168,11 @@ pub fn pipe_first_left_operation(
 }
 
 pub fn pipe_last_right_operation(
-    _tree: &SELTree,
-    _node: &SELTreeNode,
-    _context: &SELExecutionContext,
+    tree: &SELTree,
+    node: &SELTreeNode,
+    context: &SELExecutionContext,
 ) -> SELExecutionResult {
-    return SELExecutionResult::new(DataType::Unknown, None);
+    return pipe_operation(tree, node, context, false);
 }
 
 pub fn pipe_last_left_operation(
@@ -380,6 +395,44 @@ mod tests {
 
         let tree = compiler
             .compile_with_context(&String::from(":lower = 10 -> middle(:upper = 20)"), context);
+
+        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let value: i64 = from_byte_vec(result.get_value().unwrap());
+
+        assert_eq!(result.get_type(), DataType::Integer);
+        assert_eq!(value, 15);
+    }
+
+    #[test]
+    fn executes_pipe_last_right_exposed_function_with_arg() {
+        let compiler = Compiler::new();
+        let mut context = SELContext::new();
+
+        context.register_function("middle", |sel_value, symbol_table| {
+            match sel_value.get_type() {
+                DataType::List => {
+                    let list: List = from_byte_vec(sel_value.get_value().unwrap());
+
+                    let first_value: i64 =
+                        from_byte_vec(list.get_values().get(0).unwrap().get_value().unwrap());
+
+                    let second_value: i64 =
+                        from_byte_vec(list.get_values().get(1).unwrap().get_value().unwrap());
+
+                    assert_eq!(first_value, 10);
+                    assert_eq!(second_value, 20);
+
+                    let value: i64 = (second_value - first_value) / 2 + first_value;
+
+                    SELValue::new_from_int(value)
+                }
+                _ => SELValue::new(),
+            }
+        });
+
+        let execution_context = SELExecutionContext::from(&context);
+
+        let tree = compiler.compile_with_context(&String::from("20 |> middle(10)"), context);
 
         let result = get_node_result(&tree, tree.get_root(), &execution_context);
         let value: i64 = from_byte_vec(result.get_value().unwrap());
