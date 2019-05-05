@@ -95,10 +95,6 @@ pub fn operation(
                             }
                         }
 
-                        println!("result {:?}", result);
-
-                        println!("value {:?}", func_sel_value);
-
                         call_result(func_sel_value).or(Some(result))
                     }
                     _ => call_result(result.get_sel_value().to_owned()).or(Some(result)),

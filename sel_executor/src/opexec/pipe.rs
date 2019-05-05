@@ -2,6 +2,7 @@ use super::SELExecutionContext;
 use crate::opexec::execution_result::SELExecutionResult;
 use crate::opexec::get_node_result;
 use crate::opexec::utils::get_value_from_result;
+use sel_common::sel_types::associative_list::AssociativeList;
 use sel_common::sel_types::list::List;
 use sel_common::{from_byte_vec, DataType, Operation, SELTree, SELTreeNode, SELValue};
 
@@ -91,6 +92,23 @@ pub fn pipe_first_right_operation(
                                         // else we just insert at beginning
                                         _ => list.insert(0, value.clone()),
                                     }
+                                    println!("list {:?}", list);
+
+                                    let mut func_sel_value = SELValue::new_from_list(list.clone());
+                                    println!("value {:?}", func_sel_value);
+
+                                    // if there are any pairs in list
+                                    // promote to associative array for function call
+                                    for value in list.get_values() {
+                                        if value.get_type() == DataType::Pair {
+                                            func_sel_value = SELValue::new_from_associative_list(
+                                                AssociativeList::from(list),
+                                            );
+                                            break;
+                                        }
+                                    }
+
+                                    println!("value {:?}", func_sel_value);
 
                                     // use list as value to group's left side function
                                     right_node
@@ -107,7 +125,7 @@ pub fn pipe_first_right_operation(
                                                 })
                                                 .map(|func| {
                                                     SELExecutionResult::from(&func(
-                                                        SELValue::new_from_list(list),
+                                                        func_sel_value,
                                                         tree.get_symbol_table(),
                                                     ))
                                                 })
@@ -155,6 +173,7 @@ mod tests {
     use crate::opexec::execution_result::SELExecutionResult;
     use crate::opexec::get_node_result;
     use crate::SELExecutionContext;
+    use sel_common::sel_types::associative_list::AssociativeList;
     use sel_common::sel_types::list::List;
     use sel_common::{from_byte_vec, to_byte_vec, DataType, SELContext, SELValue};
     use sel_compiler::Compiler;
@@ -319,5 +338,53 @@ mod tests {
 
         assert_eq!(result.get_type(), DataType::Integer);
         assert_eq!(value, 20);
+    }
+
+    #[test]
+    fn executes_pipe_first_right_exposed_function_with_pair_pipe_value() {
+        let compiler = Compiler::new();
+        let mut context = SELContext::new();
+
+        context.register_function("middle", |sel_value, symbol_table| {
+            match sel_value.get_type() {
+                DataType::AssociativeList => {
+                    let args: AssociativeList = from_byte_vec(sel_value.get_value().unwrap());
+
+                    let first_value: i64 = from_byte_vec(
+                        args.get_by_association_index(
+                            *symbol_table.get_value(&String::from("lower")).unwrap(),
+                        )
+                        .unwrap()
+                        .get_value()
+                        .unwrap(),
+                    );
+
+                    let second_value: i64 = from_byte_vec(
+                        args.get_by_association_index(
+                            *symbol_table.get_value(&String::from("upper")).unwrap(),
+                        )
+                        .unwrap()
+                        .get_value()
+                        .unwrap(),
+                    );
+
+                    let value: i64 = (second_value - first_value) / 2 + first_value;
+
+                    SELValue::new_from_int(value)
+                }
+                _ => SELValue::new(),
+            }
+        });
+
+        let execution_context = SELExecutionContext::from(&context);
+
+        let tree = compiler
+            .compile_with_context(&String::from(":lower = 10 -> middle(:upper = 20)"), context);
+
+        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let value: i64 = from_byte_vec(result.get_value().unwrap());
+
+        assert_eq!(result.get_type(), DataType::Integer);
+        assert_eq!(value, 15);
     }
 }
