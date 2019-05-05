@@ -1,4 +1,5 @@
-use sel_common::{DataType, Operation};
+use crate::change::Change;
+use sel_common::{DataType, NodeSide, Operation, SELTreeNode};
 use sel_tokenizer::{Token, TokenType};
 
 pub fn loop_max<T>(max: usize, mut f: T)
@@ -16,6 +17,18 @@ where
         }
 
         loop_count += 1;
+    }
+}
+
+pub fn apply_changes(nodes: &mut Vec<SELTreeNode>, changes: Vec<Change>) {
+    for change in changes {
+        let node = nodes.get_mut(change.index_to_change).unwrap();
+
+        match change.side_to_set {
+            NodeSide::Left => node.set_left(change.new_index),
+            NodeSide::Right => node.set_right(change.new_index),
+            NodeSide::Parent => node.set_parent(change.new_index),
+        }
     }
 }
 

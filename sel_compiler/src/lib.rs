@@ -1,3 +1,4 @@
+mod change;
 mod compiler;
 mod precedence_manager;
 mod process_tokens;

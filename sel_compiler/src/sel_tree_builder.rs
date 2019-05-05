@@ -1,34 +1,11 @@
 use super::precedence_manager::{PrecedenceGroup, PrecedenceManager};
 use super::utils::{get_data_type_for_token, get_operation_type_for_token, loop_max};
+use crate::change::{none_left_right, Change};
 use crate::precedence_manager::RIGHT_TO_LEFT_PRECEDENCES;
 use crate::process_tokens::make_nodes_from_tokenizer;
+use crate::utils::apply_changes;
 use sel_common::{DataHeap, DataType, NodeSide, Operation, SELContext, SELTree, SELTreeNode};
 use sel_tokenizer::{TokenType, Tokenizer};
-
-#[derive(PartialEq, Debug, Clone, Copy)]
-struct Change {
-    index_to_change: usize,
-    new_index: Option<usize>,
-    side_to_set: NodeSide,
-}
-
-fn none_left_right(index: usize) -> Vec<Change> {
-    let mut changes: Vec<Change> = vec![];
-
-    changes.push(Change {
-        index_to_change: index,
-        new_index: None,
-        side_to_set: NodeSide::Left,
-    });
-
-    changes.push(Change {
-        index_to_change: index,
-        new_index: None,
-        side_to_set: NodeSide::Right,
-    });
-
-    return changes;
-}
 
 struct SELTreeBuilder {}
 
@@ -155,7 +132,7 @@ impl SELTreeBuilder {
         }
 
         {
-            SELTreeBuilder::apply_changes(&mut nodes, changes)
+            apply_changes(&mut nodes, changes)
         }
 
         return nodes;
@@ -233,7 +210,7 @@ impl SELTreeBuilder {
                 None
             });
 
-        SELTreeBuilder::apply_changes(&mut nodes, changes);
+        apply_changes(&mut nodes, changes);
 
         nodes
     }
@@ -288,7 +265,7 @@ impl SELTreeBuilder {
                 Some(true)
             });
 
-        SELTreeBuilder::apply_changes(&mut nodes, changes);
+        apply_changes(&mut nodes, changes);
 
         nodes
     }
@@ -339,21 +316,9 @@ impl SELTreeBuilder {
             });
         }
 
-        SELTreeBuilder::apply_changes(&mut nodes, changes);
+        apply_changes(&mut nodes, changes);
 
         nodes
-    }
-
-    fn apply_changes(nodes: &mut Vec<SELTreeNode>, changes: Vec<Change>) {
-        for change in changes {
-            let node = nodes.get_mut(change.index_to_change).unwrap();
-
-            match change.side_to_set {
-                NodeSide::Left => node.set_left(change.new_index),
-                NodeSide::Right => node.set_right(change.new_index),
-                NodeSide::Parent => node.set_parent(change.new_index),
-            }
-        }
     }
 
     fn build(&mut self, s: &String, context: SELContext) -> SELTree {
