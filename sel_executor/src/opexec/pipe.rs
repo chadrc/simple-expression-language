@@ -9,12 +9,14 @@ use sel_common::{from_byte_vec, DataType, Operation, SELTree, SELTreeNode, SELVa
 fn pipe_operation(
     tree: &SELTree,
     node: &SELTreeNode,
+    pipe_value_index: Option<usize>,
+    expression_index: Option<usize>,
     context: &SELExecutionContext,
     first: bool,
 ) -> SELExecutionResult {
     // first, get value of left
     // this is our value to pipe
-    node.get_left()
+    pipe_value_index
         .and_then(|left_index| tree.get_nodes().get(left_index))
         .map(|left_node| get_node_result(tree, left_node, context))
         .map(|left_result| {
@@ -22,7 +24,7 @@ fn pipe_operation(
 
             // get right node
             // should be the root of an expression to execute
-            node.get_right()
+            expression_index
                 .and_then(|right_index| tree.get_nodes().get(right_index))
                 .and_then(|right_node| {
                     // make new context with value to pipe as input
@@ -160,15 +162,15 @@ pub fn pipe_first_right_operation(
     node: &SELTreeNode,
     context: &SELExecutionContext,
 ) -> SELExecutionResult {
-    return pipe_operation(tree, node, context, true);
+    return pipe_operation(tree, node, node.get_left(), node.get_right(), context, true);
 }
 
 pub fn pipe_first_left_operation(
-    _tree: &SELTree,
-    _node: &SELTreeNode,
-    _context: &SELExecutionContext,
+    tree: &SELTree,
+    node: &SELTreeNode,
+    context: &SELExecutionContext,
 ) -> SELExecutionResult {
-    return SELExecutionResult::new(DataType::Unknown, None);
+    return pipe_operation(tree, node, node.get_right(), node.get_left(), context, true);
 }
 
 pub fn pipe_last_right_operation(
@@ -176,7 +178,14 @@ pub fn pipe_last_right_operation(
     node: &SELTreeNode,
     context: &SELExecutionContext,
 ) -> SELExecutionResult {
-    return pipe_operation(tree, node, context, false);
+    return pipe_operation(
+        tree,
+        node,
+        node.get_left(),
+        node.get_right(),
+        context,
+        false,
+    );
 }
 
 pub fn pipe_last_left_operation(
@@ -478,6 +487,47 @@ mod tests {
         let execution_context = SELExecutionContext::from(&context);
 
         let tree = compiler.compile_with_context(&String::from("20, 30 |> avg(10)"), context);
+
+        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let value: i64 = from_byte_vec(result.get_value().unwrap());
+
+        assert_eq!(result.get_type(), DataType::Integer);
+        assert_eq!(value, 20);
+    }
+
+    #[test]
+    fn executes_pipe_first_left_exposed_function_with_multiple_pipe_values() {
+        let compiler = Compiler::new();
+        let mut context = SELContext::new();
+
+        context.register_function("avg", |sel_value, symbol_table| {
+            match sel_value.get_type() {
+                DataType::List => {
+                    let list: List = from_byte_vec(sel_value.get_value().unwrap());
+
+                    let ints: Vec<i64> = list
+                        .get_values()
+                        .iter()
+                        .map(|sel_value| from_byte_vec::<i64>(sel_value.get_value().unwrap()))
+                        .collect();
+
+                    assert_eq!(*ints.get(0).unwrap(), 10);
+                    assert_eq!(*ints.get(1).unwrap(), 20);
+                    assert_eq!(*ints.get(2).unwrap(), 30);
+
+                    let total = ints.iter().fold(0 as i64, |result, i| i + result);
+
+                    let avg = total / list.get_values().len() as i64;
+
+                    SELValue::new_from_int(avg)
+                }
+                _ => SELValue::new(),
+            }
+        });
+
+        let execution_context = SELExecutionContext::from(&context);
+
+        let tree = compiler.compile_with_context(&String::from("avg(30) <- 10, 20"), context);
 
         let result = get_node_result(&tree, tree.get_root(), &execution_context);
         let value: i64 = from_byte_vec(result.get_value().unwrap());
