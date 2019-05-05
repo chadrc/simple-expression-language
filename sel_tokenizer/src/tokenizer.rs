@@ -69,18 +69,6 @@ impl<'a> Tokenizer<'a> {
         symbol_tree.attach("~", TokenType::Partial);
         symbol_tree.attach("=>", TokenType::MatchTrue);
         symbol_tree.attach("!=>", TokenType::MatchFalse);
-        symbol_tree.attach("==>", TokenType::MatchEqual);
-        symbol_tree.attach("!==>", TokenType::MatchNotEqual);
-        symbol_tree.attach("<=>", TokenType::MatchLessThan);
-        symbol_tree.attach("<==>", TokenType::MatchLessThanEqual);
-        symbol_tree.attach(">=>", TokenType::MatchGreaterThan);
-        symbol_tree.attach(">==>", TokenType::MatchGreaterThanEqual);
-        symbol_tree.attach(":=>", TokenType::MatchKeysEqual);
-        symbol_tree.attach(":!=>", TokenType::MatchKeysNotEqual);
-        symbol_tree.attach("$=>", TokenType::MatchValuesEqual);
-        symbol_tree.attach("$!=>", TokenType::MatchValuesNotEqual);
-        symbol_tree.attach("~=>", TokenType::MatchContains);
-        symbol_tree.attach("~!=>", TokenType::MatchNotContains);
 
         return Tokenizer {
             current_token: String::new(),

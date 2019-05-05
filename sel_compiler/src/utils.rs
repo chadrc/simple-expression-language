@@ -79,18 +79,6 @@ pub fn get_operation_type_for_token(token: &Token) -> Operation {
         TokenType::PipeLastLeft => Operation::PipeLastLeft,
         TokenType::MatchTrue => Operation::MatchTrue,
         TokenType::MatchFalse => Operation::MatchFalse,
-        TokenType::MatchEqual => Operation::MatchEqual,
-        TokenType::MatchNotEqual => Operation::MatchNotEqual,
-        TokenType::MatchLessThan => Operation::MatchLessThan,
-        TokenType::MatchLessThanEqual => Operation::MatchLessThanEqual,
-        TokenType::MatchGreaterThan => Operation::MatchGreaterThan,
-        TokenType::MatchGreaterThanEqual => Operation::MatchGreaterThanEqual,
-        TokenType::MatchKeysEqual => Operation::MatchKeysEqual,
-        TokenType::MatchKeysNotEqual => Operation::MatchKeysNotEqual,
-        TokenType::MatchValuesEqual => Operation::MatchValuesEqual,
-        TokenType::MatchValuesNotEqual => Operation::MatchValuesNotEqual,
-        TokenType::MatchContains => Operation::MatchContains,
-        TokenType::MatchNotContains => Operation::MatchNotContains,
         TokenType::Boolean
         | TokenType::Integer
         | TokenType::Decimal

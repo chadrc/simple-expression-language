@@ -165,18 +165,6 @@ impl PrecedenceManager {
 
         operation_priorities.insert(Operation::MatchTrue, MATCH_PRECEDENCE);
         operation_priorities.insert(Operation::MatchFalse, MATCH_PRECEDENCE);
-        operation_priorities.insert(Operation::MatchEqual, MATCH_PRECEDENCE);
-        operation_priorities.insert(Operation::MatchNotEqual, MATCH_PRECEDENCE);
-        operation_priorities.insert(Operation::MatchLessThan, MATCH_PRECEDENCE);
-        operation_priorities.insert(Operation::MatchLessThanEqual, MATCH_PRECEDENCE);
-        operation_priorities.insert(Operation::MatchGreaterThan, MATCH_PRECEDENCE);
-        operation_priorities.insert(Operation::MatchGreaterThanEqual, MATCH_PRECEDENCE);
-        operation_priorities.insert(Operation::MatchKeysEqual, MATCH_PRECEDENCE);
-        operation_priorities.insert(Operation::MatchKeysNotEqual, MATCH_PRECEDENCE);
-        operation_priorities.insert(Operation::MatchValuesEqual, MATCH_PRECEDENCE);
-        operation_priorities.insert(Operation::MatchValuesNotEqual, MATCH_PRECEDENCE);
-        operation_priorities.insert(Operation::MatchContains, MATCH_PRECEDENCE);
-        operation_priorities.insert(Operation::MatchNotContains, MATCH_PRECEDENCE);
 
         operation_priorities.insert(Operation::PipeFirstRight, PIPE_RIGHT_PRECEDENCE);
         operation_priorities.insert(Operation::PipeLastRight, PIPE_RIGHT_PRECEDENCE);
