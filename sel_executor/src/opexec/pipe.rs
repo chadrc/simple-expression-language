@@ -2,6 +2,7 @@ use super::SELExecutionContext;
 use crate::opexec::execution_result::SELExecutionResult;
 use crate::opexec::get_node_result;
 use crate::opexec::utils::get_value_from_result;
+use sel_common::sel_types::list::List;
 use sel_common::{DataType, Operation, SELTree, SELTreeNode, SELValue};
 
 pub fn pipe_first_right_operation(
@@ -50,6 +51,52 @@ pub fn pipe_first_right_operation(
                                 .and_then(|function_symbol| context.get_function(function_symbol))
                                 .map(|func| SELExecutionResult::from(&func(value.clone())))
                         }
+                        (Operation::Group, _) => {
+                            // first get value of group
+                            right_node
+                                .get_right()
+                                // need to go one more right
+                                // getting result of group node now would try to execute function
+                                .and_then(|arg_node_index| tree.get_nodes().get(arg_node_index))
+                                .map(|arg_node| get_node_result(tree, arg_node, context))
+                                .map(|arg_result| {
+                                    // if value is not a list
+                                    // make a list
+                                    let mut list: List = match arg_result.get_type() {
+                                        DataType::List => get_value_from_result(&arg_result),
+                                        _ => {
+                                            let mut l = List::new();
+                                            l.push(arg_result.get_sel_value().clone());
+
+                                            l
+                                        }
+                                    };
+
+                                    // inject pipe value into list
+                                    list.insert(0, value.clone());
+
+                                    // use list as value to group's left side function
+                                    right_node
+                                        .get_left()
+                                        .and_then(|left_index| tree.get_nodes().get(left_index))
+                                        .and_then(|left_node| {
+                                            tree.get_usize_value_of(left_node)
+                                                .and_then(|function_identifier_index| {
+                                                    tree.get_symbol_table()
+                                                        .get_symbol(function_identifier_index)
+                                                })
+                                                .and_then(|function_symbol| {
+                                                    context.get_function(function_symbol)
+                                                })
+                                                .map(|func| {
+                                                    SELExecutionResult::from(&func(
+                                                        SELValue::new_from_list(list),
+                                                    ))
+                                                })
+                                        })
+                                        .unwrap_or(SELExecutionResult::new(DataType::Unknown, None))
+                                })
+                        }
                         _ => {
                             // get result of right node
                             Some(get_node_result(tree, right_node, &pipe_context))
@@ -90,6 +137,7 @@ mod tests {
     use crate::opexec::execution_result::SELExecutionResult;
     use crate::opexec::get_node_result;
     use crate::SELExecutionContext;
+    use sel_common::sel_types::list::List;
     use sel_common::{from_byte_vec, to_byte_vec, DataType, SELContext, SELValue};
     use sel_compiler::Compiler;
 
@@ -135,14 +183,47 @@ mod tests {
             _ => SELValue::new(),
         });
 
-        let tree = compiler.compile(&String::from("10 -> is_even"));
-
         let execution_context = SELExecutionContext::from(&context);
+
+        let tree = compiler.compile_with_context(&String::from("10 -> is_even"), context);
 
         let result = get_node_result(&tree, tree.get_root(), &execution_context);
         let value: bool = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Boolean);
         assert_eq!(value, true);
+    }
+
+    #[test]
+    fn executes_pipe_first_right_exposed_function_with_arg() {
+        let compiler = Compiler::new();
+        let mut context = SELContext::new();
+
+        context.register_function("middle", |sel_value| match sel_value.get_type() {
+            DataType::List => {
+                let list: List = from_byte_vec(sel_value.get_value().unwrap());
+
+                let first_value: i64 =
+                    from_byte_vec(list.get_values().get(0).unwrap().get_value().unwrap());
+
+                let second_value: i64 =
+                    from_byte_vec(list.get_values().get(1).unwrap().get_value().unwrap());
+
+                let value: i64 = (second_value - first_value) / 2 + first_value;
+
+                SELValue::new_from_int(value)
+            }
+            _ => SELValue::new(),
+        });
+
+        let execution_context = SELExecutionContext::from(&context);
+
+        let tree = compiler.compile_with_context(&String::from("10 -> middle(20)"), context);
+
+        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let value: i64 = from_byte_vec(result.get_value().unwrap());
+
+        assert_eq!(result.get_type(), DataType::Integer);
+        assert_eq!(value, 15);
     }
 }

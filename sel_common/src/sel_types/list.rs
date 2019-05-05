@@ -17,4 +17,8 @@ impl List {
     pub fn push(&mut self, value: SELValue) {
         self.values.push(value);
     }
+
+    pub fn insert(&mut self, index: usize, value: SELValue) {
+        self.values.insert(index, value);
+    }
 }
