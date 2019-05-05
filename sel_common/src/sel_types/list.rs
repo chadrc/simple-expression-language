@@ -21,4 +21,8 @@ impl List {
     pub fn insert(&mut self, index: usize, value: SELValue) {
         self.values.insert(index, value);
     }
+
+    pub fn append(&mut self, other: &mut List) {
+        self.values.append(&mut other.values);
+    }
 }
