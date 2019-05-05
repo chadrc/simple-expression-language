@@ -166,3 +166,15 @@ fn multi_line_nested_expression_expression_value_is_sub_tree_index() {
     assert_eq!(first_expr_value, 1);
     assert_eq!(second_expr_value, 0);
 }
+#[test]
+fn single_line_expression_roots() {
+    let input = String::from("10 -> { $ * 10 }");
+
+    let compiler = Compiler::new();
+
+    let tree = compiler.compile(&input);
+
+    let sub_tree = tree.get_sub_trees().get(0).unwrap();
+
+    assert_eq!(*sub_tree.get_roots().get(0).unwrap(), 4);
+}

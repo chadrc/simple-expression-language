@@ -64,6 +64,14 @@ pub fn build_tree_from_string(s: &String, context: SELContext) -> SELTree {
                     }
                 }
 
+                // if the expression is a single line expression
+                // or root is on same line as opening brace
+                // root won't be included
+                // insert as beginning if not contained
+                if !group_sub_roots.contains(&group_root) {
+                    group_sub_roots.insert(0, group_root);
+                }
+
                 check_set_expression_sub_tree(
                     &mut nodes,
                     &mut data,
