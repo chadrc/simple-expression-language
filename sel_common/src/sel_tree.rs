@@ -2,7 +2,7 @@ use super::data_type::DataType;
 use super::operation::Operation;
 use super::DataHeap;
 use crate::symbol_table::SymbolTable;
-use crate::SELContext;
+use crate::{SELContext, SELSubTree};
 
 #[derive(PartialEq, Debug, Clone, Copy)]
 pub struct SELTreeNode {
@@ -82,6 +82,7 @@ impl SELTreeNode {
 pub struct SELTree {
     data: DataHeap,
     root: usize,
+    sub_trees: Vec<SELSubTree>,
     sub_roots: Vec<usize>,
     nodes: Vec<SELTreeNode>,
     context: SELContext,
@@ -90,6 +91,7 @@ pub struct SELTree {
 impl SELTree {
     pub fn new(
         root: usize,
+        sub_trees: Vec<SELSubTree>,
         sub_roots: Vec<usize>,
         nodes: Vec<SELTreeNode>,
         data: DataHeap,
@@ -97,6 +99,7 @@ impl SELTree {
     ) -> SELTree {
         return SELTree {
             root,
+            sub_trees,
             sub_roots,
             nodes,
             data,
@@ -106,6 +109,10 @@ impl SELTree {
 
     pub fn get_nodes(&self) -> &Vec<SELTreeNode> {
         return &self.nodes;
+    }
+
+    pub fn get_sub_trees(&self) -> &Vec<SELSubTree> {
+        return &self.sub_trees;
     }
 
     pub fn get_sub_roots(&self) -> &Vec<usize> {

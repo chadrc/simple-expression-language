@@ -72,5 +72,5 @@ pub fn build_tree_from_string(s: &String, context: SELContext) -> SELTree {
         .map(|first| find_root_index(&nodes, Some(*first)))
         .collect();
 
-    return SELTree::new(root, sub_roots, nodes, data, context);
+    return SELTree::new(root, vec![], sub_roots, nodes, data, context);
 }

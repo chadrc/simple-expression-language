@@ -8,6 +8,7 @@ mod operation;
 mod sel_tree;
 mod sel_types;
 mod sel_value;
+mod sub_tree;
 mod symbol_table;
 mod utils;
 
@@ -18,6 +19,7 @@ pub use operation::Operation;
 pub use sel_tree::{NodeSide, SELTree, SELTreeNode};
 pub use sel_types::{AssociativeList, Expression, List, Pair, Range, Symbol};
 pub use sel_value::SELValue;
+pub use sub_tree::SELSubTree;
 pub use symbol_table::SymbolTable;
 pub use utils::{from_byte_vec, to_byte_vec, FromByteVec, ToByteVec};
 

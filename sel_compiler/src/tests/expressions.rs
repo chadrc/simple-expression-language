@@ -54,7 +54,7 @@ fn single_expression_block() {
 }
 
 #[test]
-fn multi_line_nested_expression() {
+fn multi_line_nested_expression_main_roots() {
     let input = String::from(
         "\
 1
@@ -85,4 +85,47 @@ fn multi_line_nested_expression() {
     assert_eq!(tree.get_sub_roots().len(), 2);
     assert_eq!(*tree.get_sub_roots().get(0).unwrap(), 1);
     assert_eq!(*tree.get_sub_roots().get(1).unwrap(), 7);
+}
+
+#[test]
+fn multi_line_nested_expression_nested_expression_roots() {
+    let input = String::from(
+        "\
+1
+
+{
+    2
+
+    {
+        3
+
+        4
+    }
+
+    5
+}
+
+6
+",
+    );
+
+    let compiler = Compiler::new();
+
+    let tree = compiler.compile(&input);
+
+    println!("{:?}", tree);
+
+    assert_eq!(tree.get_sub_trees().len(), 2);
+
+    let sub_tree_1 = tree.get_sub_trees().get(0).unwrap();
+    let sub_tree_2 = tree.get_sub_trees().get(1).unwrap();
+
+    assert_eq!(sub_tree_1.get_root().unwrap(), 2);
+    assert_eq!(sub_tree_1.get_sub_roots().len(), 2);
+    assert_eq!(*sub_tree_1.get_sub_roots().get(0).unwrap(), 3);
+    assert_eq!(*sub_tree_1.get_sub_roots().get(1).unwrap(), 6);
+
+    assert_eq!(sub_tree_2.get_root().unwrap(), 4);
+    assert_eq!(sub_tree_2.get_sub_roots().len(), 1);
+    assert_eq!(*sub_tree_2.get_sub_roots().get(0).unwrap(), 5);
 }
