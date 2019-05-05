@@ -26,8 +26,8 @@ pub fn pipe_first_right_operation(
                     let mut pipe_context = context.clone();
                     pipe_context.set_input(value.clone());
 
-                    match right_node.get_operation() {
-                        Operation::Expression => {
+                    match (right_node.get_operation(), right_node.get_data_type()) {
+                        (Operation::Expression, _) => {
                             // value of expression is sub tree index
                             tree.get_usize_value_of(right_node)
                                 .and_then(|sub_tree_index| tree.get_sub_trees().get(sub_tree_index))
@@ -38,6 +38,17 @@ pub fn pipe_first_right_operation(
                                 .map(|sub_tree_root| {
                                     get_node_result(tree, sub_tree_root, &pipe_context)
                                 })
+                        }
+                        (_, DataType::Identifier) => {
+                            // identifier will be of an exposed function
+                            // first get node value
+                            tree.get_usize_value_of(right_node)
+                                .and_then(|function_identifier_index| {
+                                    tree.get_symbol_table()
+                                        .get_symbol(function_identifier_index)
+                                })
+                                .and_then(|function_symbol| context.get_function(function_symbol))
+                                .map(|func| SELExecutionResult::from(&func(value.clone())))
                         }
                         _ => {
                             // get result of right node
@@ -76,9 +87,10 @@ pub fn pipe_last_left_operation(
 
 #[cfg(test)]
 mod tests {
+    use crate::opexec::execution_result::SELExecutionResult;
     use crate::opexec::get_node_result;
     use crate::SELExecutionContext;
-    use sel_common::{from_byte_vec, DataType, SELContext};
+    use sel_common::{from_byte_vec, to_byte_vec, DataType, SELContext, SELValue};
     use sel_compiler::Compiler;
 
     #[test]
@@ -106,5 +118,31 @@ mod tests {
 
         assert_eq!(result.get_type(), DataType::Integer);
         assert_eq!(value, 100);
+    }
+
+    #[test]
+    fn executes_pipe_first_right_exposed_function() {
+        let compiler = Compiler::new();
+        let mut context = SELContext::new();
+
+        context.register_function("is_even", |sel_value| match sel_value.get_type() {
+            DataType::Integer => {
+                let value: i64 = from_byte_vec(sel_value.get_value().unwrap());
+                let result = value % 2 == 0;
+
+                SELValue::new_from_boolean(result)
+            }
+            _ => SELValue::new(),
+        });
+
+        let tree = compiler.compile(&String::from("10 -> is_even"));
+
+        let execution_context = SELExecutionContext::from(&context);
+
+        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let value: bool = from_byte_vec(result.get_value().unwrap());
+
+        assert_eq!(result.get_type(), DataType::Boolean);
+        assert_eq!(value, true);
     }
 }
