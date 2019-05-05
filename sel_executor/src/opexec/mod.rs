@@ -88,6 +88,7 @@ pub fn get_node_result(
         Operation::NotContains => contains::not_contains_operation(tree, node, context),
         Operation::MatchTrue => conditional::match_true(tree, node, context),
         Operation::MatchFalse => conditional::match_false(tree, node, context),
+        Operation::MatchList => conditional::match_list(tree, node, context),
         _ => SELExecutionResult::new(DataType::Unknown, None),
     };
 }
