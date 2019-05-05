@@ -74,6 +74,7 @@ fn multi_line_nested_expression() {
 6
 ",
     );
+
     let compiler = Compiler::new();
 
     let tree = compiler.compile(&input);
