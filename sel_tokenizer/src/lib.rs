@@ -640,14 +640,14 @@ mod tests {
 
     #[test]
     fn tokenize_start_collect() {
-        let tokens = tokens_from_str("-<");
-        assert_token(tokens.get(0).unwrap(), TokenType::StartCollect, "-<");
+        let tokens = tokens_from_str(">-");
+        assert_token(tokens.get(0).unwrap(), TokenType::Collect, ">-");
     }
 
     #[test]
     fn tokenize_end_collect() {
-        let tokens = tokens_from_str(">-");
-        assert_token(tokens.get(0).unwrap(), TokenType::EndCollect, ">-");
+        let tokens = tokens_from_str("-<");
+        assert_token(tokens.get(0).unwrap(), TokenType::SeedCollect, "-<");
     }
 
     #[test]

@@ -60,7 +60,7 @@ pub enum TokenType {
     MatchTrue,
     MatchFalse,
     Stream,
-    StartCollect,
-    EndCollect,
+    Collect,
+    SeedCollect,
     Unknown,
 }

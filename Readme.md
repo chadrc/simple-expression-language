@@ -983,7 +983,7 @@ Sum numbers in an array
 ```
 /// Input: [1, 2, 3, 4, 5]
 
-$ >>> $ * 2 <{0}> $.value + $.result
+$ >>> $ * 2 >- 0 -< $.value + $.result
 /// 15
 ```
 

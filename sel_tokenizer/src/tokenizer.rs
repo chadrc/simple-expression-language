@@ -70,8 +70,8 @@ impl<'a> Tokenizer<'a> {
         symbol_tree.attach("=>", TokenType::MatchTrue);
         symbol_tree.attach("!=>", TokenType::MatchFalse);
         symbol_tree.attach(">>>", TokenType::Stream);
-        symbol_tree.attach("-<", TokenType::StartCollect);
-        symbol_tree.attach(">-", TokenType::EndCollect);
+        symbol_tree.attach(">-", TokenType::Collect);
+        symbol_tree.attach("-<", TokenType::SeedCollect);
 
         return Tokenizer {
             current_token: String::new(),
