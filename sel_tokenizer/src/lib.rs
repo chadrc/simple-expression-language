@@ -633,6 +633,24 @@ mod tests {
     }
 
     #[test]
+    fn tokenize_stream() {
+        let tokens = tokens_from_str(">>>");
+        assert_token(tokens.get(0).unwrap(), TokenType::Stream, ">>>");
+    }
+
+    #[test]
+    fn tokenize_start_collect() {
+        let tokens = tokens_from_str("-<");
+        assert_token(tokens.get(0).unwrap(), TokenType::StartCollect, "-<");
+    }
+
+    #[test]
+    fn tokenize_end_collect() {
+        let tokens = tokens_from_str(">-");
+        assert_token(tokens.get(0).unwrap(), TokenType::EndCollect, ">-");
+    }
+
+    #[test]
     fn tokenize_comment() {
         let tokens = tokens_from_str("/// this is a comment");
         assert_token(

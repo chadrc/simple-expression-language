@@ -69,6 +69,9 @@ impl<'a> Tokenizer<'a> {
         symbol_tree.attach("~", TokenType::Partial);
         symbol_tree.attach("=>", TokenType::MatchTrue);
         symbol_tree.attach("!=>", TokenType::MatchFalse);
+        symbol_tree.attach(">>>", TokenType::Stream);
+        symbol_tree.attach("-<", TokenType::StartCollect);
+        symbol_tree.attach(">-", TokenType::EndCollect);
 
         return Tokenizer {
             current_token: String::new(),

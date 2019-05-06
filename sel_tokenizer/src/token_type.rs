@@ -59,5 +59,8 @@ pub enum TokenType {
     Partial,
     MatchTrue,
     MatchFalse,
+    Stream,
+    StartCollect,
+    EndCollect,
     Unknown,
 }
