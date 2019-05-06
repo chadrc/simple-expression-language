@@ -4,7 +4,7 @@ use crate::opexec::get_node_result;
 use crate::opexec::utils::{
     get_left_right_results, get_value_from_result, get_values_from_results, match_equality_ops,
 };
-use sel_common::{to_byte_vec, DataType, Operation, SELTree, SELTreeNode};
+use sel_common::{to_byte_vec, DataType, Operation, SELContext, SELTree, SELTreeNode};
 
 fn run_match(
     tree: &SELTree,
@@ -25,6 +25,28 @@ fn run_match(
             }
         })
         .unwrap_or(false);
+}
+
+fn get_current_result(context: &SELExecutionContext) -> Option<SELExecutionResult> {
+    let result_opt = if context.get_results().len() > 0 {
+        context
+            .get_results()
+            .get(context.get_results().len() - 1)
+            .map(|result| result.to_owned())
+    } else {
+        match context.get_input() {
+            Some(input) => Some(SELExecutionResult::new(
+                input.get_type(),
+                match input.get_value() {
+                    Some(value) => Some(std::vec::Vec::from(value.as_slice())),
+                    None => None,
+                },
+            )),
+            None => None,
+        }
+    };
+
+    return result_opt;
 }
 
 fn match_bool(
@@ -149,7 +171,9 @@ pub fn match_list(
         }
     }
 
-    return final_result.unwrap_or(SELExecutionResult::new(DataType::Unknown, None));
+    return final_result.unwrap_or(
+        get_current_result(context).unwrap_or(SELExecutionResult::new(DataType::Unit, None)),
+    );
 }
 
 #[cfg(test)]
@@ -250,5 +274,22 @@ mod tests {
 
         assert_eq!(result.get_type(), DataType::String);
         assert_eq!(value, String::from("false"));
+    }
+
+    #[test]
+    fn executes_match_list_three_arms_none_match() {
+        let compiler = Compiler::new();
+        let tree = compiler.compile(&String::from(
+            "? => \"true 1\", ? => \"true 2\", ? => \"true 3\"",
+        ));
+
+        let mut execution_context = SELExecutionContext::new();
+        execution_context.set_input(SELValue::new_from_boolean(false));
+
+        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let value: bool = from_byte_vec(result.get_value().unwrap());
+
+        assert_eq!(result.get_type(), DataType::Boolean);
+        assert_eq!(value, false);
     }
 }
