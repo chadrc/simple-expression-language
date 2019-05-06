@@ -44,6 +44,9 @@ false
 /// Symbol
 :my_symbol
 
+// may have up to 256 prime symbols following symbol identifier
+:my_symbol'
+
 /// Pairs
 value = 123
 ```
@@ -118,6 +121,14 @@ There is no null value but the unit value `()` is provided to represent somethin
 /// Length
 "Hello, World!"`l
 /// 13
+```
+
+## Symbol operations
+```
+/// Get prime count
+:my_symbol'''.prime
+
+/// 3
 ```
 
 ## Range operations
