@@ -327,6 +327,16 @@ impl<'a> Iterator for Tokenizer<'a> {
                         ParseState::ParsingIdentifier => {
                             if c.is_alphanumeric() || c == '_' {
                                 self.current_token.push(c);
+                            } else if c == '\'' {
+                                self.current_token.push(c);
+                                self.parse_state = ParseState::ParsingPrime;
+                            } else {
+                                return self.end_current_token(c);
+                            }
+                        }
+                        ParseState::ParsingPrime => {
+                            if c == '\'' {
+                                self.current_token.push(c);
                             } else {
                                 return self.end_current_token(c);
                             }

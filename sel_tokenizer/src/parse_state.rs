@@ -7,6 +7,7 @@ pub enum ParseState {
     ParsingSingleQuotedString,
     ParsingDoubleQuotedString,
     ParsingIdentifier,
+    ParsingPrime,
     EscapeCharacter,
     ParsingExclusiveRange,
     ParsingSymbol,

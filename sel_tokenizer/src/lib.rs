@@ -567,6 +567,12 @@ mod tests {
     }
 
     #[test]
+    fn tokenize_identifier_prime() {
+        let tokens = tokens_from_str("value'");
+        assert_token(tokens.get(0).unwrap(), TokenType::Identifier, "value'");
+    }
+
+    #[test]
     fn tokenize_identifier_like_true() {
         let tokens = tokens_from_str("trueish");
         assert_token(tokens.get(0).unwrap(), TokenType::Identifier, "trueish");
