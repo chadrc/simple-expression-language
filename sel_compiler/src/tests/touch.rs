@@ -158,7 +158,7 @@ fn compiles_touch_identifier() {
 }
 
 #[test]
-fn compiles_symbol_operation() {
+fn touch_symbol() {
     let input = String::from(":value");
     let compiler = Compiler::new();
 
@@ -176,4 +176,25 @@ fn compiles_symbol_operation() {
     assert_eq!(root.get_data_type(), DataType::Symbol);
     assert_eq!(root_value, Some(0));
     assert_eq!(symbol, Some(&String::from("value")));
+}
+
+#[test]
+fn touch_symbol_prime() {
+    let input = String::from(":value''");
+    let compiler = Compiler::new();
+
+    let tree = compiler.compile(&input);
+
+    let root = tree.get_root();
+
+    let root_value = tree.get_integer_value_of(root);
+
+    let symbol = tree
+        .get_symbol_table()
+        .get_symbol(root_value.unwrap() as usize);
+
+    assert_eq!(root.get_operation(), Operation::Touch);
+    assert_eq!(root.get_data_type(), DataType::Symbol);
+    assert_eq!(root_value, Some(0));
+    assert_eq!(symbol, Some(&String::from("value''")));
 }
