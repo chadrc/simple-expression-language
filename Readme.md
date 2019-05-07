@@ -827,7 +827,7 @@ init_array(10) -> map(#squared)
 init_array(5) -> map(#plus_random) -> filter(#filter)
 ```
 
-## Currying
+## Partial Arguments
 
 Both functions and named expressions can be curried.
 
@@ -843,27 +843,27 @@ Functions:
 #clamp_10_min_5 ~ clamp(10, 5)
 @ takes one argument, max
 
-@ can skip parameters with the '_' symbol
-#clamp_min_5 ~ clamp(_, 5)
+@ can skip parameters by omitting them
+#clamp_min_5 ~ clamp(, 5)
 @ takes two arguments, num and max
 
-@ can curry a curried expression
-#clamp_5_to_15 ~ #clamp_min_5(_, 15)
+@ can partially apply on an already partially applied function
+#clamp_5_to_15 ~ clamp_min_5(, 15)
 @ taks one argument, num
 ```
 
-### Currying by name
+### Partial Arguments by name
 
-You may also provide a parameter by its name. This lets you avoid the need to ignore parameters.
+You may also provide an argument by its name. This lets you avoid the need to ignore parameters.
 
 Assuming clamp accesses its inputs by name (see Functions _TODO: add link_ section).
 
 ```
-#clamp_min_5 ~ clamp(min=5)
+#clamp_min_5 ~ clamp(:min=5)
 
-#clamp_5_to_15 ~ #clamp_min_5(max=15)
+#clamp_5_to_15 ~ clamp_min_5(:max=15)
 
-#clamp_10_to_20 ~ clamp(min=10, max=20)
+#clamp_10_to_20 ~ clamp(:min=10, :max=20)
 ```
 
 ## Match Operations
