@@ -14,7 +14,8 @@ cargo run -p test_bed
 
 # Specification
 The following spec is less of a living spec and more of a place to organize my thoughts. When the features and grammar are more established, I plan on making a Book detailing everything.
-## Literals
+
+## Comments and Documentation
 
 ```
 @ Comments start with '@' followed by a space and continue to end of line
@@ -25,6 +26,11 @@ and contiue until another two '@' symbols.
 @@
 
 @@ Comment blocks don't have to be multi line either @@
+```
+
+## Literals
+
+```
 
 @ Numbers
 4
