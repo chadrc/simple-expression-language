@@ -684,6 +684,13 @@ mod tests {
     }
 
     #[test]
+    fn tokenize_annotation_with_following_token() {
+        let tokens = tokens_from_str("@Annotation(");
+        assert_token(tokens.get(0).unwrap(), TokenType::Annotation, "@Annotation");
+        assert_token(tokens.get(1).unwrap(), TokenType::StartGroup, "(");
+    }
+
+    #[test]
     fn tokenize_comment_with_newline_then_value() {
         let tokens = tokens_from_str("@ this is a comment\n1");
         assert_token(
