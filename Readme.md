@@ -921,61 +921,6 @@ To check if a value has not been initialized the unit `()` as the match conditio
 true => "Value has some type of value"
 ```
 
-### Matching with Associative Arrays
-
-Matching on associative arrays allows matching on multiple values and wildcard matching.
-
-Match positionally
-
-```
-@ Input: [10, "foo"]
-
-[5, "bar"] => "5 bars",
-[5, "foo"] => "5 foos",
-[10, "bar"] => "10 bars",
-[10, "foo"] => "10 foos"
-_ => "baz"
-@ "10 foos"
-```
-
-Ignoring positions
-
-```
-@ Input: [10, "foo", true]
-
-@ ignore one position
-[5, _, true] => "5 bars or foos sold",
-@ ignore implictly by not specifying
-[10] => "10 bar or foo transaction",
-_ => "baz"
-@ "10 bar or foo transaction"
-```
-
-Each arm expression receives the value being match as the input.
-
-```
-@ Input: [10, "foo"]
-
-[_, "bar"] => $[0] + " bars",
-[_, "foo"] => $[0] + " foos",
-_ => "baz"
-@ "10 foos"
-```
-
-Match on keys of an associative array
-
-```
-@ Input: [first_name: "John", last_name: "Smith", email: "johnsmith@example.com"]
-
-[last_name: "Anderson"] => "Member of the Anderson family",
-@ Check for non-existant/uninitialized key
-[email: ()] => $.first_name + " does not have an email",
-@ Check for existing key
-[email: _] => $.first_name + " has an email",
-_ => ...
-@ "John has an email"
-```
-
 ## Iteration
 
 There are two operations for iteration of associative arrays.
