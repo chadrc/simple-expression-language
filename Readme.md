@@ -915,9 +915,10 @@ true => "Not divisible by 3, 5, or 15"
 To check if a value has not been initialized the unit `()` as the match condition with the `==>`
 
 ```
-() ==> "Value is uninitialized",
-@ Could also use () == ? => ....
-_ => "Since value is not uninitialized, it has some type of value"
+@ Unit evaluates to false, so use false match on value and a true arm as the default
+
+() !=> "Value is uninitialized",
+true => "Value has some type of value"
 ```
 
 ### Matching with Associative Arrays
