@@ -721,6 +721,15 @@ max |> clamp(34, min)
 clamp(34, min, max)
 ```
 
+### Infix Notation
+Infix notation for a function allows you to place an argument to the function before the function name. The infix function will receive both the value on the left and the value on the right as its arguments.
+
+```
+10 `max` 15
+
+@ 15 
+```
+
 ## Named Expressions
 
 Named expressions are denoted by a `#` followed by an identifier and then curly braces `{}`.
