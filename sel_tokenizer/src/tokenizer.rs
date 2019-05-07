@@ -49,7 +49,7 @@ impl<'a> Tokenizer<'a> {
         symbol_tree.attach("^", TokenType::BitwiseXorSign);
         symbol_tree.attach("<<", TokenType::BitwiseLeftShiftSign);
         symbol_tree.attach(">>", TokenType::BitwiseRightShiftSign);
-        symbol_tree.attach("`", TokenType::TransformationSign);
+        symbol_tree.attach("`", TokenType::BackTick);
         symbol_tree.attach("$", TokenType::Input);
         symbol_tree.attach("?", TokenType::CurrentResult);
         symbol_tree.attach("(", TokenType::StartGroup);

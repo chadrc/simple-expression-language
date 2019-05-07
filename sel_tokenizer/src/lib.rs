@@ -360,11 +360,6 @@ mod tests {
     }
 
     #[test]
-    fn tokenize_transformation_operator() {
-        assert_4_5_binary_operation("`", TokenType::TransformationSign);
-    }
-
-    #[test]
     fn tokenize_bitwise_or() {
         assert_4_5_binary_operation("|", TokenType::BitwiseOrSign);
     }
@@ -654,6 +649,12 @@ mod tests {
     fn tokenize_end_collect() {
         let tokens = tokens_from_str("-<");
         assert_token(tokens.get(0).unwrap(), TokenType::SeedCollect, "-<");
+    }
+
+    #[test]
+    fn tokenize_back_tick() {
+        let tokens = tokens_from_str("`");
+        assert_token(tokens.get(0).unwrap(), TokenType::BackTick, "`");
     }
 
     #[test]

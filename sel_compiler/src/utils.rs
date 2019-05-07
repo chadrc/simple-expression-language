@@ -112,7 +112,7 @@ pub fn get_operation_type_for_token(token: &Token) -> Operation {
         TokenType::StartGroup => Operation::Group,
         TokenType::StartAssociativeList => Operation::AssociativeList,
         TokenType::StartExpressionBlock => Operation::Expression,
-        TokenType::TransformationSign => Operation::Transform,
+        TokenType::BackTick => Operation::Transform,
         TokenType::BitwiseOrSign => Operation::BitwiseOr,
         TokenType::BitwiseXorSign => Operation::BitwiseXOR,
         TokenType::BitwiseAndSign => Operation::BitwiseAnd,

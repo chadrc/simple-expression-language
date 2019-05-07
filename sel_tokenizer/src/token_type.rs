@@ -19,7 +19,7 @@ pub enum TokenType {
     BitwiseOrSign,
     BitwiseLeftShiftSign,
     BitwiseRightShiftSign,
-    TransformationSign,
+    BackTick,
     Equal,
     NotEqual,
     KeysEqual,
