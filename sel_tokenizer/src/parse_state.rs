@@ -12,5 +12,5 @@ pub enum ParseState {
     ParsingExclusiveRange,
     ParsingSymbol,
     ParsingDot,
-    ParsingComment,
+    ParsingUntilEndLine,
 }

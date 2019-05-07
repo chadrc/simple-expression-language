@@ -658,22 +658,38 @@ mod tests {
     }
 
     #[test]
-    fn tokenize_comment() {
-        let tokens = tokens_from_str("/// this is a comment");
+    fn tokenize_annotation_comment() {
+        let tokens = tokens_from_str("@ this is a comment");
         assert_token(
             tokens.get(0).unwrap(),
-            TokenType::Comment,
-            "/// this is a comment",
+            TokenType::CommentAnnotation,
+            "@ this is a comment",
         );
     }
 
     #[test]
-    fn tokenize_comment_with_newline_then_value() {
-        let tokens = tokens_from_str("/// this is a comment\n1");
+    fn tokenize_annotation_document_block() {
+        let tokens = tokens_from_str("@@ this is a comment");
         assert_token(
             tokens.get(0).unwrap(),
-            TokenType::Comment,
-            "/// this is a comment",
+            TokenType::DocumentAnnotation,
+            "@@ this is a comment",
+        );
+    }
+
+    #[test]
+    fn tokenize_annotation() {
+        let tokens = tokens_from_str("@Annotation");
+        assert_token(tokens.get(0).unwrap(), TokenType::Annotation, "@Annotation");
+    }
+
+    #[test]
+    fn tokenize_comment_with_newline_then_value() {
+        let tokens = tokens_from_str("@ this is a comment\n1");
+        assert_token(
+            tokens.get(0).unwrap(),
+            TokenType::CommentAnnotation,
+            "@ this is a comment",
         );
 
         assert_token(tokens.get(1).unwrap(), TokenType::LineEnd, "\n");

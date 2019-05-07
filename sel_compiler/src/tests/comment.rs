@@ -3,7 +3,7 @@ use sel_common::{DataType, Operation};
 
 #[test]
 fn only_comment_empty_tree() {
-    let input = String::from("/// this is a comment");
+    let input = String::from("@ this is a comment");
     let compiler = Compiler::new();
 
     let tree = compiler.compile(&input);
@@ -17,7 +17,7 @@ fn only_comment_empty_tree() {
 
 #[test]
 fn only_comment_with_following_expression() {
-    let input = String::from("/// this is a comment\n5 + 10");
+    let input = String::from("@ this is a comment\n5 + 10");
     let compiler = Compiler::new();
 
     let tree = compiler.compile(&input);
@@ -38,7 +38,7 @@ fn only_comment_with_following_expression() {
 }
 #[test]
 fn expression_with_following_comment() {
-    let input = String::from("5 + 10 /// this is a comment");
+    let input = String::from("5 + 10 @ this is a comment");
     let compiler = Compiler::new();
 
     let tree = compiler.compile(&input);

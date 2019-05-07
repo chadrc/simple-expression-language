@@ -43,7 +43,7 @@ pub fn make_nodes_from_tokenizer(
             0
         };
 
-        if token.get_token_type() == TokenType::Comment {
+        if token.get_token_type() == TokenType::CommentAnnotation {
             // will store later for meta data
             // for now, just drop the token
             continue;

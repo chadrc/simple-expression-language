@@ -61,7 +61,8 @@ impl<'a> Tokenizer<'a> {
         symbol_tree.attach(":", TokenType::Symbol);
         symbol_tree.attach("=", TokenType::Pair);
         symbol_tree.attach(",", TokenType::Comma);
-        symbol_tree.attach("///", TokenType::Comment);
+        symbol_tree.attach("@", TokenType::CommentAnnotation);
+        symbol_tree.attach("@@", TokenType::DocumentAnnotation);
         symbol_tree.attach("->", TokenType::PipeFirstRight);
         symbol_tree.attach("<-", TokenType::PipeFirstLeft);
         symbol_tree.attach("|>", TokenType::PipeLastRight);
@@ -341,7 +342,7 @@ impl<'a> Iterator for Tokenizer<'a> {
                                 return self.end_current_token(c);
                             }
                         }
-                        ParseState::ParsingComment => {
+                        ParseState::ParsingUntilEndLine => {
                             if c == '\n' {
                                 // starting new EndLine token shouldn't affect anything
                                 // may want to skip in future anyway
@@ -388,11 +389,35 @@ impl<'a> Iterator for Tokenizer<'a> {
                                                 self.parse_state = ParseState::ParsingIdentifier;
                                                 self.current_token_type = TokenType::Identifier;
                                                 self.current_token.push(c);
-                                            } else if self.current_token_type == TokenType::Comment
+                                            } else if self.current_token_type
+                                                == TokenType::CommentAnnotation
                                             {
                                                 // comment tokens consist of entire line
                                                 // not just the comment symbol
-                                                self.parse_state = ParseState::ParsingComment;
+
+                                                self.current_token.push(c);
+
+                                                // and the second character was not a whitespace
+                                                // promote to Annotation
+                                                if !c.is_whitespace() {
+                                                    self.current_token_type = TokenType::Annotation;
+                                                    self.parse_state =
+                                                        ParseState::ParsingIdentifier;
+                                                } else {
+                                                    self.parse_state =
+                                                        ParseState::ParsingUntilEndLine;
+                                                }
+                                            } else if self.current_token_type
+                                                == TokenType::DocumentAnnotation
+                                            {
+                                                // comment tokens consist of entire line
+                                                // not just the comment symbol
+                                                self.parse_state = ParseState::ParsingUntilEndLine;
+                                                self.current_token.push(c);
+                                            } else if self.current_token_type
+                                                == TokenType::Annotation
+                                            {
+                                                self.parse_state = ParseState::ParsingUntilEndLine;
                                                 self.current_token.push(c);
                                             } else {
                                                 // end of symbol
