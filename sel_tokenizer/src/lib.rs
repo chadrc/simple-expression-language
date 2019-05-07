@@ -691,6 +691,16 @@ mod tests {
     }
 
     #[test]
+    fn tokenize_tagged_identifier() {
+        let tokens = tokens_from_str("#my_identifier");
+        assert_token(
+            tokens.get(0).unwrap(),
+            TokenType::TaggedIdentifier,
+            "#my_identifier",
+        );
+    }
+
+    #[test]
     fn tokenize_comment_with_newline_then_value() {
         let tokens = tokens_from_str("@ this is a comment\n1");
         assert_token(

@@ -64,5 +64,6 @@ pub enum TokenType {
     Stream,
     Collect,
     SeedCollect,
+    TaggedIdentifier,
     Unknown,
 }

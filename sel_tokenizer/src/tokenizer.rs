@@ -61,6 +61,7 @@ impl<'a> Tokenizer<'a> {
         symbol_tree.attach(":", TokenType::Symbol);
         symbol_tree.attach("=", TokenType::Pair);
         symbol_tree.attach(",", TokenType::Comma);
+        symbol_tree.attach("#", TokenType::TaggedIdentifier);
         symbol_tree.attach("@", TokenType::CommentAnnotation);
         symbol_tree.attach("@@", TokenType::DocumentAnnotation);
         symbol_tree.attach("->", TokenType::PipeFirstRight);
@@ -418,6 +419,15 @@ impl<'a> Iterator for Tokenizer<'a> {
                                                 == TokenType::Annotation
                                             {
                                                 self.parse_state = ParseState::ParsingUntilEndLine;
+                                                self.current_token.push(c);
+                                            } else if self.current_token_type
+                                                == TokenType::TaggedIdentifier
+                                                && (c.is_alphabetic() || c == '_')
+                                            {
+                                                // this is the second token
+                                                // only parse a following identifier if
+                                                // it is immediately after '#' symbol
+                                                self.parse_state = ParseState::ParsingIdentifier;
                                                 self.current_token.push(c);
                                             } else {
                                                 // end of symbol
