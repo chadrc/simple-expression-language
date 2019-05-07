@@ -538,6 +538,22 @@ $["last_name"]
 @ "Smith"
 ```
 
+## Transformations
+Literals may be transformed to other types defined by the runtime with the '`' operator.
+
+There are no built in transformers, but assuming the runtime has support to transform values into a Date object.
+```
+@ Convert formatted date string
+"Jan, 1, 2019"`Date
+
+@ Convert unix timestamp
+1546300800000`Date
+
+@ Use symbol to create a Date with unknown/dynamic value
+:now`Date
+```
+The actual created result of each operation would depend on the runtime definition.
+
 ## Results
 
 Each expression outputs a result.
