@@ -108,6 +108,33 @@ fn expression_with_annotation_stores_annotation() {
 }
 
 #[test]
+fn expression_with_annotation_stores_multiple_annotation() {
+    let input = String::from(
+        "\
+@First
+@Second
+@Third
+5 + 10
+",
+    );
+    let compiler = Compiler::new();
+
+    let tree = compiler.compile(&input);
+
+    let annotations = tree.get_annotations();
+
+    assert_eq!(annotations.len(), 3);
+
+    let first = annotations.get(0).unwrap();
+    let second = annotations.get(1).unwrap();
+    let third = annotations.get(2).unwrap();
+
+    assert_eq!(first.get_name(), &String::from("First"));
+    assert_eq!(second.get_name(), &String::from("Second"));
+    assert_eq!(third.get_name(), &String::from("Third"));
+}
+
+#[test]
 fn expression_with_annotation_block() {
     let input = String::from("@@ this is a comment\n@@ with a second line\n5 + 10");
     let compiler = Compiler::new();
