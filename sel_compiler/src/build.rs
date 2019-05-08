@@ -12,7 +12,7 @@ pub fn build_tree_from_string(s: &String, context: SELContext) -> SELTree {
     let mut context = context;
     let mut precedence_manager = PrecedenceManager::new();
     let mut tokenizer = Tokenizer::new(s);
-    let (mut nodes, mut data, firsts_of_expression) =
+    let (mut nodes, mut data, firsts_of_expression, documents) =
         make_nodes_from_tokenizer(&mut precedence_manager, &mut tokenizer, &mut context);
 
     let precedence_groups = precedence_manager.get_group_tiers();
@@ -97,7 +97,7 @@ pub fn build_tree_from_string(s: &String, context: SELContext) -> SELTree {
         .map(|first| find_root_index(&nodes, Some(*first)))
         .collect();
 
-    return SELTree::new(root, sub_trees, sub_roots, nodes, data, context);
+    return SELTree::new(root, sub_trees, sub_roots, nodes, data, context, documents);
 }
 
 fn check_set_expression_sub_tree(

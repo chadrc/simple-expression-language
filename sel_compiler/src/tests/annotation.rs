@@ -80,3 +80,25 @@ fn expression_with_annotation_block() {
     assert_eq!(right.get_operation(), Operation::Touch);
     assert_eq!(right.get_data_type(), DataType::Integer);
 }
+
+#[test]
+fn expression_with_annotation_block_stores_document() {
+    let input = String::from("@@ this is a comment\n@@ with a second line\n5 + 10");
+    let compiler = Compiler::new();
+
+    let tree = compiler.compile(&input);
+
+    let documents = tree.get_documents();
+
+    let only = documents.get(0).unwrap();
+
+    assert_eq!(only.get_lines().len(), 2);
+    assert_eq!(
+        only.get_lines().get(0).unwrap(),
+        &String::from("this is a comment")
+    );
+    assert_eq!(
+        only.get_lines().get(1).unwrap(),
+        &String::from("with a second line")
+    );
+}

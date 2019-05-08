@@ -1,5 +1,6 @@
 use crate::precedence_manager::PrecedenceManager;
 use crate::utils::{get_data_type_for_token, get_operation_type_for_token};
+use sel_common::annotation_document::AnnotationDocument;
 use sel_common::{DataHeap, DataType, Operation, SELContext, SELTreeNode};
 use sel_tokenizer::{TokenType, Tokenizer};
 
@@ -20,10 +21,18 @@ pub fn make_nodes_from_tokenizer(
     precedence_manager: &mut PrecedenceManager,
     tokenizer: &mut Tokenizer,
     context: &mut SELContext,
-) -> (Vec<SELTreeNode>, DataHeap, Vec<usize>) {
+) -> (
+    Vec<SELTreeNode>,
+    DataHeap,
+    Vec<usize>,
+    Vec<AnnotationDocument>,
+) {
     let mut nodes: Vec<SELTreeNode> = vec![];
     let mut data = DataHeap::new();
     let mut firsts_of_expression: Vec<usize> = vec![];
+    let mut documents: Vec<AnnotationDocument> = vec![];
+
+    let mut current_document: AnnotationDocument = AnnotationDocument::new();
 
     // loop trough all tokens
     // convert them to tree nodes
@@ -43,11 +52,14 @@ pub fn make_nodes_from_tokenizer(
             0
         };
 
-        if token.get_token_type() == TokenType::CommentAnnotation
-            || token.get_token_type() == TokenType::DocumentAnnotation
-        {
+        if token.get_token_type() == TokenType::CommentAnnotation {
             // will store later for meta data
             // for now, just drop the token
+            continue;
+        } else if token.get_token_type() == TokenType::DocumentAnnotation {
+            // slice out the line without the leading '@@'
+            let line = String::from(token.get_token_str()[2..].trim());
+            current_document.add_line(line);
             continue;
         }
 
@@ -160,5 +172,9 @@ pub fn make_nodes_from_tokenizer(
         nodes.push(SELTreeNode::new(Operation::None, DataType::Unit, 0, None));
     }
 
-    return (nodes, data, firsts_of_expression);
+    if current_document.get_lines().len() > 0 {
+        documents.push(current_document);
+    }
+
+    return (nodes, data, firsts_of_expression, documents);
 }

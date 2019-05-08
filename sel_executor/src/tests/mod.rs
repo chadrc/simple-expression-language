@@ -13,6 +13,7 @@ mod tree_execution {
             vec![],
             DataHeap::new(),
             SELContext::new(),
+            vec![],
         );
 
         let context = SELExecutionContext::new();
