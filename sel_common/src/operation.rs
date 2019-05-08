@@ -49,5 +49,8 @@ pub enum Operation {
     MatchTrue,
     MatchFalse,
     MatchList,
+    Stream,
+    Collect,
+    CollectInit,
     None,
 }

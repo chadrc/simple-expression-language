@@ -127,6 +127,9 @@ pub fn get_operation_type_for_token(token: &Token) -> Operation {
         TokenType::PipeLastLeft => Operation::PipeLastLeft,
         TokenType::MatchTrue => Operation::MatchTrue,
         TokenType::MatchFalse => Operation::MatchFalse,
+        TokenType::Stream => Operation::Stream,
+        TokenType::Collect => Operation::Collect,
+        TokenType::SeedCollect => Operation::CollectInit,
         TokenType::Boolean
         | TokenType::Integer
         | TokenType::Decimal
