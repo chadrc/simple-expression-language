@@ -836,19 +836,21 @@ Functions:
 - `clamp(num: int, min: int, max: int)`
 
 ```
-#clamp_10 ~ clamp(10)
+#clamp_10 clamp ~ (10)
 @ this new expresson now has takes 2 arguments, min and max
 
 @ can also provide multiple values
-#clamp_10_min_5 ~ clamp(10, 5)
+#clamp_10_min_5 clamp ~ (10, 5)
 @ takes one argument, max
 
 @ can skip parameters by omitting them
-#clamp_min_5 ~ clamp(, 5)
+#clamp_min_5 clamp ~ (, 5)
 @ takes two arguments, num and max
 
 @ can partially apply on an already partially applied function
-#clamp_5_to_15 ~ clamp_min_5(, 15)
+
+#clamp_5_to_15 clamp_min_5 ~ (, 15)
+
 @ taks one argument, num
 ```
 

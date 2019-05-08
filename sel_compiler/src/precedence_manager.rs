@@ -24,7 +24,8 @@ const LOGICAL_OR_PRECEDENCE: usize = LOGICAL_XOR_PRECEDENCE + 1;
 const PAIR_PRECEDENCE: usize = LOGICAL_OR_PRECEDENCE + 1;
 const MATCH_PRECEDENCE: usize = PAIR_PRECEDENCE + 1;
 pub const LIST_PRECEDENCE: usize = MATCH_PRECEDENCE + 1;
-const PIPE_RIGHT_PRECEDENCE: usize = LIST_PRECEDENCE + 1;
+const PARTIAL_APPLICATION_PRECEDENCE: usize = LIST_PRECEDENCE + 1;
+const PIPE_RIGHT_PRECEDENCE: usize = PARTIAL_APPLICATION_PRECEDENCE + 1;
 const PIPE_LEFT_PRECEDENCE: usize = PIPE_RIGHT_PRECEDENCE + 1;
 const STREAM_PRECEDENCE: usize = PIPE_RIGHT_PRECEDENCE + 1;
 const COLLECT_INIT_PRECEDENCE: usize = PIPE_RIGHT_PRECEDENCE + 1;
@@ -66,6 +67,7 @@ impl PrecedenceGroup {
         members.push(vec![]); // LOGICAL_OR_PRECEDENCE
         members.push(vec![]); // PAIR_PRECEDENCE
         members.push(vec![]); // LIST_PRECEDENCE
+        members.push(vec![]); // PARTIAL_APPLICATION_PRECEDENCE
         members.push(vec![]); // MATCH_PRECEDENCE
         members.push(vec![]); // PIPE_RIGHT_PRECEDENCE
         members.push(vec![]); // PIPE_LEFT_PRECEDENCE
@@ -176,6 +178,11 @@ impl PrecedenceManager {
 
         operation_priorities.insert(Operation::List, LIST_PRECEDENCE);
         operation_priorities.insert(Operation::MatchList, LIST_PRECEDENCE);
+
+        operation_priorities.insert(
+            Operation::PartialApplication,
+            PARTIAL_APPLICATION_PRECEDENCE,
+        );
 
         operation_priorities.insert(Operation::PipeFirstRight, PIPE_RIGHT_PRECEDENCE);
         operation_priorities.insert(Operation::PipeLastRight, PIPE_RIGHT_PRECEDENCE);

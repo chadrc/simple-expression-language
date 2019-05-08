@@ -53,5 +53,6 @@ pub enum Operation {
     Stream,
     Collect,
     CollectInit,
+    PartialApplication,
     None,
 }

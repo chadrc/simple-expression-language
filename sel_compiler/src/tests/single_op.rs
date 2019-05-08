@@ -800,6 +800,30 @@ fn compiles_pipe_first_right() {
 }
 
 #[test]
+fn compiles_partial_arguments() {
+    let input = String::from("func ~ 10");
+    let compiler = Compiler::new();
+
+    let tree = compiler.compile(&input);
+
+    let root = tree.get_root();
+
+    let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
+
+    let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
+    let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
+
+    assert_eq!(root.get_operation(), Operation::PartialApplication);
+    assert_eq!(root.get_data_type(), DataType::Unknown);
+
+    assert_eq!(left.get_operation(), Operation::Touch);
+    assert_eq!(left.get_data_type(), DataType::Identifier);
+
+    assert_eq!(right.get_operation(), Operation::Touch);
+    assert_eq!(right.get_data_type(), DataType::Integer);
+}
+
+#[test]
 fn compiles_pipe_first_left() {
     let input = String::from("func <- 10");
     let compiler = Compiler::new();
