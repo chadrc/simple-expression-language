@@ -53,10 +53,10 @@ pub fn make_nodes_from_tokenizer(
             0
         };
 
-        println!("in doc {:?} {}", token.get_token_type(), in_document);
-        if token.get_token_type() == TokenType::CommentAnnotation {
-            // will store later for meta data
-            // for now, just drop the token
+        if token.get_token_type() == TokenType::CommentAnnotation
+            || token.get_token_type() == TokenType::Annotation
+        {
+            // drop
             continue;
         } else if token.get_token_type() == TokenType::DocumentAnnotation {
             // slice out the line without the leading '@@'

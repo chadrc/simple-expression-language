@@ -60,6 +60,33 @@ fn expression_with_following_comment() {
 }
 
 #[test]
+fn expression_with_annotation() {
+    let input = String::from(
+        "\
+@MyAnnotation
+5 + 10
+",
+    );
+    let compiler = Compiler::new();
+
+    let tree = compiler.compile(&input);
+
+    let root = tree.get_root();
+
+    let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
+    let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
+
+    assert_eq!(root.get_operation(), Operation::Addition);
+    assert_eq!(root.get_data_type(), DataType::Unknown);
+
+    assert_eq!(left.get_operation(), Operation::Touch);
+    assert_eq!(left.get_data_type(), DataType::Integer);
+
+    assert_eq!(right.get_operation(), Operation::Touch);
+    assert_eq!(right.get_data_type(), DataType::Integer);
+}
+
+#[test]
 fn expression_with_annotation_block() {
     let input = String::from("@@ this is a comment\n@@ with a second line\n5 + 10");
     let compiler = Compiler::new();
