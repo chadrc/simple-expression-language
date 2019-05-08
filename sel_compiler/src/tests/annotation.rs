@@ -87,6 +87,27 @@ fn expression_with_annotation() {
 }
 
 #[test]
+fn expression_with_annotation_stores_annotation() {
+    let input = String::from(
+        "\
+@MyAnnotation
+5 + 10
+",
+    );
+    let compiler = Compiler::new();
+
+    let tree = compiler.compile(&input);
+
+    let annotations = tree.get_annotations();
+
+    assert_eq!(annotations.len(), 1);
+
+    let annotation = annotations.get(0).unwrap();
+
+    assert_eq!(annotation.get_name(), &String::from("MyAnnotation"));
+}
+
+#[test]
 fn expression_with_annotation_block() {
     let input = String::from("@@ this is a comment\n@@ with a second line\n5 + 10");
     let compiler = Compiler::new();

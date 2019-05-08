@@ -1,5 +1,6 @@
 use crate::precedence_manager::PrecedenceManager;
 use crate::utils::{get_data_type_for_token, get_operation_type_for_token};
+use sel_common::annotation::Annotation;
 use sel_common::annotation_document::AnnotationDocument;
 use sel_common::{DataHeap, DataType, Operation, SELContext, SELTreeNode};
 use sel_tokenizer::{TokenType, Tokenizer};
@@ -25,11 +26,13 @@ pub fn make_nodes_from_tokenizer(
     Vec<SELTreeNode>,
     DataHeap,
     Vec<usize>,
+    Vec<Annotation>,
     Vec<AnnotationDocument>,
 ) {
     let mut nodes: Vec<SELTreeNode> = vec![];
     let mut data = DataHeap::new();
     let mut firsts_of_expression: Vec<usize> = vec![];
+    let mut annotations: Vec<Annotation> = vec![];
     let mut documents: Vec<AnnotationDocument> = vec![];
 
     let mut current_document: AnnotationDocument = AnnotationDocument::new();
@@ -53,10 +56,12 @@ pub fn make_nodes_from_tokenizer(
             0
         };
 
-        if token.get_token_type() == TokenType::CommentAnnotation
-            || token.get_token_type() == TokenType::Annotation
-        {
+        if token.get_token_type() == TokenType::CommentAnnotation {
             // drop
+            continue;
+        } else if token.get_token_type() == TokenType::Annotation {
+            let name = String::from(token.get_token_str()[1..].trim());
+            annotations.push(Annotation::new(name));
             continue;
         } else if token.get_token_type() == TokenType::DocumentAnnotation {
             // slice out the line without the leading '@@'
@@ -189,5 +194,5 @@ pub fn make_nodes_from_tokenizer(
         documents.push(current_document);
     }
 
-    return (nodes, data, firsts_of_expression, documents);
+    return (nodes, data, firsts_of_expression, annotations, documents);
 }

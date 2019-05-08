@@ -54,6 +54,7 @@ mod tests {
             DataHeap::new(),
             SELContext::new(),
             vec![],
+            vec![],
         );
 
         let context = SELExecutionContext::new();
@@ -77,7 +78,16 @@ mod tests {
             value,
         ));
 
-        let tree = SELTree::new(0, vec![], vec![], nodes, heap, SELContext::new(), vec![]);
+        let tree = SELTree::new(
+            0,
+            vec![],
+            vec![],
+            nodes,
+            heap,
+            SELContext::new(),
+            vec![],
+            vec![],
+        );
 
         let context = SELExecutionContext::new();
 
@@ -105,7 +115,16 @@ mod tests {
             value,
         ));
 
-        let tree = SELTree::new(0, vec![], vec![], nodes, heap, SELContext::new(), vec![]);
+        let tree = SELTree::new(
+            0,
+            vec![],
+            vec![],
+            nodes,
+            heap,
+            SELContext::new(),
+            vec![],
+            vec![],
+        );
 
         let context = SELExecutionContext::new();
 
@@ -133,7 +152,16 @@ mod tests {
             value,
         ));
 
-        let tree = SELTree::new(0, vec![], vec![], nodes, heap, SELContext::new(), vec![]);
+        let tree = SELTree::new(
+            0,
+            vec![],
+            vec![],
+            nodes,
+            heap,
+            SELContext::new(),
+            vec![],
+            vec![],
+        );
 
         let context = SELExecutionContext::new();
 
@@ -161,7 +189,16 @@ mod tests {
             value,
         ));
 
-        let tree = SELTree::new(0, vec![], vec![], nodes, heap, SELContext::new(), vec![]);
+        let tree = SELTree::new(
+            0,
+            vec![],
+            vec![],
+            nodes,
+            heap,
+            SELContext::new(),
+            vec![],
+            vec![],
+        );
 
         let context = SELExecutionContext::new();
 

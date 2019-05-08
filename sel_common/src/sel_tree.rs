@@ -1,6 +1,7 @@
 use super::data_type::DataType;
 use super::operation::Operation;
 use super::DataHeap;
+use crate::annotation::Annotation;
 use crate::annotation_document::AnnotationDocument;
 use crate::symbol_table::SymbolTable;
 use crate::{SELContext, SELSubTree};
@@ -91,6 +92,7 @@ pub struct SELTree {
     sub_roots: Vec<usize>,
     nodes: Vec<SELTreeNode>,
     context: SELContext,
+    annotations: Vec<Annotation>,
     documents: Vec<AnnotationDocument>,
 }
 
@@ -102,6 +104,7 @@ impl SELTree {
         nodes: Vec<SELTreeNode>,
         data: DataHeap,
         context: SELContext,
+        annotations: Vec<Annotation>,
         documents: Vec<AnnotationDocument>,
     ) -> SELTree {
         return SELTree {
@@ -111,6 +114,7 @@ impl SELTree {
             nodes,
             data,
             context,
+            annotations,
             documents,
         };
     }
@@ -191,8 +195,8 @@ impl SELTree {
         return &self.documents;
     }
 
-    pub fn get_documents_mut(&mut self) -> &mut Vec<AnnotationDocument> {
-        return &mut self.documents;
+    pub fn get_annotations(&self) -> &Vec<Annotation> {
+        return &self.annotations;
     }
 }
 

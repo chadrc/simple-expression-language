@@ -1,6 +1,7 @@
 #[macro_use]
 extern crate serde_derive;
 
+pub mod annotation;
 pub mod annotation_document;
 mod context;
 mod data_heap;
