@@ -102,3 +102,72 @@ fn expression_with_annotation_block_stores_document() {
         &String::from("with a second line")
     );
 }
+
+#[test]
+fn expression_with_annotation_block_stores_multiple_document() {
+    let input = String::from(
+        "\
+@@ this is a comment
+@@ with a second line
+5 + 10
+
+@@ second document block
+@@ also has a second line
+@@ and a third
+3 + 10
+
+@@ third document block
+@@ also has a second line
+@@ and a third
+    ",
+    );
+    let compiler = Compiler::new();
+
+    let tree = compiler.compile(&input);
+
+    let documents = tree.get_documents();
+
+    assert_eq!(documents.len(), 3);
+
+    let first = documents.get(0).unwrap();
+    let second = documents.get(1).unwrap();
+    let third = documents.get(2).unwrap();
+
+    assert_eq!(first.get_lines().len(), 2);
+    assert_eq!(
+        first.get_lines().get(0).unwrap(),
+        &String::from("this is a comment")
+    );
+    assert_eq!(
+        first.get_lines().get(1).unwrap(),
+        &String::from("with a second line")
+    );
+
+    assert_eq!(second.get_lines().len(), 3);
+    assert_eq!(
+        second.get_lines().get(0).unwrap(),
+        &String::from("second document block")
+    );
+    assert_eq!(
+        second.get_lines().get(1).unwrap(),
+        &String::from("also has a second line")
+    );
+    assert_eq!(
+        second.get_lines().get(2).unwrap(),
+        &String::from("and a third")
+    );
+
+    assert_eq!(third.get_lines().len(), 3);
+    assert_eq!(
+        third.get_lines().get(0).unwrap(),
+        &String::from("third document block")
+    );
+    assert_eq!(
+        third.get_lines().get(1).unwrap(),
+        &String::from("also has a second line")
+    );
+    assert_eq!(
+        third.get_lines().get(2).unwrap(),
+        &String::from("and a third")
+    );
+}

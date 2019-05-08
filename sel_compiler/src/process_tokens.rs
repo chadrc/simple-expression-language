@@ -43,6 +43,7 @@ pub fn make_nodes_from_tokenizer(
     let mut link_next = true;
     let mut symbol_next = false;
     let mut empty_group = false;
+    let mut in_document = false;
 
     for token in tokenizer {
         let inserted_index = nodes.len();
@@ -52,6 +53,7 @@ pub fn make_nodes_from_tokenizer(
             0
         };
 
+        println!("in doc {:?} {}", token.get_token_type(), in_document);
         if token.get_token_type() == TokenType::CommentAnnotation {
             // will store later for meta data
             // for now, just drop the token
@@ -60,6 +62,7 @@ pub fn make_nodes_from_tokenizer(
             // slice out the line without the leading '@@'
             let line = String::from(token.get_token_str()[2..].trim());
             current_document.add_line(line);
+            in_document = true;
             continue;
         }
 
@@ -68,6 +71,15 @@ pub fn make_nodes_from_tokenizer(
             // skip this token, no need to convert LineEnd to a node
             link_next = false;
             continue;
+        }
+
+        if in_document {
+            in_document = false;
+
+            // end current document
+            // and make new one
+            documents.push(current_document);
+            current_document = AnnotationDocument::new();
         }
 
         if token.get_token_type() == TokenType::EndGroup
@@ -172,6 +184,7 @@ pub fn make_nodes_from_tokenizer(
         nodes.push(SELTreeNode::new(Operation::None, DataType::Unit, 0, None));
     }
 
+    // add last document if has lines
     if current_document.get_lines().len() > 0 {
         documents.push(current_document);
     }
