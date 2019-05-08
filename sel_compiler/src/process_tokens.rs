@@ -135,6 +135,10 @@ pub fn make_nodes_from_tokenizer(
             // if previous node is not a value
             // this op is actually a Negation operation
             op = Operation::Negation;
+        } else if op == Operation::AssociativeList && last_op == Operation::Touch {
+            // if op before associative list was a value type
+            // then it is an interpreted access operation
+            op = Operation::InterpretedAccess;
         }
 
         let mut node = SELTreeNode::new(op, data_type, inserted_index, value);
@@ -174,6 +178,7 @@ pub fn make_nodes_from_tokenizer(
 
         if (node.get_operation() == Operation::Group && !empty_group)
             || node.get_operation() == Operation::AssociativeList
+            || node.get_operation() == Operation::InterpretedAccess
             || node.get_operation() == Operation::Expression
         {
             precedence_manager.start_group();

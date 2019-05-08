@@ -7,7 +7,8 @@ const GROUP_PRECEDENCE: usize = VALUE_PRECEDENCE + 1;
 const TRANSFORM_PRECEDENCE: usize = GROUP_PRECEDENCE + 1;
 const UNARY_PRECEDENCE: usize = TRANSFORM_PRECEDENCE + 1;
 const ACCESS_PRECEDENCE: usize = UNARY_PRECEDENCE + 1;
-const RANGE_PRECEDENCE: usize = ACCESS_PRECEDENCE + 1;
+const INTERPRETED_ACCESS_PRECEDENCE: usize = ACCESS_PRECEDENCE + 1;
+const RANGE_PRECEDENCE: usize = INTERPRETED_ACCESS_PRECEDENCE + 1;
 const EXPONENTIAL_PRECEDENCE: usize = RANGE_PRECEDENCE + 1;
 const MULTIPLICATION_PRECEDENCE: usize = EXPONENTIAL_PRECEDENCE + 1;
 const ADDITION_PRECEDENCE: usize = MULTIPLICATION_PRECEDENCE + 1;
@@ -48,6 +49,7 @@ impl PrecedenceGroup {
         members.push(vec![]); // GROUP_PRECEDENCE
         members.push(vec![]); // TRANSFORM_PRECEDENCE
         members.push(vec![]); // ACCESS_PRECEDENCE
+        members.push(vec![]); // INTERPRETED_ACCESS_PRECEDENCE
         members.push(vec![]); // UNARY_PRECEDENCE
         members.push(vec![]); // RANGE_PRECEDENCE
         members.push(vec![]); // EXPONENTIAL_PRECEDENCE
@@ -118,6 +120,8 @@ impl PrecedenceManager {
         operation_priorities.insert(Operation::Transform, TRANSFORM_PRECEDENCE);
 
         operation_priorities.insert(Operation::DotAccess, ACCESS_PRECEDENCE);
+
+        operation_priorities.insert(Operation::InterpretedAccess, INTERPRETED_ACCESS_PRECEDENCE);
 
         operation_priorities.insert(Operation::Symbol, UNARY_PRECEDENCE);
         operation_priorities.insert(Operation::Not, UNARY_PRECEDENCE);

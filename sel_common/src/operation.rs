@@ -38,6 +38,7 @@ pub enum Operation {
     BitwiseLeftShift,
     BitwiseRightShift,
     DotAccess,
+    InterpretedAccess,
     Group,
     AssociativeList,
     Expression,
