@@ -12,7 +12,8 @@ const RANGE_PRECEDENCE: usize = INTERPRETED_ACCESS_PRECEDENCE + 1;
 const EXPONENTIAL_PRECEDENCE: usize = RANGE_PRECEDENCE + 1;
 const MULTIPLICATION_PRECEDENCE: usize = EXPONENTIAL_PRECEDENCE + 1;
 const ADDITION_PRECEDENCE: usize = MULTIPLICATION_PRECEDENCE + 1;
-const BITSHIFT_PRECEDENCE: usize = ADDITION_PRECEDENCE + 1;
+const INFIX_PRECEDENCE: usize = ADDITION_PRECEDENCE + 1;
+const BITSHIFT_PRECEDENCE: usize = INFIX_PRECEDENCE + 1;
 const RELATIONAL_PRECEDENCE: usize = BITSHIFT_PRECEDENCE + 1;
 const EQUALITY_PRECEDENCE: usize = RELATIONAL_PRECEDENCE + 1;
 const BITWISE_AND_PRECEDENCE: usize = EQUALITY_PRECEDENCE + 1;
@@ -56,6 +57,7 @@ impl PrecedenceGroup {
         members.push(vec![]); // EXPONENTIAL_PRECEDENCE
         members.push(vec![]); // MULTIPLICATION_PRECEDENCE
         members.push(vec![]); // ADDITION_PRECEDENCE
+        members.push(vec![]); // INFIX_PRECEDENCE
         members.push(vec![]); // BITSHIFT_PRECEDENCE
         members.push(vec![]); // RELATIONAL_PRECEDENCE
         members.push(vec![]); // EQUALITY_PRECEDENCE
@@ -141,6 +143,8 @@ impl PrecedenceManager {
 
         operation_priorities.insert(Operation::Addition, ADDITION_PRECEDENCE);
         operation_priorities.insert(Operation::Subtraction, ADDITION_PRECEDENCE);
+
+        operation_priorities.insert(Operation::InfixCall, INFIX_PRECEDENCE);
 
         operation_priorities.insert(Operation::BitwiseRightShift, BITSHIFT_PRECEDENCE);
         operation_priorities.insert(Operation::BitwiseLeftShift, BITSHIFT_PRECEDENCE);

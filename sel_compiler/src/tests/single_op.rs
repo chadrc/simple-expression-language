@@ -844,7 +844,7 @@ fn compiles_infix_function() {
     let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
 
     assert_eq!(root.get_operation(), Operation::InfixCall);
-    assert_eq!(root.get_data_type(), DataType::Unknown);
+    assert_eq!(root.get_data_type(), DataType::Identifier);
 
     assert_eq!(left.get_operation(), Operation::Touch);
     assert_eq!(left.get_data_type(), DataType::Integer);

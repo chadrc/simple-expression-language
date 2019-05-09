@@ -47,6 +47,8 @@ pub fn make_nodes_from_tokenizer(
     let mut symbol_next = false;
     let mut empty_group = false;
     let mut in_document = false;
+    let mut infix_next = false;
+    let mut infix_last = false;
 
     for token in tokenizer {
         let inserted_index = nodes.len();
@@ -69,12 +71,19 @@ pub fn make_nodes_from_tokenizer(
             current_document.add_line(line);
             in_document = true;
             continue;
-        }
-
-        if token.get_token_type() == TokenType::LineEnd {
+        } else if token.get_token_type() == TokenType::LineEnd {
             // set next token to not be linked to previous
             // skip this token, no need to convert LineEnd to a node
             link_next = false;
+            continue;
+        } else if token.get_token_type() == TokenType::BackTick {
+            if infix_last {
+                // flag to continue normal parsing
+                infix_last = false;
+            } else {
+                // flag to say next identifier is infix
+                infix_next = true;
+            }
             continue;
         }
 
@@ -130,6 +139,15 @@ pub fn make_nodes_from_tokenizer(
         } else {
             data.insert_from_string(data_type, &token.get_token_str())
         };
+
+        if infix_next {
+            // set to be infix
+            op = Operation::InfixCall;
+
+            // set to skip next back tick
+            infix_next = false;
+            infix_last = true;
+        }
 
         if op == Operation::Subtraction && last_data_type == DataType::Unknown {
             // if previous node is not a value
