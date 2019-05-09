@@ -3,8 +3,10 @@ use super::operation::Operation;
 use super::DataHeap;
 use crate::annotation::Annotation;
 use crate::annotation_document::AnnotationDocument;
+use crate::named_expression::NamedExpression;
 use crate::symbol_table::SymbolTable;
 use crate::{SELContext, SELSubTree};
+use std::collections::HashMap;
 
 #[derive(PartialEq, Debug, Clone, Copy)]
 pub struct SELTreeNode {
@@ -94,6 +96,7 @@ pub struct SELTree {
     context: SELContext,
     annotations: Vec<Annotation>,
     documents: Vec<AnnotationDocument>,
+    named_expressions: HashMap<usize, NamedExpression>,
 }
 
 impl SELTree {
@@ -106,6 +109,7 @@ impl SELTree {
         context: SELContext,
         annotations: Vec<Annotation>,
         documents: Vec<AnnotationDocument>,
+        named_expressions: HashMap<usize, NamedExpression>,
     ) -> SELTree {
         return SELTree {
             root,
@@ -116,6 +120,7 @@ impl SELTree {
             context,
             annotations,
             documents,
+            named_expressions,
         };
     }
 
@@ -197,6 +202,10 @@ impl SELTree {
 
     pub fn get_annotations(&self) -> &Vec<Annotation> {
         return &self.annotations;
+    }
+
+    pub fn get_named_expressions(&self) -> &HashMap<usize, NamedExpression> {
+        return &self.named_expressions;
     }
 }
 

@@ -42,6 +42,7 @@ mod tests {
         from_byte_vec, DataHeap, DataType, Operation, SELContext, SELTree, SELTreeNode,
     };
     use sel_compiler::Compiler;
+    use std::collections::HashMap;
 
     #[test]
     fn executes_boolean() {
@@ -74,6 +75,7 @@ mod tests {
             SELContext::new(),
             vec![],
             vec![],
+            HashMap::new(),
         );
 
         let context = context::SELExecutionContext::new();

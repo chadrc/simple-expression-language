@@ -1,5 +1,7 @@
 use super::super::compiler::Compiler;
+use sel_common::named_expression::NamedExpression;
 use sel_common::{DataType, Operation};
+use std::collections::HashMap;
 
 #[test]
 fn compiles_addition_operation() {
@@ -832,10 +834,8 @@ fn compiles_infix_function() {
 
     let root = tree.get_root();
 
-    let root_value = tree.get_integer_value_of(root);
-    let symbol = tree
-        .get_symbol_table()
-        .get_symbol(root_value.unwrap() as usize);
+    let root_value = tree.get_usize_value_of(root);
+    let symbol = tree.get_symbol_table().get_symbol(root_value.unwrap());
 
     assert_eq!(root_value, Some(0));
     assert_eq!(symbol, Some(&String::from("infix")));
@@ -848,6 +848,42 @@ fn compiles_infix_function() {
 
     assert_eq!(left.get_operation(), Operation::Touch);
     assert_eq!(left.get_data_type(), DataType::Integer);
+
+    assert_eq!(right.get_operation(), Operation::Touch);
+    assert_eq!(right.get_data_type(), DataType::Integer);
+}
+
+#[test]
+fn compiles_named_expression() {
+    let input = String::from("#my_expression $ + 5");
+    let compiler = Compiler::new();
+
+    let tree = compiler.compile(&input);
+
+    let named_expressions = tree.get_named_expressions();
+
+    assert_eq!(named_expressions.len(), 1);
+
+    let symbol = tree
+        .get_symbol_table()
+        .get_value(&String::from("my_expression"))
+        .unwrap();
+
+    let named_expression = named_expressions.get(symbol).unwrap();
+
+    assert_eq!(named_expression.get_symbol(), 0);
+    assert_eq!(named_expression.get_root(), 2);
+
+    let root = tree.get_nodes().get(named_expression.get_root()).unwrap();
+
+    let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
+    let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
+
+    assert_eq!(root.get_operation(), Operation::Addition);
+    assert_eq!(root.get_data_type(), DataType::Unknown);
+
+    assert_eq!(left.get_operation(), Operation::Input);
+    assert_eq!(left.get_data_type(), DataType::Unknown);
 
     assert_eq!(right.get_operation(), Operation::Touch);
     assert_eq!(right.get_data_type(), DataType::Integer);

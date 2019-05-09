@@ -6,7 +6,7 @@ use crate::resolve_tree::resolve_tree;
 use crate::utils::promote_match_lists;
 use sel_common::{DataHeap, Operation, SELContext, SELSubTree, SELTree, SELTreeNode};
 use sel_tokenizer::Tokenizer;
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 
 pub fn build_tree_from_string(s: &String, context: SELContext) -> SELTree {
     let mut context = context;
@@ -106,6 +106,7 @@ pub fn build_tree_from_string(s: &String, context: SELContext) -> SELTree {
         context,
         annotations,
         documents,
+        HashMap::new(),
     );
 }
 

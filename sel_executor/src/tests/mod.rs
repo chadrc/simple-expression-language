@@ -3,6 +3,7 @@ mod tree_execution {
     use super::super::SELExecutionContext;
     use sel_common::{from_byte_vec, DataHeap, DataType, SELContext, SELTree};
     use sel_compiler::Compiler;
+    use std::collections::HashMap;
 
     #[test]
     fn executes_empty() {
@@ -15,6 +16,7 @@ mod tree_execution {
             SELContext::new(),
             vec![],
             vec![],
+            HashMap::new(),
         );
 
         let context = SELExecutionContext::new();

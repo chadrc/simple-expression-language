@@ -43,6 +43,7 @@ mod tests {
     use sel_common::{
         from_byte_vec, DataHeap, DataType, Operation, SELContext, SELTree, SELTreeNode,
     };
+    use std::collections::HashMap;
 
     #[test]
     fn executes_integer_negation() {
@@ -75,6 +76,7 @@ mod tests {
             SELContext::new(),
             vec![],
             vec![],
+            HashMap::new(),
         );
 
         let context = SELExecutionContext::new();
@@ -121,6 +123,7 @@ mod tests {
             SELContext::new(),
             vec![],
             vec![],
+            HashMap::new(),
         );
 
         let context = SELExecutionContext::new();

@@ -98,6 +98,7 @@ pub mod test_utils {
     use super::super::context;
     use super::*;
     use sel_common::{DataHeap, DataType, Operation, SELContext, SELTree, SELTreeNode};
+    use std::collections::HashMap;
 
     pub fn result_of_binary_op(
         op: Operation,
@@ -144,6 +145,7 @@ pub mod test_utils {
             SELContext::new(),
             vec![],
             vec![],
+            HashMap::new(),
         );
 
         let context = context::SELExecutionContext::new();

@@ -6,6 +6,7 @@ pub mod annotation_document;
 mod context;
 mod data_heap;
 mod data_type;
+pub mod named_expression;
 mod operation;
 mod sel_tree;
 pub mod sel_types;
