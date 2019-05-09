@@ -824,6 +824,36 @@ fn compiles_partial_arguments() {
 }
 
 #[test]
+fn compiles_infix_function() {
+    let input = String::from("5 `infix` 10");
+    let compiler = Compiler::new();
+
+    let tree = compiler.compile(&input);
+
+    let root = tree.get_root();
+
+    let root_value = tree.get_integer_value_of(root);
+    let symbol = tree
+        .get_symbol_table()
+        .get_symbol(root_value.unwrap() as usize);
+
+    assert_eq!(root_value, Some(0));
+    assert_eq!(symbol, Some(&String::from("infix")));
+
+    let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
+    let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
+
+    assert_eq!(root.get_operation(), Operation::InfixCall);
+    assert_eq!(root.get_data_type(), DataType::Unknown);
+
+    assert_eq!(left.get_operation(), Operation::Touch);
+    assert_eq!(left.get_data_type(), DataType::Integer);
+
+    assert_eq!(right.get_operation(), Operation::Touch);
+    assert_eq!(right.get_data_type(), DataType::Integer);
+}
+
+#[test]
 fn compiles_pipe_first_left() {
     let input = String::from("func <- 10");
     let compiler = Compiler::new();

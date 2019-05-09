@@ -54,5 +54,6 @@ pub enum Operation {
     Collect,
     CollectInit,
     PartialApplication,
+    InfixCall,
     None,
 }
