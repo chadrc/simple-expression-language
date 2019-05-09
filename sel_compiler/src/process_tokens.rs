@@ -93,7 +93,9 @@ pub fn make_nodes_from_tokenizer(
 
             // set to next node index for now
             // will find root after precedence resolution
-            let root = inserted_index + 1;
+            // next node is inserted index because we are dropping this token
+            //so inserted index will be the same next iteration
+            let root = inserted_index;
 
             named_expressions.push(NamedExpression::new(root, symbol_index));
             continue;

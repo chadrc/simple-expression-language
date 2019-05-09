@@ -87,20 +87,12 @@ pub fn build_tree_from_string(s: &String, context: SELContext) -> SELTree {
         }
     }
 
-    // firsts of group doesn't contain very first
-    // we find this one by starting at 0
-    let root = find_root_index(&nodes, None);
-
-    // collect remaining roots by transforming firsts of group
-    let sub_roots: Vec<usize> = firsts_of_expression
-        .iter()
-        .filter(|sub_root| !sub_root_ban_set.contains(sub_root))
-        .map(|first| find_root_index(&nodes, Some(*first)))
-        .collect();
-
     let named_expressions = named_expressions
         .iter()
         .fold(HashMap::new(), |mut map, value| {
+            println!("banning {:?}", value.get_root());
+            sub_root_ban_set.insert(value.get_root());
+
             map.insert(
                 value.get_symbol(),
                 NamedExpression::new(
@@ -110,6 +102,34 @@ pub fn build_tree_from_string(s: &String, context: SELContext) -> SELTree {
             );
             map
         });
+
+    // firsts of group doesn't contain very first
+    // we find this one by starting at 0
+    let root = if !sub_root_ban_set.contains(&0) {
+        find_root_index(&nodes, None)
+    } else {
+        // find first sub root that isn't in named_expression or ban set
+        let mut root = 0;
+        for sub_root in firsts_of_expression.iter() {
+            if !sub_root_ban_set.contains(&sub_root) {
+                root = *sub_root;
+                break;
+            }
+        }
+
+        // this sub_root has been promoted
+        // ban it
+        sub_root_ban_set.insert(root);
+
+        find_root_index(&nodes, Some(root))
+    };
+
+    // collect remaining roots by transforming firsts of group
+    let sub_roots: Vec<usize> = firsts_of_expression
+        .iter()
+        .filter(|sub_root| !sub_root_ban_set.contains(sub_root))
+        .map(|first| find_root_index(&nodes, Some(*first)))
+        .collect();
 
     return SELTree::new(
         root,

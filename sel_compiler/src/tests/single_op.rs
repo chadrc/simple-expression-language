@@ -893,6 +893,40 @@ fn compiles_named_expression() {
 }
 
 #[test]
+fn compiles_named_expression_with_following_expression() {
+    let input = String::from(
+        "\
+#my_expression $ + 5
+
+? / 10.0
+",
+    );
+    let compiler = Compiler::new();
+
+    let tree = compiler.compile(&input);
+
+    println!("{:?}", tree);
+
+    assert_eq!(tree.get_sub_roots().len(), 0);
+
+    let root = tree.get_root();
+
+    assert_eq!(root.get_own_index(), 4);
+
+    let left = tree.get_nodes().get(root.get_left().unwrap()).unwrap();
+    let right = tree.get_nodes().get(root.get_right().unwrap()).unwrap();
+
+    assert_eq!(root.get_operation(), Operation::Division);
+    assert_eq!(root.get_data_type(), DataType::Unknown);
+
+    assert_eq!(left.get_operation(), Operation::CurrentResult);
+    assert_eq!(left.get_data_type(), DataType::Unknown);
+
+    assert_eq!(right.get_operation(), Operation::Touch);
+    assert_eq!(right.get_data_type(), DataType::Decimal);
+}
+
+#[test]
 fn compiles_pipe_first_left() {
     let input = String::from("func <- 10");
     let compiler = Compiler::new();
