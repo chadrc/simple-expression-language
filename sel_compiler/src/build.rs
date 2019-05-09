@@ -4,6 +4,7 @@ use crate::precedence_manager::{PrecedenceManager, LIST_PRECEDENCE, RIGHT_TO_LEF
 use crate::process_tokens::make_nodes_from_tokenizer;
 use crate::resolve_tree::resolve_tree;
 use crate::utils::promote_match_lists;
+use sel_common::named_expression::NamedExpression;
 use sel_common::{DataHeap, Operation, SELContext, SELSubTree, SELTree, SELTreeNode};
 use sel_tokenizer::Tokenizer;
 use std::collections::{HashMap, HashSet};
@@ -12,7 +13,7 @@ pub fn build_tree_from_string(s: &String, context: SELContext) -> SELTree {
     let mut context = context;
     let mut precedence_manager = PrecedenceManager::new();
     let mut tokenizer = Tokenizer::new(s);
-    let (mut nodes, mut data, firsts_of_expression, annotations, documents) =
+    let (mut nodes, mut data, firsts_of_expression, annotations, documents, named_expressions) =
         make_nodes_from_tokenizer(&mut precedence_manager, &mut tokenizer, &mut context);
 
     let precedence_groups = precedence_manager.get_group_tiers();
@@ -97,6 +98,19 @@ pub fn build_tree_from_string(s: &String, context: SELContext) -> SELTree {
         .map(|first| find_root_index(&nodes, Some(*first)))
         .collect();
 
+    let named_expressions = named_expressions
+        .iter()
+        .fold(HashMap::new(), |mut map, value| {
+            map.insert(
+                value.get_symbol(),
+                NamedExpression::new(
+                    find_root_index(&nodes, Some(value.get_root())),
+                    value.get_symbol(),
+                ),
+            );
+            map
+        });
+
     return SELTree::new(
         root,
         sub_trees,
@@ -106,7 +120,7 @@ pub fn build_tree_from_string(s: &String, context: SELContext) -> SELTree {
         context,
         annotations,
         documents,
-        HashMap::new(),
+        named_expressions,
     );
 }
 

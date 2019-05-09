@@ -872,7 +872,10 @@ fn compiles_named_expression() {
     let named_expression = named_expressions.get(symbol).unwrap();
 
     assert_eq!(named_expression.get_symbol(), 0);
-    assert_eq!(named_expression.get_root(), 2);
+
+    // it is third token, but the name of the expression will be dropped
+    // making it the second node
+    assert_eq!(named_expression.get_root(), 1);
 
     let root = tree.get_nodes().get(named_expression.get_root()).unwrap();
 

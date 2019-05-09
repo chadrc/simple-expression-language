@@ -2,6 +2,7 @@ use crate::precedence_manager::PrecedenceManager;
 use crate::utils::{get_data_type_for_token, get_operation_type_for_token};
 use sel_common::annotation::Annotation;
 use sel_common::annotation_document::AnnotationDocument;
+use sel_common::named_expression::NamedExpression;
 use sel_common::{DataHeap, DataType, Operation, SELContext, SELTreeNode};
 use sel_tokenizer::{TokenType, Tokenizer};
 
@@ -28,19 +29,16 @@ pub fn make_nodes_from_tokenizer(
     Vec<usize>,
     Vec<Annotation>,
     Vec<AnnotationDocument>,
+    Vec<NamedExpression>,
 ) {
     let mut nodes: Vec<SELTreeNode> = vec![];
     let mut data = DataHeap::new();
     let mut firsts_of_expression: Vec<usize> = vec![];
     let mut annotations: Vec<Annotation> = vec![];
     let mut documents: Vec<AnnotationDocument> = vec![];
+    let mut named_expressions: Vec<NamedExpression> = vec![];
 
     let mut current_document: AnnotationDocument = AnnotationDocument::new();
-
-    // loop trough all tokens
-    // convert them to tree nodes
-    // and link them together
-
     let mut last_data_type = DataType::Unknown;
     let mut last_op = Operation::None;
     let mut link_next = true;
@@ -50,6 +48,9 @@ pub fn make_nodes_from_tokenizer(
     let mut infix_next = false;
     let mut infix_last = false;
 
+    // loop trough all tokens
+    // convert them to tree nodes
+    // and link them together
     for token in tokenizer {
         let inserted_index = nodes.len();
         let previous_index = if nodes.len() > 0 {
@@ -84,6 +85,17 @@ pub fn make_nodes_from_tokenizer(
                 // flag to say next identifier is infix
                 infix_next = true;
             }
+            continue;
+        } else if token.get_token_type() == TokenType::TaggedIdentifier {
+            // slice away the leading '#'
+            let name = String::from(token.get_token_str()[1..].as_ref());
+            let symbol_index = context.add_symbol(&name);
+
+            // set to next node index for now
+            // will find root after precedence resolution
+            let root = inserted_index + 1;
+
+            named_expressions.push(NamedExpression::new(root, symbol_index));
             continue;
         }
 
@@ -217,5 +229,12 @@ pub fn make_nodes_from_tokenizer(
         documents.push(current_document);
     }
 
-    return (nodes, data, firsts_of_expression, annotations, documents);
+    return (
+        nodes,
+        data,
+        firsts_of_expression,
+        annotations,
+        documents,
+        named_expressions,
+    );
 }

@@ -1,4 +1,4 @@
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct NamedExpression {
     root: usize,
     symbol_index: usize,
