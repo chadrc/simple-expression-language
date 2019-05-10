@@ -905,8 +905,6 @@ fn compiles_named_expression_with_following_expression() {
 
     let tree = compiler.compile(&input);
 
-    println!("{:?}", tree);
-
     assert_eq!(tree.get_sub_roots().len(), 0);
 
     let root = tree.get_root();
