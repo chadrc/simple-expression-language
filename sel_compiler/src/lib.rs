@@ -7,6 +7,7 @@ mod precedence_manager;
 mod process_tokens;
 mod resolve_node;
 mod resolve_tree;
+mod tokenizer;
 mod utils;
 
 #[cfg(test)]

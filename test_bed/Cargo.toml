@@ -8,4 +8,3 @@ edition = "2018"
 sel_common = { path = "../sel_common" }
 sel_compiler = { path = "../sel_compiler" }
 sel_executor = { path = "../sel_executor" }
-sel_tokenizer = { path = "../sel_tokenizer" }

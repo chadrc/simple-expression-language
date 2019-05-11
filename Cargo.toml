@@ -10,6 +10,5 @@ members = [
     "sel_executor",
     "sel_common",
     "sel_compiler",
-    "sel_tokenizer",
     "test_bed"
 ]

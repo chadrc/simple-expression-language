@@ -1,6 +1,7 @@
 use crate::change::Change;
+use crate::tokenizer::token::Token;
+use crate::tokenizer::token_type::TokenType;
 use sel_common::{DataType, NodeSide, Operation, SELTreeNode};
-use sel_tokenizer::{Token, TokenType};
 
 pub fn loop_max<T>(max: usize, mut f: T)
 where

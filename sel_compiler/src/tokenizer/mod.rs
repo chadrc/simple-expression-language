@@ -1,12 +1,12 @@
 mod parse_state;
 mod symbol_tree;
-mod token;
-mod token_type;
-mod tokenizer;
+pub mod token;
+pub mod token_type;
+pub mod tokenizer;
 
-pub use token::Token;
-pub use token_type::TokenType;
-pub use tokenizer::Tokenizer;
+use token::Token;
+use token_type::TokenType;
+use tokenizer::Tokenizer;
 
 #[cfg(test)]
 mod tests {

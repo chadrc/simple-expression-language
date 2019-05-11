@@ -2,7 +2,6 @@ use super::parse_state::ParseState;
 use super::symbol_tree::{SymbolTree, SymbolTreeNode};
 use super::token::Token;
 use super::token_type::TokenType;
-use crate::parse_state::ParseState::ParsingNamespace;
 
 pub struct Tokenizer<'a> {
     current_token: String,

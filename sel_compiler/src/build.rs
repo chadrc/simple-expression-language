@@ -3,10 +3,10 @@ use crate::group_handling::{correct_group, identifier_call_check, update_group};
 use crate::precedence_manager::{PrecedenceManager, LIST_PRECEDENCE, RIGHT_TO_LEFT_PRECEDENCES};
 use crate::process_tokens::make_nodes_from_tokenizer;
 use crate::resolve_tree::resolve_tree;
+use crate::tokenizer::tokenizer::Tokenizer;
 use crate::utils::promote_match_lists;
 use sel_common::named_expression::NamedExpression;
 use sel_common::{DataHeap, Operation, SELContext, SELSubTree, SELTree, SELTreeNode};
-use sel_tokenizer::Tokenizer;
 use std::collections::{HashMap, HashSet};
 
 pub fn build_tree_from_string(s: &String, context: SELContext) -> SELTree {

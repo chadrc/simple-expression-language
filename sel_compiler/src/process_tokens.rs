@@ -1,10 +1,11 @@
 use crate::precedence_manager::PrecedenceManager;
+use crate::tokenizer::token_type::TokenType;
+use crate::tokenizer::tokenizer::Tokenizer;
 use crate::utils::{get_data_type_for_token, get_operation_type_for_token};
 use sel_common::annotation::Annotation;
 use sel_common::annotation_document::AnnotationDocument;
 use sel_common::named_expression::NamedExpression;
 use sel_common::{DataHeap, DataType, Operation, SELContext, SELTreeNode};
-use sel_tokenizer::{TokenType, Tokenizer};
 use std::collections::HashMap;
 
 const TERMINABLE_OPS: [Operation; 6] = [
