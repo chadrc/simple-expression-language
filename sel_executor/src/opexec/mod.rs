@@ -146,6 +146,7 @@ pub mod test_utils {
             vec![],
             vec![],
             HashMap::new(),
+            HashMap::new(),
         );
 
         let context = context::SELExecutionContext::new();

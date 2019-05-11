@@ -77,6 +77,7 @@ mod tests {
             vec![],
             vec![],
             HashMap::new(),
+            HashMap::new(),
         );
 
         let context = SELExecutionContext::new();
@@ -123,6 +124,7 @@ mod tests {
             SELContext::new(),
             vec![],
             vec![],
+            HashMap::new(),
             HashMap::new(),
         );
 

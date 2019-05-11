@@ -5,6 +5,7 @@ use sel_common::annotation_document::AnnotationDocument;
 use sel_common::named_expression::NamedExpression;
 use sel_common::{DataHeap, DataType, Operation, SELContext, SELTreeNode};
 use sel_tokenizer::{TokenType, Tokenizer};
+use std::collections::HashMap;
 
 const TERMINABLE_OPS: [Operation; 6] = [
     Operation::Touch,
@@ -30,6 +31,7 @@ pub fn make_nodes_from_tokenizer(
     Vec<Annotation>,
     Vec<AnnotationDocument>,
     Vec<NamedExpression>,
+    HashMap<usize, Vec<String>>,
 ) {
     let mut nodes: Vec<SELTreeNode> = vec![];
     let mut data = DataHeap::new();
@@ -37,6 +39,7 @@ pub fn make_nodes_from_tokenizer(
     let mut annotations: Vec<Annotation> = vec![];
     let mut documents: Vec<AnnotationDocument> = vec![];
     let mut named_expressions: Vec<NamedExpression> = vec![];
+    let mut identifier_namespaces: HashMap<usize, Vec<String>> = HashMap::new();
 
     let mut current_document: AnnotationDocument = AnnotationDocument::new();
     let mut last_data_type = DataType::Unknown;
@@ -47,6 +50,7 @@ pub fn make_nodes_from_tokenizer(
     let mut in_document = false;
     let mut infix_next = false;
     let mut infix_last = false;
+    let mut current_identifier: Vec<String> = vec![];
 
     // loop trough all tokens
     // convert them to tree nodes
@@ -148,7 +152,28 @@ pub fn make_nodes_from_tokenizer(
         }
 
         let value = if token.get_token_type() == TokenType::Identifier {
-            let symbol_value = context.add_symbol(&token.get_token_str());
+            let parts: Vec<String> = token
+                .get_token_str()
+                .split("::")
+                .map(|s| String::from(s))
+                .collect();
+            let identifier = parts.get(parts.len() - 1).unwrap();
+            let namespaces = if parts.len() > 1 {
+                parts
+                    .iter()
+                    .take(parts.len() - 1)
+                    .map(|s| s.to_owned())
+                    .collect()
+            } else {
+                vec![]
+            };
+
+            let symbol_value = context.add_symbol(&identifier);
+
+            if namespaces.len() > 0 {
+                identifier_namespaces.insert(symbol_value, namespaces);
+            }
+
             data.insert_integer(symbol_value as i64)
         } else {
             data.insert_from_string(data_type, &token.get_token_str())
@@ -238,5 +263,6 @@ pub fn make_nodes_from_tokenizer(
         annotations,
         documents,
         named_expressions,
+        identifier_namespaces,
     );
 }

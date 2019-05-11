@@ -76,6 +76,7 @@ mod tests {
             vec![],
             vec![],
             HashMap::new(),
+            HashMap::new(),
         );
 
         let context = context::SELExecutionContext::new();

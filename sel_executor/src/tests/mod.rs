@@ -17,6 +17,7 @@ mod tree_execution {
             vec![],
             vec![],
             HashMap::new(),
+            HashMap::new(),
         );
 
         let context = SELExecutionContext::new();

@@ -97,6 +97,7 @@ pub struct SELTree {
     annotations: Vec<Annotation>,
     documents: Vec<AnnotationDocument>,
     named_expressions: HashMap<usize, NamedExpression>,
+    namespaces: HashMap<usize, Vec<String>>,
 }
 
 impl SELTree {
@@ -110,6 +111,7 @@ impl SELTree {
         annotations: Vec<Annotation>,
         documents: Vec<AnnotationDocument>,
         named_expressions: HashMap<usize, NamedExpression>,
+        name_spaces: HashMap<usize, Vec<String>>,
     ) -> SELTree {
         return SELTree {
             root,
@@ -121,6 +123,7 @@ impl SELTree {
             annotations,
             documents,
             named_expressions,
+            namespaces: name_spaces,
         };
     }
 
@@ -206,6 +209,10 @@ impl SELTree {
 
     pub fn get_named_expressions(&self) -> &HashMap<usize, NamedExpression> {
         return &self.named_expressions;
+    }
+
+    pub fn get_namespaces_for_symbol(&self) -> &HashMap<usize, Vec<String>> {
+        return &self.namespaces;
     }
 }
 

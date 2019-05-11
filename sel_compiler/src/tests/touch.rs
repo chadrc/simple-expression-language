@@ -158,6 +158,35 @@ fn compiles_touch_identifier() {
 }
 
 #[test]
+fn compiles_touch_namespaced_identifier() {
+    let input = String::from("common::const::value");
+    let compiler = Compiler::new();
+
+    let tree = compiler.compile(&input);
+
+    let root = tree.get_root();
+
+    let root_value = tree.get_usize_value_of(&root).unwrap();
+
+    let symbol = tree
+        .get_symbol_table()
+        .get_symbol(root_value as usize)
+        .unwrap();
+
+    let namespaces = tree.get_namespaces_for_symbol().get(&root_value).unwrap();
+
+    assert_eq!(namespaces.len(), 2);
+
+    assert_eq!(namespaces.get(0).unwrap(), &String::from("common"));
+    assert_eq!(namespaces.get(1).unwrap(), &String::from("const"));
+
+    assert_eq!(root.get_operation(), Operation::Touch);
+    assert_eq!(root.get_data_type(), DataType::Identifier);
+    assert_eq!(root_value, 0);
+    assert_eq!(symbol, &String::from("value"));
+}
+
+#[test]
 fn touch_symbol() {
     let input = String::from(":value");
     let compiler = Compiler::new();
