@@ -62,6 +62,7 @@ pub enum TokenType {
     MatchTrue,
     MatchFalse,
     Stream,
+    Namespace,
     Collect,
     SeedCollect,
     TaggedIdentifier,

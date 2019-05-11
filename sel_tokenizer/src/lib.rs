@@ -678,6 +678,14 @@ mod tests {
     }
 
     #[test]
+    fn tokenize_name_space() {
+        let tokens = tokens_from_str("common::func");
+        assert_token(tokens.get(0).unwrap(), TokenType::Identifier, "common");
+        assert_token(tokens.get(1).unwrap(), TokenType::Namespace, "::");
+        assert_token(tokens.get(2).unwrap(), TokenType::Identifier, "func");
+    }
+
+    #[test]
     fn tokenize_annotation() {
         let tokens = tokens_from_str("@Annotation");
         assert_token(tokens.get(0).unwrap(), TokenType::Annotation, "@Annotation");

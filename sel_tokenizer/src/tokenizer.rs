@@ -59,6 +59,7 @@ impl<'a> Tokenizer<'a> {
         symbol_tree.attach("{", TokenType::StartExpressionBlock);
         symbol_tree.attach("}", TokenType::EndExpressionBlock);
         symbol_tree.attach(":", TokenType::Symbol);
+        symbol_tree.attach("::", TokenType::Namespace);
         symbol_tree.attach("=", TokenType::Pair);
         symbol_tree.attach(",", TokenType::Comma);
         symbol_tree.attach("#", TokenType::TaggedIdentifier);
