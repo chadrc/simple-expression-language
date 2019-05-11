@@ -2,6 +2,11 @@
 
 ## Values
 
+### Characters
+`'a'`
+
+`'\n'`
+
 ### Strings
 `"Hello World"`
 
@@ -91,6 +96,9 @@
 
 #### Exponential `**`
 `5 ** 4`
+
+#### Concatenation `++`
+`"Hello, " ++ "World"`
 
 #### Exclusive Range `..`
 `1..10`

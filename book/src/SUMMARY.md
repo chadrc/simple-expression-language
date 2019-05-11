@@ -2,6 +2,7 @@
 
 [Forward](./forward.md)
 
-- [Chapter 1](./chapter_1.md)
+- [Types](types.md)
+    - [Text Types](./characters_strings.md)
 
 [Grammar](./grammar.md)
