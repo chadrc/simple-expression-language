@@ -3,6 +3,7 @@ use crate::sel_types::expression::Expression;
 use crate::sel_types::list::List;
 use crate::sel_types::pair::Pair;
 use crate::sel_types::range::Range;
+use crate::sel_types::stream_instruction::StreamInstruction;
 use crate::sel_types::symbol::Symbol;
 use bincode::{deserialize, serialize};
 
@@ -155,6 +156,18 @@ impl ToByteVec for Expression {
 impl FromByteVec for Expression {
     fn from_byte_vec(v: &Vec<u8>) -> Self {
         return deserialize(v).unwrap_or(Expression::new(None));
+    }
+}
+
+impl ToByteVec for StreamInstruction {
+    fn to_byte_vec(&self) -> Vec<u8> {
+        return serialize(self).unwrap_or(vec![]);
+    }
+}
+
+impl FromByteVec for StreamInstruction {
+    fn from_byte_vec(v: &Vec<u8>) -> Self {
+        return deserialize(v).unwrap_or(StreamInstruction::Close);
     }
 }
 

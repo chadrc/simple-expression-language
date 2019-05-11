@@ -27,6 +27,7 @@ mod pair;
 mod pipe;
 mod range;
 mod result;
+mod stream;
 mod subtraction;
 mod touch;
 mod utils;

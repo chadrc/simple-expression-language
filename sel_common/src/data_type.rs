@@ -15,6 +15,7 @@ pub enum DataType {
     List,
     AssociativeList,
     Expression,
+    StreamInstruction,
 }
 
 impl std::fmt::Display for DataType {
