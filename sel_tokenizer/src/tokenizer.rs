@@ -2,6 +2,7 @@ use super::parse_state::ParseState;
 use super::symbol_tree::{SymbolTree, SymbolTreeNode};
 use super::token::Token;
 use super::token_type::TokenType;
+use crate::parse_state::ParseState::ParsingNamespace;
 
 pub struct Tokenizer<'a> {
     current_token: String,
@@ -59,7 +60,6 @@ impl<'a> Tokenizer<'a> {
         symbol_tree.attach("{", TokenType::StartExpressionBlock);
         symbol_tree.attach("}", TokenType::EndExpressionBlock);
         symbol_tree.attach(":", TokenType::Symbol);
-        symbol_tree.attach("::", TokenType::Namespace);
         symbol_tree.attach("=", TokenType::Pair);
         symbol_tree.attach(",", TokenType::Comma);
         symbol_tree.attach("#", TokenType::TaggedIdentifier);
@@ -330,11 +330,23 @@ impl<'a> Iterator for Tokenizer<'a> {
                         ParseState::ParsingIdentifier => {
                             if c.is_alphanumeric() || c == '_' {
                                 self.current_token.push(c);
+                            } else if c == ':' {
+                                // switch to parsing namespace
+                                self.current_token.push(c);
+                                self.parse_state = ParseState::ParsingNamespace;
                             } else if c == '\'' {
                                 self.current_token.push(c);
                                 self.parse_state = ParseState::ParsingPrime;
                             } else {
                                 return self.end_current_token(c);
+                            }
+                        }
+                        ParseState::ParsingNamespace => {
+                            if c == ':' {
+                                // this is the second colon for namespace resolution
+                                // switch back to parsing identifier
+                                self.current_token.push(c);
+                                self.parse_state = ParseState::ParsingIdentifier;
                             }
                         }
                         ParseState::ParsingPrime => {
