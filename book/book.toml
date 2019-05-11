@@ -1,0 +1,5 @@
+[book]
+authors = ["chadcollins"]
+multilingual = false
+src = "src"
+title = "Simple Expression Language"
