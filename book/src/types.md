@@ -1,3 +1,3 @@
 # Types
 
-[Text Types](./characters_strings.md)
+[Text Types](types/characters_strings.md)
