@@ -943,6 +943,31 @@ The right side is an expression with input:
 @ 3
 @ 4
 @ 5
+
+```
+
+#### Combining streams
+Combine two or more streams in order to output there values together.
+
+```
+@ Combine 2 streams
+(10, 20, 30) <> (40, 50, 60) >>> $.0, $.1
+@ (10, 40)
+@ (20, 50)
+@ (30, 60)
+
+@ Combine 3 or more
+(10, 20, 30) <> (40, 50, 60) <> (70, 80, 90) >>> $.0, $.1, $.2
+@ (10, 40, 70)
+@ (20, 50, 80)
+@ (30, 60, 90)
+
+
+@ Combine 2 the combine with another or more
+((10, 20, 30) <> (40, 50, 60)) <> (70, 80, 90) >>> $.0, $.1
+@ ((10, 40), 70)
+@ ((20, 50), 80)
+@ ((30, 60), 90)
 ```
 
 ### Collecting
