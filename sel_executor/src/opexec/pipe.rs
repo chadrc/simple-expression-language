@@ -11,7 +11,7 @@ fn pipe_operation(
     node: &SELTreeNode,
     pipe_value_index: Option<usize>,
     expression_index: Option<usize>,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
     first: bool,
 ) -> SELExecutionResult {
     // first, get value of left
@@ -41,7 +41,7 @@ fn pipe_operation(
                                     tree.get_nodes().get(*sub_tree_root_index)
                                 })
                                 .map(|sub_tree_root| {
-                                    get_node_result(tree, sub_tree_root, &pipe_context)
+                                    get_node_result(tree, sub_tree_root, &mut pipe_context)
                                 })
                         }
                         (_, DataType::Identifier) => {
@@ -148,7 +148,7 @@ fn pipe_operation(
                         }
                         _ => {
                             // get result of right node
-                            Some(get_node_result(tree, right_node, &pipe_context))
+                            Some(get_node_result(tree, right_node, &mut pipe_context))
                         }
                     }
                 })
@@ -160,7 +160,7 @@ fn pipe_operation(
 pub fn pipe_first_right_operation(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
 ) -> SELExecutionResult {
     return pipe_operation(tree, node, node.get_left(), node.get_right(), context, true);
 }
@@ -168,7 +168,7 @@ pub fn pipe_first_right_operation(
 pub fn pipe_first_left_operation(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
 ) -> SELExecutionResult {
     return pipe_operation(tree, node, node.get_right(), node.get_left(), context, true);
 }
@@ -176,7 +176,7 @@ pub fn pipe_first_left_operation(
 pub fn pipe_last_right_operation(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
 ) -> SELExecutionResult {
     return pipe_operation(
         tree,
@@ -191,7 +191,7 @@ pub fn pipe_last_right_operation(
 pub fn pipe_last_left_operation(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
 ) -> SELExecutionResult {
     return pipe_operation(
         tree,
@@ -214,12 +214,12 @@ mod tests {
     use sel_compiler::Compiler;
 
     #[test]
-    fn executes_pipe_first_right_raw_expresssion() {
+    fn executes_pipe_first_right_raw_expression() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("10 -> $ * 10"));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: i64 = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Integer);
@@ -231,9 +231,9 @@ mod tests {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("10 -> { $ * 10 }"));
 
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: i64 = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Integer);
@@ -257,11 +257,11 @@ mod tests {
             }
         });
 
-        let execution_context = SELExecutionContext::from(&context);
+        let mut execution_context = SELExecutionContext::from(&context);
 
         let tree = compiler.compile_with_context(&String::from("10 -> is_even"), context);
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: bool = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Boolean);
@@ -292,11 +292,11 @@ mod tests {
             }
         });
 
-        let execution_context = SELExecutionContext::from(&context);
+        let mut execution_context = SELExecutionContext::from(&context);
 
         let tree = compiler.compile_with_context(&String::from("10 -> middle(20)"), context);
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: i64 = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Integer);
@@ -329,11 +329,11 @@ mod tests {
             }
         });
 
-        let execution_context = SELExecutionContext::from(&context);
+        let mut execution_context = SELExecutionContext::from(&context);
 
         let tree = compiler.compile_with_context(&String::from("10 -> avg(20, 30)"), context);
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: i64 = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Integer);
@@ -364,11 +364,11 @@ mod tests {
             }
         });
 
-        let execution_context = SELExecutionContext::from(&context);
+        let mut execution_context = SELExecutionContext::from(&context);
 
         let tree = compiler.compile_with_context(&String::from("10, 20 -> avg(30)"), context);
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: i64 = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Integer);
@@ -411,12 +411,12 @@ mod tests {
             }
         });
 
-        let execution_context = SELExecutionContext::from(&context);
+        let mut execution_context = SELExecutionContext::from(&context);
 
         let tree = compiler
             .compile_with_context(&String::from(":lower = 10 -> middle(:upper = 20)"), context);
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: i64 = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Integer);
@@ -450,11 +450,11 @@ mod tests {
             }
         });
 
-        let execution_context = SELExecutionContext::from(&context);
+        let mut execution_context = SELExecutionContext::from(&context);
 
         let tree = compiler.compile_with_context(&String::from("20 |> middle(10)"), context);
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: i64 = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Integer);
@@ -491,11 +491,11 @@ mod tests {
             }
         });
 
-        let execution_context = SELExecutionContext::from(&context);
+        let mut execution_context = SELExecutionContext::from(&context);
 
         let tree = compiler.compile_with_context(&String::from("20, 30 |> avg(10)"), context);
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: i64 = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Integer);
@@ -532,11 +532,11 @@ mod tests {
             }
         });
 
-        let execution_context = SELExecutionContext::from(&context);
+        let mut execution_context = SELExecutionContext::from(&context);
 
         let tree = compiler.compile_with_context(&String::from("avg(30) <- 10, 20"), context);
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: i64 = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Integer);
@@ -573,11 +573,11 @@ mod tests {
             }
         });
 
-        let execution_context = SELExecutionContext::from(&context);
+        let mut execution_context = SELExecutionContext::from(&context);
 
         let tree = compiler.compile_with_context(&String::from("avg(10) <| 20, 30"), context);
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: i64 = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Integer);

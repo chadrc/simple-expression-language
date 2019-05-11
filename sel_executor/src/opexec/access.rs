@@ -47,7 +47,7 @@ fn get_index(node: &SELTreeNode, tree: &SELTree) -> Option<usize> {
 pub fn dot_access_operation(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
 ) -> SELExecutionResult {
     // get value of left
     // this is the value we will attempt to access
@@ -109,9 +109,9 @@ mod tests {
     fn executes_pair_left_access() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("(:my_value = 100).left"));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let symbol: Symbol = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Symbol);
@@ -122,9 +122,9 @@ mod tests {
     fn executes_pair_right_access() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("(:my_value = 100).right"));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: i64 = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Integer);
@@ -135,9 +135,9 @@ mod tests {
     fn executes_access_of_non_existent_identifier() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("(:my_value = 100).center"));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
 
         assert_eq!(result.get_type(), DataType::Unit);
     }
@@ -146,9 +146,9 @@ mod tests {
     fn executes_access_of_non_existent_value() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("uninitialized.field"));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
 
         assert_eq!(result.get_type(), DataType::Unit);
     }
@@ -157,9 +157,9 @@ mod tests {
     fn executes_access_of_non_existent_chain() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("uninitialized.next.field"));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
 
         assert_eq!(result.get_type(), DataType::Unit);
     }
@@ -168,9 +168,9 @@ mod tests {
     fn executes_chain_access() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("(:top = :next = 100).right.right"));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: i64 = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Integer);
@@ -181,9 +181,9 @@ mod tests {
     fn executes_list_index_access() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("(100, 200, 300).1"));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: i64 = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Integer);
@@ -194,9 +194,9 @@ mod tests {
     fn executes_list_index_access_out_of_bounds() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("(100, 200, 300).3"));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
 
         assert_eq!(result.get_type(), DataType::Unit);
     }
@@ -207,9 +207,9 @@ mod tests {
         let tree = compiler.compile(&String::from(
             "(:name = (:first = \"Panda\", :last = \"Bear\")).right.1.right",
         ));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: String = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::String);
@@ -220,9 +220,9 @@ mod tests {
     fn executes_associative_list_access_single_field() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("[:name = \"Panda\"].name"));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: String = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::String);
@@ -235,9 +235,9 @@ mod tests {
         let tree = compiler.compile(&String::from(
             "[:user = [:first_name = \"Panda\", :last_name = \"Bear\"]].user.last_name",
         ));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: String = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::String);
@@ -248,9 +248,9 @@ mod tests {
     fn executes_associative_list_access_single_index() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("[:name = \"Panda\"].0.right"));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: String = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::String);
@@ -263,9 +263,9 @@ mod tests {
         let tree = compiler.compile(&String::from(
             "[[:first_name = \"Panda\", :last_name = \"Bear\"]].0.1.right",
         ));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: String = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::String);

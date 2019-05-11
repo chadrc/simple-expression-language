@@ -5,7 +5,7 @@ use sel_common::{from_byte_vec, to_byte_vec, DataType, SELTree, SELTreeNode};
 pub fn operation(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
 ) -> SELExecutionResult {
     let right = tree.get_nodes().get(node.get_right().unwrap()).unwrap();
     let result = get_node_result(tree, &right, context);
@@ -80,9 +80,9 @@ mod tests {
             HashMap::new(),
         );
 
-        let context = SELExecutionContext::new();
+        let mut context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &context);
+        let result = get_node_result(&tree, tree.get_root(), &mut context);
 
         let result_value = match result.get_value() {
             Some(value) => Some(from_byte_vec(value)),
@@ -128,9 +128,9 @@ mod tests {
             HashMap::new(),
         );
 
-        let context = SELExecutionContext::new();
+        let mut context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &context);
+        let result = get_node_result(&tree, tree.get_root(), &mut context);
 
         let result_value = match result.get_value() {
             Some(value) => Some(from_byte_vec(value)),

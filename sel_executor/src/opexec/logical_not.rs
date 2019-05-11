@@ -6,7 +6,7 @@ use sel_common::{to_byte_vec, DataType, SELTree, SELTreeNode};
 pub fn operation(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
 ) -> SELExecutionResult {
     let right = tree.get_nodes().get(node.get_right().unwrap()).unwrap();
     let result = get_node_result(tree, &right, context);
@@ -79,9 +79,9 @@ mod tests {
             HashMap::new(),
         );
 
-        let context = context::SELExecutionContext::new();
+        let mut context = context::SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &context);
+        let result = get_node_result(&tree, tree.get_root(), &mut context);
 
         let result_value = match result.get_value() {
             Some(value) => Some(from_byte_vec(value)),
@@ -110,9 +110,9 @@ mod tests {
     fn executes_bitwise_not() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("!10928"));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: i64 = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Integer);

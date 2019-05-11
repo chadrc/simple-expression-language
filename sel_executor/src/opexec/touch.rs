@@ -6,7 +6,7 @@ use sel_common::{to_byte_vec, DataType, SELTree, SELTreeNode};
 pub fn operation(
     tree: &SELTree,
     node: &SELTreeNode,
-    _context: &SELExecutionContext,
+    _context: &mut SELExecutionContext,
 ) -> SELExecutionResult {
     return match node.get_data_type() {
         DataType::Unit => SELExecutionResult::new(DataType::Unit, None),
@@ -60,9 +60,9 @@ mod tests {
             HashMap::new(),
         );
 
-        let context = SELExecutionContext::new();
+        let mut context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &context);
+        let result = get_node_result(&tree, tree.get_root(), &mut context);
 
         assert_eq!(result.get_type(), DataType::Unit);
         assert_eq!(result.get_value(), None);
@@ -94,9 +94,9 @@ mod tests {
             HashMap::new(),
         );
 
-        let context = SELExecutionContext::new();
+        let mut context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &context);
+        let result = get_node_result(&tree, tree.get_root(), &mut context);
 
         let result_value = match result.get_value() {
             Some(value) => Some(from_byte_vec(value)),
@@ -133,9 +133,9 @@ mod tests {
             HashMap::new(),
         );
 
-        let context = SELExecutionContext::new();
+        let mut context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &context);
+        let result = get_node_result(&tree, tree.get_root(), &mut context);
 
         let result_value = match result.get_value() {
             Some(value) => Some(from_byte_vec(value)),
@@ -172,9 +172,9 @@ mod tests {
             HashMap::new(),
         );
 
-        let context = SELExecutionContext::new();
+        let mut context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &context);
+        let result = get_node_result(&tree, tree.get_root(), &mut context);
 
         let result_value = match result.get_value() {
             Some(value) => Some(from_byte_vec(value)),
@@ -211,9 +211,9 @@ mod tests {
             HashMap::new(),
         );
 
-        let context = SELExecutionContext::new();
+        let mut context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &context);
+        let result = get_node_result(&tree, tree.get_root(), &mut context);
 
         let result_value = match result.get_value() {
             Some(value) => Some(from_byte_vec(value)),
@@ -228,9 +228,9 @@ mod tests {
     fn executes_symbol_touch() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from(":value"));
-        let context = SELExecutionContext::new();
+        let mut context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &context);
+        let result = get_node_result(&tree, tree.get_root(), &mut context);
 
         let symbol: Symbol = from_byte_vec(result.get_value().unwrap());
 
@@ -243,9 +243,9 @@ mod tests {
     fn executes_identifier_touch() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("value"));
-        let context = SELExecutionContext::new();
+        let mut context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &context);
+        let result = get_node_result(&tree, tree.get_root(), &mut context);
 
         // identifiers with no context value always yield unit
         assert_eq!(result.get_type(), DataType::Unit);
@@ -259,9 +259,9 @@ mod tests {
         context.set_integer_symbol(&String::from("value"), 10);
 
         let tree = compiler.compile_with_context(&String::from("value"), context);
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
 
         let result_value = match result.get_value() {
             Some(value) => Some(from_byte_vec(value)),

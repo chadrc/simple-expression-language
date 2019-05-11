@@ -6,7 +6,7 @@ use sel_common::{SELTree, SELTreeNode};
 pub fn operation(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
 ) -> SELExecutionResult {
     return match_comparison_ops(
         tree,

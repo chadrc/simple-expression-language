@@ -7,7 +7,7 @@ use sel_common::{from_byte_vec, to_byte_vec, DataType, Operation, SELTree, SELTr
 pub fn operation(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
 ) -> SELExecutionResult {
     node.get_right()
         // right index of expression operation is the root of the expression
@@ -32,9 +32,9 @@ mod tests {
     fn executes_expression_declaration() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("{ 10 + 5 }"));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let result_value: Expression = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Expression);
@@ -46,9 +46,9 @@ mod tests {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("{ }"));
 
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let result_value: Expression = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Expression);

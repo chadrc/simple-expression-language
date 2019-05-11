@@ -40,7 +40,7 @@ use sel_common::{DataType, Operation, SELTree, SELTreeNode};
 pub fn get_node_result(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
 ) -> SELExecutionResult {
     return match node.get_operation() {
         Operation::Touch => touch::operation(tree, node, context),
@@ -90,6 +90,7 @@ pub fn get_node_result(
         Operation::MatchTrue => conditional::match_true(tree, node, context),
         Operation::MatchFalse => conditional::match_false(tree, node, context),
         Operation::MatchList => conditional::match_list(tree, node, context),
+        Operation::Stream => stream::pipe_last_left_operation(tree, node, context),
         _ => SELExecutionResult::new(DataType::Unknown, None),
     };
 }
@@ -150,8 +151,8 @@ pub mod test_utils {
             HashMap::new(),
         );
 
-        let context = context::SELExecutionContext::new();
+        let mut context = context::SELExecutionContext::new();
 
-        return get_node_result(&tree, tree.get_root(), &context);
+        return get_node_result(&tree, tree.get_root(), &mut context);
     }
 }

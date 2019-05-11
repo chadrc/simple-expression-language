@@ -1,13 +1,54 @@
 use crate::opexec::execution_result::SELExecutionResult;
+use crate::opexec::get_node_result;
 use crate::SELExecutionContext;
-use sel_common::{DataType, SELTree, SELTreeNode};
+use sel_common::sel_types::list::List;
+use sel_common::sel_types::stream_instruction::StreamInstruction;
+use sel_common::{from_byte_vec, to_byte_vec, DataType, SELTree, SELTreeNode};
 
 pub fn pipe_last_left_operation(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
 ) -> SELExecutionResult {
-    return SELExecutionResult::new(DataType::Unknown, None);
+    // get left result
+    // this will contain our streamable value
+    node.get_left()
+        .and_then(|left_index| tree.get_nodes().get(left_index))
+        .map(|left_node| get_node_result(tree, left_node, context))
+        .map(|left_result| {
+            // now get right side node
+            node.get_right()
+                .and_then(|right_index| tree.get_nodes().get(right_index))
+                .map(|right_node| {
+                    match left_result.get_type() {
+                        DataType::List => {
+                            let list: List = from_byte_vec(left_result.get_value().unwrap());
+
+                            // for list streams
+                            // we iterate over each value
+                            // create a new context with that value as the input
+                            // get the result of the right side of the stream op with new context
+                            // add this result to context results list
+
+                            for item in list.get_values() {
+                                let mut item_context = context.clone();
+                                item_context.set_input(item.clone());
+
+                                let item_result =
+                                    get_node_result(tree, right_node, &mut item_context);
+
+                                context.push_result(item_result);
+                            }
+                        }
+                        _ => (),
+                    }
+                })
+        });
+
+    return SELExecutionResult::new(
+        DataType::StreamInstruction,
+        Some(to_byte_vec(StreamInstruction::Close)),
+    );
 }
 
 #[cfg(test)]
@@ -22,9 +63,9 @@ mod tests {
     fn executes_stream_of_list() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("10, 20, 30 >>> $"));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let results = execute_sel_tree(&tree, &execution_context);
+        let results = execute_sel_tree(&tree, &mut execution_context);
 
         assert_eq!(results.len(), 4);
 

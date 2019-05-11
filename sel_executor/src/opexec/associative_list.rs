@@ -7,7 +7,7 @@ use sel_common::{from_byte_vec, to_byte_vec, DataType, SELTree, SELTreeNode, SEL
 pub fn operation(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
 ) -> SELExecutionResult {
     node.get_right()
         .and_then(|right_index| tree.get_nodes().get(right_index))
@@ -60,9 +60,9 @@ mod tests {
     fn executes_associative_list_from_single_integer_value() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("[100]"));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let list: AssociativeList = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::AssociativeList);
@@ -81,9 +81,9 @@ mod tests {
     fn executes_associative_list_from_single_symbol_integer_pair_value() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("[:max = 100]"));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let list: AssociativeList = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::AssociativeList);
@@ -120,9 +120,9 @@ mod tests {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("[[:max = 100]]"));
         println!("{:?}", tree);
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let list: AssociativeList = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::AssociativeList);
@@ -163,9 +163,9 @@ mod tests {
     fn executes_associative_list_from_list() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("[100, true]"));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let list: AssociativeList = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::AssociativeList);
@@ -193,9 +193,9 @@ mod tests {
         let tree = compiler.compile(&String::from(
             "[:first_name = \"Panda\", :last_name = \"Bear\"]",
         ));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let list: AssociativeList = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::AssociativeList);

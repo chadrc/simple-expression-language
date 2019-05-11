@@ -10,7 +10,7 @@ use sel_common::sel_types::range::Range;
 fn range_operation(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
     inclusive: bool,
 ) -> SELExecutionResult {
     let (left_result, right_result) = get_left_right_results(tree, node, context);
@@ -34,7 +34,7 @@ fn range_operation(
 pub fn exclusive_range_operation(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
 ) -> SELExecutionResult {
     return range_operation(tree, node, context, false);
 }
@@ -42,7 +42,7 @@ pub fn exclusive_range_operation(
 pub fn inclusive_range_operation(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
 ) -> SELExecutionResult {
     return range_operation(tree, node, context, true);
 }
@@ -60,9 +60,9 @@ mod tests {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("5..10"));
 
-        let context = SELExecutionContext::new();
+        let mut context = SELExecutionContext::new();
 
-        let results = execute_sel_tree(&tree, &context);
+        let results = execute_sel_tree(&tree, &mut context);
 
         let first_result = results.get(0).unwrap();
         let range: Range = from_byte_vec(first_result.get_value().unwrap());
@@ -77,9 +77,9 @@ mod tests {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("5...10"));
 
-        let context = SELExecutionContext::new();
+        let mut context = SELExecutionContext::new();
 
-        let results = execute_sel_tree(&tree, &context);
+        let results = execute_sel_tree(&tree, &mut context);
 
         let first_result = results.get(0).unwrap();
         let range: Range = from_byte_vec(first_result.get_value().unwrap());

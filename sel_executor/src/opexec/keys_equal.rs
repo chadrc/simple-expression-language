@@ -7,7 +7,7 @@ use sel_common::{to_byte_vec, DataType, SELTree, SELTreeNode};
 fn keys_equal_operation(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
     invert: bool,
 ) -> SELExecutionResult {
     let (left_result, right_result) = get_left_right_results(tree, node, context);
@@ -39,7 +39,7 @@ fn keys_equal_operation(
 pub fn equal_operation(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
 ) -> SELExecutionResult {
     return keys_equal_operation(tree, node, context, false);
 }
@@ -47,7 +47,7 @@ pub fn equal_operation(
 pub fn not_equal_operation(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
 ) -> SELExecutionResult {
     return keys_equal_operation(tree, node, context, true);
 }
@@ -66,9 +66,9 @@ mod tests {
         let tree = compiler.compile(&String::from(
             "[:email = \"panda@example.com\", :username = \"panda\"] := [:email = \"polar@example.com\", :username = \"polar\"]",
         ));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: bool = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Boolean);
@@ -81,9 +81,9 @@ mod tests {
         let tree = compiler.compile(&String::from(
             "[:email = \"panda@example.com\", :password=\"secret\", :username = \"panda\"] := [:email = \"polar@example.com\", :username = \"polar\"]",
         ));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: bool = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Boolean);
@@ -96,9 +96,9 @@ mod tests {
         let tree = compiler.compile(&String::from(
             "[:email = \"panda@example.com\", :username = \"panda\"] :!= [:email = \"polar@example.com\", :username = \"polar\"]",
         ));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: bool = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Boolean);
@@ -111,9 +111,9 @@ mod tests {
         let tree = compiler.compile(&String::from(
             "[:email = \"panda@example.com\", :password=\"secret\", :username = \"panda\"] :!= [:email = \"polar@example.com\", :username = \"polar\"]",
         ));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: bool = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Boolean);

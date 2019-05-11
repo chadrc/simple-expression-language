@@ -8,8 +8,11 @@ use sel_common::{from_byte_vec, DataType, Operation, SELTree, SELTreeNode, SELVa
 pub fn operation(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
 ) -> SELExecutionResult {
+    // hack right now
+    // cannot borrow a mutable value for both closures below
+    let context = context.clone();
     let call_result = |sel_value: SELValue| -> Option<SELExecutionResult> {
         match node.get_left() {
             // having left index means this is a call operation
@@ -18,6 +21,9 @@ pub fn operation(
                     .get(left_index)
                     // have a left, get symbol index
                     .and_then(|left_node| {
+                        // hack right now
+                        // clone again to get mutability locally
+                        let mut context = context.clone();
                         match left_node.get_operation() {
                             Operation::Touch => {
                                 tree.get_usize_value_of(left_node)
@@ -42,7 +48,7 @@ pub fn operation(
                                     )
                             }
                             _ => {
-                                let left_result = get_node_result(tree, left_node, context);
+                                let left_result = get_node_result(tree, left_node, &mut context);
                                 match left_result.get_type() {
                                     DataType::Expression => {
                                         let expr: Expression =
@@ -57,7 +63,11 @@ pub fn operation(
                                                 tree.get_nodes().get(expr_root_index)
                                             })
                                             .map(|expr_root_node| {
-                                                get_node_result(tree, expr_root_node, &expr_context)
+                                                get_node_result(
+                                                    tree,
+                                                    expr_root_node,
+                                                    &mut expr_context,
+                                                )
                                             })
                                     }
                                     _ => None,
@@ -78,7 +88,11 @@ pub fn operation(
             .get(right_index)
             // attempt call op with result from right tree
             .and_then(|right_node| {
-                let result = get_node_result(tree, right_node, context);
+                // hack right now
+                // clone again to get mutability locally
+                let mut context = context.clone();
+
+                let result = get_node_result(tree, right_node, &mut context);
 
                 match result.get_type() {
                     DataType::List => {
@@ -121,9 +135,9 @@ mod tests {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("5 * (4 + 3)"));
 
-        let context = SELExecutionContext::new();
+        let mut context = SELExecutionContext::new();
 
-        let results = execute_sel_tree(&tree, &context);
+        let results = execute_sel_tree(&tree, &mut context);
 
         let first_result = results.get(0).unwrap();
         let first_result_value = match first_result.get_value() {
@@ -143,11 +157,11 @@ mod tests {
             SELValue::new_from_int(10)
         });
 
-        let execution_context = SELExecutionContext::from(&context);
+        let mut execution_context = SELExecutionContext::from(&context);
 
         let tree = compiler.compile_with_context(&String::from("get_vars()"), context);
 
-        let results = execute_sel_tree(&tree, &execution_context);
+        let results = execute_sel_tree(&tree, &mut execution_context);
 
         let first_result = results.get(0).unwrap();
         let first_result_value = match first_result.get_value() {
@@ -170,11 +184,11 @@ mod tests {
             SELValue::new_from_int(arg * 10)
         });
 
-        let execution_context = SELExecutionContext::from(&context);
+        let mut execution_context = SELExecutionContext::from(&context);
 
         let tree = compiler.compile_with_context(&String::from("get_vars(10)"), context);
 
-        let results = execute_sel_tree(&tree, &execution_context);
+        let results = execute_sel_tree(&tree, &mut execution_context);
 
         let first_result = results.get(0).unwrap();
         let first_result_value = match first_result.get_value() {
@@ -217,12 +231,12 @@ mod tests {
             SELValue::new_from_int(value)
         });
 
-        let execution_context = SELExecutionContext::from(&context);
+        let mut execution_context = SELExecutionContext::from(&context);
 
         let tree = compiler
             .compile_with_context(&String::from("middle(:lower = 10, :upper = 20)"), context);
 
-        let results = execute_sel_tree(&tree, &execution_context);
+        let results = execute_sel_tree(&tree, &mut execution_context);
 
         let result = results.get(0).unwrap();
         let result_value: i64 = from_byte_vec(result.get_value().unwrap());
@@ -235,11 +249,11 @@ mod tests {
     fn executes_call_with_unregistered_function() {
         let compiler = Compiler::new();
 
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
         let tree = compiler.compile(&String::from("fetch(10)"));
 
-        let results = execute_sel_tree(&tree, &execution_context);
+        let results = execute_sel_tree(&tree, &mut execution_context);
 
         let first_result = results.get(0).unwrap();
 
@@ -251,11 +265,11 @@ mod tests {
     fn executes_call_expression() {
         let compiler = Compiler::new();
 
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
         let tree = compiler.compile(&String::from("{ 5 + 10 }\n?()"));
 
-        let results = execute_sel_tree(&tree, &execution_context);
+        let results = execute_sel_tree(&tree, &mut execution_context);
 
         let result = results.get(1).unwrap();
         let value: i64 = from_byte_vec(result.get_value().unwrap());
@@ -268,11 +282,11 @@ mod tests {
     fn executes_call_expression_with_input() {
         let compiler = Compiler::new();
 
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
         let tree = compiler.compile(&String::from("{ $ + 10 }\n?(5)"));
 
-        let results = execute_sel_tree(&tree, &execution_context);
+        let results = execute_sel_tree(&tree, &mut execution_context);
 
         let result = results.get(1).unwrap();
         let value: i64 = from_byte_vec(result.get_value().unwrap());

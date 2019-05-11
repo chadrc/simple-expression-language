@@ -4,7 +4,7 @@ use sel_common::{DataType, SELTree, SELTreeNode};
 pub fn operation(
     _tree: &SELTree,
     _node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
 ) -> SELExecutionResult {
     return match context.get_input() {
         Some(input) => SELExecutionResult::new(
@@ -54,7 +54,7 @@ mod tests {
 
         context.set_input(input);
 
-        let result = get_node_result(&tree, tree.get_root(), &context);
+        let result = get_node_result(&tree, tree.get_root(), &mut context);
 
         let result_value = match result.get_value() {
             Some(value) => Some(from_byte_vec(value)),
@@ -87,9 +87,9 @@ mod tests {
             HashMap::new(),
         );
 
-        let context = SELExecutionContext::new();
+        let mut context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &context);
+        let result = get_node_result(&tree, tree.get_root(), &mut context);
 
         assert_eq!(result.get_type(), DataType::Unit);
         assert_eq!(result.get_value(), None);

@@ -11,7 +11,7 @@ use sel_common::{from_byte_vec, to_byte_vec, DataType, SELTree, SELTreeNode};
 fn contains(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
     invert: bool,
 ) -> SELExecutionResult {
     let (left_result, right_result) = get_left_right_results(tree, node, context);
@@ -67,7 +67,7 @@ fn contains(
 pub fn contains_operation(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
 ) -> SELExecutionResult {
     return contains(tree, node, context, false);
 }
@@ -75,7 +75,7 @@ pub fn contains_operation(
 pub fn not_contains_operation(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
 ) -> SELExecutionResult {
     return contains(tree, node, context, true);
 }
@@ -94,9 +94,9 @@ mod tests {
         let tree = compiler.compile(&String::from(
             "[:email = \"panda@example.com\", :username = \"panda\"] ~= \"panda\"",
         ));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: bool = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Boolean);
@@ -109,9 +109,9 @@ mod tests {
         let tree = compiler.compile(&String::from(
             "[:email = \"panda@example.com\", :username = \"panda\"] ~= \"polar\"",
         ));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: bool = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Boolean);
@@ -124,9 +124,9 @@ mod tests {
         let tree = compiler.compile(&String::from(
             "[:email = \"panda@example.com\", :username = \"panda\"] ~!= \"panda\"",
         ));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: bool = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Boolean);
@@ -139,9 +139,9 @@ mod tests {
         let tree = compiler.compile(&String::from(
             "[:email = \"panda@example.com\", :username = \"panda\"] ~!= \"polar\"",
         ));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: bool = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Boolean);
@@ -152,9 +152,9 @@ mod tests {
     fn executes_list_contains_value_true() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("(10, 20, 30) ~= 20"));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: bool = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Boolean);
@@ -165,9 +165,9 @@ mod tests {
     fn executes_list_contains_value_false() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("(10, 20, 30) ~= 40"));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: bool = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Boolean);
@@ -178,9 +178,9 @@ mod tests {
     fn executes_list_not_contains_value_false() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("(10, 20, 30) ~!= 20"));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: bool = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Boolean);
@@ -191,9 +191,9 @@ mod tests {
     fn executes_list_not_contains_value_true() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("(10, 20, 30) ~!= 40"));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: bool = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Boolean);

@@ -21,7 +21,7 @@ fn add_value_to_list(value: SELValue, list: &mut List) {
 fn add_if_exists(
     index: Option<usize>,
     tree: &SELTree,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
     list: &mut List,
 ) {
     let result_info: Option<(SELExecutionResult, bool)> = index
@@ -50,7 +50,7 @@ fn add_if_exists(
 pub fn operation(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
 ) -> SELExecutionResult {
     let mut list = List::new();
 
@@ -71,9 +71,9 @@ mod tests {
     fn executes_two_member_list() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("100, true"));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let list: List = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::List);
@@ -99,9 +99,9 @@ mod tests {
     fn executes_empty_list() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from(","));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let list: List = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::List);
@@ -115,9 +115,9 @@ mod tests {
     fn executes_single_item_list_trailing() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("100,"));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let list: List = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::List);
@@ -136,9 +136,9 @@ mod tests {
     fn executes_single_item_list_leading() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from(",100"));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let list: List = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::List);
@@ -157,9 +157,9 @@ mod tests {
     fn executes_five_member_list() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("100, 200, 300, 400, 500"));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let list: List = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::List);
@@ -194,9 +194,9 @@ mod tests {
     fn executes_nested_list() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("100, 200, (300, 400, 500)"));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let list: List = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::List);
@@ -247,9 +247,9 @@ mod tests {
     fn executes_multiple_nested_list() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("100, 200, (300, (400, 500), 600)"));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let list: List = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::List);

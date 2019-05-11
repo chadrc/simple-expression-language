@@ -9,7 +9,7 @@ use sel_common::{to_byte_vec, DataType, Operation, SELContext, SELTree, SELTreeN
 fn run_match(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
     invert: bool,
 ) -> bool {
     return node
@@ -52,7 +52,7 @@ fn get_current_result(context: &SELExecutionContext) -> Option<SELExecutionResul
 fn match_bool(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
     invert: bool,
 ) -> SELExecutionResult {
     let run = run_match(tree, node, context, invert);
@@ -87,7 +87,7 @@ fn match_bool(
 pub fn match_true(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
 ) -> SELExecutionResult {
     return match_bool(tree, node, context, false);
 }
@@ -95,7 +95,7 @@ pub fn match_true(
 pub fn match_false(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
 ) -> SELExecutionResult {
     return match_bool(tree, node, context, true);
 }
@@ -103,7 +103,7 @@ pub fn match_false(
 pub fn match_list(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
 ) -> SELExecutionResult {
     let mut match_stack: Vec<&SELTreeNode> = vec![];
     let mut current_node = node;
@@ -192,7 +192,7 @@ mod tests {
         let mut execution_context = SELExecutionContext::new();
         execution_context.set_input(SELValue::new_from_int(200));
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: i64 = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Integer);
@@ -207,7 +207,7 @@ mod tests {
         let mut execution_context = SELExecutionContext::new();
         execution_context.set_input(SELValue::new_from_int(200));
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: i64 = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Integer);
@@ -222,7 +222,7 @@ mod tests {
         let mut execution_context = SELExecutionContext::new();
         execution_context.set_input(SELValue::new_from_int(200));
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: i64 = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Integer);
@@ -237,7 +237,7 @@ mod tests {
         let mut execution_context = SELExecutionContext::new();
         execution_context.set_input(SELValue::new_from_int(200));
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: i64 = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Integer);
@@ -252,7 +252,7 @@ mod tests {
         let mut execution_context = SELExecutionContext::new();
         execution_context.set_input(SELValue::new_from_boolean(true));
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: String = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::String);
@@ -269,7 +269,7 @@ mod tests {
         let mut execution_context = SELExecutionContext::new();
         execution_context.set_input(SELValue::new_from_boolean(false));
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: String = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::String);
@@ -286,7 +286,7 @@ mod tests {
         let mut execution_context = SELExecutionContext::new();
         execution_context.set_input(SELValue::new_from_boolean(false));
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: bool = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Boolean);

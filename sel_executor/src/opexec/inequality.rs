@@ -6,7 +6,7 @@ use sel_common::{DataType, SELTree, SELTreeNode};
 pub fn operation(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
 ) -> SELExecutionResult {
     return match_equality_ops(
         tree,

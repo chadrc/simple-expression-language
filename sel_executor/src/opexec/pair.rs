@@ -9,7 +9,7 @@ use sel_common::sel_types::pair::Pair;
 pub fn operation(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
 ) -> SELExecutionResult {
     let (left_result, right_result) = get_left_right_results(tree, node, context);
     let bytes = to_byte_vec(Pair::new(
@@ -33,9 +33,9 @@ mod tests {
         let compiler = Compiler::new();
         let context = SELContext::new();
         let tree = compiler.compile_with_context(&String::from(":value = 10"), context);
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
 
         assert_eq!(result.get_type(), DataType::Pair);
 

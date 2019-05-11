@@ -24,7 +24,7 @@ pub fn get_value_from_result<T: FromByteVec>(result: &SELExecutionResult) -> T {
 pub fn get_left_right_results(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
 ) -> (SELExecutionResult, SELExecutionResult) {
     let left = tree.get_nodes().get(node.get_left().unwrap()).unwrap();
     let right = tree.get_nodes().get(node.get_right().unwrap()).unwrap();
@@ -43,7 +43,7 @@ pub enum OptionOr<T, V> {
 fn match_int_dec_ops<FI, FF, RI, RF, FU, RU>(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
     integer_func: FI,
     float_func: FF,
     integer_type: DataType,
@@ -142,7 +142,7 @@ where
 pub fn match_math_ops<FI, FF, RI, RF>(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
     integer_func: FI,
     float_func: FF,
 ) -> OptionOr<SELExecutionResult, (SELExecutionResult, SELExecutionResult)>
@@ -167,7 +167,7 @@ where
 pub fn match_int_math_ops<FI, FF, R>(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
     integer_func: FI,
     float_func: FF,
 ) -> OptionOr<SELExecutionResult, (SELExecutionResult, SELExecutionResult)>
@@ -191,7 +191,7 @@ where
 pub fn match_comparison_ops<FI, FF, FS>(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
     integer_func: FI,
     float_func: FF,
     string_func: FS,
@@ -229,7 +229,7 @@ where
 pub fn match_equality_ops<FI, FF, FS, FU>(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
     integer_func: FI,
     float_func: FF,
     string_func: FS,

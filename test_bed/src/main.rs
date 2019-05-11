@@ -114,7 +114,7 @@ fn main() {
         let input_str = String::from(*input);
         let tree = compiler.compile_with_context(&input_str, context);
 
-        let results = sel_executor::execute_sel_tree(&tree, &execution_context);
+        let results = sel_executor::execute_sel_tree(&tree, &mut execution_context);
 
         println!("{}", input_str);
         for (result_index, result) in results.iter().enumerate() {

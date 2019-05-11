@@ -5,7 +5,7 @@ use sel_common::{to_byte_vec, DataType, SELTree, SELTreeNode};
 fn match_bitwise_op<F>(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
     f: F,
 ) -> SELExecutionResult
 where
@@ -29,7 +29,7 @@ where
 pub fn or_operation(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
 ) -> SELExecutionResult {
     return match_bitwise_op(tree, node, context, |left, right| left | right);
 }
@@ -37,7 +37,7 @@ pub fn or_operation(
 pub fn and_operation(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
 ) -> SELExecutionResult {
     return match_bitwise_op(tree, node, context, |left, right| left & right);
 }
@@ -45,7 +45,7 @@ pub fn and_operation(
 pub fn xor_operation(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
 ) -> SELExecutionResult {
     return match_bitwise_op(tree, node, context, |left, right| left ^ right);
 }
@@ -53,7 +53,7 @@ pub fn xor_operation(
 pub fn left_shift_operation(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
 ) -> SELExecutionResult {
     return match_bitwise_op(tree, node, context, |left, right| left << right);
 }
@@ -61,7 +61,7 @@ pub fn left_shift_operation(
 pub fn right_shift_operation(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
 ) -> SELExecutionResult {
     return match_bitwise_op(tree, node, context, |left, right| left >> right);
 }
@@ -76,9 +76,9 @@ mod tests {
     fn executes_bitwise_or() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("250 | 10928"));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: i64 = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Integer);
@@ -89,9 +89,9 @@ mod tests {
     fn executes_bitwise_and() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("250 & 10928"));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: i64 = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Integer);
@@ -102,9 +102,9 @@ mod tests {
     fn executes_bitwise_xor() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("250 ^ 10928"));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: i64 = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Integer);
@@ -115,9 +115,9 @@ mod tests {
     fn executes_bitwise_left_shift() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("250 << 2"));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: i64 = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Integer);
@@ -128,9 +128,9 @@ mod tests {
     fn executes_bitwise_right_shift() {
         let compiler = Compiler::new();
         let tree = compiler.compile(&String::from("250 >> 2"));
-        let execution_context = SELExecutionContext::new();
+        let mut execution_context = SELExecutionContext::new();
 
-        let result = get_node_result(&tree, tree.get_root(), &execution_context);
+        let result = get_node_result(&tree, tree.get_root(), &mut execution_context);
         let value: i64 = from_byte_vec(result.get_value().unwrap());
 
         assert_eq!(result.get_type(), DataType::Integer);

@@ -7,7 +7,7 @@ use sel_common::{DataType, SELTree, SELTreeNode};
 pub fn division_operation(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
 ) -> SELExecutionResult {
     return match match_math_ops(
         tree,
@@ -24,7 +24,7 @@ pub fn division_operation(
 pub fn integer_division_operation(
     tree: &SELTree,
     node: &SELTreeNode,
-    context: &SELExecutionContext,
+    context: &mut SELExecutionContext,
 ) -> SELExecutionResult {
     return match match_int_math_ops(
         tree,
