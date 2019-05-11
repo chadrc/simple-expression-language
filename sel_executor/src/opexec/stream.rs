@@ -6,7 +6,7 @@ use sel_common::sel_types::stream::SELStream;
 use sel_common::sel_types::stream_instruction::StreamInstruction;
 use sel_common::{from_byte_vec, to_byte_vec, DataType, SELTree, SELTreeNode};
 
-pub fn pipe_last_left_operation(
+pub fn operation(
     tree: &SELTree,
     node: &SELTreeNode,
     context: &mut SELExecutionContext,

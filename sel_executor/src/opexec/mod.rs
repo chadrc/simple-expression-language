@@ -90,7 +90,7 @@ pub fn get_node_result(
         Operation::MatchTrue => conditional::match_true(tree, node, context),
         Operation::MatchFalse => conditional::match_false(tree, node, context),
         Operation::MatchList => conditional::match_list(tree, node, context),
-        Operation::Stream => stream::pipe_last_left_operation(tree, node, context),
+        Operation::Stream => stream::operation(tree, node, context),
         _ => SELExecutionResult::new(DataType::Unknown, None),
     };
 }
