@@ -62,7 +62,7 @@ mod tests {
     #[test]
     fn executes_stream_of_list() {
         let compiler = Compiler::new();
-        let tree = compiler.compile(&String::from("10, 20, 30 >>> $"));
+        let tree = compiler.compile(&String::from("10, 20, 30 >>> $ + 5"));
         let mut execution_context = SELExecutionContext::new();
 
         let results = execute_sel_tree(&tree, &mut execution_context);
@@ -76,15 +76,15 @@ mod tests {
 
         let value_1: i64 = from_byte_vec(result_1.get_value().unwrap());
         assert_eq!(result_1.get_type(), DataType::Integer);
-        assert_eq!(value_1, 10);
+        assert_eq!(value_1, 15);
 
         let value_2: i64 = from_byte_vec(result_2.get_value().unwrap());
         assert_eq!(result_2.get_type(), DataType::Integer);
-        assert_eq!(value_2, 20);
+        assert_eq!(value_2, 25);
 
         let value_3: i64 = from_byte_vec(result_3.get_value().unwrap());
         assert_eq!(result_3.get_type(), DataType::Integer);
-        assert_eq!(value_3, 30);
+        assert_eq!(value_3, 35);
 
         let value_4: StreamInstruction = from_byte_vec(result_4.get_value().unwrap());
         assert_eq!(result_4.get_type(), DataType::StreamInstruction);
