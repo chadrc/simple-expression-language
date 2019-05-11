@@ -688,6 +688,14 @@ mod tests {
     }
 
     #[test]
+    fn tokenize_identifier_symbol() {
+        let tokens = tokens_from_str("common:func");
+        assert_token(tokens.get(0).unwrap(), TokenType::Identifier, "common");
+        assert_token(tokens.get(1).unwrap(), TokenType::Symbol, ":");
+        assert_token(tokens.get(2).unwrap(), TokenType::Identifier, "func");
+    }
+
+    #[test]
     fn tokenize_annotation() {
         let tokens = tokens_from_str("@Annotation");
         assert_token(tokens.get(0).unwrap(), TokenType::Annotation, "@Annotation");

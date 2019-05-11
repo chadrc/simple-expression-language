@@ -331,9 +331,16 @@ impl<'a> Iterator for Tokenizer<'a> {
                             if c.is_alphanumeric() || c == '_' {
                                 self.current_token.push(c);
                             } else if c == ':' {
-                                // switch to parsing namespace
-                                self.current_token.push(c);
-                                self.parse_state = ParseState::ParsingNamespace;
+                                let next = self.input.chars().nth(self.next_index).unwrap_or('\0');
+                                if next == ':' {
+                                    // switch to parsing namespace
+                                    self.current_token.push(c);
+                                    self.parse_state = ParseState::ParsingNamespace;
+                                } else {
+                                    // colon is a symbol
+                                    // end current token
+                                    return self.end_current_token(c);
+                                }
                             } else if c == '\'' {
                                 self.current_token.push(c);
                                 self.parse_state = ParseState::ParsingPrime;
