@@ -1,4 +1,4 @@
-# Text Types
+# Text
 
 ## Characters
 Represent any single character code point with by surrounding that character in single quotes.
