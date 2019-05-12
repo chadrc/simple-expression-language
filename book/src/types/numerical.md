@@ -1,5 +1,5 @@
 # Numbers
-Numbers are stored as the largest value a computer can handle. Underscores may be used to make large numbers more readable.
+Numbers are stored as the largest signed value the running computer can handle. Underscores may be used to make large numbers more readable.
 
 ## Integers
 ```
