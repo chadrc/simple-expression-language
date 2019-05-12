@@ -50,7 +50,7 @@
 ### Symbols
 `:my_symbol`
 
-`:my_symbol`
+`:my_symbol'`
 
 ### Unit
 `()`
