@@ -3,7 +3,8 @@ Annotations are used to provided metadata about an expression. Some examples are
  
 * Provide a description
 * Generating documentation
-* Mark an expression to be used as a test
+* Mark an expression as a test
+* Set how to resolve namespaces
 
 [Comments](annotation_pages/comments.md)
 
